@@ -1,0 +1,2 @@
+numpy>=1.19.4 
+git+git://github.com/mariolpantunes/uts@main#egg=uts
