@@ -46,10 +46,12 @@ def rdp(points, r=0.95):
     ssreg = np.sum((y-yhat)**2)
     sstot = np.sum((y - ybar)**2)
 
-    determination = 1.0 - (ssreg / sstot)
+    if sstot > 0.0:
+        determination = 1.0 - (ssreg / sstot)
+    else:
+        determination = 1.0 - ssreg
 
     if determination < r :
-        print("hey")
         left = rdp(points[0:index+1], r)
         right = rdp(points[index:end+1], r)
         return np.concatenate((left[0:len(left)-1], right))

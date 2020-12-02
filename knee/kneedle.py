@@ -45,17 +45,17 @@ def differences(points, cd, cc):
     return rv
 
 
-def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise):
+def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
     Ds = ema.linear(points, 1.0)
-    print(Ds)
+    #print(Ds)
 
     pmin = Ds.min(axis = 0)
     pmax = Ds.max(axis = 0)
     Dn = (Ds - pmin)/(pmax - pmin)
-    print(Dn)
+    #print(Dn)
 
     Dd = differences(Dn, cd, cc)
-    print(Dd)
+    #print(Dd)
 
     idx = []
     lmxThresholds = []
@@ -77,11 +77,14 @@ def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockw
             if y1 < lmxThresholds[-1]:
                 knees.append(idx[-1])
                 detectKneeForLastLmx = False
-        
+
+    if debug:
+        return {'knees': knees,
+        'Ds':Ds, 'Dn': Dn, 'Dd':Dd}        
 
     return np.array(knees)
 
-def auto_knee(points, sensitivity=1.0):
+def auto_knee(points, sensitivity=1.0, debug=False):
     start = points[0]
     end = points[-1]
 
@@ -109,16 +112,16 @@ def auto_knee(points, sensitivity=1.0):
     else:
         cc = Concavity.Counterclockwise
     
-    return knee(points, sensitivity, cd, cc)
+    return knee(points, sensitivity, cd, cc, debug)
 
 #points = np.array([[0.0, 0.0], [1.0, 2.0], [1.2, 4.0], [2.3, 6], [2.9, 8], [5, 10]])
 
-l = [[1.0, 1.0],[2, 0.25],[3, 0.111],[4, 0.0625],[5, 0.04],[6, 0.0277777],[7, 0.0204],[8, 0.015625],[9, 0.012345679],[10, .01]]
-points = np.array(l)
+#l = [[1.0, 1.0],[2, 0.25],[3, 0.111],[4, 0.0625],[5, 0.04],[6, 0.0277777],[7, 0.0204],[8, 0.015625],[9, 0.012345679],[10, .01]]
+#points = np.array(l)
 #print(points)
 
-knees = knee(points, 1.0, Direction.Decreasing, Concavity.Counterclockwise)
-print("Knee:", knees)
+#knees = knee(points, 1.0, Direction.Decreasing, Concavity.Counterclockwise)
+#print("Knee:", knees)
 
-knees = auto_knee(points)
-print("Auto Knee:", knees)
+#knees = auto_knee(points)
+#print("Auto Knee:", knees)

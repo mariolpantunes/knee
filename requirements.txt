@@ -1,2 +1,3 @@
-numpy>=1.19.4 
+numpy>=1.19.4
+matplotlib>=3.3.3
 git+git://github.com/mariolpantunes/uts@main#egg=uts
