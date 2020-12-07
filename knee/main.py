@@ -14,12 +14,19 @@ from rdp import rdp
 from kneedle import auto_knee
 import matplotlib.pyplot as plt
 
+#import cProfile
+
 
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
     print(points)
 
+    #pr = cProfile.Profile()
+    #pr.enable()
     points_reduced = rdp(points, args.r)
+    #pr.disable()
+    #pr.print_stats()
+
     print(points)
     #double space_saving = MathUtils.round((1.0-(points_rdp.size()/(double)points.size()))*100.0, 2);
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
@@ -27,7 +34,7 @@ def main(args):
 
     values = auto_knee(points_reduced, debug=True)
 
-    print(values)
+    #print(values)
 
     fig, ((ax0, ax1), (ax2, ax3), (ax4, ax5)) = plt.subplots(3,2)
     
@@ -81,6 +88,7 @@ def main(args):
     plt.margins(0, 0)
     filename = os.path.splitext(args.i)[0]+'.pdf'
     plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
+    print('Plotting...')
     plt.show()
 
 
@@ -90,4 +98,5 @@ if __name__ == '__main__':
     parser.add_argument('-r', type=float, help='R2', default=0.95)
     #parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()
+    
     main(args)

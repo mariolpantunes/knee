@@ -7,33 +7,15 @@ __status__ = 'Development'
 
 
 import numpy as np
-import math
 
 
-def perpendicular_distance(pt, start, end):
-    d = end - start
-
-    mag = math.hypot(d[0], d[1])
-    if mag > 0.0:
-        d /= mag
-    
-    pv = pt - start
-    pvdot = np.dot(d, pv)
-
-    a = pv - pvdot * d
-
-    return math.hypot(a[0], a[1])
+def perpendicular_distance2(pt, start, end):
+    return np.fabs(np.cross(end-start,pt-start)/np.linalg.norm(end-start))
 
 def rdp(points, r=0.95):
-    dmax = 0
-    index = 0
     end = len(points) - 1
-
-    for i in range(1, end):
-        d = perpendicular_distance(points[i], points[0], points[end])
-        if d > dmax :
-            index = i
-            dmax = d
+    d = perpendicular_distance2(points, points[0], points[end])
+    index = np.argmax(d)
 
     m = (points[end][1]-points[0][1])/(points[end][0]-points[0][0])
     b = points[0][1]- (m * points[0][0])
