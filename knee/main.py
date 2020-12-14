@@ -12,32 +12,25 @@ import numpy as np
 
 from rdp import rdp
 from kneedle import auto_knee
+from lmethod import knee
+from knee_ranking import *
 import matplotlib.pyplot as plt
 
 #import cProfile
 
+from enum import Enum
 
-def main(args):
-    points = np.genfromtxt(args.i, delimiter=',')
-    print(points)
 
-    #pr = cProfile.Profile()
-    #pr.enable()
-    points_reduced = rdp(points, args.r)
-    #pr.disable()
-    #pr.print_stats()
+class Method(Enum):
+    kneedle = 'kneedle'
+    lmethod = 'lmethod'
 
-    print(points)
-    #double space_saving = MathUtils.round((1.0-(points_rdp.size()/(double)points.size()))*100.0, 2);
-    space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
-    print('Number of data points after RDP: {}({}%)'.format(len(points_reduced), space_saving));
+    def __str__(self):
+        return self.value
 
-    values = auto_knee(points_reduced, debug=True)
 
-    #print(values)
-
+def plot_kneedle(args, points, points_reduced, values):
     fig, ((ax0, ax1), (ax2, ax3), (ax4, ax5)) = plt.subplots(3,2)
-    
     
     xpoints = np.transpose(points)[0]
     ypoints = np.transpose(points)[1]
@@ -92,10 +85,64 @@ def main(args):
     plt.show()
 
 
+def ranking_to_color(ranking):
+    return (ranking, 0, 1.0-ranking)
+
+
+def plot_ranking(points, knees, rankings):
+    print(rankings)
+    xpoints = np.transpose(points)[0]
+    ypoints = np.transpose(points)[1]
+    plt.plot(xpoints, ypoints)
+    #plt.set_yticklabels([])
+    #plt.set_xticklabels([])
+    
+    for i in range(0, len(knees)):
+        idx = knees[i]
+        plt.axvline(xpoints[idx], color=ranking_to_color(rankings[i]))
+
+    plt.margins(0, 0)
+    filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
+    plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
+    print('Plotting...')
+    plt.show()
+
+
+def plot_lmethod(args, points, points_reduced, values):
+    pass
+
+
+def main(args):
+    points = np.genfromtxt(args.i, delimiter=',')
+    print(points)
+
+    #pr = cProfile.Profile()
+    #pr.enable()
+    points_reduced = rdp(points, args.r)
+    #pr.disable()
+    #pr.print_stats()
+
+    print(points)
+    #double space_saving = MathUtils.round((1.0-(points_rdp.size()/(double)points.size()))*100.0, 2);
+    space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
+    print('Number of data points after RDP: {}({}%)'.format(len(points_reduced), space_saving));
+
+    #print(values)
+    if args.m is Method.kneedle:
+        knees = auto_knee(points_reduced, debug=True)
+        plot_kneedle(args, points, points_reduced, knees)
+        #rankings = curvature_ranking(points_reduced, knees['knees'])
+        rankings = menger_curvature_ranking(points_reduced, knees['knees'])
+        plot_ranking(points_reduced, knees['knees'], rankings)
+    elif args.m is Method.lmethod:
+        plot_lmethod(args, points, points_reduced, knee(points_reduced, debug=True))
+
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Knee testing app')
+    parser = argparse.ArgumentParser(description='Multi Knee testing app')
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-r', type=float, help='R2', default=0.95)
+    parser.add_argument('-m', type=Method, choices=list(Method), default='kneedle')
     #parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()
     
