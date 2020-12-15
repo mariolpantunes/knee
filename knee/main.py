@@ -86,22 +86,47 @@ def plot_kneedle(args, points, points_reduced, values):
 
 
 def ranking_to_color(ranking):
-    return (ranking, 0, 1.0-ranking)
+    color = (ranking, 0.5*(1.0-ranking), 1.0-ranking)
+    return color
 
 
-def plot_ranking(points, knees, rankings):
-    print(rankings)
+def plot_ranking(args, points, knees):
+    rankings_k = curvature_ranking(points, knees)
+    rankings_m = menger_curvature_ranking(points, knees)
+    rankings_l = l_ranking(points, knees)
+    
+    fig, ((ax0, ax1, ax2)) = plt.subplots(1,3)
+    
     xpoints = np.transpose(points)[0]
     ypoints = np.transpose(points)[1]
-    plt.plot(xpoints, ypoints)
-    #plt.set_yticklabels([])
-    #plt.set_xticklabels([])
+    ax0.plot(xpoints, ypoints)
+    ax0.set_yticklabels([])
+    ax0.set_xticklabels([])
+    ax0.text(.5, .9, 'Curvature', horizontalalignment='center', transform=ax0.transAxes)
+    ax0.margins(0, 0)
+
+    xpoints = np.transpose(points)[0]
+    ypoints = np.transpose(points)[1]
+    ax1.plot(xpoints, ypoints)
+    ax1.set_yticklabels([])
+    ax1.set_xticklabels([])
+    ax1.text(.5, .9, 'Menger', horizontalalignment='center', transform=ax1.transAxes)
+    ax1.margins(0, 0)
+
+    xpoints = np.transpose(points)[0]
+    ypoints = np.transpose(points)[1]
+    ax2.plot(xpoints, ypoints)
+    ax2.set_yticklabels([])
+    ax2.set_xticklabels([])
+    ax2.text(.5, .9, 'L-Method', horizontalalignment='center', transform=ax2.transAxes)
+    ax2.margins(0, 0)
     
     for i in range(0, len(knees)):
         idx = knees[i]
-        plt.axvline(xpoints[idx], color=ranking_to_color(rankings[i]))
+        ax0.axvline(xpoints[idx], color=ranking_to_color(rankings_k[i]))
+        ax1.axvline(xpoints[idx], color=ranking_to_color(rankings_m[i]))
+        ax2.axvline(xpoints[idx], color=ranking_to_color(rankings_l[i]))
 
-    plt.margins(0, 0)
     filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
     plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
     print('Plotting...')
@@ -118,7 +143,7 @@ def main(args):
 
     #pr = cProfile.Profile()
     #pr.enable()
-    points_reduced = rdp(points, args.r)
+    points_reduced = rdp(points, args.r2)
     #pr.disable()
     #pr.print_stats()
 
@@ -128,20 +153,22 @@ def main(args):
     print('Number of data points after RDP: {}({}%)'.format(len(points_reduced), space_saving));
 
     #print(values)
+    knees = None
     if args.m is Method.kneedle:
         knees = auto_knee(points_reduced, debug=True)
         plot_kneedle(args, points, points_reduced, knees)
-        #rankings = curvature_ranking(points_reduced, knees['knees'])
-        rankings = menger_curvature_ranking(points_reduced, knees['knees'])
-        plot_ranking(points_reduced, knees['knees'], rankings)
     elif args.m is Method.lmethod:
         plot_lmethod(args, points, points_reduced, knee(points_reduced, debug=True))
+    
+    # plot rankings
+    plot_ranking(args, points_reduced, knees['knees'])
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee testing app')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-r', type=float, help='R2', default=0.95)
+    parser.add_argument('--r2', type=float, help='R2', default=0.95)
+    parser.add_argument('-r', type=bool, help='Ranking relative', default=True)
     parser.add_argument('-m', type=Method, choices=list(Method), default='kneedle')
     #parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()

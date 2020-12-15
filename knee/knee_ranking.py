@@ -10,14 +10,18 @@ import numpy as np
 import math
 
 
-def rank(array):
+def distance_to_similarity(array: np.ndarray) -> np.ndarray:
+    return max(array) - array
+
+
+def rank(array: np.ndarray) -> np.ndarray:
     temp = array.argsort()
     ranks = np.empty_like(temp)
     ranks[temp] = np.arange(len(array))
     return ranks
 
 
-def curvature_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
+def curvature_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
     pt = np.transpose(points)
 
     x = pt[0]
@@ -31,7 +35,8 @@ def curvature_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
         curvature = math.fabs(gradient2[idx]) / (1.0 + gradient1[idx]**2.0)**(1.5)
         rankings.append(curvature)
     
-    rankings = rank(np.array(rankings))
+    if relative:
+        rankings = rank(np.array(rankings))
     rankings = (rankings - np.min(rankings))/np.ptp(rankings)
 
     return rankings
@@ -52,8 +57,7 @@ def menger_curvature(f, g, h):
     return nom/dem
 
 
-def menger_curvature_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
-
+def menger_curvature_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
     rankings = []
     for idx in knees:
         f = points[idx]
@@ -62,7 +66,77 @@ def menger_curvature_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarra
         curvature = menger_curvature(f, g, h)
         rankings.append(curvature)
     
-    rankings = rank(np.array(rankings))
+    if relative:
+        rankings = rank(np.array(rankings))
+    rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+
+    return rankings
+
+def l_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=5, relative=True) -> np.ndarray:
+    rankings = []
+
+    pt = np.transpose(points)
+
+    x = pt[0]
+    y = pt[1]
+
+    for idx in knees:
+        coef_left, r_left, *other  = np.polyfit(x[idx-neighborhood:idx+1], 
+        y[idx-neighborhood:idx+1], 1, full=True)
+        coef_right, r_rigth, *other = np.polyfit(x[idx:idx+neighborhood+1],
+        y[idx:idx+neighborhood+1], 1, full=True)
+        error = (r_left[0] + r_rigth[0]) / 2.0
+        rankings.append(error)
+
+    rankings = distance_to_similarity(np.array(rankings))
+    
+    if relative:
+        rankings = rank(np.array(rankings))
+    rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+
+    return rankings
+
+
+def slopes_to_angle(m1: float, m2: float) -> float:
+    tan = (m1-m2)/(1.0+m1*m2)
+    angle_positive = math.atan(tan)
+    angle_negative = math.atan(-tan)
+
+    print('Positive: {}'.format(angle_positive))
+    print('Negative: {}'.format(angle_negative))
+
+    if angle_positive < angle_negative:
+        return angle_positive
+    else:
+        return angle_negative
+
+
+def angle_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=30, relative=True) -> np.ndarray:
+    rankings = []
+
+    pt = np.transpose(points)
+
+    x = pt[0]
+    y = pt[1]
+
+    for idx in knees:
+        coef_left, r_left, *other  = np.polyfit(x[idx-neighborhood:idx+1], 
+        y[idx-neighborhood:idx+1], 1, full=True)
+        coef_right, r_rigth, *other = np.polyfit(x[idx:idx+neighborhood+1],
+        y[idx:idx+neighborhood+1], 1, full=True)
+        print('-----')
+        print(coef_left)
+        print(coef_right)
+        angle = slopes_to_angle(coef_left[0], coef_right[0])
+        print(angle)
+        print('-----')
+        error = (r_left[0] + r_rigth[0]) / 2.0
+        rankings.append(error)
+
+    rankings = distance_to_similarity(np.array(rankings))
+    
+    if relative:
+        rankings = rank(np.array(rankings))
     rankings = (rankings - np.min(rankings))/np.ptp(rankings)
 
     return rankings
