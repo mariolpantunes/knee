@@ -72,7 +72,7 @@ def menger_curvature_ranking(points: np.ndarray, knees: np.ndarray, relative=Tru
 
     return rankings
 
-def l_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=5, relative=True) -> np.ndarray:
+def l_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
     rankings = []
 
     pt = np.transpose(points)
@@ -80,13 +80,27 @@ def l_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=5, relative=Tr
     x = pt[0]
     y = pt[1]
 
-    for idx in knees:
-        coef_left, r_left, *other  = np.polyfit(x[idx-neighborhood:idx+1], 
-        y[idx-neighborhood:idx+1], 1, full=True)
-        coef_right, r_rigth, *other = np.polyfit(x[idx:idx+neighborhood+1],
-        y[idx:idx+neighborhood+1], 1, full=True)
+    coef_left, r_left, *other  = np.polyfit(x[0:knees[0]+1], 
+    y[0:knees[0]+1], 1, full=True)
+    coef_right, r_rigth, *other = np.polyfit(x[knees[0]:knees[1]+1],
+    y[knees[0]:knees[1]+1], 1, full=True)
+    error = (r_left[0] + r_rigth[0]) / 2.0
+    rankings.append(error)
+
+    for i in range(1, len(knees)-1):
+        coef_left, r_left, *other  = np.polyfit(x[knees[i-1]:knees[i]+1], 
+        y[knees[i-1]:knees[i]+1], 1, full=True)
+        coef_right, r_rigth, *other = np.polyfit(x[knees[i]:knees[i+1]+1],
+        y[knees[i]:knees[i+1]+1], 1, full=True)
         error = (r_left[0] + r_rigth[0]) / 2.0
         rankings.append(error)
+    
+    coef_left, r_left, *other  = np.polyfit(x[knees[-2]:knees[-1]+1], 
+    y[knees[-2]:knees[-1]+1], 1, full=True)
+    coef_right, r_rigth, *other = np.polyfit(x[knees[-1]:],
+    y[knees[-1]:], 1, full=True)
+    error = (r_left[0] + r_rigth[0]) / 2.0
+    rankings.append(error)
 
     rankings = distance_to_similarity(np.array(rankings))
     
