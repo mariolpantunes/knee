@@ -94,8 +94,9 @@ def plot_ranking(args, points, knees):
     rankings_k = curvature_ranking(points, knees)
     rankings_m = menger_curvature_ranking(points, knees)
     rankings_l = l_ranking(points, knees)
+    rankings_d = dfdt_ranking(points, knees)
     
-    fig, ((ax0, ax1, ax2)) = plt.subplots(1,3)
+    fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
     
     xpoints = np.transpose(points)[0]
     ypoints = np.transpose(points)[1]
@@ -120,12 +121,21 @@ def plot_ranking(args, points, knees):
     ax2.set_xticklabels([])
     ax2.text(.5, .9, 'L-Method', horizontalalignment='center', transform=ax2.transAxes)
     ax2.margins(0, 0)
+
+    xpoints = np.transpose(points)[0]
+    ypoints = np.transpose(points)[1]
+    ax3.plot(xpoints, ypoints)
+    ax3.set_yticklabels([])
+    ax3.set_xticklabels([])
+    ax3.text(.5, .9, 'DFDT', horizontalalignment='center', transform=ax3.transAxes)
+    ax3.margins(0, 0)
     
     for i in range(0, len(knees)):
         idx = knees[i]
         ax0.axvline(xpoints[idx], color=ranking_to_color(rankings_k[i]))
         ax1.axvline(xpoints[idx], color=ranking_to_color(rankings_m[i]))
         ax2.axvline(xpoints[idx], color=ranking_to_color(rankings_l[i]))
+        ax3.axvline(xpoints[idx], color=ranking_to_color(rankings_d[i]))
 
     filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
     plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)

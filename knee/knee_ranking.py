@@ -111,6 +111,42 @@ def slopes_to_angle(m1: float, m2: float) -> float:
         return angle_negative
 
 
+def isodata(array: np.ndarray) -> float:
+    mean = array.mean()
+    previous_mean = 0 
+    
+    while mean != previous_mean:
+        mean_left = array[array <= mean].mean()
+        mean_right = array[array > mean].mean()
+
+        previous_mean = mean
+        mean = (mean_left+mean_right) / 2.0
+
+    return mean
+
+def dfdt_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
+    pt = np.transpose(points)
+
+    x = pt[0]
+    y = pt[1]
+
+    gradient1 = np.gradient(y, x, edge_order=1)
+    t = isodata(gradient1)
+
+    rankings = []
+    for idx in knees:
+        error = math.fabs(t - gradient1[idx])
+        rankings.append(error)
+    
+    rankings = distance_to_similarity(np.array(rankings))
+
+    if relative:
+        rankings = rank(np.array(rankings))
+    rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+
+    return rankings
+
+
 def angle_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=30, relative=True) -> np.ndarray:
     rankings = []
 
