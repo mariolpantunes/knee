@@ -9,6 +9,7 @@ import math
 import numpy as np
 from uts import ema
 from enum import Enum
+from zscore import zscore_points
 #from rdp import rdp
 
 
@@ -84,6 +85,57 @@ def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockw
 
     return np.array(knees)
 
+
+def knee2(points, score = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
+    Ds = ema.linear(points, 1.0)
+    #print(Ds)
+
+    pmin = Ds.min(axis = 0)
+    pmax = Ds.max(axis = 0)
+    Dn = (Ds - pmin)/(pmax - pmin)
+    #print(Dn)
+
+    Dd = differences(Dn, cd, cc)
+    #print(Dd)
+
+    idx = []
+    lmxThresholds = []
+    detectKneeForLastLmx = False
+    knees=[]
+
+    for i in range(1, len(Dd)-1):
+        y0 = Dd[i-1][1]
+        y = Dd[i][1]
+        y1 = Dd[i+1][1]
+        
+        if y0 < y and y > y1 or y0 > y and y < y1:
+            # check zscore
+
+            left = math.fabs(zscore_points(y, Dd[0:i]))
+            right = math.fabs(zscore_points(y, Dd[i:-1]))
+
+            print("Z-score = {} and {}".format(left, right))
+
+            if left > score and right > score:
+                knees.append(i)
+            #idx.append(i)
+            #tlmx = y - sensitivity / (len(Dd) - 1);
+            #lmxThresholds.append(tlmx)
+            #detectKneeForLastLmx = True
+        
+        
+        #if detectKneeForLastLmx:
+        #    if y1 < lmxThresholds[-1]:
+        #        knees.append(idx[-1])
+        #        detectKneeForLastLmx = False
+
+    if debug:
+        return {'knees': knees,
+        'Ds':Ds, 'Dn': Dn, 'Dd':Dd}        
+
+    return np.array(knees)
+
+
 def auto_knee(points, sensitivity=1.0, debug=False):
     start = points[0]
     end = points[-1]
@@ -112,7 +164,7 @@ def auto_knee(points, sensitivity=1.0, debug=False):
     else:
         cc = Concavity.Counterclockwise
     
-    return knee(points, sensitivity, cd, cc, debug)
+    return knee2(points, sensitivity, cd, cc, debug)
 
 #points = np.array([[0.0, 0.0], [1.0, 2.0], [1.2, 4.0], [2.3, 6], [2.9, 8], [5, 10]])
 

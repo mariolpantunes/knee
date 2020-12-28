@@ -34,14 +34,17 @@ def rdp(points, r=0.95):
         determination = 1.0 - ssreg
 
     if determination < r :
-        left = rdp(points[0:index+1], r)
-        right = rdp(points[index:end+1], r)
-        return np.concatenate((left[0:len(left)-1], right))
+        left, left_points = rdp(points[0:index+1], r)
+        right, right_points = rdp(points[index:end+1], r)
+        points_removed = np.concatenate((left_points, right_points), axis=0)
+        return np.concatenate((left[0:len(left)-1], right)), points_removed
     else:
         rv = np.empty([2,2])
         rv[0] = points[0]
         rv[1] = points[end]
-        return rv
+        middle_point = (points[0][0] + points[end][0])/2.0
+        points_removed = np.array([[middle_point, float(len(points) - 2.0)]])
+        return rv, points_removed
 
 
 #points = np.array([[0.0, 0.0], [1.0, 2.0], [1.2, 4.0], [2.3, 6], [2.9, 8], [5, 10]])

@@ -147,20 +147,48 @@ def plot_lmethod(args, points, points_reduced, values):
     pass
 
 
+def plot_points_removed(points, points_removed):
+    fig, ax1 = plt.subplots()
+    
+    #plot original curve
+
+    color = 'tab:blue'
+    #ax1.set_xlabel('time (s)')
+    #ax1.set_ylabel('exp', color=color)
+    xpoints = np.transpose(points)[0]
+    ypoints = np.transpose(points)[1]
+    ax1.plot(xpoints, ypoints, color=color)
+    ax1.tick_params(axis='y', labelcolor=color)
+
+    # plot removed points
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+    color = 'tab:red'
+    xpoints = np.transpose(points_removed)[0]
+    ypoints = np.transpose(points_removed)[1]
+    #ax2.set_ylabel('sin', color=color)  # we already handled the x-label with ax1
+    ax2.plot(xpoints, ypoints, color=color)
+    ax2.tick_params(axis='y', labelcolor=color)
+    
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    plt.show()
+
+
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
     print(points)
 
     #pr = cProfile.Profile()
     #pr.enable()
-    points_reduced = rdp(points, args.r2)
+    points_reduced, points_removed = rdp(points, args.r2)
     #pr.disable()
     #pr.print_stats()
 
     print(points)
     #double space_saving = MathUtils.round((1.0-(points_rdp.size()/(double)points.size()))*100.0, 2);
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
-    print('Number of data points after RDP: {}({}%)'.format(len(points_reduced), space_saving));
+    print('Number of data points after RDP: {}({}%)'.format(len(points_reduced), space_saving))
+    plot_points_removed(points, points_removed)
+
 
     #print(values)
     knees = None
