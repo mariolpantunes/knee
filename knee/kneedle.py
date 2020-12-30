@@ -80,7 +80,7 @@ def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockw
                 detectKneeForLastLmx = False
 
     if debug:
-        return {'knees': knees,
+        return {'knees': np.array(knees),
         'Ds':Ds, 'Dn': Dn, 'Dd':Dd}        
 
     return np.array(knees)
@@ -176,7 +176,7 @@ def knee2(points, threshold, cd=Direction.Decreasing, cc=Concavity.Clockwise, de
         #        detectKneeForLastLmx = False
 
     if debug:
-        return {'knees': knees,
+        return {'knees': np.array(knees),
         'Ds':Ds, 'Dn': Dn, 'zscores': np.array(scores),
         'zscores_left': np.array(scores_left),
         'zscores_right': np.array(scores_right), 'Dd':Dd}        
@@ -212,7 +212,23 @@ def auto_knee(points, sensitivity=1.0, debug=False):
     else:
         cc = Concavity.Counterclockwise
     
-    return knee2(points, sensitivity, cd, cc, debug)
+    knees = knee(points, sensitivity, cd, cc, debug)
+    knees_1 = knees['knees']
+    if cc is Concavity.Clockwise:
+        knees_2 = knee(points, sensitivity, cd, Concavity.Counterclockwise, debug)['knees']
+    else:
+        knees_2 = knee(points, sensitivity, cd, Concavity.Clockwise, debug)['knees']
+
+    print(knees_1.shape)
+    print(knees_2.shape)
+
+    knees_merge = np.concatenate((knees_1, knees_2))
+    knees_merge = np.unique(knees_merge)
+    knees_merge.sort()
+
+    knees['knees'] = knees_merge
+
+    return knees
 
 #points = np.array([[0.0, 0.0], [1.0, 2.0], [1.2, 4.0], [2.3, 6], [2.9, 8], [5, 10]])
 

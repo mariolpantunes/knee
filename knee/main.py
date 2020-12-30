@@ -60,34 +60,36 @@ def plot_kneedle(args, points, points_reduced, values, threshold):
     ax3.set_xticklabels([])
     ax3.text(.5,.9,'Differences',horizontalalignment='center', transform=ax3.transAxes)
 
-    x_zscore = np.transpose(values['zscores'])[0]
-    y_zscore = np.transpose(values['zscores'])[1]
-    ax4.plot(x_zscore, y_zscore)
-    x_zscore_left = np.transpose(values['zscores_left'])[0]
-    y_zscore_left = np.transpose(values['zscores_left'])[1]
-    ax4.plot(x_zscore_left, y_zscore_left, color='tab:orange')
-    x_zscore_right = np.transpose(values['zscores_right'])[0]
-    y_zscore_right = np.transpose(values['zscores_right'])[1]
-    ax4.plot(x_zscore_right, y_zscore_right, color='tab:purple')
-    ax4.set_yticklabels([])
-    ax4.set_xticklabels([])
-    ax4.axhline(y=threshold, color='r', linestyle='-')
-    ax4.text(.5,.9,'Z-score',horizontalalignment='center', transform=ax4.transAxes)
+    if 'zscores' in values:
+        x_zscore = np.transpose(values['zscores'])[0]
+        y_zscore = np.transpose(values['zscores'])[1]
+        ax4.plot(x_zscore, y_zscore)
+        x_zscore_left = np.transpose(values['zscores_left'])[0]
+        y_zscore_left = np.transpose(values['zscores_left'])[1]
+        ax4.plot(x_zscore_left, y_zscore_left, color='tab:orange')
+        x_zscore_right = np.transpose(values['zscores_right'])[0]
+        y_zscore_right = np.transpose(values['zscores_right'])[1]
+        ax4.plot(x_zscore_right, y_zscore_right, color='tab:purple')
+        ax4.set_yticklabels([])
+        ax4.set_xticklabels([])
+        ax4.axhline(y=threshold, color='r', linestyle='-')
+        ax4.text(.5,.9,'Z-score',horizontalalignment='center', transform=ax4.transAxes)
 
-    ax4_1 = ax4.twinx()  # instantiate a second axes that shares the same x-axis
-    color = 'tab:green'
-    ax4_1.plot(xdd, ydd, color=color)
-    #ax4_1.tick_params(axis='y', labelcolor=color)
+        ax4_1 = ax4.twinx()  # instantiate a second axes that shares the same x-axis
+        color = 'tab:green'
+        ax4_1.plot(xdd, ydd, color=color)
+        #ax4_1.tick_params(axis='y', labelcolor=color)
 
     xpoints_reduced = np.transpose(points_reduced)[0]
     ypoints_reduced = np.transpose(points_reduced)[1]
     ax5.plot(xpoints_reduced, ypoints_reduced)
+    ax5.plot(xpoints_reduced[values['knees']], ypoints_reduced[values['knees']], 'r+')
     ax5.set_yticklabels([])
     ax5.set_xticklabels([])
     ax5.text(.5,.9,'Knees',horizontalalignment='center', transform=ax5.transAxes)
 
-    for i in values['knees']:
-        ax5.axvline(xpoints_reduced[i], color='r')
+    #for i in values['knees']:
+    #    ax5.axvline(xpoints_reduced[i], color='r')
 
     plt.subplots_adjust(wspace=0, hspace=0)
     plt.margins(0, 0)
@@ -105,7 +107,7 @@ def ranking_to_color(ranking):
 def plot_ranking(args, points, knees):
     rankings_k = curvature_ranking(points, knees)
     rankings_m = menger_curvature_ranking(points, knees)
-    rankings_l = [] #l_ranking(points, knees)
+    rankings_l = slope_ranking(points, knees)
     rankings_d = dfdt_ranking(points, knees)
     
     fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
@@ -131,7 +133,7 @@ def plot_ranking(args, points, knees):
     ax2.plot(xpoints, ypoints)
     ax2.set_yticklabels([])
     ax2.set_xticklabels([])
-    ax2.text(.5, .9, 'L-Method', horizontalalignment='center', transform=ax2.transAxes)
+    ax2.text(.5, .9, 'Slope', horizontalalignment='center', transform=ax2.transAxes)
     ax2.margins(0, 0)
 
     xpoints = np.transpose(points)[0]

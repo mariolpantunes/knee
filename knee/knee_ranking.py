@@ -190,3 +190,37 @@ def angle_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=30, relati
     rankings = (rankings - np.min(rankings))/np.ptp(rankings)
 
     return rankings
+
+def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.9, relative=True) -> np.ndarray:
+    rankings = []
+
+    pt = np.transpose(points)
+
+    x = pt[0]
+    y = pt[1]
+    
+    j = 0
+    r = (np.corrcoef(x[j:knees[0]+1], y[j:knees[0]+1])[0,1])**2.0
+    while r < t:
+        j = int((j+knees[0])/2.0)
+        r = (np.corrcoef(x[j:knees[0]+1], y[j:knees[0]+1])[0,1])**2.0
+    print('R2({}) = {}'.format(0, r))
+    
+    slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
+    rankings.append(math.fabs(slope))
+    
+    for i in range(1, len(knees)):
+        j = knees[i-1]
+        r = (np.corrcoef(x[j:knees[i]+1], y[j:knees[i]+1])[0,1])**2.0
+        while r < t:
+            j = int((j + knees[i])/2.0)
+            r = (np.corrcoef(x[j:knees[i]+1], y[j:knees[i]+1])[0,1])**2.0
+        print('R2({}) = {}'.format(i, r))
+        slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
+        rankings.append(math.fabs(slope))
+
+    if relative:
+        rankings = rank(np.array(rankings))
+    rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+
+    return rankings
