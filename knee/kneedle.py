@@ -86,7 +86,25 @@ def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockw
     return np.array(knees)
 
 
-def knee2(points, score = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
+def find_next_tau(points, i, tau):
+    #print('Find Next Tau')
+    #print('Tau = {}'.format(tau))
+    durations = points[i:,0] - points[i-1:-1,0]
+    #print(durations)
+    cumulative_durations = np.cumsum(durations)
+    #print(cumulative_durations)
+    #idx = cumulative_durations[cumulative_durations>tau]
+    idx = np.argmax(cumulative_durations>tau)
+    #print('IDX = {}'.format(idx))
+    if idx == 0:
+        return len(points)-1
+    rv = i+idx
+    #print('Next idex = {}'.format(rv))
+    #input("Press Enter to continue...")
+    return rv
+
+
+def knee2(points, threshold, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
     Ds = ema.linear(points, 1.0)
     #print(Ds)
 
@@ -103,21 +121,49 @@ def knee2(points, score = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise, 
     detectKneeForLastLmx = False
     knees=[]
 
-    for i in range(1, len(Dd)-1):
+    scores = []
+    scores_left = []
+    scores_right = []
+
+    for i in range(1, len(Dd)-2):
         y0 = Dd[i-1][1]
         y = Dd[i][1]
         y1 = Dd[i+1][1]
+
+        # check zscore
+        if len(knees) == 0:
+            tau = Dd[i][0] - Dd[0][0]
+            left = math.fabs(zscore_points(y, Dd[0:i+1]))
+            
+        else:
+            tau = Dd[i][0] - Dd[knees[-1]][0]
+            left = math.fabs(zscore_points(y, Dd[knees[-1]:i+1]))
+            
+        j = find_next_tau(Dd, i, tau)
+
+        if len(knees) == 0:
+            score = math.fabs(zscore_points(y, Dd[0:j+1]))
+        else:
+            score = math.fabs(zscore_points(y, Dd[knees[-1]:j+1]))
+        
+        right = math.fabs(zscore_points(y, Dd[i:j+1]))
+        
+        scores_left.append([Dd[i][0], left])
+        scores_right.append([Dd[i][0], right])
+        scores.append([Dd[i][0], score])
         
         if y0 < y and y > y1 or y0 > y and y < y1:
-            # check zscore
-
-            left = math.fabs(zscore_points(y, Dd[0:i]))
-            right = math.fabs(zscore_points(y, Dd[i:-1]))
-
-            print("Z-score = {} and {}".format(left, right))
-
-            if left > score and right > score:
+            print('Tau = {} Previous index {} Next index {}'.format(tau, i,j))
+            print('Z-score = {} and {}'.format(left, right))
+            print('Z-score = {} ({})'.format(score, threshold))
+            if left > threshold and right > threshold:
                 knees.append(i)
+            
+            
+            
+            #
+            #if score > threshold:
+            #    knees.append(i)
             #idx.append(i)
             #tlmx = y - sensitivity / (len(Dd) - 1);
             #lmxThresholds.append(tlmx)
@@ -131,7 +177,9 @@ def knee2(points, score = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise, 
 
     if debug:
         return {'knees': knees,
-        'Ds':Ds, 'Dn': Dn, 'Dd':Dd}        
+        'Ds':Ds, 'Dn': Dn, 'zscores': np.array(scores),
+        'zscores_left': np.array(scores_left),
+        'zscores_right': np.array(scores_right), 'Dd':Dd}        
 
     return np.array(knees)
 

@@ -29,7 +29,7 @@ class Method(Enum):
         return self.value
 
 
-def plot_kneedle(args, points, points_reduced, values):
+def plot_kneedle(args, points, points_reduced, values, threshold):
     fig, ((ax0, ax1), (ax2, ax3), (ax4, ax5)) = plt.subplots(3,2)
     
     xpoints = np.transpose(points)[0]
@@ -53,19 +53,31 @@ def plot_kneedle(args, points, points_reduced, values):
     ax2.set_xticklabels([])
     ax2.text(.5,.9,'Smooth',horizontalalignment='center', transform=ax2.transAxes)
 
-    xdn = np.transpose(values['Dn'])[0]
-    ydn = np.transpose(values['Dn'])[1]
-    ax3.plot(xdn, ydn)
-    ax3.set_yticklabels([])
-    ax3.set_xticklabels([])
-    ax3.text(.5,.9,'Normalized',horizontalalignment='center', transform=ax3.transAxes)
-
     xdd = np.transpose(values['Dd'])[0]
     ydd = np.transpose(values['Dd'])[1]
-    ax4.plot(xdd, ydd)
+    ax3.plot(xdd, ydd)
+    ax3.set_yticklabels([])
+    ax3.set_xticklabels([])
+    ax3.text(.5,.9,'Differences',horizontalalignment='center', transform=ax3.transAxes)
+
+    x_zscore = np.transpose(values['zscores'])[0]
+    y_zscore = np.transpose(values['zscores'])[1]
+    ax4.plot(x_zscore, y_zscore)
+    x_zscore_left = np.transpose(values['zscores_left'])[0]
+    y_zscore_left = np.transpose(values['zscores_left'])[1]
+    ax4.plot(x_zscore_left, y_zscore_left, color='tab:orange')
+    x_zscore_right = np.transpose(values['zscores_right'])[0]
+    y_zscore_right = np.transpose(values['zscores_right'])[1]
+    ax4.plot(x_zscore_right, y_zscore_right, color='tab:purple')
     ax4.set_yticklabels([])
     ax4.set_xticklabels([])
-    ax4.text(.5,.9,'Differences',horizontalalignment='center', transform=ax4.transAxes)
+    ax4.axhline(y=threshold, color='r', linestyle='-')
+    ax4.text(.5,.9,'Z-score',horizontalalignment='center', transform=ax4.transAxes)
+
+    ax4_1 = ax4.twinx()  # instantiate a second axes that shares the same x-axis
+    color = 'tab:green'
+    ax4_1.plot(xdd, ydd, color=color)
+    #ax4_1.tick_params(axis='y', labelcolor=color)
 
     xpoints_reduced = np.transpose(points_reduced)[0]
     ypoints_reduced = np.transpose(points_reduced)[1]
@@ -93,7 +105,7 @@ def ranking_to_color(ranking):
 def plot_ranking(args, points, knees):
     rankings_k = curvature_ranking(points, knees)
     rankings_m = menger_curvature_ranking(points, knees)
-    rankings_l = l_ranking(points, knees)
+    rankings_l = [] #l_ranking(points, knees)
     rankings_d = dfdt_ranking(points, knees)
     
     fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
@@ -140,6 +152,7 @@ def plot_ranking(args, points, knees):
     filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
     plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
     print('Plotting...')
+    fig.tight_layout()
     plt.show()
 
 
@@ -193,8 +206,8 @@ def main(args):
     #print(values)
     knees = None
     if args.m is Method.kneedle:
-        knees = auto_knee(points_reduced, debug=True)
-        plot_kneedle(args, points, points_reduced, knees)
+        knees = auto_knee(points_reduced, sensitivity=args.t, debug=True)
+        plot_kneedle(args, points, points_reduced, knees, args.t)
     elif args.m is Method.lmethod:
         plot_lmethod(args, points, points_reduced, knee(points_reduced, debug=True))
     
@@ -206,6 +219,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee testing app')
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('--r2', type=float, help='R2', default=0.95)
+    parser.add_argument('-t', type=float, help='Sensitivity', default=1.0)
     parser.add_argument('-r', type=bool, help='Ranking relative', default=True)
     parser.add_argument('-m', type=Method, choices=list(Method), default='kneedle')
     #parser.add_argument('-o', type=str, help='output file')

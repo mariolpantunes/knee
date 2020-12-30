@@ -27,6 +27,10 @@ def zscore(xi, mean, std):
 
 
 def zscore_points(xi, points):
+    
+    if len(points) <= 1:
+        raise Exception('The number of points is smaller than 2')
+
     xpoints = np.transpose(points)[0]
     ypoints = np.transpose(points)[1]
     
