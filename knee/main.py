@@ -5,14 +5,16 @@ __version__ = '0.1'
 __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
+
 import os
 import csv
 import argparse
 import numpy as np
 
+
 from rdp import rdp
 from kneedle import auto_knee
-from lmethod import knee
+import lmethod
 from knee_ranking import *
 import matplotlib.pyplot as plt
 
@@ -79,14 +81,18 @@ def plot_kneedle(args, points, points_reduced, values, threshold):
         color = 'tab:green'
         ax4_1.plot(xdd, ydd, color=color)
         #ax4_1.tick_params(axis='y', labelcolor=color)
+    
+    ax4.plot(xpoints_reduced, ypoints_reduced)
+    ax4.plot(xpoints_reduced[values['knees_z']], ypoints_reduced[values['knees_z']], 'r+')
+    ax4.set_yticklabels([])
+    ax4.set_xticklabels([])
+    ax4.text(.5,.9,'Knees Z-Score', horizontalalignment='center', transform=ax4.transAxes)
 
-    xpoints_reduced = np.transpose(points_reduced)[0]
-    ypoints_reduced = np.transpose(points_reduced)[1]
     ax5.plot(xpoints_reduced, ypoints_reduced)
     ax5.plot(xpoints_reduced[values['knees']], ypoints_reduced[values['knees']], 'r+')
     ax5.set_yticklabels([])
     ax5.set_xticklabels([])
-    ax5.text(.5,.9,'Knees',horizontalalignment='center', transform=ax5.transAxes)
+    ax5.text(.5,.9,'Knees Significant', horizontalalignment='center', transform=ax5.transAxes)
 
     #for i in values['knees']:
     #    ax5.axvline(xpoints_reduced[i], color='r')
@@ -105,51 +111,54 @@ def ranking_to_color(ranking):
 
 
 def plot_ranking(args, points, knees):
-    rankings_k = curvature_ranking(points, knees)
-    rankings_m = menger_curvature_ranking(points, knees)
-    rankings_l = slope_ranking(points, knees)
-    rankings_d = dfdt_ranking(points, knees)
+    fig, ((ax0, ax1)) = plt.subplots(2, 1)
+
+    rankings_relative = slope_ranking(points, knees)
+    rankings_absolute = slope_ranking(points, knees, relative=False)
+
+    t = isodata(rankings_absolute)
+
+    print("Absolute ranking = {}".format(rankings_absolute))
+    print("t = {}".format(t))
+
+    rankings_filtered = []
+    knees_filtered = []
     
-    fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
+    for i in range(0, len(knees)):
+        ranking = rankings_absolute[i]
+        if ranking >= t:
+            knees_filtered.append(knees[i])
+            rankings_filtered.append(ranking)
     
+    rankings_filtered = np.array(rankings_filtered)
+    rankings_filtered = rank(np.array(rankings_filtered))
+    
+    if len(rankings_filtered) > 1:
+        rankings_filtered = (rankings_filtered - np.min(rankings_filtered))/np.ptp(rankings_filtered)
+    else:
+        rankings_filtered[0] = 1.0
+
     xpoints = np.transpose(points)[0]
     ypoints = np.transpose(points)[1]
     ax0.plot(xpoints, ypoints)
     ax0.set_yticklabels([])
     ax0.set_xticklabels([])
-    ax0.text(.5, .9, 'Curvature', horizontalalignment='center', transform=ax0.transAxes)
+    ax0.text(.5, .9, 'Slope', horizontalalignment='center', transform=ax0.transAxes)
     ax0.margins(0, 0)
 
-    xpoints = np.transpose(points)[0]
-    ypoints = np.transpose(points)[1]
     ax1.plot(xpoints, ypoints)
     ax1.set_yticklabels([])
     ax1.set_xticklabels([])
-    ax1.text(.5, .9, 'Menger', horizontalalignment='center', transform=ax1.transAxes)
+    ax1.text(.5, .9, 'Slope (ISODATA)', horizontalalignment='center', transform=ax1.transAxes)
     ax1.margins(0, 0)
-
-    xpoints = np.transpose(points)[0]
-    ypoints = np.transpose(points)[1]
-    ax2.plot(xpoints, ypoints)
-    ax2.set_yticklabels([])
-    ax2.set_xticklabels([])
-    ax2.text(.5, .9, 'Slope', horizontalalignment='center', transform=ax2.transAxes)
-    ax2.margins(0, 0)
-
-    xpoints = np.transpose(points)[0]
-    ypoints = np.transpose(points)[1]
-    ax3.plot(xpoints, ypoints)
-    ax3.set_yticklabels([])
-    ax3.set_xticklabels([])
-    ax3.text(.5, .9, 'DFDT', horizontalalignment='center', transform=ax3.transAxes)
-    ax3.margins(0, 0)
     
     for i in range(0, len(knees)):
         idx = knees[i]
-        ax0.axvline(xpoints[idx], color=ranking_to_color(rankings_k[i]))
-        ax1.axvline(xpoints[idx], color=ranking_to_color(rankings_m[i]))
-        ax2.axvline(xpoints[idx], color=ranking_to_color(rankings_l[i]))
-        ax3.axvline(xpoints[idx], color=ranking_to_color(rankings_d[i]))
+        ax0.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
+    
+    for  i in range(0, len(knees_filtered)):
+        idx = knees_filtered[i]
+        ax1.axvline(xpoints[idx], color=ranking_to_color(rankings_filtered[i]))
 
     filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
     plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
@@ -159,7 +168,43 @@ def plot_ranking(args, points, knees):
 
 
 def plot_lmethod(args, points, points_reduced, values):
-    pass
+    fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
+
+    xpoints = np.transpose(points)[0]
+    ypoints = np.transpose(points)[1]
+    ax0.plot(xpoints, ypoints)
+    ax0.set_yticklabels([])
+    ax0.set_xticklabels([])
+    ax0.text(.5,.9,'Original',horizontalalignment='center', transform=ax0.transAxes)
+
+    xpoints_reduced = np.transpose(points_reduced)[0]
+    ypoints_reduced = np.transpose(points_reduced)[1]
+    ax1.plot(xpoints_reduced, ypoints_reduced)
+    ax1.set_yticklabels([])
+    ax1.set_xticklabels([])
+    ax1.text(.5,.9,'Reduced',horizontalalignment='center', transform=ax1.transAxes)
+
+    # compute left lines
+    left_coefficients = values['left']
+    poly = np.poly1d(left_coefficients)
+
+    new_x = np.linspace(xpoints_reduced[0], xpoints_reduced[values['knees']])
+    new_y = poly(new_x)
+
+    ax2.plot(xpoints_reduced, ypoints_reduced, "o", new_x, new_y)
+    ax2.set_xlim([xpoints_reduced[0]-1, xpoints_reduced[-1] + 1 ])
+    ax2.set_ylim([ypoints_reduced[0]-1, ypoints_reduced[-1] + 1 ])
+    ax2.plot(xpoints_reduced[values['knees']], ypoints_reduced[values['knees']], 'r+')
+    ax2.set_yticklabels([])
+    ax2.set_xticklabels([])
+    ax2.text(.5, .9,'Knees', horizontalalignment='center', transform=ax2.transAxes)
+    
+    plt.subplots_adjust(wspace=0, hspace=0)
+    plt.margins(0, 0)
+    filename = os.path.splitext(args.i)[0]+'.pdf'
+    plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
+    print('Plotting...')
+    plt.show()
 
 
 def plot_points_removed(points, points_removed):
@@ -204,14 +249,13 @@ def main(args):
     print('Number of data points after RDP: {}({}%)'.format(len(points_reduced), space_saving))
     plot_points_removed(points, points_removed)
 
-
     #print(values)
     knees = None
     if args.m is Method.kneedle:
         knees = auto_knee(points_reduced, sensitivity=args.t, debug=True)
         plot_kneedle(args, points, points_reduced, knees, args.t)
     elif args.m is Method.lmethod:
-        plot_lmethod(args, points, points_reduced, knee(points_reduced, debug=True))
+        plot_lmethod(args, points, points_reduced, lmethod.knee(points_reduced, debug=True))
     
     # plot rankings
     plot_ranking(args, points_reduced, knees['knees'])

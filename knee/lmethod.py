@@ -10,7 +10,7 @@ import numpy as np
 from uts import ema
 
 
-def knee(points):
+def knee(points, debug=False):
     Ds = ema.linear(points, 1.0)
     pmin = Ds.min(axis = 0)
     pmax = Ds.max(axis = 0)
@@ -37,8 +37,13 @@ def knee(points):
             coef_left = i_coef_left
             coef_right = i_coef_right
     
+    knees = [index]
+    
     #return index
-    return {'knees': knees, left: coef_left, right: coef_right, 'Ds':Ds, 'Dn': Dn, 'Dd':Dn}
+    if debug:
+        return {'knees': np.array(knees), 'left': coef_left, 'right': coef_right, 'Ds':Ds, 'Dn': Dn, 'Dd':Dn}
+    else:
+        return np.array(knees)
 
 #l = [[1.0, 1.0],[2, 0.25],[3, 0.111],[4, 0.0625],[5, 0.04],[6, 0.0277777],[7, 0.0204],[8, 0.015625],[9, 0.012345679],[10, .01]]
 #points = np.array(l)

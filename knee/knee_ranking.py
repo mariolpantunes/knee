@@ -216,11 +216,17 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.9, relative=True) -
             j = int((j + knees[i])/2.0)
             r = (np.corrcoef(x[j:knees[i]+1], y[j:knees[i]+1])[0,1])**2.0
         print('R2({}) = {}'.format(i, r))
-        slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
+        slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
         rankings.append(math.fabs(slope))
 
+    rankings = np.array(rankings)
+
     if relative:
-        rankings = rank(np.array(rankings))
-    rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+        rankings = rank(rankings)
+        # Min Max normalization
+        rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+    else:
+        # Standardization (Z-score Normalization)
+        rankings = (rankings - np.mean(rankings))/np.std(rankings)
 
     return rankings
