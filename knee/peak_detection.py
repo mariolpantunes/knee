@@ -103,3 +103,48 @@ def significant_zscore_peaks(points, peaks_idx, t=1.0):
             significant.append(False)
 
     return np.array(significant)
+
+
+def mountaineer_peak_valley(points, threshold=6):
+
+    possible_peak = possible_valley = False
+    potential_peak_idx = potential_valley_idx = 0
+    potential_peak_value = potential_valley_value = 0
+    num_steps = 0
+
+    peaks = np.full((len(points)), False)
+    valley = np.full((len(points)), False)
+
+    for i in range(1, len(points)):
+        if points[i][1] > points[i-1][1]:
+            num_steps += 1
+            if not possible_valley:
+                possible_valley = True
+                potential_valley_idx = i-1
+                potential_valley_value = points[i-1][1]
+        else:
+            if num_steps >= threshold:
+                possible_peak = True
+                potential_peak_idx = i-1
+                potential_peak_value = points[i-1][1]
+            else:
+                if possible_valley:
+                    if points[i][1] <= potential_valley_value:
+                        potential_valley_idx = i
+                        potential_valley_value = points[i][1]
+                
+                if possible_peak:
+                    if points[i-1][1] > potential_valley_value:
+                        potential_peak_idx = i-1
+                        potential_peak_value = points[i-1][1]
+                    else:
+                        peaks[potential_peak_idx] = True
+                    
+                    if possible_valley:
+                        valley[potential_peak_idx] = True
+                        possible_valley = False
+                    
+                    threshold = 0.6*num_steps
+                    possible_peak = False
+            num_steps = 0
+    return peaks, valley
