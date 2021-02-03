@@ -8,7 +8,7 @@ __status__ = 'Development'
 import math
 import numpy as np
 from uts import ema
-from peak_detection import all_peaks, significant_peaks, significant_zscore_peaks
+from peak_detection import all_peaks, significant_peaks, significant_zscore_peaks, significant_zscore_peaks_iso
 from enum import Enum
 
 
@@ -112,6 +112,13 @@ def knee2(points, threshold, cd=Direction.Decreasing, cc=Concavity.Clockwise, de
     for i in range(0, len(significant_peaks_idx)):
         if significant_peaks_idx[i]:
             knees_z.append(i)
+    
+    #knees_m = []
+    #significant_peaks_idx, significant_valleys_idx = mountaineer_peak_valley(Dd)
+    #for i in range(0, len(significant_peaks_idx)):
+    #    if significant_peaks_idx[i]:
+    #        knees_m.append(i)
+    #print(knees_m)
 
     if debug:
         return {

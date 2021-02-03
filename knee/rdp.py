@@ -9,6 +9,33 @@ __status__ = 'Development'
 import numpy as np
 
 
+def strait_line(points, a, b, t=0.8):
+    # setup
+    pt = np.transpose(points)
+    x = pt[0]
+    y = pt[1]
+    i = previous_i = a
+
+    # compute initial value
+    r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
+
+    if r2 >= t:
+        return a
+    else:
+        previous_i = i
+        i = int((i+b)/2.0)
+
+        while abs(i - previous_i) > 1:
+            r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
+            
+            previous_i = i
+            if r2 < t:
+                i = int((i+b)/2.0)
+            else:
+                i = int((a+i)/2.0)
+        return previous_i
+
+
 def perpendicular_distance2(pt, start, end):
     return np.fabs(np.cross(end-start,pt-start)/np.linalg.norm(end-start))
 

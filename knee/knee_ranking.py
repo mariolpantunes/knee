@@ -9,6 +9,8 @@ __status__ = 'Development'
 import numpy as np
 import math
 
+from uts import thresholding
+
 
 def distance_to_similarity(array: np.ndarray) -> np.ndarray:
     return max(array) - array
@@ -125,19 +127,6 @@ def slopes_to_angle(m1: float, m2: float) -> float:
         return angle_negative
 
 
-def isodata(array: np.ndarray) -> float:
-    mean = array.mean()
-    previous_mean = 0 
-    
-    while mean != previous_mean:
-        mean_left = array[array <= mean].mean()
-        mean_right = array[array > mean].mean()
-
-        previous_mean = mean
-        mean = (mean_left+mean_right) / 2.0
-
-    return mean
-
 def dfdt_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
     pt = np.transpose(points)
 
@@ -145,7 +134,7 @@ def dfdt_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.nda
     y = pt[1]
 
     gradient1 = np.gradient(y, x, edge_order=1)
-    t = isodata(gradient1)
+    t = thresholding.isodata(gradient1)
 
     rankings = []
     for idx in knees:
