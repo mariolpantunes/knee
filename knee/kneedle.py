@@ -8,7 +8,7 @@ __status__ = 'Development'
 import math
 import numpy as np
 from uts import ema
-from peak_detection import all_peaks, significant_peaks, significant_zscore_peaks, significant_zscore_peaks_iso
+from uts import peak_detection 
 from enum import Enum
 
 
@@ -69,7 +69,7 @@ def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockw
         
         if y0 < y and y > y1:
             idx.append(i)
-            tlmx = y - sensitivity / (len(Dd) - 1);
+            tlmx = y - sensitivity / (len(Dd) - 1)
             lmxThresholds.append(tlmx)
             detectKneeForLastLmx = True
         
@@ -85,7 +85,7 @@ def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockw
     return np.array(knees)
 
 
-def knee2(points, threshold, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
+def knee2(points, sensitivity, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
     Ds = ema.linear(points, 1.0)
     #print(Ds)
 
@@ -97,33 +97,59 @@ def knee2(points, threshold, cd=Direction.Decreasing, cc=Concavity.Clockwise, de
     Dd = differences(Dn, cd, cc)
     #print(Dd)
 
-    peaks_idx = all_peaks(Dd)
-
-    significant_peaks_idx = significant_peaks(Dd, peaks_idx)
-    
+    # Original Code
+    idx = []
+    lmxThresholds = []
+    detectKneeForLastLmx = False
     knees=[]
+
+    for i in range(1, len(Dd)-1):
+        y0 = Dd[i-1][1]
+        y = Dd[i][1]
+        y1 = Dd[i+1][1]
+        
+        if y0 < y and y > y1:
+            idx.append(i)
+            tlmx = y - sensitivity / (len(Dd) - 1)
+            lmxThresholds.append(tlmx)
+            detectKneeForLastLmx = True
+        
+        if detectKneeForLastLmx:
+            if y1 < lmxThresholds[-1]:
+                knees.append(idx[-1])
+                detectKneeForLastLmx = False
+
+    # New version
+    peaks_idx = peak_detection.all_peaks(Dd)
+
+    significant_peaks_idx =  peak_detection.significant_peaks(Dd, peaks_idx, 0.25)
+    
+    knees_significant=[]
     for i in range(0, len(significant_peaks_idx)):
         if significant_peaks_idx[i]:
-            knees.append(i)
+            knees_significant.append(i)
 
-    significant_peaks_idx = significant_zscore_peaks(Dd, peaks_idx)
+    significant_peaks_idx =  peak_detection.significant_zscore_peaks(Dd, peaks_idx)
     
     knees_z=[]
     for i in range(0, len(significant_peaks_idx)):
         if significant_peaks_idx[i]:
             knees_z.append(i)
     
-    #knees_m = []
-    #significant_peaks_idx, significant_valleys_idx = mountaineer_peak_valley(Dd)
-    #for i in range(0, len(significant_peaks_idx)):
-    #    if significant_peaks_idx[i]:
-    #        knees_m.append(i)
-    #print(knees_m)
+    knees_iso = []
+    significant_peaks_idx = peak_detection.significant_zscore_peaks_iso(Dd, peaks_idx)
+    for i in range(0, len(significant_peaks_idx)):
+        if significant_peaks_idx[i]:
+            knees_iso.append(i)
+
+    print(knees)
 
     if debug:
         return {
         'knees_z': np.array(knees_z),
         'knees': np.array(knees),
+        'knees_significant': np.array(knees_significant),
+        'knees_iso': np.array(knees_iso),
         'Ds':Ds, 'Dn': Dn, 'Dd':Dd}        
 
     return np.array(knees)
@@ -157,21 +183,25 @@ def auto_knee(points, sensitivity=1.0, debug=False):
     else:
         cc = Concavity.Counterclockwise
     
-    knees = knee2(points, sensitivity, cd, cc, debug)
-    knees_1 = knees['knees']
+    knees_1 = knee2(points, sensitivity, cd, cc, debug)
+    
     if cc is Concavity.Clockwise:
-        knees_2 = knee2(points, sensitivity, cd, Concavity.Counterclockwise, debug)['knees']
+        knees_2 = knee2(points, sensitivity, cd, Concavity.Counterclockwise, debug)
     else:
-        knees_2 = knee2(points, sensitivity, cd, Concavity.Clockwise, debug)['knees']
+        knees_2 = knee2(points, sensitivity, cd, Concavity.Clockwise, debug)
 
-    print(knees_1.shape)
-    print(knees_2.shape)
+    # Merge results from dual kneedle
+    keys = ['knees_z', 'knees', 'knees_significant', 'knees_iso']
 
-    knees_merge = np.concatenate((knees_1, knees_2))
-    knees_merge = np.unique(knees_merge)
-    knees_merge.sort()
+    knees = knees_1
 
-    knees['knees'] = knees_merge
+    for key in keys:
+        tmp_1 = knees_1[key]
+        tmp_2 = knees_2[key]
+        tmp = np.concatenate((tmp_1, tmp_2))
+        tmp = np.unique(tmp)
+        tmp.sort
+        knees[key] = tmp
 
     return knees
 

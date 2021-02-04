@@ -18,9 +18,9 @@ class TestRDP(unittest.TestCase):
         desired = 0
         self.assertEqual(result, desired)
     
-    def test_strait_line_90(self):
+    def test_strait_line_99(self):
         points = np.array([[1.0,5.0], [2.0,5.0], [3.0, 5.0],[4.0,4.0],
         [5.0,3.0], [6.0, 2.0], [7.0,1.0], [8.0, 0.0], [9.0, 0.0]])
         result = strait_line(points, 0, 7, .99)
-        desired = 2
+        desired = 3
         self.assertEqual(result, desired)

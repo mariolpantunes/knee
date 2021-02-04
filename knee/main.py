@@ -12,10 +12,11 @@ import argparse
 import numpy as np
 
 
-from rdp import rdp
+import rdp
 from kneedle import auto_knee
 import lmethod
 from knee_ranking import *
+from uts import thresholding
 import matplotlib.pyplot as plt
 
 #import cProfile
@@ -31,38 +32,65 @@ class Method(Enum):
         return self.value
 
 
+# plot lines
+def plot_lines(ax, x, y, title):
+    ax.plot(x, y)
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
+    ax.text(.5,.9, title, horizontalalignment='center', transform=ax.transAxes)
+
+
+# plot lines and knees (markers)
+def plot_lines_knees(ax, x, y, knees, title):
+    ax.plot(x, y)
+    ax.plot(x[knees], y[knees], 'r+')
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
+    ax.text(.5,.9, title, horizontalalignment='center', transform=ax.transAxes)
+
+
 def plot_kneedle(args, points, points_reduced, values, threshold):
-    fig, ((ax0, ax1), (ax2, ax3), (ax4, ax5)) = plt.subplots(3,2)
     
-    xpoints = np.transpose(points)[0]
-    ypoints = np.transpose(points)[1]
-    ax0.plot(xpoints, ypoints)
-    ax0.set_yticklabels([])
-    ax0.set_xticklabels([])
-    ax0.text(.5,.9,'Original',horizontalalignment='center', transform=ax0.transAxes)
 
     xpoints_reduced = np.transpose(points_reduced)[0]
     ypoints_reduced = np.transpose(points_reduced)[1]
-    ax1.plot(xpoints_reduced, ypoints_reduced)
-    ax1.set_yticklabels([])
-    ax1.set_xticklabels([])
-    ax1.text(.5,.9,'Reduced',horizontalalignment='center', transform=ax1.transAxes)
-
-    xds = np.transpose(values['Ds'])[0]
-    yds = np.transpose(values['Ds'])[1]
-    ax2.plot(xds, yds)
-    ax2.set_yticklabels([])
-    ax2.set_xticklabels([])
-    ax2.text(.5,.9,'Smooth',horizontalalignment='center', transform=ax2.transAxes)
-
     xdd = np.transpose(values['Dd'])[0]
     ydd = np.transpose(values['Dd'])[1]
-    ax3.plot(xdd, ydd)
-    ax3.set_yticklabels([])
-    ax3.set_xticklabels([])
-    ax3.text(.5,.9,'Differences',horizontalalignment='center', transform=ax3.transAxes)
 
-    if 'zscores' in values:
+    lines = [('differences', xdd, ydd), ('reduced', xpoints_reduced, ypoints_reduced)]
+
+    for name,x,y in lines:
+        fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
+        print('Plotting {}'.format(name))
+        plot_lines_knees(ax0, x, y, values['knees'], 'Knees Original')
+        plot_lines_knees(ax1, x, y, values['knees_z'], 'Knees Z-Score')
+        if len(values['knees_significant']) > 0:
+            plot_lines_knees(ax2, x, y, values['knees_significant'], 'Knees Significant')
+        plot_lines_knees(ax3, x, y, values['knees_iso'], 'Knees ISODATA')
+    
+        #plt.subplots_adjust(wspace=0, hspace=0)
+        #plt.margins(0, 0)
+        #filename = os.path.splitext(args.i)[0]+'.pdf'
+        #plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
+        #print('Plotting...')
+        plt.show()
+    
+    #xpoints = np.transpose(points)[0]
+    #ypoints = np.transpose(points)[1]
+    #plot_lines(ax0, xpoints, ypoints, 'Original')
+
+    
+    #plot_lines(ax1, xpoints_reduced, ypoints_reduced, 'Reduced')
+
+    #xds = np.transpose(values['Ds'])[0]
+    #yds = np.transpose(values['Ds'])[1]
+    #plot_lines(ax2, xds, yds, 'Smooth')
+
+    
+    #plot_lines(ax3, xdd, ydd, 'Differences')
+    
+
+    '''if 'zscores' in values:
         x_zscore = np.transpose(values['zscores'])[0]
         y_zscore = np.transpose(values['zscores'])[1]
         ax4.plot(x_zscore, y_zscore)
@@ -80,30 +108,8 @@ def plot_kneedle(args, points, points_reduced, values, threshold):
         ax4_1 = ax4.twinx()  # instantiate a second axes that shares the same x-axis
         color = 'tab:green'
         ax4_1.plot(xdd, ydd, color=color)
-        #ax4_1.tick_params(axis='y', labelcolor=color)
+        #ax4_1.tick_params(axis='y', labelcolor=color)'''
     
-    ax4.plot(xpoints_reduced, ypoints_reduced)
-    ax4.plot(xpoints_reduced[values['knees_z']], ypoints_reduced[values['knees_z']], 'r+')
-    ax4.set_yticklabels([])
-    ax4.set_xticklabels([])
-    ax4.text(.5,.9,'Knees Z-Score', horizontalalignment='center', transform=ax4.transAxes)
-
-    ax5.plot(xpoints_reduced, ypoints_reduced)
-    ax5.plot(xpoints_reduced[values['knees']], ypoints_reduced[values['knees']], 'r+')
-    ax5.set_yticklabels([])
-    ax5.set_xticklabels([])
-    ax5.text(.5,.9,'Knees Significant', horizontalalignment='center', transform=ax5.transAxes)
-
-    #for i in values['knees']:
-    #    ax5.axvline(xpoints_reduced[i], color='r')
-
-    plt.subplots_adjust(wspace=0, hspace=0)
-    plt.margins(0, 0)
-    filename = os.path.splitext(args.i)[0]+'.pdf'
-    plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
-    print('Plotting...')
-    plt.show()
-
 
 def ranking_to_color(ranking):
     color = (ranking, 0.5*(1.0-ranking), 1.0-ranking)
@@ -111,54 +117,35 @@ def ranking_to_color(ranking):
 
 
 def plot_ranking(args, points, knees):
-    fig, ((ax0, ax1)) = plt.subplots(2, 1)
-
-    rankings_relative = slope_ranking(points, knees)
-    rankings_absolute = slope_ranking(points, knees, relative=False)
-
-    t = isodata(rankings_absolute)
-
-    print("Absolute ranking = {}".format(rankings_absolute))
-    print("t = {}".format(t))
-
-    rankings_filtered = []
-    knees_filtered = []
-    
-    for i in range(0, len(knees)):
-        ranking = rankings_absolute[i]
-        if ranking >= t:
-            knees_filtered.append(knees[i])
-            rankings_filtered.append(ranking)
-    
-    rankings_filtered = np.array(rankings_filtered)
-    rankings_filtered = rank(np.array(rankings_filtered))
-    
-    if len(rankings_filtered) > 1:
-        rankings_filtered = (rankings_filtered - np.min(rankings_filtered))/np.ptp(rankings_filtered)
-    else:
-        rankings_filtered[0] = 1.0
+    fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2)
 
     xpoints = np.transpose(points)[0]
     ypoints = np.transpose(points)[1]
-    ax0.plot(xpoints, ypoints)
-    ax0.set_yticklabels([])
-    ax0.set_xticklabels([])
-    ax0.text(.5, .9, 'Slope', horizontalalignment='center', transform=ax0.transAxes)
-    ax0.margins(0, 0)
+    keys = ['knees_z', 'knees', 'knees_significant', 'knees_iso']
 
-    ax1.plot(xpoints, ypoints)
-    ax1.set_yticklabels([])
-    ax1.set_xticklabels([])
-    ax1.text(.5, .9, 'Slope (ISODATA)', horizontalalignment='center', transform=ax1.transAxes)
-    ax1.margins(0, 0)
-    
-    for i in range(0, len(knees)):
-        idx = knees[i]
+    plot_lines(ax0, xpoints, ypoints, 'Original')
+    rankings_relative = slope_ranking(points, knees['knees'])
+    for i in range(0, len(knees['knees'])):
+        idx = knees['knees'][i]
         ax0.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
-    
-    for  i in range(0, len(knees_filtered)):
-        idx = knees_filtered[i]
-        ax1.axvline(xpoints[idx], color=ranking_to_color(rankings_filtered[i]))
+
+    plot_lines(ax1, xpoints, ypoints, 'Zscore')
+    rankings_relative = slope_ranking(points, knees['knees_z'])
+    for i in range(0, len(knees['knees_z'])):
+        idx = knees['knees_z'][i]
+        ax1.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
+
+    plot_lines(ax2, xpoints, ypoints, 'Significant')
+    rankings_relative = slope_ranking(points, knees['knees_significant'])
+    for i in range(0, len(knees['knees_significant'])):
+        idx = knees['knees_significant'][i]
+        ax2.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
+
+    plot_lines(ax3, xpoints, ypoints, 'ISO')
+    rankings_relative = slope_ranking(points, knees['knees_iso'])
+    for i in range(0, len(knees['knees_iso'])):
+        idx = knees['knees_iso'][i]
+        ax3.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
 
     filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
     plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
@@ -239,7 +226,7 @@ def main(args):
 
     #pr = cProfile.Profile()
     #pr.enable()
-    points_reduced, points_removed = rdp(points, args.r2)
+    points_reduced, points_removed = rdp.rdp(points, args.r2)
     #pr.disable()
     #pr.print_stats()
 
@@ -258,7 +245,7 @@ def main(args):
         plot_lmethod(args, points, points_reduced, lmethod.knee(points_reduced, debug=True))
     
     # plot rankings
-    plot_ranking(args, points_reduced, knees['knees'])
+    plot_ranking(args, points_reduced, knees)
 
 
 if __name__ == '__main__':

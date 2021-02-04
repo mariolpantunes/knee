@@ -9,7 +9,7 @@ __status__ = 'Development'
 import numpy as np
 
 
-def strait_line(points, a, b, t=0.8):
+'''def strait_line(points, a, b, t=0.8):
     # setup
     pt = np.transpose(points)
     x = pt[0]
@@ -19,21 +19,44 @@ def strait_line(points, a, b, t=0.8):
     # compute initial value
     r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
 
+    scores = []
+
+    for i in range(a, b):
+        r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
+        scores.append(r2)
+    scores = np.array(scores)
+    idx = (np.abs(scores - t)).argmin()
+
+    return a+idx'''
+
+def strait_line(points, a, b, t=0.8):
+    # setup
+    pt = np.transpose(points)
+    x = pt[0]
+    y = pt[1]
+    i = a
+    right = b
+
+    # compute initial value
+    r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
+
     if r2 >= t:
         return a
     else:
-        previous_i = i
-        i = int((i+b)/2.0)
+        print('[{}, {}] {}'.format(i, right, r2))
+        i = int((i+right)/2.0)
 
-        while abs(i - previous_i) > 1:
+        while abs(i-right) > 1:
             r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
             
-            previous_i = i
             if r2 < t:
-                i = int((i+b)/2.0)
+                i = int((i+right)/2.0)
             else:
+                right = i
                 i = int((a+i)/2.0)
-        return previous_i
+            print('[{}, {}] {}'.format(i, right, r2))
+        print(right)
+        return right
 
 
 def perpendicular_distance2(pt, start, end):

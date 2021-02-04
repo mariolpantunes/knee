@@ -10,7 +10,7 @@ import numpy as np
 import math
 
 from uts import thresholding
-
+import rdp
 
 def distance_to_similarity(array: np.ndarray) -> np.ndarray:
     return max(array) - array
@@ -180,31 +180,23 @@ def angle_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=30, relati
 
     return rankings
 
-def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.9, relative=True) -> np.ndarray:
+def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -> np.ndarray:
     rankings = []
 
     pt = np.transpose(points)
-
     x = pt[0]
     y = pt[1]
     
-    j = 0
-    r = (np.corrcoef(x[j:knees[0]+1], y[j:knees[0]+1])[0,1])**2.0
-    while r < t:
-        j = int((j+knees[0])/2.0)
-        r = (np.corrcoef(x[j:knees[0]+1], y[j:knees[0]+1])[0,1])**2.0
-    print('R2({}) = {}'.format(0, r))
+    print('Slope {}'.format(0))
+    j = rdp.strait_line(points, 0, knees[0], t)
     
     slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
     rankings.append(math.fabs(slope))
     
     for i in range(1, len(knees)):
-        j = knees[i-1]
-        r = (np.corrcoef(x[j:knees[i]+1], y[j:knees[i]+1])[0,1])**2.0
-        while r < t:
-            j = int((j + knees[i])/2.0)
-            r = (np.corrcoef(x[j:knees[i]+1], y[j:knees[i]+1])[0,1])**2.0
-        print('R2({}) = {}'.format(i, r))
+        print('Slope {}'.format(i))
+        j = rdp.strait_line(points, knees[i-1], knees[i], t)
+        
         slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
         rankings.append(math.fabs(slope))
 
