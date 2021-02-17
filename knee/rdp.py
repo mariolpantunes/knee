@@ -30,10 +30,12 @@ import numpy as np
     return a+idx'''
 
 def strait_line(points, a, b, t=0.8):
+    #corner cases
+    if abs(a - b) <= 1:
+        return a
     # setup
-    pt = np.transpose(points)
-    x = pt[0]
-    y = pt[1]
+    x = points[:,0]
+    y = points[:,1]
     i = a
     right = b
 
@@ -55,8 +57,11 @@ def strait_line(points, a, b, t=0.8):
                 right = i
                 i = int((a+i)/2.0)
             print('[{}, {}] {}'.format(i, right, r2))
-        print(right)
-        return right
+        
+        if right != b:
+            return right
+        else:
+            return i
 
 
 def perpendicular_distance2(pt, start, end):
