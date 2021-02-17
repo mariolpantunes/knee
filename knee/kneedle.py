@@ -167,7 +167,9 @@ def auto_knee(points, sensitivity=1.0, debug=False):
     else:
         cd = Direction.Decreasing
     
-    y = np.transpose(points)[1]
+    #y = np.transpose(points)[1]
+    #x = points[:,0]
+    y = points[:,1]
     yhat = np.empty(len(points))
     for i in range(0, len(points)):
         yhat[i] = points[i][0]*m+b

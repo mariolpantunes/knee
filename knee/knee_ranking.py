@@ -24,10 +24,8 @@ def rank(array: np.ndarray) -> np.ndarray:
 
 
 def curvature_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
-    pt = np.transpose(points)
-
-    x = pt[0]
-    y = pt[1]
+    x = points[:,0]
+    y = points[:,1]
 
     gradient1 = np.gradient(y, x, edge_order=1)
     gradient2 = np.gradient(y, x, edge_order=2)
@@ -77,10 +75,8 @@ def menger_curvature_ranking(points: np.ndarray, knees: np.ndarray, relative=Tru
 def l_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
     rankings = []
 
-    pt = np.transpose(points)
-
-    x = pt[0]
-    y = pt[1]
+    x = points[:,0]
+    y = points[:,1]
 
     coef_left, r_left, *other  = np.polyfit(x[0:knees[0]+1], 
     y[0:knees[0]+1], 1, full=True)
@@ -128,10 +124,8 @@ def slopes_to_angle(m1: float, m2: float) -> float:
 
 
 def dfdt_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
-    pt = np.transpose(points)
-
-    x = pt[0]
-    y = pt[1]
+    x = points[:,0]
+    y = points[:,1]
 
     gradient1 = np.gradient(y, x, edge_order=1)
     t = thresholding.isodata(gradient1)
@@ -153,10 +147,8 @@ def dfdt_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.nda
 def angle_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=30, relative=True) -> np.ndarray:
     rankings = []
 
-    pt = np.transpose(points)
-
-    x = pt[0]
-    y = pt[1]
+    x = points[:,0]
+    y = points[:,1]
 
     for idx in knees:
         coef_left, r_left, *other  = np.polyfit(x[idx-neighborhood:idx+1], 
@@ -183,19 +175,18 @@ def angle_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=30, relati
 def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -> np.ndarray:
     rankings = []
 
-    pt = np.transpose(points)
-    x = pt[0]
-    y = pt[1]
+    x = points[:,0]
+    y = points[:,1]
     
-    print('Slope {}'.format(0))
-    j = rdp.strait_line(points, 0, knees[0], t)
+    #print('Slope {}'.format(0))
+    j = rdp.straight_line(points, 0, knees[0], t)
     
     slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
     rankings.append(math.fabs(slope))
     
     for i in range(1, len(knees)):
-        print('Slope {}'.format(i))
-        j = rdp.strait_line(points, knees[i-1], knees[i], t)
+        #print('Slope {}'.format(i))
+        j = rdp.straight_line(points, knees[i-1], knees[i], t)
         
         slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
         rankings.append(math.fabs(slope))

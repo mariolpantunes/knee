@@ -13,6 +13,7 @@ import numpy as np
 
 
 import rdp
+import clustering
 from kneedle import auto_knee
 import lmethod
 from knee_ranking import *
@@ -50,12 +51,10 @@ def plot_lines_knees(ax, x, y, knees, title):
 
 
 def plot_kneedle(args, points, points_reduced, values, threshold):
-    
-
-    xpoints_reduced = np.transpose(points_reduced)[0]
-    ypoints_reduced = np.transpose(points_reduced)[1]
-    xdd = np.transpose(values['Dd'])[0]
-    ydd = np.transpose(values['Dd'])[1]
+    xpoints_reduced = points_reduced[:,0]
+    ypoints_reduced = points_reduced[:,1]
+    xdd = values['Dd'][:,0]
+    ydd = values['Dd'][:,1]
 
     lines = [('differences', xdd, ydd), ('reduced', xpoints_reduced, ypoints_reduced)]
 
@@ -119,8 +118,8 @@ def ranking_to_color(ranking):
 def plot_ranking(args, points, knees):
     fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2, 2)
 
-    xpoints = np.transpose(points)[0]
-    ypoints = np.transpose(points)[1]
+    xpoints = points[:,0]
+    ypoints = points[:,1]
     keys = ['knees_z', 'knees', 'knees_significant', 'knees_iso']
 
     plot_lines(ax0, xpoints, ypoints, 'Original')
@@ -157,31 +156,40 @@ def plot_ranking(args, points, knees):
 def plot_lmethod(args, points, points_reduced, values):
     fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
 
-    xpoints = np.transpose(points)[0]
-    ypoints = np.transpose(points)[1]
+    xpoints = points[:,0]
+    ypoints = points[:,1]
     ax0.plot(xpoints, ypoints)
     ax0.set_yticklabels([])
     ax0.set_xticklabels([])
     ax0.text(.5,.9,'Original',horizontalalignment='center', transform=ax0.transAxes)
 
-    xpoints_reduced = np.transpose(points_reduced)[0]
-    ypoints_reduced = np.transpose(points_reduced)[1]
+    xpoints_reduced = points_reduced[:,0]
+    ypoints_reduced = points_reduced[:,1]
     ax1.plot(xpoints_reduced, ypoints_reduced)
     ax1.set_yticklabels([])
     ax1.set_xticklabels([])
     ax1.text(.5,.9,'Reduced',horizontalalignment='center', transform=ax1.transAxes)
 
+    # compute lines
+    xpoints = values['Dn'][:,0]
+    ypoints = values['Dn'][:,1]
+
     # compute left lines
     left_coefficients = values['left']
     poly = np.poly1d(left_coefficients)
+    new_x_left = np.linspace(xpoints[0], xpoints[values['knees'][0]])
+    new_y_left = poly(new_x_left)
+    ax2.plot(xpoints, ypoints, "o", new_x_left, new_y_left)
 
-    new_x = np.linspace(xpoints_reduced[0], xpoints_reduced[values['knees']])
-    new_y = poly(new_x)
-
-    ax2.plot(xpoints_reduced, ypoints_reduced, "o", new_x, new_y)
-    ax2.set_xlim([xpoints_reduced[0]-1, xpoints_reduced[-1] + 1 ])
-    ax2.set_ylim([ypoints_reduced[0]-1, ypoints_reduced[-1] + 1 ])
-    ax2.plot(xpoints_reduced[values['knees']], ypoints_reduced[values['knees']], 'r+')
+     # compute right lines
+    right_coefficients = values['right']
+    poly = np.poly1d(right_coefficients)
+    new_x_right = np.linspace(xpoints[values['knees'][0]], xpoints[-1])
+    new_y_right = poly(new_x_right)
+    ax2.plot(xpoints, ypoints, "o", new_x_right, new_y_right)
+    
+    
+    ax2.plot(xpoints[values['knees']], ypoints[values['knees']], 'r+')
     ax2.set_yticklabels([])
     ax2.set_xticklabels([])
     ax2.text(.5, .9,'Knees', horizontalalignment='center', transform=ax2.transAxes)
@@ -202,16 +210,16 @@ def plot_points_removed(points, points_removed):
     color = 'tab:blue'
     #ax1.set_xlabel('time (s)')
     #ax1.set_ylabel('exp', color=color)
-    xpoints = np.transpose(points)[0]
-    ypoints = np.transpose(points)[1]
+    xpoints = points[:,0]
+    ypoints = points[:,1]
     ax1.plot(xpoints, ypoints, color=color)
     ax1.tick_params(axis='y', labelcolor=color)
 
     # plot removed points
     ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
     color = 'tab:red'
-    xpoints = np.transpose(points_removed)[0]
-    ypoints = np.transpose(points_removed)[1]
+    xpoints = points_removed[:,0]
+    ypoints = points_removed[:,1]
     #ax2.set_ylabel('sin', color=color)  # we already handled the x-label with ax1
     ax2.plot(xpoints, ypoints, color=color)
     ax2.tick_params(axis='y', labelcolor=color)
@@ -219,6 +227,40 @@ def plot_points_removed(points, points_removed):
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
 
+
+def postprocessing(points, knees, t=0.01):
+    print('Post-Processing')
+    keys = ['knees', 'knees_z', 'knees_significant', 'knees_iso']
+
+    duration = points[-1,0] - points[0,0]
+
+    rv = knees.copy()
+
+    for k in keys:
+        print('Current knees: {}'.format(k))
+        current_knees = knees[k]
+        #print(current_knees)
+        knee_points = points[current_knees]
+        #print(knee_points)
+        clusters = clustering.single_linkage(knee_points, duration, t)
+        print(clusters)
+        max_cluster = clusters.max()
+        
+        filtered_knees = []
+        for i in range(0, max_cluster+1):
+            print('Cluster {}'.format(i))
+            current_cluster = current_knees[clusters==i]
+            print(current_cluster)
+            if len(current_cluster) > 1:
+                rankings = slope_ranking(points, current_cluster)
+                print(rankings)
+                idx = np.argmax(rankings)
+                filtered_knees.append(current_knees[clusters==i][idx])
+            else:
+                filtered_knees.append(current_knees[clusters==i][0])
+        rv[k] = np.array(filtered_knees)
+    return rv
+        
 
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
@@ -247,6 +289,13 @@ def main(args):
     # plot rankings
     plot_ranking(args, points_reduced, knees)
 
+    # post-processing
+    filtered_knees = postprocessing(points_reduced, knees, args.c)
+    print(filtered_knees)
+
+    # plot rankings
+    plot_ranking(args, points_reduced, filtered_knees)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee testing app')
@@ -255,6 +304,7 @@ if __name__ == '__main__':
     parser.add_argument('-t', type=float, help='Sensitivity', default=1.0)
     parser.add_argument('-r', type=bool, help='Ranking relative', default=True)
     parser.add_argument('-m', type=Method, choices=list(Method), default='kneedle')
+    parser.add_argument('-c', type=float, help='clustering threshold', default=0.05)
     #parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()
     

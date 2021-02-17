@@ -11,9 +11,8 @@ import numpy as np
 
 '''def strait_line(points, a, b, t=0.8):
     # setup
-    pt = np.transpose(points)
-    x = pt[0]
-    y = pt[1]
+    x = points[:,0]
+    y = points[:,1]
     i = previous_i = a
 
     # compute initial value
@@ -29,7 +28,7 @@ import numpy as np
 
     return a+idx'''
 
-def strait_line(points, a, b, t=0.8):
+def straight_line(points, a, b, t=0.8):
     #corner cases
     if abs(a - b) <= 1:
         return a
@@ -45,7 +44,7 @@ def strait_line(points, a, b, t=0.8):
     if r2 >= t:
         return a
     else:
-        print('[{}, {}] {}'.format(i, right, r2))
+        #print('[{}, {}] {}'.format(i, right, r2))
         i = int((i+right)/2.0)
 
         while abs(i-right) > 1:
@@ -56,7 +55,7 @@ def strait_line(points, a, b, t=0.8):
             else:
                 right = i
                 i = int((a+i)/2.0)
-            print('[{}, {}] {}'.format(i, right, r2))
+            #print('[{}, {}] {}'.format(i, right, r2))
         
         if right != b:
             return right
@@ -74,7 +73,7 @@ def rdp(points, r=0.95):
 
     m = (points[end][1]-points[0][1])/(points[end][0]-points[0][0])
     b = points[0][1]- (m * points[0][0])
-    y = np.transpose(points)[1]
+    y = points[:,1]
     yhat = np.empty(len(y))
     for i in range(0, end+1):
         yhat[i] = points[i][0]*m+b
