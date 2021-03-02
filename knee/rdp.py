@@ -9,11 +9,26 @@ __status__ = 'Development'
 import numpy as np
 
 
-'''def strait_line(points, a, b, t=0.8):
+def get_r2_points(points):
+    x = points[:,0]
+    y = points[:,1]
+    return get_r2(x, y)
+
+
+def get_r2(x, y):
+    #r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
+    if len(x) <= 2:
+        return 1.0
+    else:
+        r2 = (np.corrcoef(x, y)[0,1])**2.0
+        return r2
+
+
+def naive_strait_line(points, a, b, t=0.8):
     # setup
     x = points[:,0]
     y = points[:,1]
-    i = previous_i = a
+    i = a
 
     # compute initial value
     r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
@@ -26,7 +41,8 @@ import numpy as np
     scores = np.array(scores)
     idx = (np.abs(scores - t)).argmin()
 
-    return a+idx'''
+    return a+idx
+
 
 def straight_line(points, a, b, t=0.8):
     #corner cases
@@ -39,7 +55,7 @@ def straight_line(points, a, b, t=0.8):
     right = b
 
     # compute initial value
-    r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
+    r2 = get_r2(x[i:b+1], y[i:b+1])
 
     if r2 >= t:
         return a
@@ -48,7 +64,7 @@ def straight_line(points, a, b, t=0.8):
         i = int((i+right)/2.0)
 
         while abs(i-right) > 1:
-            r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
+            r2 = get_r2(x[i:b+1], y[i:b+1])
             
             if r2 < t:
                 i = int((i+right)/2.0)

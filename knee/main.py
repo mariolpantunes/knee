@@ -10,6 +10,7 @@ import os
 import csv
 import argparse
 import numpy as np
+import logging
 
 
 import rdp
@@ -23,6 +24,12 @@ import matplotlib.pyplot as plt
 #import cProfile
 
 from enum import Enum
+
+
+logging.basicConfig(level=logging.INFO)
+
+
+logger = logging.getLogger(__name__)
 
 
 class Method(Enum):
@@ -58,7 +65,7 @@ def plot_kneedle(args, points, points_reduced, values, threshold):
 
     lines = [('differences', xdd, ydd), ('reduced', xpoints_reduced, ypoints_reduced)]
 
-    for name,x,y in lines:
+    for name, x, y in lines:
         fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
         print('Plotting {}'.format(name))
         plot_lines_knees(ax0, x, y, values['knees'], 'Knees Original')
@@ -174,28 +181,46 @@ def plot_lmethod(args, points, points_reduced, values):
     xpoints = values['Dn'][:,0]
     ypoints = values['Dn'][:,1]
 
-    # compute left lines
-    left_coefficients = values['left']
-    poly = np.poly1d(left_coefficients)
-    new_x_left = np.linspace(xpoints[0], xpoints[values['knees'][0]])
-    new_y_left = poly(new_x_left)
-    ax2.plot(xpoints, ypoints, "o", new_x_left, new_y_left)
+    knee_list = []
+    for knee in values['knees']:
+        logger.info(knee)
+        # knee index, left and right limit
+        knee_idx = knee['knee']
+        left = knee['left']
+        right = knee['right'] - 1
 
-     # compute right lines
-    right_coefficients = values['right']
-    poly = np.poly1d(right_coefficients)
-    new_x_right = np.linspace(xpoints[values['knees'][0]], xpoints[-1])
-    new_y_right = poly(new_x_right)
-    ax2.plot(xpoints, ypoints, "o", new_x_right, new_y_right)
-    
-    
-    ax2.plot(xpoints[values['knees']], ypoints[values['knees']], 'r+')
+        # compute left lines
+        #left_coefficients = knee['coef_left']
+        #poly = np.poly1d(left_coefficients)
+        #x_left = np.linspace(xpoints[left], xpoints[knee_idx])
+        #logger.info('X left = %s', x_left)
+        #y_left = poly(x_left)
+        #ax2.plot(x_left, y_left)
+        ax2.plot([xpoints[left], xpoints[knee_idx]], [ypoints[left], ypoints[knee_idx]])
+
+        # compute right lines
+        #right_coefficients = knee['coef_right']
+        #poly = np.poly1d(right_coefficients)
+        #x_right = np.linspace(xpoints[knee_idx], xpoints[right])
+        #logger.info('X right = %s', x_right)
+        #y_right = poly(x_right)
+        #ax2.plot(x_right, y_right)
+        ax2.plot([xpoints[knee_idx], xpoints[right]], [ypoints[knee_idx], ypoints[right]])
+
+        ax2.plot(xpoints[knee_idx], ypoints[knee_idx], 'ro')
+        knee_list.append(knee_idx)
+
+    #ax2.plot(xpoints, ypoints)
     ax2.set_yticklabels([])
     ax2.set_xticklabels([])
-    ax2.text(.5, .9,'Knees', horizontalalignment='center', transform=ax2.transAxes)
+    #ax2.set_ylim(0, 1)
+    ax2.text(.5, .9, 'Knees', horizontalalignment='center', transform=ax2.transAxes)
+
+    #plot_lines_knees(ax3, xpoints_reduced, ypoints_reduced, knee_list, 'Knees')
+    plot_lines_knees(ax3, xpoints, ypoints, knee_list, 'Knees')
     
-    plt.subplots_adjust(wspace=0, hspace=0)
-    plt.margins(0, 0)
+    #plt.subplots_adjust(wspace=0, hspace=0)
+    #plt.margins(0, 0)
     filename = os.path.splitext(args.i)[0]+'.pdf'
     plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
     print('Plotting...')
@@ -284,7 +309,7 @@ def main(args):
         knees = auto_knee(points_reduced, sensitivity=args.t, debug=True)
         plot_kneedle(args, points, points_reduced, knees, args.t)
     elif args.m is Method.lmethod:
-        plot_lmethod(args, points, points_reduced, lmethod.knee(points_reduced, debug=True))
+        plot_lmethod(args, points, points_reduced, lmethod.multiknee(points_reduced, args.r2, debug=True))
     
     # plot rankings
     plot_ranking(args, points_reduced, knees)
