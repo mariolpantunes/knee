@@ -251,40 +251,6 @@ def plot_points_removed(points, points_removed):
     
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
-
-
-def postprocessing(points, knees, t=0.01):
-    print('Post-Processing')
-    keys = ['knees', 'knees_z', 'knees_significant', 'knees_iso']
-
-    duration = points[-1,0] - points[0,0]
-
-    rv = knees.copy()
-
-    for k in keys:
-        print('Current knees: {}'.format(k))
-        current_knees = knees[k]
-        #print(current_knees)
-        knee_points = points[current_knees]
-        #print(knee_points)
-        clusters = clustering.single_linkage(knee_points, duration, t)
-        print(clusters)
-        max_cluster = clusters.max()
-        
-        filtered_knees = []
-        for i in range(0, max_cluster+1):
-            print('Cluster {}'.format(i))
-            current_cluster = current_knees[clusters==i]
-            print(current_cluster)
-            if len(current_cluster) > 1:
-                rankings = slope_ranking(points, current_cluster)
-                print(rankings)
-                idx = np.argmax(rankings)
-                filtered_knees.append(current_knees[clusters==i][idx])
-            else:
-                filtered_knees.append(current_knees[clusters==i][0])
-        rv[k] = np.array(filtered_knees)
-    return rv
         
 
 def main(args):

@@ -7,8 +7,8 @@ __status__ = 'Development'
 
 
 import math
-import numpy as np
 import logging
+import numpy as np
 from rdp import get_r2
 from linear_fit import linear_fit, linear_residuals, linear_r2
 from uts import ema
@@ -28,31 +28,41 @@ class Fit(Enum):
 
 def get_knee(x, y, fit):
     index = 2
-    
+    length = x[-1] - x[0]    
+    left_length = x[index] - x[0]
+    right_length = x[-1] - x[index]
+
     if fit is Fit.best_fit:
         coef_left, r_left, *other  = np.polyfit(x[0:index+1], y[0:index+1], 1, full=True)
         coef_right, r_rigth, *other = np.polyfit(x[index:], y[index:], 1, full=True)
-        error = (r_left[0] + r_rigth[0]) / 2.0
+        error = r_left[0]*(left_length/length) + r_rigth[0]*(right_length/length)
+        #error = (r_left[0] + r_rigth[0]) / 2.0
     else:
         coef_left = linear_fit(x[0:index+1], y[0:index+1])
         coef_right = linear_fit(x[index:], y[index:])
         r_left = linear_residuals(x[0:index+1], y[0:index+1], coef_left)
         r_rigth = linear_residuals(x[index:], y[index:], coef_right)
-        error = (r_left + r_rigth) / 2.0
-
-        #logger.info("Error(%s) = %s", index, error)
+        error = r_left*(left_length/length) + r_rigth*(right_length/length)
+        #error = (r_left + r_rigth) / 2.0
+    
+    #logger.info("Error(%s) = %s", index, error)
 
     for i in range(index+1, len(x)-2):
+        left_length = x[i] - x[0]
+        right_length = x[-1] - x[i]
+
         if fit is Fit.best_fit:
             i_coef_left, r_left, *other  = np.polyfit(x[0:i+1], y[0:i+1], 1, full=True)
             i_coef_right, r_rigth, *other = np.polyfit(x[i:], y[i:], 1, full=True)
-            current_error = (r_left[0] + r_rigth[0]) / 2.0
+            current_error = r_left[0]*(left_length/length) + r_rigth[0]*(right_length/length)
+            #current_error = (r_left[0] + r_rigth[0]) / 2.0
         else:
             i_coef_left = linear_fit(x[0:i+1], y[0:i+1])
             i_coef_right = linear_fit(x[i:], y[i:])
             r_left = linear_residuals(x[0:i+1], y[0:i+1], i_coef_left)
             r_rigth = linear_residuals(x[i:], y[i:], i_coef_right)
-            current_error = (r_left + r_rigth) / 2.0
+            current_error = r_left*(left_length/length) + r_rigth*(right_length/length)
+            #current_error = (r_left + r_rigth) / 2.0
         
         #logger.info("Error(%s) = %s", i, error)
 
