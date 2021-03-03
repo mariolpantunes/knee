@@ -142,7 +142,7 @@ def knee2(points, sensitivity, cd=Direction.Decreasing, cc=Concavity.Clockwise, 
         if significant_peaks_idx[i]:
             knees_iso.append(i)
 
-    print(knees)
+    #print(knees)
 
     if debug:
         return {

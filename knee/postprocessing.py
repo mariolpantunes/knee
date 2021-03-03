@@ -8,8 +8,7 @@ __status__ = 'Development'
 
 import numpy as np
 import logging
-import clustering
-import ranking
+import knee.knee_ranking as ranking
 
 
 logger = logging.getLogger(__name__)
@@ -25,79 +24,50 @@ def corner_point(points, knee, t=0.01):
     done = False
     rv = True
 
+    #logger.info('Is corner Point (%s): %s', i-1, rv)
+
     while not done and rv:
-        if y[i] > fxp:
+        if y[i] >= fxp:
             rv = False
+        #logger.info('Is corner Point (%s): %s', i, rv)
         
-        p = (x[i] - x[i])/lenght
+        p = (x[i] - x[knee])/lenght
         if p >= t:
             done = True
         
         i += 1
+        if i > len(points) - 1: 
+            done = True
+    #logger.info('(Last) Is corner Point (%s): %s', i, rv)
+
     return rv
 
 
-def filter_corner_point(points, knees):
+def filter_corner_point(points, knees, t=0.01):
     logger.info('Filter Corner Points')
 
     rv = []
 
     for knee in knees:
-        if not corner_point(points, knee):
+        if not corner_point(points, knee, t):
             rv.append(knee)
     
     return np.array(rv)
 
 
-def filter_clustring(points, knees, t=0.01):
+def filter_clustring(points, knees, clustering, t=0.01):
     logger.info('Filter Knees based on 1D Clustering and Ranking')
 
     knee_points = points[knees]
-    clusters = clustering.single_linkage(knee_points, t)
+    clusters = clustering(knee_points, t)
     max_cluster = clusters.max()
     filtered_knees = []
     for i in range(0, max_cluster+1):
-        print('Cluster {}'.format(i))
         current_cluster = knees[clusters==i]
-        print(current_cluster)
         if len(current_cluster) > 1:
             rankings = ranking.slope_ranking(points, current_cluster)
-            print(rankings)
             idx = np.argmax(rankings)
             filtered_knees.append(knees[clusters==i][idx])
         else:
             filtered_knees.append(knees[clusters==i][0])
-
-
-def postprocessing(points, knees, t=0.01):
-    
-    keys = ['knees', 'knees_z', 'knees_significant', 'knees_iso']
-
-    
-
-    rv = knees.copy()
-
-    for k in keys:
-        
-        current_knees = knees[k]
-        #print(current_knees)
-        knee_points = points[current_knees]
-        #print(knee_points)
-        
-        
-        
-        
-        filtered_knees = []
-        for i in range(0, max_cluster+1):
-            print('Cluster {}'.format(i))
-            current_cluster = current_knees[clusters==i]
-            print(current_cluster)
-            if len(current_cluster) > 1:
-                rankings = slope_ranking(points, current_cluster)
-                print(rankings)
-                idx = np.argmax(rankings)
-                filtered_knees.append(current_knees[clusters==i][idx])
-            else:
-                filtered_knees.append(current_knees[clusters==i][0])
-        rv[k] = np.array(filtered_knees)
-    return rv
+    return np.array(filtered_knees)

@@ -9,8 +9,8 @@ __status__ = 'Development'
 import math
 import logging
 import numpy as np
-from rdp import get_r2
-from linear_fit import linear_fit, linear_residuals, linear_r2
+from knee.rdp import get_r2
+from knee.linear_fit import linear_fit, linear_residuals, linear_r2
 from uts import ema
 from enum import Enum
 

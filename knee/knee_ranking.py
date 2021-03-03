@@ -6,11 +6,15 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import numpy as np
 import math
-
+import logging
+import numpy as np
 from uts import thresholding
-import rdp
+import knee.rdp as rdp
+
+
+logger = logging.getLogger(__name__)
+
 
 def distance_to_similarity(array: np.ndarray) -> np.ndarray:
     return max(array) - array
@@ -114,8 +118,8 @@ def slopes_to_angle(m1: float, m2: float) -> float:
     angle_positive = math.atan(tan)
     angle_negative = math.atan(-tan)
 
-    print('Positive: {}'.format(angle_positive))
-    print('Negative: {}'.format(angle_negative))
+    logger.info('Positive: {}'.format(angle_positive))
+    logger.info('Negative: {}'.format(angle_negative))
 
     if angle_positive < angle_negative:
         return angle_positive
@@ -155,12 +159,12 @@ def angle_ranking(points: np.ndarray, knees: np.ndarray, neighborhood=30, relati
         y[idx-neighborhood:idx+1], 1, full=True)
         coef_right, r_rigth, *other = np.polyfit(x[idx:idx+neighborhood+1],
         y[idx:idx+neighborhood+1], 1, full=True)
-        print('-----')
-        print(coef_left)
-        print(coef_right)
+        logger.info('-----')
+        logger.info(coef_left)
+        logger.info(coef_right)
         angle = slopes_to_angle(coef_left[0], coef_right[0])
-        print(angle)
-        print('-----')
+        logger.info(angle)
+        logger.info('-----')
         error = (r_left[0] + r_rigth[0]) / 2.0
         rankings.append(error)
 
