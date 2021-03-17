@@ -24,7 +24,7 @@ def get_r2(x, y):
         return r2
 
 
-def naive_strait_line(points, a, b, t=0.8):
+def naive_straight_line(points, a, b, t=0.8):
     # setup
     x = points[:,0]
     y = points[:,1]
@@ -79,8 +79,16 @@ def straight_line(points, a, b, t=0.8):
             return i
 
 
+def perpendicular_distance(pt, left, right):
+    points = pt[left:right+1]
+    start = pt[left]
+    stop = pt[right]
+    return left + perpendicular_distance2(points, start, stop)
+
+
 def perpendicular_distance2(pt, start, end):
     return np.fabs(np.cross(end-start,pt-start)/np.linalg.norm(end-start))
+
 
 def rdp(points, r=0.95):
     end = len(points) - 1

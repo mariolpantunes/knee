@@ -192,19 +192,24 @@ def auto_knee(points, sensitivity=1.0, debug=False):
     else:
         knees_2 = knee2(points, sensitivity, cd, Concavity.Clockwise, debug)
 
-    # Merge results from dual kneedle
-    keys = ['knees_z', 'knees', 'knees_significant', 'knees_iso']
 
-    knees = knees_1
+    if debug:
+        # Merge results from dual kneedle
+        keys = ['knees_z', 'knees', 'knees_significant', 'knees_iso']
+        knees = knees_1
 
-    for key in keys:
-        tmp_1 = knees_1[key]
-        tmp_2 = knees_2[key]
-        tmp = np.concatenate((tmp_1, tmp_2))
-        tmp = np.unique(tmp)
-        tmp.sort
-        knees[key] = tmp
-
+        for key in keys:
+            tmp_1 = knees_1[key]
+            tmp_2 = knees_2[key]
+            tmp = np.concatenate((tmp_1, tmp_2))
+            tmp = np.unique(tmp)
+            tmp.sort
+            knees[key] = tmp
+    else:
+        knees = np.concatenate((knees_1, knees_2))
+        knees = np.unique(knees)
+        knees.sort
+         
     return knees
 
 #points = np.array([[0.0, 0.0], [1.0, 2.0], [1.2, 4.0], [2.3, 6], [2.9, 8], [5, 10]])
