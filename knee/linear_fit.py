@@ -13,6 +13,12 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
+def linear_fit_points(points):
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_fit(x, y)
+
+
 def linear_fit(x, y):
     m = (y[0] - y[-1])/(x[0] - x[-1])
     b = y[0] - (m*x[0])
@@ -24,6 +30,12 @@ def linear_transform(x, coef):
     b, m = coef
     y_hat = x * m + b
     return y_hat
+
+
+def linear_r2_points(points, coef):
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_r2(x, y, coef)
 
 
 def linear_r2(x, y, coef):

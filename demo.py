@@ -19,6 +19,8 @@ from knee.postprocessing import filter_clustring
 import matplotlib.pyplot as plt
 from knee.rdp import rdp
 import knee.clustering as clustering
+from knee.multi_knee import multi_knee
+import knee.max_perpendicular_distance as maxd
 
 #import cProfile
 
@@ -32,6 +34,7 @@ logger = logging.getLogger(__name__)
 class Method(Enum):
     kneedle = 'kneedle'
     lmethod = 'lmethod'
+    maxd = 'maxd'
 
     def __str__(self):
         return self.value
@@ -134,10 +137,26 @@ def get_dimention(lentgh: int):
     return (nrows, ncols)
 
 
+def plot_ranking_single(points, knees):
+    fig, ax = plt.subplots()
+    xpoints = points[:,0]
+    ypoints = points[:,1]
+    plot_lines(ax, xpoints, ypoints, 'knees')
+    rankings_relative = slope_ranking(points, knees)
+    for i in range(0, len(knees)):
+        idx = knees[i]
+        ax.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
+    fig.tight_layout()
+    plt.show()
+
 
 def plot_ranking(args, points, knees):
     xpoints = points[:,0]
     ypoints = points[:,1]
+
+    if type(knees) != dict:
+        plot_ranking_single(points, knees)
+        return
 
     if args.m is Method.kneedle:
         keys = ['knees_z', 'knees', 'knees_significant', 'knees_iso']
@@ -239,6 +258,17 @@ def plot_lmethod(args, points, points_reduced, values):
     plt.show()
 
 
+def plot_knees(points, knees):
+    fig, ax = plt.subplots()
+
+    x = points[:, 0]
+    y = points[:, 1]
+    plot_lines_knees(ax, x, y, knees, 'Knees')
+
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    plt.show()
+
+
 def plot_points_removed(points, points_removed):
     fig, ax1 = plt.subplots()
     
@@ -266,6 +296,13 @@ def plot_points_removed(points, points_removed):
 
 
 def postprocessing(points, knees, args):
+    if type(knees) == dict:
+        return postprocessing_dict(points, knees, args)
+    else:
+        return postprocessing_list(points, knees, args)
+
+
+def postprocessing_dict(points, knees, args):
     logger.info('Post Processing')
     rv = knees.copy()
     
@@ -290,6 +327,26 @@ def postprocessing(points, knees, args):
         rv[k] = np.array(current_knees)
 
     return rv
+
+
+def postprocessing_list(points, knees, args):
+    logger.info('Post Processing')
+    rv = knees.copy()
+    
+    logger.info('Knees: %s', knees)
+    logger.info('Initial #Knees: %s', len(knees))
+    #current_knees = filter_corner_point(points, current_knees, args.c)
+    #logger.info('Corner Point Knees: %s', len(current_knees))
+    if args.c is Clustering.single:
+        current_knees = filter_clustring(points, knees, clustering.single_linkage, args.ct)
+    elif args.c is Clustering.complete:
+        current_knees = filter_clustring(points, knees, clustering.complete_linkage, args.ct)
+    else:
+        current_knees = filter_clustring(points, knees, clustering.average_linkage, args.ct)
+    logger.info('Clustering Knees: %s', len(current_knees))
+    
+    return current_knees
+
 
 
 def main(args):
@@ -321,6 +378,10 @@ def main(args):
             knee_idx = knee['knee']
             other_format_knees.append(knee_idx)
         knees['knees'] = np.array(other_format_knees)
+    elif args.m is Method.maxd:
+        knees = multi_knee(maxd.get_knee, points_reduced)
+        plot_knees(points_reduced, knees)
+
     
     # plot rankings
     plot_ranking(args, points_reduced, knees)
@@ -340,7 +401,7 @@ if __name__ == '__main__':
     parser.add_argument('-t', type=float, help='Sensitivity', default=1.0)
     #parser.add_argument('-r', type=bool, help='Ranking relative', default=True)
     parser.add_argument('-m', type=Method, choices=list(Method), default='kneedle')
-    parser.add_argument('-c', type=Clustering, help=list(Clustering), default='single')
+    parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='single')
     parser.add_argument('--ct', type=float, help='clustering threshold', default=0.01)
     #parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()

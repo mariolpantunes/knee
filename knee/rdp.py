@@ -79,20 +79,26 @@ def straight_line(points, a, b, t=0.8):
             return i
 
 
-def perpendicular_distance(pt, left, right):
+def perpendicular_distance(points):
+    left = 0
+    right = len(points) - 1
+    return perpendicular_distance_index(points, left, right)
+
+
+def perpendicular_distance_index(pt, left, right):
     points = pt[left:right+1]
     start = pt[left]
     stop = pt[right]
-    return left + perpendicular_distance2(points, start, stop)
+    return left + perpendicular_distance_points(points, start, stop)
 
 
-def perpendicular_distance2(pt, start, end):
+def perpendicular_distance_points(pt, start, end):
     return np.fabs(np.cross(end-start,pt-start)/np.linalg.norm(end-start))
 
 
 def rdp(points, r=0.95):
     end = len(points) - 1
-    d = perpendicular_distance2(points, points[0], points[end])
+    d = perpendicular_distance_points(points, points[0], points[end])
     index = np.argmax(d)
 
     m = (points[end][1]-points[0][1])/(points[end][0]-points[0][0])
@@ -123,8 +129,3 @@ def rdp(points, r=0.95):
         middle_point = (points[0][0] + points[end][0])/2.0
         points_removed = np.array([[middle_point, float(len(points) - 2.0)]])
         return rv, points_removed
-
-
-#points = np.array([[0.0, 0.0], [1.0, 2.0], [1.2, 4.0], [2.3, 6], [2.9, 8], [5, 10]])
-#sp = rdp(points)
-#print(sp)

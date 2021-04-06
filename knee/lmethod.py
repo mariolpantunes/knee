@@ -338,8 +338,6 @@ def multiknee_rec(x, y, left, right, t, fit, debug):
 
     logger.info('R2[%s, %s] Left Part [%s, %s] Right Part [%s, %s]', r2_left, r2_right, left, knee_idx+1, knee_idx+1, right)
 
-    #input('wait...')
-
     if r2_left <= t and (knee_idx+1-left) > 4:
         responce_left = multiknee_rec(x, y, left, knee_idx+1, t, fit, debug)
         rv = responce_left
@@ -354,7 +352,7 @@ def multiknee_rec(x, y, left, right, t, fit, debug):
     return rv
 
 
-def multiknee(points, t = 0.9, fit=Fit.point_fit, debug=False):
+def multiknee(points, t = 0.99, fit=Fit.point_fit, debug=False):
     Ds = ema.linear(points, 1.0)
     pmin = Ds.min(axis = 0)
     pmax = Ds.max(axis = 0)
@@ -369,7 +367,7 @@ def multiknee(points, t = 0.9, fit=Fit.point_fit, debug=False):
         if debug:
             return {'knees': response, 'Ds':Ds, 'Dn': Dn}
         else:
-            return response
+            return np.array(response)
     else:
         if debug:
             return {'knees': np.array([]), 'Ds':Ds, 'Dn': Dn}

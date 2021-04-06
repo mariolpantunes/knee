@@ -14,13 +14,12 @@ import logging
 import knee.rdp as rdp
 import knee.kneedle as kneedle
 import knee.lmethod as lmethod
-#from knee.knee_ranking import *
-#from knee.postprocessing import filter_clustring
+import knee.dfdt as dfdt
+import knee.menger as menger
+import knee.curvature as curvature
+import knee.postprocessing as pp
 import matplotlib.pyplot as plt
-
 import knee.clustering as clustering
-
-
 from plot import get_dimention, plot_lines_knees
 
 logging.basicConfig(level=logging.INFO)
@@ -36,12 +35,9 @@ def plot_knees(points, knees, names):
     if len(knees) > 1:
         nrows, ncols = get_dimention(len(knees))
     
-    logger.info('%s x %s', nrows, ncols)
-    
     fig, axs = plt.subplots(nrows, ncols)
 
     for j in range(len(knees)): 
-        logger.info('%s', knees[j])
         if len(knees) == 1:
             plot_lines_knees(axs, x, y, knees[j], names[j])
         elif nrows == 1:
@@ -65,8 +61,8 @@ def main(args):
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
 
-    names = ['kneedle', 'l-method']
-    methods = [kneedle.auto_knee, lmethod.multiknee]
+    names = ['kneedle', 'l-method', 'dfdt', 'menger', 'curvature']
+    methods = [kneedle.auto_knee, lmethod.multiknee, dfdt.multiknee, menger.multiknee, curvature.multiknee]
     knees = []
 
     for m in methods:
@@ -74,6 +70,11 @@ def main(args):
     
     plot_knees(points_reduced, knees, names)
 
+    filtered_knees = []
+    for k in knees:
+        filtered_knees.append(pp.filter_clustring(points_reduced, k, clustering.complete_linkage, 0.02))
+
+    plot_knees(points_reduced, filtered_knees, names)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')

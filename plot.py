@@ -10,8 +10,8 @@ import math
 
 
 def get_dimention(lentgh: int):
-    nrows = int(math.sqrt(lentgh))
-    ncols = lentgh // nrows
+    nrows = int(round(math.sqrt(lentgh)))
+    ncols = int(math.ceil(lentgh / nrows))
     return (nrows, ncols)
 
 
