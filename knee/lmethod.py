@@ -12,6 +12,7 @@ import numpy as np
 from knee.rdp import get_r2, perpendicular_distance
 from knee.linear_fit import linear_fit, linear_residuals, linear_r2
 from uts import ema
+import knee.multi_knee as mk
 from enum import Enum
 
 
@@ -27,6 +28,7 @@ class Fit(Enum):
 
     def __str__(self):
         return self.value
+
 
 def get_knee_binary(points):
     x = points[:,0]
@@ -149,7 +151,7 @@ def get_knee(x, y, fit=Fit.point_fit):
     return (index, coef_left, coef_right)
 
 
-def knee_points(points, fit=Fit.best_fit, debug=False):
+def knee_points(points, fit=Fit.point_fit, debug=False):
     x = points[:,0]
     y = points[:,1]
     return knee(x, y, fit, debug)
@@ -373,3 +375,7 @@ def multiknee(points, t = 0.99, fit=Fit.point_fit, debug=False):
             return {'knees': np.array([]), 'Ds':Ds, 'Dn': Dn}
         else:
             np.array([])
+
+
+def multi_knee(points, t1=0.99, t2=4):
+    return mk.multi_knee(knee_points, points, t1, t2)

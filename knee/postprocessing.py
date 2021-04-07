@@ -55,9 +55,22 @@ def filter_corner_point(points, knees, t=0.01):
     return np.array(rv)
 
 
-def filter_clustring(points, knees, clustering, t=0.01):
-    logger.info('Filter Knees based on 1D Clustering and Ranking')
+def filter_worst_knees(points, knees):
+    filtered_knees = []
 
+    filtered_knees.append(knees[0])
+    h_min = points[knees[0]][1]
+
+    for i in range(1, len(knees)):
+        h = points[knees[i]][1]
+        if h <= h_min:
+            filtered_knees.append(knees[i])
+            h_min = h
+
+    return np.array(filtered_knees)
+
+
+def filter_clustring(points, knees, clustering, t=0.01):
     knee_points = points[knees]
     clusters = clustering(knee_points, t)
     max_cluster = clusters.max()

@@ -10,7 +10,8 @@ import math
 import logging
 import numpy as np
 from knee.linear_fit import linear_fit, linear_r2
-from uts import thresholding, ema
+from uts import ema
+import knee.multi_knee as mk
 
 
 logger = logging.getLogger(__name__)
@@ -107,3 +108,7 @@ def multiknee(points, t = 0.99, debug=False):
             return {'knees': np.array([]), 'Ds':Ds, 'Dn': Dn}
         else:
             np.array([])
+
+
+def multi_knee(points, t1=0.99, t2=4):
+    return mk.multi_knee(get_knee, points, t1, t2)

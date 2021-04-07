@@ -9,22 +9,31 @@ __status__ = 'Development'
 import logging
 import numpy as np
 from uts import ema
+import knee.multi_knee as mk
 from knee.linear_fit import linear_fit, linear_r2
 
 
 logger = logging.getLogger(__name__)
 
 
-def get_knee(x, y, debug=False):
+def get_knee_points(points):
+    x = points[:,0]
+    y = points[:,1]
+
+    return get_knee(x, y)
+
+
+def get_knee(x, y):
     gradient1 = np.gradient(y, x, edge_order=1)
     gradient2 = np.gradient(y, x, edge_order=2)
 
     curvature = gradient2 / ((1.0 + gradient1**2.0)**(1.5))
-    return np.argmax(curvature)
+    return np.argmax(curvature[0:-2])
+
 
 def multiknee_rec(x, y, left, right, t, debug):
     logger.info('MultiKnee [%s, %s]', left, right)
-    response = get_knee(x[left:right], y[left:right], debug)
+    response = get_knee(x[left:right], y[left:right])
     knee_idx = response + left
     response = knee_idx
 
@@ -80,3 +89,7 @@ def multiknee(points, t = 0.99, debug=False):
             return {'knees': np.array([]), 'Ds':Ds, 'Dn': Dn}
         else:
             np.array([])
+
+
+def multi_knee(points, t1=0.99, t2=4):
+    return mk.multi_knee(get_knee_points, points, t1, t2)

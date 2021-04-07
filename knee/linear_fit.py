@@ -20,6 +20,7 @@ def linear_fit_points(points):
 
 
 def linear_fit(x, y):
+    
     m = (y[0] - y[-1])/(x[0] - x[-1])
     b = y[0] - (m*x[0])
     coef = (b, m)

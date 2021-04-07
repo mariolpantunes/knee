@@ -6,26 +6,44 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
+import math
 import logging
 import numpy as np
+from numpy.core.fromnumeric import argmin
 from knee.linear_fit import linear_fit, linear_r2
 from uts import thresholding, ema
+import knee.multi_knee as mk
 
 
 logger = logging.getLogger(__name__)
 
 
-def get_knee(x,y,debug=False):
-    #x = points[:,0]
-    #y = points[:,1]
+def get_knee(x, y):
+    gradient = np.gradient(y, x, edge_order=1)
+    t = thresholding.isodata(gradient)
+    diff = np.absolute(gradient - t)
+    knee = np.argmin(diff[1:-1]) + 1
+
+    return knee
+
+
+def knee_points(points):
+    x = points[:,0]
+    y = points[:,1]
 
     gradient = np.gradient(y, x, edge_order=1)
     t = thresholding.isodata(gradient)
     diff = np.absolute(gradient - t)
-    knee = np.argmin(diff)
+    
+    knee = cutoff = 0 #np.argmin(diff)
+    last_knee = -1
 
+    while last_knee < knee and (len(x)-cutoff) > 2:
+        last_knee = knee
+        knee = argmin(diff[cutoff:-1]) + cutoff
+        cutoff = int(math.ceil(knee/2.0))
+        
     return knee
-
 
 def multiknee_rec(x, y, left, right, t, debug):
     logger.info('MultiKnee [%s, %s]', left, right)
@@ -87,3 +105,7 @@ def multiknee(points, t = 0.99, debug=False):
             return {'knees': np.array([]), 'Ds':Ds, 'Dn': Dn}
         else:
             np.array([])
+
+
+def multi_knee(points, t1=0.99, t2=2):
+    return mk.multi_knee(knee_points, points, t1, t2)

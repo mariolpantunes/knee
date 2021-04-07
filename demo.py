@@ -14,8 +14,8 @@ import logging
 
 from knee.kneedle import auto_knee
 import knee.lmethod as lmethod
-from knee.knee_ranking import *
-from knee.postprocessing import filter_clustring
+from knee.knee_ranking import slope_ranking, weighted_slope_ranking
+from knee.postprocessing import filter_clustring, filter_worst_knees
 import matplotlib.pyplot as plt
 from knee.rdp import rdp
 import knee.clustering as clustering
@@ -89,42 +89,7 @@ def plot_kneedle(args, points, points_reduced, values, threshold):
         #plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
         #print('Plotting...')
         plt.show()
-    
-    #xpoints = np.transpose(points)[0]
-    #ypoints = np.transpose(points)[1]
-    #plot_lines(ax0, xpoints, ypoints, 'Original')
 
-    
-    #plot_lines(ax1, xpoints_reduced, ypoints_reduced, 'Reduced')
-
-    #xds = np.transpose(values['Ds'])[0]
-    #yds = np.transpose(values['Ds'])[1]
-    #plot_lines(ax2, xds, yds, 'Smooth')
-
-    
-    #plot_lines(ax3, xdd, ydd, 'Differences')
-    
-
-    '''if 'zscores' in values:
-        x_zscore = np.transpose(values['zscores'])[0]
-        y_zscore = np.transpose(values['zscores'])[1]
-        ax4.plot(x_zscore, y_zscore)
-        x_zscore_left = np.transpose(values['zscores_left'])[0]
-        y_zscore_left = np.transpose(values['zscores_left'])[1]
-        ax4.plot(x_zscore_left, y_zscore_left, color='tab:orange')
-        x_zscore_right = np.transpose(values['zscores_right'])[0]
-        y_zscore_right = np.transpose(values['zscores_right'])[1]
-        ax4.plot(x_zscore_right, y_zscore_right, color='tab:purple')
-        ax4.set_yticklabels([])
-        ax4.set_xticklabels([])
-        ax4.axhline(y=threshold, color='r', linestyle='-')
-        ax4.text(.5,.9,'Z-score',horizontalalignment='center', transform=ax4.transAxes)
-
-        ax4_1 = ax4.twinx()  # instantiate a second axes that shares the same x-axis
-        color = 'tab:green'
-        ax4_1.plot(xdd, ydd, color=color)
-        #ax4_1.tick_params(axis='y', labelcolor=color)'''
-    
 
 def ranking_to_color(ranking):
     color = (ranking, 0.5*(1.0-ranking), 1.0-ranking)
@@ -137,26 +102,30 @@ def get_dimention(lentgh: int):
     return (nrows, ncols)
 
 
-def plot_ranking_single(points, knees):
+def plot_ranking(args, points, knees, ranking, title):
+    if type(knees) == dict:
+        plot_ranking_dict(args, points, knees, ranking, title)
+    else:
+        plot_ranking_list(points, knees, ranking, title)
+
+
+def plot_ranking_list(points, knees, ranking, title):
     fig, ax = plt.subplots()
     xpoints = points[:,0]
     ypoints = points[:,1]
     plot_lines(ax, xpoints, ypoints, 'knees')
-    rankings_relative = slope_ranking(points, knees)
+    rankings_relative = ranking(points, knees)
     for i in range(0, len(knees)):
         idx = knees[i]
         ax.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
     fig.tight_layout()
-    plt.show()
+    fig.suptitle(title)
+    #plt.show()
 
 
-def plot_ranking(args, points, knees):
+def plot_ranking_dict(args, points, knees, ranking, title):
     xpoints = points[:,0]
     ypoints = points[:,1]
-
-    if type(knees) != dict:
-        plot_ranking_single(points, knees)
-        return
 
     if args.m is Method.kneedle:
         keys = ['knees_z', 'knees', 'knees_significant', 'knees_iso']
@@ -177,7 +146,7 @@ def plot_ranking(args, points, knees):
             r = j % ncols
             c = j // ncols
             plot_lines(axs[r][c], xpoints, ypoints, k)
-        rankings_relative = slope_ranking(points, knees[k])
+        rankings_relative = ranking(points, knees[k])
         for i in range(0, len(knees[k])):
             idx = knees[k][i]
             if len(keys) == 1:
@@ -186,9 +155,10 @@ def plot_ranking(args, points, knees):
                 axs[r][c].axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
 
     filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
-    plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
+    #plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
     fig.tight_layout()
-    plt.show()
+    fig.suptitle(title)
+    #plt.show()
 
 
 def plot_lmethod(args, points, points_reduced, values):
@@ -221,21 +191,9 @@ def plot_lmethod(args, points, points_reduced, values):
         right = knee['right'] - 1
 
         # compute left lines
-        #left_coefficients = knee['coef_left']
-        #poly = np.poly1d(left_coefficients)
-        #x_left = np.linspace(xpoints[left], xpoints[knee_idx])
-        #logger.info('X left = %s', x_left)
-        #y_left = poly(x_left)
-        #ax2.plot(x_left, y_left)
         ax2.plot([xpoints[left], xpoints[knee_idx]], [ypoints[left], ypoints[knee_idx]])
 
         # compute right lines
-        #right_coefficients = knee['coef_right']
-        #poly = np.poly1d(right_coefficients)
-        #x_right = np.linspace(xpoints[knee_idx], xpoints[right])
-        #logger.info('X right = %s', x_right)
-        #y_right = poly(x_right)
-        #ax2.plot(x_right, y_right)
         ax2.plot([xpoints[knee_idx], xpoints[right]], [ypoints[knee_idx], ypoints[right]])
 
         ax2.plot(xpoints[knee_idx], ypoints[knee_idx], 'ro')
@@ -315,8 +273,8 @@ def postprocessing_dict(points, knees, args):
         logger.info('Knees: %s', k)
         current_knees = knees[k]
         logger.info('Initial Knees: %s', len(current_knees))
-        #current_knees = filter_corner_point(points, current_knees, args.c)
-        #logger.info('Corner Point Knees: %s', len(current_knees))
+        current_knees = filter_worst_knees(points, current_knees)
+        logger.info('Worst Knees: %s', len(current_knees))
         if args.c is Clustering.single:
             current_knees = filter_clustring(points, current_knees, clustering.single_linkage, args.ct)
         elif args.c is Clustering.complete:
@@ -335,8 +293,8 @@ def postprocessing_list(points, knees, args):
     
     logger.info('Knees: %s', knees)
     logger.info('Initial #Knees: %s', len(knees))
-    #current_knees = filter_corner_point(points, current_knees, args.c)
-    #logger.info('Corner Point Knees: %s', len(current_knees))
+    knees = filter_worst_knees(points, knees)
+    logger.info('Worst Knees: %s', len(knees))
     if args.c is Clustering.single:
         current_knees = filter_clustring(points, knees, clustering.single_linkage, args.ct)
     elif args.c is Clustering.complete:
@@ -346,7 +304,6 @@ def postprocessing_list(points, knees, args):
     logger.info('Clustering Knees: %s', len(current_knees))
     
     return current_knees
-
 
 
 def main(args):
@@ -384,14 +341,19 @@ def main(args):
 
     
     # plot rankings
-    plot_ranking(args, points_reduced, knees)
+    #plot_ranking(args, points_reduced, knees)
 
     # post-processing
     filtered_knees = postprocessing(points_reduced, knees, args)
     #logger.info(filtered_knees)
 
-    # plot rankings
-    plot_ranking(args, points_reduced, filtered_knees)
+    # plot slope rankings
+    plot_ranking(args, points_reduced, filtered_knees, slope_ranking, 'Slope')
+    # plot weighted slope rankings
+    plot_ranking(args, points_reduced, filtered_knees, weighted_slope_ranking, 'Weighted Slope')
+
+    plt.show()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee testing app')
@@ -400,9 +362,9 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, help='L-Method R2', default=0.90)
     parser.add_argument('-t', type=float, help='Sensitivity', default=1.0)
     #parser.add_argument('-r', type=bool, help='Ranking relative', default=True)
-    parser.add_argument('-m', type=Method, choices=list(Method), default='kneedle')
-    parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='single')
-    parser.add_argument('--ct', type=float, help='clustering threshold', default=0.01)
+    parser.add_argument('-m', type=Method, choices=list(Method), default='maxd')
+    parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
+    parser.add_argument('--ct', type=float, help='clustering threshold', default=0.02)
     #parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()
     

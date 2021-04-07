@@ -7,9 +7,15 @@ __status__ = 'Development'
 
 import math
 import numpy as np
+from knee.linear_fit import linear_fit_points
+import knee.multi_knee as mk
 from uts import ema
-from uts import peak_detection 
+from uts import peak_detection
 from enum import Enum
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class Direction(Enum):
@@ -43,6 +49,20 @@ def differences(points, cd, cc):
             rv[i][1] = math.fabs(points[i][1] - points[i][0]) # abs(y - x)
     
     return rv
+
+
+def single_knee(points, t, cd, cc):
+    Ds = ema.linear(points, t)
+    pmin = Ds.min(axis = 0)
+    pmax = Ds.max(axis = 0)
+    Dn = (Ds - pmin)/(pmax - pmin)
+    Dd = differences(Dn, cd, cc)
+    peaks = peak_detection.all_peaks(Dd)
+    idx = peak_detection.highest_peak(points, peaks)
+    if idx == -1:
+        return None
+    else:
+        return idx
 
 
 def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
@@ -212,14 +232,33 @@ def auto_knee(points, sensitivity=1.0, debug=False):
          
     return knees
 
-#points = np.array([[0.0, 0.0], [1.0, 2.0], [1.2, 4.0], [2.3, 6], [2.9, 8], [5, 10]])
 
-#l = [[1.0, 1.0],[2, 0.25],[3, 0.111],[4, 0.0625],[5, 0.04],[6, 0.0277777],[7, 0.0204],[8, 0.015625],[9, 0.012345679],[10, .01]]
-#points = np.array(l)
-#print(points)
+def get_knee(points, t=1):
+    b, m = linear_fit_points(points)
+    
+    if m > 0.0:
+        cd = Direction.Increasing
+    else:
+        cd = Direction.Decreasing
 
-#knees = knee(points, 1.0, Direction.Decreasing, Concavity.Counterclockwise)
-#print("Knee:", knees)
+    y = points[:,1]
+    yhat = np.empty(len(points))
+    for i in range(0, len(points)):
+        yhat[i] = points[i][0]*m+b
 
-#knees = auto_knee(points)
-#print("Auto Knee:", knees)
+    vote = np.sum(y - yhat)
+
+    if cd is Direction.Increasing and vote > 0:
+        cc = Concavity.Clockwise
+    elif cd is Direction.Increasing and vote <= 0:
+        cc = Concavity.Counterclockwise
+    elif cd is Direction.Decreasing and vote > 0:
+        cc = Concavity.Clockwise
+    else:
+        cc = Concavity.Counterclockwise
+    
+    return single_knee(points, t, cd, cc)
+
+
+def multi_knee(points, t1=0.99, t2=2):
+    return mk.multi_knee(get_knee, points, t1, t2)
