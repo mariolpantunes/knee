@@ -6,7 +6,12 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
+from knee.linear_fit import linear_fit, linear_r2
+import logging
 import numpy as np
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_r2_points(points):
@@ -25,21 +30,25 @@ def get_r2(x, y):
 
 
 def naive_straight_line(points, a, b, t=0.8):
+    #corner cases
+    if abs(a - b) <= 1:
+        return a
+    
     # setup
     x = points[:,0]
     y = points[:,1]
-    i = a
-
-    # compute initial value
-    r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
 
     scores = []
 
     for i in range(a, b):
-        r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
+        coef = linear_fit(x[i:b+1], y[i:b+1])
+        r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
+        #r2 = get_r2(x[i:b+1], y[i:b+1])
         scores.append(r2)
     scores = np.array(scores)
-    idx = (np.abs(scores - t)).argmin()
+    #print(f'Naive scores: {scores}')
+    #idx = (np.abs(scores - t)).argmin()
+    idx = np.argmax(scores > t)
 
     return a+idx
 
@@ -48,6 +57,7 @@ def straight_line(points, a, b, t=0.8):
     #corner cases
     if abs(a - b) <= 1:
         return a
+    
     # setup
     x = points[:,0]
     y = points[:,1]
@@ -55,7 +65,10 @@ def straight_line(points, a, b, t=0.8):
     right = b
 
     # compute initial value
-    r2 = get_r2(x[i:b+1], y[i:b+1])
+    coef = linear_fit(x[i:b+1], y[i:b+1])
+    r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
+    #r2 = get_r2(x[i:b+1], y[i:b+1])
+    #print('[{}, {}] = {}'.format(i, right, r2))
 
     if r2 >= t:
         return a
@@ -64,17 +77,29 @@ def straight_line(points, a, b, t=0.8):
         i = int((i+right)/2.0)
 
         while abs(i-right) > 1:
-            r2 = get_r2(x[i:b+1], y[i:b+1])
-            
+            coef = linear_fit(x[i:b+1], y[i:b+1])
+            r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
+            #r2 = get_r2(x[i:b+1], y[i:b+1])
+            #print('[{}, {}] = {}'.format(i, right, r2))
+
             if r2 < t:
                 i = int((i+right)/2.0)
             else:
                 right = i
                 i = int((a+i)/2.0)
-            #print('[{}, {}] {}'.format(i, right, r2))
         
+        coef = linear_fit(x[i:b+1], y[i:b+1])
+        r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
+        #r2 = get_r2(x[i:b+1], y[i:b+1])
+        #print('[{}, {}] = {}'.format(i, right, r2))
+
         if right != b:
-            return right
+            coef = linear_fit(x[i:b+1], y[i:b+1])
+            r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
+            if r2 > t:
+                return i
+            else:
+                return right
         else:
             return i
 

@@ -9,6 +9,7 @@ __status__ = 'Development'
 import numpy as np
 import logging
 import knee.knee_ranking as ranking
+import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger(__name__)
@@ -70,17 +71,31 @@ def filter_worst_knees(points, knees):
     return np.array(filtered_knees)
 
 
-def filter_clustring(points, knees, clustering, t=0.01):
+def filter_clustring(points, knees, clustering, t=0.01, plot=False):
+    xpoints = points[:,0]
+    ypoints = points[:,1]
+    
     knee_points = points[knees]
     clusters = clustering(knee_points, t)
     max_cluster = clusters.max()
     filtered_knees = []
     for i in range(0, max_cluster+1):
         current_cluster = knees[clusters==i]
+
         if len(current_cluster) > 1:
-            rankings = ranking.slope_ranking(points, current_cluster)
+            rankings = ranking.cluster_ranking(points, current_cluster)
+            logger.info('Rankings: %s', rankings)
             idx = np.argmax(rankings)
-            filtered_knees.append(knees[clusters==i][idx])
+            best_knee = knees[clusters==i][idx]
         else:
-            filtered_knees.append(knees[clusters==i][0])
+            logger.info('Rankings: [1.0]')
+            best_knee = knees[clusters==i][0]
+        filtered_knees.append(best_knee)
+
+        #plot cluster
+        if plot:
+            plt.plot(xpoints, ypoints)
+            plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker='x', markersize=3, color='green')
+            plt.plot(xpoints[best_knee], ypoints[best_knee], marker='o', markersize=5, color='red')
+            plt.show()
     return np.array(filtered_knees)

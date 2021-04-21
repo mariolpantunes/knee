@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_knee(points):
-    distnaces = perpendicular_distance(points)
-    return  np.argmax(distnaces)
+    distances = perpendicular_distance(points)
+    return  np.argmax(distances)
 
 
 def multi_knee(points, t1=0.99, t2=2):

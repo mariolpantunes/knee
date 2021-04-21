@@ -14,7 +14,7 @@ import logging
 
 from knee.kneedle import auto_knee
 import knee.lmethod as lmethod
-from knee.knee_ranking import slope_ranking, weighted_slope_ranking
+from knee.knee_ranking import rank, slope_ranking, multi_slope_ranking
 from knee.postprocessing import filter_clustring, filter_worst_knees
 import matplotlib.pyplot as plt
 from knee.rdp import rdp
@@ -35,6 +35,7 @@ class Method(Enum):
     kneedle = 'kneedle'
     lmethod = 'lmethod'
     maxd = 'maxd'
+    rdp = 'rdp'
 
     def __str__(self):
         return self.value
@@ -48,6 +49,13 @@ class Clustering(Enum):
     def __str__(self):
         return self.value
 
+
+class Ranking(Enum):
+    slope = 'slope'
+    mslope = 'mslope'
+
+    def __str__(self):
+        return self.value
 
 # plot lines
 def plot_lines(ax, x, y, title):
@@ -115,9 +123,11 @@ def plot_ranking_list(points, knees, ranking, title):
     ypoints = points[:,1]
     plot_lines(ax, xpoints, ypoints, 'knees')
     rankings_relative = ranking(points, knees)
+    logger.info('Ranking (%s): %s', title, rank(rankings_relative))
     for i in range(0, len(knees)):
         idx = knees[i]
-        ax.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
+        ax.plot([xpoints[idx]], [ypoints[idx]], marker='o', markersize=3, color=ranking_to_color(rankings_relative[i]))
+        #ax.axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
     fig.tight_layout()
     fig.suptitle(title)
     #plt.show()
@@ -162,7 +172,7 @@ def plot_ranking_dict(args, points, knees, ranking, title):
 
 
 def plot_lmethod(args, points, points_reduced, values):
-    fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
+    _, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
 
     xpoints = points[:,0]
     ypoints = points[:,1]
@@ -289,18 +299,16 @@ def postprocessing_dict(points, knees, args):
 
 def postprocessing_list(points, knees, args):
     logger.info('Post Processing')
-    rv = knees.copy()
     
     logger.info('Knees: %s', knees)
     logger.info('Initial #Knees: %s', len(knees))
     knees = filter_worst_knees(points, knees)
     logger.info('Worst Knees: %s', len(knees))
-    if args.c is Clustering.single:
-        current_knees = filter_clustring(points, knees, clustering.single_linkage, args.ct)
-    elif args.c is Clustering.complete:
-        current_knees = filter_clustring(points, knees, clustering.complete_linkage, args.ct)
-    else:
-        current_knees = filter_clustring(points, knees, clustering.average_linkage, args.ct)
+
+    cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
+
+    current_knees = filter_clustring(points, knees, cmethod[args.c], args.ct, True)
+
     logger.info('Clustering Knees: %s', len(current_knees))
     
     return current_knees
@@ -311,14 +319,14 @@ def main(args):
 
     #pr = cProfile.Profile()
     #pr.enable()
-    points_reduced, points_removed = rdp(points, args.r)
+    points_reduced, points_removed = rdp(points, args.rdp)
     #pr.disable()
     #pr.print_stats()
 
     #double space_saving = MathUtils.round((1.0-(points_rdp.size()/(double)points.size()))*100.0, 2);
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
-    plot_points_removed(points, points_removed)
+    #plot_points_removed(points, points_removed)
 
     #print(values)
     knees = None
@@ -338,32 +346,37 @@ def main(args):
     elif args.m is Method.maxd:
         knees = multi_knee(maxd.get_knee, points_reduced)
         plot_knees(points_reduced, knees)
+    elif args.m is Method.rdp:
+        knees = np.arange(1, len(points_reduced))
+        plot_knees(points_reduced, knees)
 
     
     # plot rankings
     #plot_ranking(args, points_reduced, knees)
 
     # post-processing
-    filtered_knees = postprocessing(points_reduced, knees, args)
+    #filtered_knees = postprocessing(points_reduced, knees, Ranking.slope, args)
     #logger.info(filtered_knees)
-
     # plot slope rankings
+    #plot_ranking(args, points_reduced, filtered_knees, slope_ranking, 'Slope')
+    #plt.show()
+    
+
+    filtered_knees = postprocessing(points_reduced, knees, args)
+    # plot multi-slope rankings
     plot_ranking(args, points_reduced, filtered_knees, slope_ranking, 'Slope')
-    # plot weighted slope rankings
-    plot_ranking(args, points_reduced, filtered_knees, weighted_slope_ranking, 'Weighted Slope')
-
     plt.show()
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee testing app')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
-    parser.add_argument('--lr', type=float, help='L-Method R2', default=0.90)
+    parser.add_argument('-rdp', type=float, help='RDP R2', default=0.9)
+    parser.add_argument('-lr', type=float, help='L-Method R2', default=0.90)
     parser.add_argument('-t', type=float, help='Sensitivity', default=1.0)
     #parser.add_argument('-r', type=bool, help='Ranking relative', default=True)
-    parser.add_argument('-m', type=Method, choices=list(Method), default='maxd')
+    parser.add_argument('-m', type=Method, choices=list(Method), default='rdp')
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
+    parser.add_argument('-r', type=Ranking, choices=list(Ranking), default='slope')
     parser.add_argument('--ct', type=float, help='clustering threshold', default=0.02)
     #parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()

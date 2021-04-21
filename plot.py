@@ -21,3 +21,18 @@ def plot_lines_knees(ax, x, y, knees, title):
     ax.set_yticklabels([])
     ax.set_xticklabels([])
     ax.text(.5,.9, title, horizontalalignment='center', transform=ax.transAxes)
+
+
+def ranking_to_color(ranking):
+    color = (ranking, 0.5*(1.0-ranking), 1.0-ranking)
+    return color
+
+
+def plot_lines_knees_ranking(ax, x, y, knees, rankings, title):
+    ax.plot(x, y)
+    for i in range(0, len(knees)):
+        idx = knees[i]
+        ax.plot([x[idx]], [y[idx]], marker='o', markersize=3, color=ranking_to_color(rankings[i]))
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
+    ax.text(.5,.9, title, horizontalalignment='center', transform=ax.transAxes)

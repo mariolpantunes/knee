@@ -40,11 +40,17 @@ def linear_r2_points(points, coef):
 
 
 def linear_r2(x, y, coef):
-    y_hat = linear_transform(x, coef)
-    y_mean = np.mean(y)
-    rss = np.sum((y-y_hat)**2)
-    tss = np.sum((y-y_mean)**2)
-    return 1.0 - (rss/tss)
+    _, m = coef
+    if m == 0.0:
+        return 0.0
+    else:
+        y_hat = linear_transform(x, coef)
+        y_mean = np.mean(y)
+        rss = np.sum((y-y_hat)**2)
+        tss = np.sum((y-y_mean)**2)
+        if tss == 0:
+            print(f'Error ({coef}) -> {x} {y} {y} {y_hat}')
+        return 1.0 - (rss/tss)
 
 
 def linear_residuals(x, y, coef):

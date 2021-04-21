@@ -6,6 +6,7 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
+from knee.linear_fit import linear_fit, linear_r2
 import uts
 import math
 import logging
@@ -25,6 +26,7 @@ def rank(array: np.ndarray) -> np.ndarray:
     temp = array.argsort()
     ranks = np.empty_like(temp)
     ranks[temp] = np.arange(len(array))
+
     return ranks
 
 
@@ -60,36 +62,60 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -
     return rankings
 
 
-def weighted_slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -> np.ndarray:
+def cluster_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -> np.ndarray:
+    logger.info('T=%s', t)
+    np.set_printoptions(precision=3)
     rankings = []
     weights  = []
+    distances = []
 
     x = points[:,0]
     y = points[:,1]
-    
+
     #print('Slope {}'.format(0))
-    j = rdp.straight_line(points, 0, knees[0], t)
-    slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
-    rankings.append(math.fabs(slope))
+    #j = rdp.naive_straight_line(points, 0, knees[0], t)
+    #slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
+    #rankings.append(math.fabs(slope))
+    #r2 = rdp.get_r2(x[j:knees[0]+1], y[j:knees[0]+1])
+    #coef = linear_fit(x[j:knees[0]+1], y[j:knees[0]+1])
+    #r2 = linear_r2(x[j:knees[0]+1], y[j:knees[0]+1], coef)
+    #rankings.append(r2)
     # height of the segment
-    d = math.fabs(y[j] - y[knees[0]])
-    weights.append(d)
+    
+    #weights.append(d)
+
+    #top = j
+    j = knees[0]
+    #d = math.fabs(y[top] - y[knees[0]])
+    #distances.append(d)
     
     for i in range(1, len(knees)):
         #print('Slope {}'.format(i))
-        j = rdp.straight_line(points, knees[i-1], knees[i], t)
+        #j = rdp.naive_straight_line(points, knees[0], knees[i], t)
+        logger.info('%s - %s', x[j:knees[i]+1], y[j:knees[i]+1]) 
+
+        #slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
+        #rankings.append(math.fabs(slope))
+        r2 = rdp.get_r2(x[j:knees[i]+1], y[j:knees[i]+1])
+        #coef = linear_fit(x[j:knees[i]+1], y[j:knees[i]+1])
+        #r2 = linear_r2(x[j:knees[i]+1], y[j:knees[i]+1], coef)
+        rankings.append(r2)
         
-        slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
-        rankings.append(math.fabs(slope))
         # height of the segment
-        d = math.fabs(y[j] - y[knees[0]])
+        d = math.fabs(y[knees[0]] - y[knees[i]])
         weights.append(d)
 
-    rankings = np.array(rankings)
     weights = np.array(weights)
+    logger.info('d = %s', weights)
+    #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+    #rankings = rankings / np.sum(rankings)
     weights = weights / np.sum(weights)
-
-    rankings = rankings * weights
+    #weights = (weights - np.min(weights))/np.ptp(weights)
+    logger.info('w = %s',weights)
+    rankings = np.array(rankings)
+    logger.info('r2 = %s',rankings)
+    rankings = np.insert(rankings * weights, 0, 0., axis=0)
+    logger.info('rank = %s',rankings)
 
     if relative:
         rankings = rank(rankings)
@@ -98,5 +124,29 @@ def weighted_slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relativ
     else:
         # Standardization (Z-score Normalization)
         rankings = (rankings - np.mean(rankings))/np.std(rankings)
+
+    return rankings
+
+
+def multi_slope_ranking(points: np.ndarray, knees: np.ndarray, ts=[0.0]) -> np.ndarray:
+    rankings = []
+
+    for t in ts:
+        rankings.append(slope_ranking(points, knees, t, True))
+    
+    rankings = np.array(rankings)
+
+    logger.info('Ranking %s', rankings)
+    #median_rankings = np.median(rankings, axis=0)
+    #rankings = np.average(rankings, axis=0)
+    rankings = np.min(rankings, axis=0)
+    #rankings = average_rankings
+    #logger.info('Ranking %s', rankings)
+
+    #global_ranking = []
+
+    rankings = rank(rankings)
+    #logger.info('Ranking %s', rankings)
+    rankings = (rankings - np.min(rankings))/np.ptp(rankings)
 
     return rankings
