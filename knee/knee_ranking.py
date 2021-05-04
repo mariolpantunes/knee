@@ -128,7 +128,7 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True)
     return rankings
 
 
-def multi_slope_ranking(points: np.ndarray, knees: np.ndarray, ts=[0.0]) -> np.ndarray:
+def multi_slope_ranking(points: np.ndarray, knees: np.ndarray, ts=[0.7, 0.8, 0.9]) -> np.ndarray:
     rankings = []
 
     for t in ts:

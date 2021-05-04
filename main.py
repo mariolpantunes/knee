@@ -105,6 +105,7 @@ def main(args):
     # Fusion
     fusion_knees = np.unique(np.concatenate(knees, 0))
     knees.append(fusion_knees)
+    
     # RDP
     knees.append(np.arange(1, len(points_reduced)))
 

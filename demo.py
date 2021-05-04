@@ -370,10 +370,9 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee testing app')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-rdp', type=float, help='RDP R2', default=0.9)
+    parser.add_argument('-rdp', type=float, help='RDP R2', default=0.95)
     parser.add_argument('-lr', type=float, help='L-Method R2', default=0.90)
     parser.add_argument('-t', type=float, help='Sensitivity', default=1.0)
-    #parser.add_argument('-r', type=bool, help='Ranking relative', default=True)
     parser.add_argument('-m', type=Method, choices=list(Method), default='rdp')
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
     parser.add_argument('-r', type=Ranking, choices=list(Ranking), default='slope')
