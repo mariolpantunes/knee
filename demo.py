@@ -83,7 +83,7 @@ def plot_kneedle(args, points, points_reduced, values, threshold):
     lines = [('differences', xdd, ydd), ('reduced', xpoints_reduced, ypoints_reduced)]
 
     for name, x, y in lines:
-        fig, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
+        _, ((ax0, ax1), (ax2, ax3)) = plt.subplots(2,2)
         logger.info('Plotting %s', name)
         plot_lines_knees(ax0, x, y, values['knees'], 'Knees Original')
         plot_lines_knees(ax1, x, y, values['knees_z'], 'Knees Z-Score')
@@ -164,7 +164,7 @@ def plot_ranking_dict(args, points, knees, ranking, title):
             else:
                 axs[r][c].axvline(xpoints[idx], color=ranking_to_color(rankings_relative[i]))
 
-    filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
+    #filename = os.path.splitext(args.i)[0]+'_ranking.pdf'
     #plt.savefig(filename, transparent = True, bbox_inches = 'tight', pad_inches = 0, dpi = 300)
     fig.tight_layout()
     fig.suptitle(title)
@@ -319,7 +319,7 @@ def main(args):
 
     #pr = cProfile.Profile()
     #pr.enable()
-    points_reduced, points_removed = rdp(points, args.rdp)
+    points_reduced, _ = rdp(points, args.rdp)
     #pr.disable()
     #pr.print_stats()
 

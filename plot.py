@@ -7,6 +7,7 @@ __status__ = 'Development'
 
 
 import math
+from knee.knee_ranking import rank
 
 
 def get_dimention(lentgh: int):
@@ -36,3 +37,25 @@ def plot_lines_knees_ranking(ax, x, y, knees, rankings, title):
     ax.set_yticklabels([])
     ax.set_xticklabels([])
     ax.text(.5,.9, title, horizontalalignment='center', transform=ax.transAxes)
+
+
+def plot_lines(ax, x, y, title):
+    ax.plot(x, y)
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
+    ax.text(.5,.9, title, horizontalalignment='center', transform=ax.transAxes)
+
+
+def plot_ranking(plt, points, knees, ranking, title):
+    fig, ax = plt.subplots()
+    xpoints = points[:,0]
+    ypoints = points[:,1]
+    plot_lines(ax, xpoints, ypoints, 'knees')
+    rankings_relative = ranking(points, knees)
+    
+    for i in range(0, len(knees)):
+        idx = knees[i]
+        ax.plot([xpoints[idx]], [ypoints[idx]], marker='o', markersize=3, color=ranking_to_color(rankings_relative[i]))
+
+    fig.tight_layout()
+    fig.suptitle(title)
