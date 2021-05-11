@@ -4,9 +4,9 @@ BASE=~/mrcs
 OUTPUT=plots
 
 
-for R in .9 .95 .99; do
-    for C in single complete average; do
-        for T in .01 .02 .05; do
+for R in .95 .99; do
+    for C in average; do
+        for T in .02; do
             for D in $BASE/*/ ; do
                 for F in $D/*.csv ; do
                     FILENAME=$(basename "$F" .csv)
@@ -18,6 +18,3 @@ for R in .9 .95 .99; do
         done
     done
 done
-
-
-#

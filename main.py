@@ -89,7 +89,7 @@ def plot_knees(points, knees, names):
 
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
-    points_reduced, points_removed = rdp.rdp(points, 0.9)
+    points_reduced, points_removed = rdp.rdp(points, 0.95)
 
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)

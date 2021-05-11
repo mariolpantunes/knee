@@ -57,8 +57,8 @@ def main(args):
     filtered_knees = postprocessing(points_reduced, knees, args)
     
     plot_ranking(plt, points_reduced, filtered_knees, slope_ranking, '')
-    #plt.show()
-    plt.savefig(args.o)
+    plt.show()
+    #plt.savefig(args.o)
 
 
 if __name__ == '__main__':
