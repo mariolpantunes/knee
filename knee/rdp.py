@@ -73,18 +73,20 @@ def perpendicular_distance_points(pt, start, end):
 def mapping(indexes, points_reduced, removed):
 
     rv = []
-    #j = 0
+    j = 0
+    count = 0
 
     for i in indexes:
         value = points_reduced[i][0]
-        j = 0
-        idx = i
+        #j = 0
+        #idx = i
         while j < len(removed) and removed[j][0] < value:
-            idx += removed[j][1]
+            count += removed[j][1]
             j += 1
-        rv.append(idx)
+        idx = i + count
+        rv.append(int(idx))
 
-    return rv
+    return np.array(rv)
 
 
 def rdp(points, r=0.9):
