@@ -29,7 +29,7 @@ def get_r2(x, y):
         return r2
 
 
-def naive_straight_line(points, a, b, t=0.8):
+def straight_line(points, a, b, t=0.8):
     #corner cases
     if abs(a - b) <= 1:
         return a
@@ -53,57 +53,6 @@ def naive_straight_line(points, a, b, t=0.8):
     return a+idx
 
 
-def straight_line(points, a, b, t=0.8):
-    #corner cases
-    if abs(a - b) <= 1:
-        return a
-    
-    # setup
-    x = points[:,0]
-    y = points[:,1]
-    i = a
-    right = b
-
-    # compute initial value
-    coef = linear_fit(x[i:b+1], y[i:b+1])
-    r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
-    #r2 = get_r2(x[i:b+1], y[i:b+1])
-    #print('[{}, {}] = {}'.format(i, right, r2))
-
-    if r2 >= t:
-        return a
-    else:
-        #print('[{}, {}] {}'.format(i, right, r2))
-        i = int((i+right)/2.0)
-
-        while abs(i-right) > 1:
-            coef = linear_fit(x[i:b+1], y[i:b+1])
-            r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
-            #r2 = get_r2(x[i:b+1], y[i:b+1])
-            #print('[{}, {}] = {}'.format(i, right, r2))
-
-            if r2 < t:
-                i = int((i+right)/2.0)
-            else:
-                right = i
-                i = int((a+i)/2.0)
-        
-        coef = linear_fit(x[i:b+1], y[i:b+1])
-        r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
-        #r2 = get_r2(x[i:b+1], y[i:b+1])
-        #print('[{}, {}] = {}'.format(i, right, r2))
-
-        if right != b:
-            coef = linear_fit(x[i:b+1], y[i:b+1])
-            r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
-            if r2 > t:
-                return i
-            else:
-                return right
-        else:
-            return i
-
-
 def perpendicular_distance(points):
     left = 0
     right = len(points) - 1
@@ -121,7 +70,24 @@ def perpendicular_distance_points(pt, start, end):
     return np.fabs(np.cross(end-start,pt-start)/np.linalg.norm(end-start))
 
 
-def rdp(points, r=0.95):
+def mapping(indexes, points_reduced, removed):
+
+    rv = []
+    #j = 0
+
+    for i in indexes:
+        value = points_reduced[i][0]
+        j = 0
+        idx = i
+        while j < len(removed) and removed[j][0] < value:
+            idx += removed[j][1]
+            j += 1
+        rv.append(idx)
+
+    return rv
+
+
+def rdp(points, r=0.9):
     end = len(points) - 1
     d = perpendicular_distance_points(points, points[0], points[end])
     index = np.argmax(d)
@@ -151,6 +117,6 @@ def rdp(points, r=0.95):
         rv = np.empty([2,2])
         rv[0] = points[0]
         rv[1] = points[end]
-        middle_point = (points[0][0] + points[end][0])/2.0
-        points_removed = np.array([[middle_point, float(len(points) - 2.0)]])
+        #middle_point = (points[0][0] + points[end][0])/2.0
+        points_removed = np.array([[points[0][0], len(points) - 2.0]])
         return rv, points_removed
