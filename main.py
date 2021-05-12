@@ -25,7 +25,7 @@ import knee.knee_ranking as ranking
 from plot import get_dimention, plot_lines_knees_ranking, plot_lines_knees
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 

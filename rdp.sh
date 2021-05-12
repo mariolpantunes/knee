@@ -3,12 +3,11 @@
 BASE=~/mrcs
 OUTPUT=plots
 
-
-for R in .95 .99; do
-    for C in average; do
-        for T in .02; do
-            for D in $BASE/*/ ; do
-                for F in $D/*.csv ; do
+for D in $BASE/*/ ; do
+    for F in $D/*.csv ; do
+        for R in .95 .99; do
+            for C in average; do
+                for T in .02; do
                     FILENAME=$(basename "$F" .csv)
                     O="$OUTPUT/$FILENAME-$R-$C-$T.pdf"
                     echo -e "R2 = $R C = $C T = $T F = $FILENAME O = $O"
