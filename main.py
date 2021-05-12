@@ -21,6 +21,7 @@ import knee.postprocessing as pp
 import matplotlib.pyplot as plt
 import knee.clustering as clustering
 import knee.max_perpendicular_distance as maxpd
+import knee.pointSelector as ps
 import knee.knee_ranking as ranking 
 from plot import get_dimention, plot_lines_knees_ranking, plot_lines_knees
 
@@ -64,12 +65,12 @@ def plot_knees(points, knees, names):
 
     nrows = ncols = 1
     
-    if len(knees) > 1:
-        nrows, ncols = get_dimention(len(knees))
+    if len(names) > 1:
+        nrows, ncols = get_dimention(len(names))
     
-    fig, axs = plt.subplots(nrows, ncols)
+    _, axs = plt.subplots(nrows, ncols)
 
-    for j in range(len(knees)):
+    for j in range(len(names)):
         
         if len(knees) == 1:
             plot_lines_knees(axs, x, y, knees[j], names[j])
@@ -94,22 +95,37 @@ def main(args):
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
 
-    names = ['kneedle', 'kneedke(Rec)', 'l-method', 'dfdt', 'menger', 'curvature', 'maxpd', 'fusion', 'rdp'] 
-    methods = [kneedle.auto_knee, kneedle.multi_knee, lmethod.multi_knee, dfdt.multi_knee, menger.multi_knee, curvature.multi_knee, maxpd.multi_knee]
+    names = ['kneedle', 'kneedke(Rec)', 'l-method', 'dfdt', 'menger', 'curvature', 'Tyler (RDP)', 'Tyler', 'rdp'] 
+    methods = [kneedle.auto_knee, kneedle.multi_knee, lmethod.multi_knee, dfdt.multi_knee, menger.multi_knee, curvature.multi_knee, ps.get_knees_points]
     knees = []
+    knees_raw = []
 
     # Elbow methods
     for m in methods:
-        knees.append(m(points_reduced))
+        tmp = m(points_reduced)
+        knees.append(tmp)
+        raw_indexes = rdp.mapping(tmp, points_reduced, points_removed)
+        knees_raw.append(raw_indexes)
+    
+    logger.info(f'{len(knees_raw)}/{len(knees)}')
+    
+    # Tyler
+    candidates = ps.get_knees_points(points)
+    knees_raw.append(candidates)
     
     # Fusion
-    fusion_knees = np.unique(np.concatenate(knees, 0))
-    knees.append(fusion_knees)
+    #fusion_knees = np.unique(np.concatenate(knees, 0))
+    #knees.append(fusion_knees)
     
     # RDP
-    knees.append(np.arange(1, len(points_reduced)))
+    candidates = np.arange(1, len(points_reduced))
+    knees.append(candidates)
+    raw_indexes = rdp.mapping(candidates, points_reduced, points_removed)
+    knees_raw.append(raw_indexes)
 
-    plot_knees(points_reduced, knees, names)
+    logger.info(f'{len(knees_raw)}/{len(knees)}')
+
+    plot_knees(points, knees_raw, names)
 
     filtered_knees = []
     for k in knees:
