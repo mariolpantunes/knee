@@ -54,7 +54,10 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -
     if relative:
         rankings = rank(rankings)
         # Min Max normalization
-        rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+        if len(rankings) > 1:
+            rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+        else:
+            rankings = np.array([1.0])
     else:
         # Standardization (Z-score Normalization)
         rankings = (rankings - np.mean(rankings))/np.std(rankings)
