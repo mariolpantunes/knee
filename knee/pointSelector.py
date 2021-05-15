@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from math import ceil
+from math import ceil, fabs
 from uts.zscore import zscore_array
 #from PyMimircache import Cachecow
 #from scipy.misc import derivative
@@ -97,11 +97,15 @@ def getPoints(mrc, x_dist=0.05, y_dist=0.05, delta_z=0.05, plot=False):
 	x, y = dict_to_lists(mrc)
 	yd2 = np.gradient(y, x, edge_order=2)
 
+	#logger.info('yd2 = %s', yd2)
+
 	# remove negative 2nd derivatives
-	yd2 = [x if x > 0 else 0 for x in yd2]
+	#yd2 = [x if x > 0 else 0 for x in yd2]
+	#yd2 = [y if y > 0 else fabs(y) for y in yd2]
+	yd2 = np.fabs(yd2)
 	# get zscore of yd2
 	#z_yd2 = zscore(yd2)
-	z_yd2 = zscore_array(x, np.array(yd2))
+	z_yd2 = zscore_array(x, yd2)
 	min_zscore = min(z_yd2)
 		
 	# optimization: create an mrc with points that have >= 0 z-score 

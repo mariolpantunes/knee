@@ -7,12 +7,12 @@ __status__ = 'Development'
 
 
 from knee.linear_fit import linear_fit, linear_r2
-import uts
+
 import math
 import logging
 import numpy as np
 import knee.rdp as rdp
-import knee.menger
+
 
 
 logger = logging.getLogger(__name__)
@@ -65,12 +65,11 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -
     return rankings
 
 
-def cluster_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -> np.ndarray:
-    logger.info('T=%s', t)
+def cluster_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
     np.set_printoptions(precision=3)
     rankings = []
     weights  = []
-    distances = []
+    #distances = []
 
     x = points[:,0]
     y = points[:,1]
@@ -91,11 +90,14 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True)
     j = knees[0]
     #d = math.fabs(y[top] - y[knees[0]])
     #distances.append(d)
-    
+
+    #peak = y[knees[0]]
+    peak = np.max(y[knees])
+
     for i in range(1, len(knees)):
         #print('Slope {}'.format(i))
         #j = rdp.naive_straight_line(points, knees[0], knees[i], t)
-        logger.info('%s - %s', x[j:knees[i]+1], y[j:knees[i]+1]) 
+        #logger.info('%s - %s', x[j:knees[i]+1], y[j:knees[i]+1]) 
 
         #slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
         #rankings.append(math.fabs(slope))
@@ -105,20 +107,20 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True)
         rankings.append(r2)
         
         # height of the segment
-        d = math.fabs(y[knees[0]] - y[knees[i]])
+        d = math.fabs(peak - y[knees[i]])
         weights.append(d)
 
     weights = np.array(weights)
-    logger.info('d = %s', weights)
+    #logger.info('d = %s', weights)
     #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
     #rankings = rankings / np.sum(rankings)
     weights = weights / np.sum(weights)
     #weights = (weights - np.min(weights))/np.ptp(weights)
-    logger.info('w = %s',weights)
+    #logger.info('w = %s',weights)
     rankings = np.array(rankings)
-    logger.info('r2 = %s',rankings)
+    #logger.info('r2 = %s',rankings)
     rankings = np.insert(rankings * weights, 0, 0., axis=0)
-    logger.info('rank = %s',rankings)
+    #logger.info('rank = %s',rankings)
 
     if relative:
         rankings = rank(rankings)
@@ -139,7 +141,7 @@ def multi_slope_ranking(points: np.ndarray, knees: np.ndarray, ts=[0.7, 0.8, 0.9
     
     rankings = np.array(rankings)
 
-    logger.info('Ranking %s', rankings)
+    #logger.info('Ranking %s', rankings)
     #median_rankings = np.median(rankings, axis=0)
     #rankings = np.average(rankings, axis=0)
     rankings = np.min(rankings, axis=0)

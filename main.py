@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding: utf-8
 
 __author__ = 'Mário Antunes'
@@ -89,7 +90,7 @@ def plot_knees(points, knees, names):
 
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
-    points_reduced, points_removed = rdp.rdp(points, 0.9)
+    points_reduced, points_removed = rdp.rdp(points, 0.95)
 
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
@@ -130,10 +131,12 @@ def main(args):
     for k, n in zip(knees, names):
         if n == 'Tyler':
             filtered_knees_raw.append(k)
-            rankings.append(ranking.slope_ranking(points, k))
+            ranks = np.full(len(k), 1.0)
+            #rankings.append(ranking.slope_ranking(points, k))
+            rankings.append(ranks)
         else:
             t_k = pp.filter_worst_knees(points_reduced, k)
-            filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, 0.05)
+            filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, 0.01)
             rankings.append(ranking.slope_ranking(points_reduced, filtered_knees))
             raw_indexes = rdp.mapping(filtered_knees, points_reduced, points_removed)
             filtered_knees_raw.append(raw_indexes)
