@@ -54,11 +54,8 @@ def main(args):
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
     
     indexes = np.arange(0, len(points_reduced))
-    logger.info(indexes)
-
     indexes = mapping(indexes, points_reduced, removed)
-    logger.info(indexes)
-
+    
     x = points[:, 0]
     y = points[:, 1]
     plt.plot(x, y)
