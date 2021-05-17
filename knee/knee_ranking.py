@@ -31,36 +31,45 @@ def rank(array: np.ndarray) -> np.ndarray:
 
 
 def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -> np.ndarray:
-    rankings = []
-
-    x = points[:,0]
-    y = points[:,1]
-    
-    #print('Slope {}'.format(0))
-    j = rdp.straight_line(points, 0, knees[0], t)
-    
-    slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
-    rankings.append(math.fabs(slope))
-    
-    for i in range(1, len(knees)):
-        #print('Slope {}'.format(i))
-        j = rdp.straight_line(points, knees[i-1], knees[i], t)
-        
-        slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
-        rankings.append(math.fabs(slope))
-
-    rankings = np.array(rankings)
-
-    if relative:
-        rankings = rank(rankings)
-        # Min Max normalization
-        if len(rankings) > 1:
-            rankings = (rankings - np.min(rankings))/np.ptp(rankings)
-        else:
-            rankings = np.array([1.0])
+    if len(knees) == 1.0:
+        rankings = np.array([1.0])
     else:
-        # Standardization (Z-score Normalization)
-        rankings = (rankings - np.mean(rankings))/np.std(rankings)
+        rankings = []
+
+        x = points[:,0]
+        y = points[:,1]
+        
+        #print('Slope {}'.format(0))
+        j = rdp.straight_line(points, 0, knees[0], t)
+       
+        if j == knees[0]:
+            rankings.append(0.0)
+        else:
+            slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
+            rankings.append(math.fabs(slope))
+        
+        for i in range(1, len(knees)):
+            #print('Slope {}'.format(i))
+            j = rdp.straight_line(points, knees[i-1], knees[i], t)
+            
+            if j == knees[i]:
+                 rankings.append(0.0)
+            else:
+                slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
+                rankings.append(math.fabs(slope))
+
+        rankings = np.array(rankings)
+
+        if relative:
+            rankings = rank(rankings)
+            # Min Max normalization
+            if len(rankings) > 1:
+                rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+            else:
+                rankings = np.array([1.0])
+        else:
+            # Standardization (Z-score Normalization)
+            rankings = (rankings - np.mean(rankings))/np.std(rankings)
 
     return rankings
 
@@ -114,7 +123,8 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.
     #logger.info('d = %s', weights)
     #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
     #rankings = rankings / np.sum(rankings)
-    weights = weights / np.sum(weights)
+    #weights = weights / np.sum(weights)
+    weights = weights / np.max(weights)
     #weights = (weights - np.min(weights))/np.ptp(weights)
     #logger.info('w = %s',weights)
     rankings = np.array(rankings)
