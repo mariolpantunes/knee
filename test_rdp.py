@@ -77,7 +77,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
+    parser.add_argument('-r', type=float, help='RDP R2', default=0.9)
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.02)
     #parser.add_argument('-o', type=str, required=True, help='output file')

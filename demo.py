@@ -27,7 +27,7 @@ import knee.max_perpendicular_distance as maxd
 from enum import Enum
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 

@@ -84,11 +84,11 @@ def filter_clustring(points, knees, clustering, t=0.01, plot=False):
 
         if len(current_cluster) > 1:
             rankings = ranking.cluster_ranking(points, current_cluster)
-            logger.info('Rankings: %s', rankings)
+            #logger.info('Rankings: %s', rankings)
             idx = np.argmax(rankings)
             best_knee = knees[clusters==i][idx]
         else:
-            logger.info('Rankings: [1.0]')
+            #logger.info('Rankings: [1.0]')
             best_knee = knees[clusters==i][0]
         filtered_knees.append(best_knee)
 
