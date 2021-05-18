@@ -123,8 +123,15 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.
     #logger.info('d = %s', weights)
     #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
     #rankings = rankings / np.sum(rankings)
-    #weights = weights / np.sum(weights)
-    weights = weights / np.max(weights)
+    
+    #sum_weights = np.sum(weights)
+    #if sum_weights != 0:
+    #    weights = weights / sum_weights
+    
+    max_weights = np.max(weights)
+    if max_weights != 0:
+        weights = weights / max_weights
+    
     #weights = (weights - np.min(weights))/np.ptp(weights)
     #logger.info('w = %s',weights)
     rankings = np.array(rankings)

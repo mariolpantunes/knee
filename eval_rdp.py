@@ -35,14 +35,14 @@ class Clustering(Enum):
 
 
 def postprocessing(points, knees, args):
-    logger.info('Post Processing')
-    logger.info('Knees: %s', knees)
-    logger.info('Initial #Knees: %s', len(knees))
+    #logger.info('Post Processing')
+    #logger.info('Knees: %s', knees)
+    #logger.info('Initial #Knees: %s', len(knees))
     knees = filter_worst_knees(points, knees)
-    logger.info('Worst Knees: %s', len(knees))
+    #logger.info('Worst Knees: %s', len(knees))
     cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
     current_knees = filter_clustring(points, knees, cmethod[args.c], args.t)
-    logger.info('Clustering Knees: %s', len(current_knees))
+    #logger.info('Clustering Knees: %s', len(current_knees))
 
     return current_knees
 
@@ -50,26 +50,18 @@ def postprocessing(points, knees, args):
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
     points_reduced, removed = rdp(points, args.r)
-    space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
-    logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
+    #space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
+    #logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
     
-    indexes = np.arange(0, len(points_reduced))
-    indexes = mapping(indexes, points_reduced, removed)
+    knees = np.arange(1, len(points_reduced))
+    #logger.info('Knee extraction')
+    filtered_knees = postprocessing(points_reduced, knees, args)
+    rankings = slope_ranking(points_reduced, filtered_knees)
+    #logger.info('Clustering and ranking')
+    filtered_knees = mapping(filtered_knees, points_reduced, removed)
+    #logger.info('Mapping into raw plot')
     
-    x = points[:, 0]
-    y = points[:, 1]
-    plt.plot(x, y)
-
-    selected = points[indexes]
-    x = selected[:, 0]
-    y = selected[:, 1]
-
-    plt.plot(x, y, marker='o', markersize=3)
-
-    #knees = np.arange(1, len(points_reduced))
-    #filtered_knees = postprocessing(points_reduced, knees, args)
-    
-    #plot_ranking(plt, points_reduced, filtered_knees, slope_ranking, '')
+    plot_ranking(plt, points, filtered_knees, rankings, args.o)
     plt.show()
     #plt.savefig(args.o)
 
@@ -80,7 +72,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', type=float, help='RDP R2', default=0.9)
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.02)
-    #parser.add_argument('-o', type=str, required=True, help='output file')
+    parser.add_argument('-o', type=str, required=True, help='output file')
     args = parser.parse_args()
     
     main(args)
