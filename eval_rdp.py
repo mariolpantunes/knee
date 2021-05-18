@@ -62,8 +62,8 @@ def main(args):
     #logger.info('Mapping into raw plot')
     
     plot_ranking(plt, points, filtered_knees, rankings, args.o)
-    plt.show()
-    #plt.savefig(args.o)
+    #plt.show()
+    plt.savefig(args.o)
 
 
 if __name__ == '__main__':

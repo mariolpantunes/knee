@@ -18,4 +18,4 @@ for D in $BASE/*/ ; do
     done
 done
 
-pdfjam $OUTPUT/*.pdf -o report.pdf
+pdfunite $OUTPUT/*.pdf report.pdf

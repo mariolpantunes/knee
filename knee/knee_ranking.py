@@ -150,6 +150,55 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.
     return rankings
 
 
+def cluster_ranking_l(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
+    
+    if len(knees) == 0:
+        return np.array([])
+    elif len(knees) == 1:
+        return np.array([1.0])
+    else:
+        fit = [0]
+        weights  = [0]
+
+        x = points[:,0]
+        y = points[:,1]
+
+        j = knees[0]
+        peak = np.max(y[knees])
+
+        for i in range(1, len(knees)-1):
+            r2_left = rdp.get_r2(x[j:knees[i]+1], y[j:knees[i]+1])
+            r2_right = rdp.get_r2(x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
+            r2 = (r2_left + r2_right) / 2.0
+            fit.append(r2)
+            
+            # height of the segment
+            d = math.fabs(peak - y[knees[i]])
+            weights.append(d)
+
+        weights.append(0)
+        weights = np.array(weights)
+        fit.append(0)
+        fit = np.array(fit)
+        
+        max_weights = np.max(weights)
+        if max_weights != 0:
+            weights = weights / max_weights
+        
+        rankings = fit * weights
+        
+        if relative:
+            rankings = rank(rankings)
+            # Min Max normalization
+            rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+        else:
+            # Standardization (Z-score Normalization)
+            rankings = (rankings - np.mean(rankings))/np.std(rankings)
+
+        return rankings
+
+
+
 def multi_slope_ranking(points: np.ndarray, knees: np.ndarray, ts=[0.7, 0.8, 0.9]) -> np.ndarray:
     rankings = []
 
