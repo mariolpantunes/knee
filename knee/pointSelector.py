@@ -100,7 +100,7 @@ def getPoints(mrc, x_dist=0.05, y_dist=0.05, delta_z=0.05, plot=False):
 	#logger.info('yd2 = %s', yd2)
 
 	# remove negative 2nd derivatives
-	#yd2 = [x if x > 0 else 0 for x in yd2]
+	#yd2 = np.array([x if x > 0 else 0 for x in yd2])
 	#yd2 = [y if y > 0 else fabs(y) for y in yd2]
 	yd2 = np.fabs(yd2)
 	# get zscore of yd2

@@ -122,7 +122,6 @@ def main(args):
     raw_indexes = rdp.mapping(candidates, points_reduced, points_removed)
     knees_raw.append(raw_indexes)
 
-
     plot_knees(points, knees_raw, names)
 
     # Cluster and select points
@@ -136,7 +135,7 @@ def main(args):
             rankings.append(ranks)
         else:
             t_k = pp.filter_worst_knees(points_reduced, k)
-            filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, 0.01)
+            filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.single_linkage, 0.01)
             rankings.append(ranking.slope_ranking(points_reduced, filtered_knees))
             raw_indexes = rdp.mapping(filtered_knees, points_reduced, points_removed)
             filtered_knees_raw.append(raw_indexes)

@@ -198,9 +198,13 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = C
         fit.append(0)
         fit = np.array(fit)
         
-        max_weights = np.max(weights)
-        if max_weights != 0:
-            weights = weights / max_weights
+        #max_weights = np.max(weights)
+        #if max_weights != 0:
+        #    weights = weights / max_weights
+        
+        sum_weights = np.sum(weights)
+        if sum_weights != 0:
+            weights = weights / sum_weights
         
         rankings = fit * weights
 

@@ -42,7 +42,7 @@ def postprocessing(points, knees, args):
     knees = filter_worst_knees(points, knees)
     #logger.info('Worst Knees: %s', len(knees))
     cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
-    current_knees = filter_clustring(points, knees, cmethod[args.c], args.t)
+    current_knees = filter_clustring(points, knees, cmethod[args.c], args.t, args.m)
     #logger.info('Clustering Knees: %s', len(current_knees))
 
     return current_knees
@@ -62,9 +62,10 @@ def main(args):
     filtered_knees = mapping(filtered_knees, points_reduced, removed)
     #logger.info('Mapping into raw plot')
     
-    plot_ranking(plt, points, filtered_knees, rankings, args.o)
-    #plt.show()
-    plt.savefig(args.o)
+    #plot_ranking(plt, points, filtered_knees, rankings, args.o)
+    plot_ranking(plt, points, filtered_knees, rankings, '')
+    plt.show()
+    #plt.savefig(args.o)
 
 
 if __name__ == '__main__':
@@ -72,9 +73,9 @@ if __name__ == '__main__':
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-r', type=float, help='RDP R2', default=0.9)
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
-    parser.add_argument('-t', type=float, help='clustering threshold', default=0.02)
+    parser.add_argument('-t', type=float, help='clustering threshold', default=0.01)
     parser.add_argument('-m', type=ClusterRanking, choices=list(ClusterRanking), default='left')
-    parser.add_argument('-o', type=str, required=True, help='output file')
+    #parser.add_argument('-o', type=str, required=True, help='output file')
     args = parser.parse_args()
     
     main(args)
