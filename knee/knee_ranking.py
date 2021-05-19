@@ -6,13 +6,23 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-from knee.linear_fit import linear_fit, linear_r2
+#import linear_fit, linear_r2
 
 import math
+import enum
 import logging
 import numpy as np
-import knee.rdp as rdp
+import knee.rdp as rdp 
+import knee.linear_fit
 
+
+class ClusterRanking(enum.Enum):
+    left = 'left'
+    linear = 'linear'
+    right = 'right'
+
+    def __str__(self):
+        return self.value
 
 
 logger = logging.getLogger(__name__)
@@ -74,7 +84,7 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -
     return rankings
 
 
-def cluster_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
+'''def cluster_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
     np.set_printoptions(precision=3)
     rankings = []
     weights  = []
@@ -147,11 +157,11 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, relative=True) -> np.
         # Standardization (Z-score Normalization)
         rankings = (rankings - np.mean(rankings))/np.std(rankings)
 
-    return rankings
+    return rankings'''
 
 
-def cluster_ranking_l(points: np.ndarray, knees: np.ndarray, relative=True) -> np.ndarray:
-    
+def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = ClusterRanking.linear) -> np.ndarray:
+    # trivial cases
     if len(knees) == 0:
         return np.array([])
     elif len(knees) == 1:
@@ -167,9 +177,16 @@ def cluster_ranking_l(points: np.ndarray, knees: np.ndarray, relative=True) -> n
         peak = np.max(y[knees])
 
         for i in range(1, len(knees)-1):
-            r2_left = rdp.get_r2(x[j:knees[i]+1], y[j:knees[i]+1])
-            r2_right = rdp.get_r2(x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
-            r2 = (r2_left + r2_right) / 2.0
+            # R2 score
+            r2 = 0
+            if t is ClusterRanking.linear:
+                r2_left = rdp.get_r2(x[j:knees[i]+1], y[j:knees[i]+1])
+                r2_right = rdp.get_r2(x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
+                r2 = (r2_left + r2_right) / 2.0
+            elif t is ClusterRanking.left:
+                r2 = rdp.get_r2(x[j:knees[i]+1], y[j:knees[i]+1])
+            else:
+                r2 = rdp.get_r2(x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
             fit.append(r2)
             
             # height of the segment
@@ -186,14 +203,11 @@ def cluster_ranking_l(points: np.ndarray, knees: np.ndarray, relative=True) -> n
             weights = weights / max_weights
         
         rankings = fit * weights
-        
-        if relative:
-            rankings = rank(rankings)
-            # Min Max normalization
-            rankings = (rankings - np.min(rankings))/np.ptp(rankings)
-        else:
-            # Standardization (Z-score Normalization)
-            rankings = (rankings - np.mean(rankings))/np.std(rankings)
+
+        # Compute relative ranking
+        rankings = rank(rankings)
+        # Min Max normalization
+        rankings = (rankings - np.min(rankings))/np.ptp(rankings)
 
         return rankings
 

@@ -17,6 +17,7 @@ from knee.knee_ranking import rank, slope_ranking
 from knee.postprocessing import filter_clustring, filter_worst_knees
 import matplotlib.pyplot as plt
 from knee.rdp import rdp, mapping
+from knee.knee_ranking import ClusterRanking
 import knee.clustering as clustering
 from plot import plot_ranking
 
@@ -72,6 +73,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', type=float, help='RDP R2', default=0.9)
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.02)
+    parser.add_argument('-m', type=ClusterRanking, choices=list(ClusterRanking), default='left')
     parser.add_argument('-o', type=str, required=True, help='output file')
     args = parser.parse_args()
     

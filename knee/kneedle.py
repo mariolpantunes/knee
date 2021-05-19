@@ -5,27 +5,33 @@ __version__ = '0.1'
 __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
+
 import math
+import enum
+import logging
 import numpy as np
 from knee.linear_fit import linear_fit_points
 import knee.multi_knee as mk
-from uts import ema
-from uts import peak_detection
-from enum import Enum
-import logging
+from uts import ema, peak_detection
 
 
 logger = logging.getLogger(__name__)
 
 
-class Direction(Enum):
-    Increasing=0
-    Decreasing=1
+class Direction(enum.Enum):
+    Increasing='increasing'
+    Decreasing='decreasing'
+
+    def __str__(self):
+        return self.value
 
 
-class Concavity(Enum):
-    Counterclockwise=0
-    Clockwise=1
+class Concavity(enum.Enum):
+    Counterclockwise='counter-clockwise'
+    Clockwise='clockwise'
+
+    def __str__(self):
+        return self.value
 
 
 def differences(points, cd, cc):

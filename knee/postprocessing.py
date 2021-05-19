@@ -71,7 +71,7 @@ def filter_worst_knees(points, knees):
     return np.array(filtered_knees)
 
 
-def filter_clustring(points, knees, clustering, t=0.01, plot=False):
+def filter_clustring(points, knees, clustering, method=ranking.ClusterRanking.linear, t=0.01, plot=False):
     xpoints = points[:,0]
     ypoints = points[:,1]
     
@@ -83,7 +83,7 @@ def filter_clustring(points, knees, clustering, t=0.01, plot=False):
         current_cluster = knees[clusters==i]
 
         if len(current_cluster) > 1:
-            rankings = ranking.cluster_ranking_l(points, current_cluster)
+            rankings = ranking.cluster_ranking(points, current_cluster, method)
             #logger.info('Rankings: %s', rankings)
             idx = np.argmax(rankings)
             best_knee = knees[clusters==i][idx]
