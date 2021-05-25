@@ -71,7 +71,7 @@ def filter_worst_knees(points, knees):
     return np.array(filtered_knees)
 
 
-def filter_clustring(points, knees, clustering, method=ranking.ClusterRanking.linear, t=0.01, plot=False):
+def filter_clustring(points, knees, clustering, t=0.01, method=ranking.ClusterRanking.left, plot=False):
     xpoints = points[:,0]
     ypoints = points[:,1]
     
