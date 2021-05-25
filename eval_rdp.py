@@ -12,7 +12,7 @@ import numpy as np
 import logging
 
 from enum import Enum
-
+from knee.evaluation import performance
 from knee.knee_ranking import rank, slope_ranking
 from knee.postprocessing import filter_clustring, filter_worst_knees
 import matplotlib.pyplot as plt
@@ -62,9 +62,13 @@ def main(args):
     filtered_knees = mapping(filtered_knees, points_reduced, removed)
     #logger.info('Mapping into raw plot')
     
-    plot_ranking(plt, points, filtered_knees, rankings, args.o)
-    #plt.show()
-    plt.savefig(args.o)
+    # Compute performance evalution
+    average_x, average_y, p = performance(points, filtered_knees)
+    logger.info('Performance %s %s %s', average_x, average_y, p)
+
+    plot_ranking(plt, points, filtered_knees, rankings, '')#args.o)
+    plt.show()
+    #plt.savefig(args.o)
 
 
 if __name__ == '__main__':
@@ -74,7 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.02)
     parser.add_argument('-m', type=ClusterRanking, choices=list(ClusterRanking), default='left')
-    parser.add_argument('-o', type=str, required=True, help='output file')
+    #parser.add_argument('-o', type=str, required=True, help='output file')
     args = parser.parse_args()
     
     main(args)

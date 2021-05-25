@@ -6,8 +6,8 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import numpy as np
 import logging
+import numpy as np
 import knee.knee_ranking as ranking
 import matplotlib.pyplot as plt
 
