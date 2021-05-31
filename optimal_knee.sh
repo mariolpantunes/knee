@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 BASE=~/mrcs
-OUTPUT=optimal
+OUTPUT=plots_optimal
 
 for D in $BASE/*/ ; do
     for F in $D/*.csv ; do

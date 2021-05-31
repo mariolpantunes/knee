@@ -47,7 +47,7 @@ def hillclimbing(objective, bounds, n_iterations=200, step_size=.01):
 
 	
 # simulated annealing algorithm
-def simulated_annealing(objective, bounds, n_iterations=100, step_size=0.01, temp=10):
+def simulated_annealing(objective, bounds, n_iterations=200, step_size=0.01, temp=20):
 	# min and max for each bound
     bounds_max = bounds.max(axis = 1)
     bounds_min = bounds.min(axis = 1)
@@ -84,3 +84,43 @@ def simulated_annealing(objective, bounds, n_iterations=100, step_size=0.01, tem
             # store the new current point
             curr, curr_cost = candidate, candidate_cost
     return [best, best_eval]
+
+
+def get_random_solution(bounds):
+    solution = bounds[:, 0] + np.random.rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
+    solution = np.minimum(solution, bounds.max(axis = 1))
+    solution = np.maximum(solution, bounds.min(axis = 1))
+    return solution
+
+
+# genetic algorithm
+def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=100, n_pop=10, r_cross=0.9, r_mut=0.1):
+    # initial population of random bitstring
+	pop = [get_random_solution(bounds) for _ in range(n_pop)]
+	# keep track of best solution
+	best, best_eval = 0, objective(pop[0])
+	# enumerate generations
+	for gen in range(n_iter):
+		# evaluate all candidates in the population
+		scores = [objective(c) for c in pop]
+		# check for new best solution
+		for i in range(n_pop):
+			if scores[i] < best_eval:
+				best, best_eval = pop[i], scores[i]
+				#logger.info('>%d, new best f(%s) = %.3f' % (gen,  pop[i], scores[i]))
+		# select parents
+		selected = [selection(pop, scores) for _ in range(n_pop)]
+		# create the next generation
+		children = list()
+		for i in range(0, n_pop, 2):
+			# get selected parents in pairs
+			p1, p2 = selected[i], selected[i+1]
+			# crossover and mutation
+			for c in crossover(p1, p2, r_cross):
+				# mutation
+				mutation(c, r_mut, bounds)
+				# store for next generation
+				children.append(c)
+		# replace population
+		pop = children
+	return [best, best_eval]

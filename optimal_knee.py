@@ -6,14 +6,13 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import os
 import argparse
 import numpy as np
 import logging
 
 from enum import Enum
 from knee.evaluation import performance
-from knee.optimization import hillclimbing, simulated_annealing
+from knee.optimization import hillclimbing, simulated_annealing, genetic_algorithm, get_random_solution
 from knee.knee_ranking import rank, slope_ranking
 from knee.postprocessing import filter_clustring, filter_worst_knees
 import matplotlib.pyplot as plt
@@ -21,9 +20,6 @@ from knee.rdp import rdp, mapping
 from knee.knee_ranking import ClusterRanking
 import knee.clustering as clustering
 from plot import plot_ranking
-
-
-import cProfile
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -80,9 +76,35 @@ def objective(p):
         knees = mapping(knees, points_reduced, removed)
         knee_cache[(r,t)] = knees
 
+    if len(knees) == 1:
+        return float('inf')
     avg_x, avg_y, avg_s = performance(points, knees)
-    cost = avg_x / avg_s
+    cost = avg_x / avg_s*avg_y
     return cost
+
+
+# tournament selection
+def selection(pop, scores, k=3):
+	# first random selection
+	selection_ix = np.random.randint(len(pop))
+	for ix in np.random.randint(0, len(pop), k-1):
+		# check if better (e.g. perform a tournament)
+		if scores[ix] < scores[selection_ix]:
+			selection_ix = ix
+	return pop[selection_ix]
+ 
+# crossover two parents to create two children
+def crossover(p1, p2, r_cross):
+    c1 = np.array([p1[0], p2[0]])
+    c2 = np.array([p1[1], p2[1]])
+    return [c1, c2]
+ 
+# mutation operator
+def mutation(candidate, r_mut, bounds):
+    if np.random.rand() < r_mut:
+        solution = get_random_solution(bounds)
+        candidate[0] = solution[0]
+        candidate[1] = solution[1]
 
 
 def main(args):
@@ -90,11 +112,7 @@ def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
 
     bounds = np.asarray([[.8, .99], [0.01, 0.1]])
-    #pr = cProfile.Profile()
-    #pr.enable()
-    best, score = hillclimbing(objective, bounds)
-    #pr.disable()
-    #pr.print_stats()
+    best, score = genetic_algorithm(objective, bounds, selection, crossover, mutation)
 
     # Round input parameters 
     r = round(best[0]*100.0)/100.0
