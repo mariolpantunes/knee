@@ -6,9 +6,9 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-from knee.linear_fit import linear_fit, linear_r2
 import logging
 import numpy as np
+import knee.linear_fit as lf
 
 
 logger = logging.getLogger(__name__)
@@ -41,8 +41,8 @@ def straight_line(points, a, b, t=0.8):
     scores = []
 
     for i in range(a, b):
-        coef = linear_fit(x[i:b+1], y[i:b+1])
-        r2 = linear_r2(x[i:b+1], y[i:b+1], coef)
+        coef = lf.linear_fit(x[i:b+1], y[i:b+1])
+        r2 = lf.linear_r2(x[i:b+1], y[i:b+1], coef)
         #r2 = get_r2(x[i:b+1], y[i:b+1])
         scores.append(r2)
     scores = np.array(scores)
@@ -90,35 +90,20 @@ def mapping(indexes, points_reduced, removed):
 
 
 def rdp(points, r=0.9):
-    end = len(points) - 1
-    d = perpendicular_distance_points(points, points[0], points[end])
-    index = np.argmax(d)
-
-    m = (points[end][1]-points[0][1])/(points[end][0]-points[0][0])
-    b = points[0][1]- (m * points[0][0])
-    y = points[:,1]
-    yhat = np.empty(len(y))
-    for i in range(0, end+1):
-        yhat[i] = points[i][0]*m+b
-    
-    ybar = np.sum(y)/len(y)          
-    ssreg = np.sum((y-yhat)**2)
-    sstot = np.sum((y - ybar)**2)
-
-    if sstot > 0.0:
-        determination = 1.0 - (ssreg / sstot)
-    else:
-        determination = 1.0 - ssreg
+    coef = lf.linear_fit_points(points)
+    determination = lf.linear_r2_points(points, coef)
 
     if determination < r :
+        d = perpendicular_distance_points(points, points[0], points[-1])
+        index = np.argmax(d)
+
         left, left_points = rdp(points[0:index+1], r)
-        right, right_points = rdp(points[index:end+1], r)
+        right, right_points = rdp(points[index:len(points)], r)
         points_removed = np.concatenate((left_points, right_points), axis=0)
         return np.concatenate((left[0:len(left)-1], right)), points_removed
     else:
         rv = np.empty([2,2])
         rv[0] = points[0]
-        rv[1] = points[end]
-        #middle_point = (points[0][0] + points[end][0])/2.0
+        rv[1] = points[-1]
         points_removed = np.array([[points[0][0], len(points) - 2.0]])
         return rv, points_removed
