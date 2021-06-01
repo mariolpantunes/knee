@@ -26,7 +26,7 @@ def hillclimbing(objective, bounds, n_iterations=200, step_size=.01):
     solution_cost = objective(solution)
     # run the hill climb
     
-    for i in range(n_iterations):
+    for _ in range(n_iterations):
 		# take a step
         candidate = solution + np.random.randn(len(bounds)) * step_size
         
@@ -100,7 +100,7 @@ def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=
 	# keep track of best solution
 	best, best_eval = 0, objective(pop[0])
 	# enumerate generations
-	for gen in range(n_iter):
+	for _ in range(n_iter):
 		# evaluate all candidates in the population
 		scores = [objective(c) for c in pop]
 		# check for new best solution

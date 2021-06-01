@@ -92,13 +92,15 @@ def selection(pop, scores, k=3):
 		if scores[ix] < scores[selection_ix]:
 			selection_ix = ix
 	return pop[selection_ix]
- 
+
+
 # crossover two parents to create two children
 def crossover(p1, p2, r_cross):
-    c1 = np.array([p1[0], p2[0]])
-    c2 = np.array([p1[1], p2[1]])
+    c1 = np.array([p1[0], p2[1]])
+    c2 = np.array([p2[0], p1[1]])
     return [c1, c2]
- 
+
+
 # mutation operator
 def mutation(candidate, r_mut, bounds):
     if np.random.rand() < r_mut:
@@ -113,6 +115,8 @@ def main(args):
 
     bounds = np.asarray([[.8, .99], [0.01, 0.1]])
     best, score = genetic_algorithm(objective, bounds, selection, crossover, mutation)
+
+    print(best)
 
     # Round input parameters 
     r = round(best[0]*100.0)/100.0
