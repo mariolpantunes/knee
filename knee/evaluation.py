@@ -48,6 +48,7 @@ def performance(points: np.ndarray, knees: np.ndarray):
     distances_x = np.array(distances_x)
     distances_y = np.array(distances_y)
     slopes = np.array(slopes)
+    slopes = slopes/slopes.max()
 
     average_x = np.average(distances_x)/total_x
     average_y = np.average(distances_y)/total_y

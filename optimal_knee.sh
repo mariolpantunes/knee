@@ -7,6 +7,6 @@ for D in $BASE/*/ ; do
     for F in $D/*.csv ; do
         FILENAME=$(basename "$F" .csv)
         O="$OUTPUT/$FILENAME.pdf"
-        python optimal_knee.py -i $F -o $O
+        python optimal_knee.py -i $F
     done
 done

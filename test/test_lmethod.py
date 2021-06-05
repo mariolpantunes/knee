@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 
-from knee.lmethod import get_knee, multiknee, multiknee_cache
+from knee.lmethod import get_knee
 
 
 class TestL_Method(unittest.TestCase):
