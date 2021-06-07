@@ -41,7 +41,7 @@ class Clustering(Enum):
         return self.value
 
 
-def postprocessing(points, knees, c=Clustering.average, t=0.1, m=ClusterRanking.linear):
+def postprocessing(points, knees, c=Clustering.average, t=0.1, m=ClusterRanking.left):
     knees = filter_worst_knees(points, knees)
     cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
     current_knees = filter_clustring(points, knees, cmethod[c], t, m)
@@ -78,8 +78,8 @@ def objective(p):
 
     if len(knees) == 1:
         return float('inf')
-    avg_x, _, avg_s = performance(points, knees)
-    cost = avg_x / avg_s
+    avg_x, _, _, _, p = performance(points, knees)
+    cost = avg_x / p
     return cost
 
 
