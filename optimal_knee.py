@@ -11,7 +11,7 @@ import numpy as np
 import logging
 
 from enum import Enum
-from knee.evaluation import performance
+from knee.evaluation import performance, performance_individual
 from knee.optimization import hillclimbing, simulated_annealing, genetic_algorithm, get_random_solution
 from knee.knee_ranking import rank, slope_ranking
 from knee.postprocessing import filter_clustring, filter_worst_knees
@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 # Global variable for optimization method
 points = None
 points_cache = {}
-knee_cache = {}
+cost_cache = {}
 
 
 class Clustering(Enum):
@@ -68,18 +68,24 @@ def objective(p):
     t = round(p[1]*100.0)/100.0
 
     # Check if cache already has these values
-    knees = None
-    if (r,t) in knee_cache:
-        knees = knee_cache[(r,t)]
+    cost = float('inf')
+    if (r,t) in cost_cache:
+        cost = cost_cache[(r,t)]
     else:
-        points_reduced, removed, knees = compute_knee_points(r, t)
-        knees = mapping(knees, points_reduced, removed)
-        knee_cache[(r,t)] = knees
+        _, _, knees = compute_knee_points(r, t)
+        #knees = mapping(knees, points_reduced, removed)
+        #avg_x, _, _, _, p = performance(points, knees)
+        #cost = avg_x / p
+        
+        # Check the performance on the reduced space
+        points_reduced, _ = points_cache[r]
+        # penalize solutions with a single knee
+        if len(knees) == 1:
+            cost = float('inf')
+        else:
+            _, _, cost = performance_individual(points_reduced, knees)
+        cost_cache[(r,t)] = cost
 
-    if len(knees) == 1:
-        return float('inf')
-    avg_x, _, _, _, p = performance(points, knees)
-    cost = avg_x / p
     return cost
 
 
@@ -113,7 +119,7 @@ def main(args):
     global points 
     points = np.genfromtxt(args.i, delimiter=',')
 
-    bounds = np.asarray([[.8, .99], [0.01, 0.1]])
+    bounds = np.asarray([[.9, .99], [0.01, 0.1]])
     best, score = genetic_algorithm(objective, bounds, selection, crossover, mutation)
 
     print(best)

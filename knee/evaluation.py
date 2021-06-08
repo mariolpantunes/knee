@@ -12,13 +12,13 @@ import numpy as np
 import knee.linear_fit as lf
 
 
-def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float = 0.9):
+def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float = 0.95):
     x = points[:,0]
     y = points[:,1]
     return get_neighbourhood(x, y, a, b, t)
 
 
-def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9):
+def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.95):
     r2 = 1.0
     i = a - 1
     slope = 1.0
@@ -36,7 +36,7 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
         return previous_res
 
 
-def performance_individual(points: np.ndarray, knees: np.ndarray):
+def performance_individual(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, float]:
     x = points[:,0]
     y = points[:,1]
 
@@ -47,7 +47,7 @@ def performance_individual(points: np.ndarray, knees: np.ndarray):
     for i in range(0, len(knees)):
         _, r2, slope  = get_neighbourhood(x, y, knees[i], previous_knee)
         coeffients.append(r2)
-        slopes.append(slope)
+        slopes.append(math.fabs(slope))
         previous_knee = knees[i]
     
     slopes = np.array(slopes)
