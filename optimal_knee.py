@@ -11,7 +11,7 @@ import numpy as np
 import logging
 
 from enum import Enum
-from knee.evaluation import performance, performance_individual
+from knee.evaluation import accuracy_trace, accuracy_knee
 from knee.optimization import hillclimbing, simulated_annealing, genetic_algorithm, get_random_solution
 from knee.knee_ranking import rank, slope_ranking
 from knee.postprocessing import filter_clustring, filter_worst_knees
@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 # Global variable for optimization method
 points = None
+args = None
 points_cache = {}
 cost_cache = {}
 
@@ -36,6 +37,14 @@ class Clustering(Enum):
     single = 'single'
     complete = 'complete'
     average = 'average'
+
+    def __str__(self):
+        return self.value
+
+
+class Accuracy(Enum):
+    knee = 'knee'
+    trace = 'trace'
 
     def __str__(self):
         return self.value
@@ -83,7 +92,10 @@ def objective(p):
         if len(knees) == 1:
             cost = float('inf')
         else:
-            _, _, cost = performance_individual(points_reduced, knees)
+            if args.a is Accuracy.knee:
+                _, _, _, _, cost = accuracy_knee(points_reduced, knees)
+            else:
+                _, _, _, _, cost = accuracy_trace(points_reduced, knees)
         cost_cache[(r,t)] = cost
 
     return cost
@@ -122,12 +134,10 @@ def main(args):
     bounds = np.asarray([[.9, .99], [0.01, 0.1]])
     best, score = genetic_algorithm(objective, bounds, selection, crossover, mutation)
 
-    print(best)
-
     # Round input parameters 
     r = round(best[0]*100.0)/100.0
     t = round(best[1]*100.0)/100.0
-    logger.info('%s (%s, %s) = %s', args.i, r, t, score)
+    logger.info('%s (%s, %s, %s) = %s', args.i, r, t, args.a, score)
 
     points_reduced, removed, knees = compute_knee_points(r, t)
     rankings = slope_ranking(points_reduced, knees)
@@ -146,6 +156,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP Optimal Knee')
     parser.add_argument('-i', type=str, required=True, help='input file')
+    parser.add_argument('-a', type=Accuracy, choices=list(Accuracy), default='trace')
     parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()
     

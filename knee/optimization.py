@@ -94,7 +94,7 @@ def get_random_solution(bounds):
 
 
 # genetic algorithm
-def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=100, n_pop=10, r_cross=0.9, r_mut=0.1):
+def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=100, n_pop=10, r_cross=0.9, r_mut=0.2):
     # initial population of random bitstring
 	pop = [get_random_solution(bounds) for _ in range(n_pop)]
 	# keep track of best solution

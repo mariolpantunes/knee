@@ -6,14 +6,12 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-#import linear_fit, linear_r2
-
 import math
 import enum
 import logging
 import numpy as np
 import knee.rdp as rdp 
-import knee.linear_fit
+import knee.evaluation as ev
 
 
 class ClusterRanking(enum.Enum):
@@ -40,7 +38,8 @@ def rank(array: np.ndarray) -> np.ndarray:
     return ranks
 
 
-def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -> np.ndarray:
+def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8) -> np.ndarray:
+    # corner case
     if len(knees) == 1.0:
         rankings = np.array([1.0])
     else:
@@ -50,36 +49,29 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t=0.8, relative=True) -
         y = points[:,1]
         
         #print('Slope {}'.format(0))
-        j = rdp.straight_line(points, 0, knees[0], t)
-       
-        if j == knees[0]:
-            rankings.append(0.0)
-        else:
-            slope = (y[j]-y[knees[0]]) / (x[j]-x[knees[0]])
-            rankings.append(math.fabs(slope))
+        #j = rdp.straight_line(points, 0, knees[0], t)
+
+        _, _, slope = ev.get_neighbourhood(x, y, knees[0], 0, t)
+        rankings.append(math.fabs(slope))
         
         for i in range(1, len(knees)):
             #print('Slope {}'.format(i))
-            j = rdp.straight_line(points, knees[i-1], knees[i], t)
-            
-            if j == knees[i]:
-                 rankings.append(0.0)
-            else:
-                slope = (y[j]-y[knees[i]]) / (x[j]-x[knees[i]])
-                rankings.append(math.fabs(slope))
+            #j = rdp.straight_line(points, knees[i-1], knees[i], t)
+            #idx, r2, slope = ev.get_neighbourhood(x, y, knees[i], knees[i-1], t)
+            _, _, slope = ev.get_neighbourhood(x, y, knees[i], knees[i-1], t)
+            #print(f'Knee {knees[i]} [{knees[i-1]}, {knees[i]}] -> ({idx}, {r2}, {slope})')
+            rankings.append(math.fabs(slope))
 
         rankings = np.array(rankings)
 
-        if relative:
-            rankings = rank(rankings)
-            # Min Max normalization
-            if len(rankings) > 1:
-                rankings = (rankings - np.min(rankings))/np.ptp(rankings)
-            else:
-                rankings = np.array([1.0])
+        #print(f'Rankings = {rankings}')
+
+        rankings = rank(rankings)
+        # Min Max normalization
+        if len(rankings) > 1:
+            rankings = (rankings - np.min(rankings))/np.ptp(rankings)
         else:
-            # Standardization (Z-score Normalization)
-            rankings = (rankings - np.mean(rankings))/np.std(rankings)
+            rankings = np.array([1.0])
 
     return rankings
 

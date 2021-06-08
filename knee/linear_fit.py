@@ -45,7 +45,6 @@ def linear_r2(x, y, coef):
     rss = np.sum((y-y_hat)**2)
     tss = np.sum((y-y_mean)**2)
     if tss == 0:
-        #print(f'Error ({coef}) -> {x} {y} {y} {y_hat}')
         return  1.0 - rss
     return 1.0 - (rss/tss)
 
