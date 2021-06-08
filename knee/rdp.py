@@ -29,25 +29,21 @@ def get_r2(x, y):
         return r2
 
 
-def straight_line(points, a, b, t=0.8):
-    #corner cases
+def straight_line(points, a, b, t=0.9):
+    #corner case
     if abs(a - b) <= 1:
         return a
     
     # setup
     x = points[:,0]
     y = points[:,1]
-
     scores = []
 
     for i in range(a, b):
         coef = lf.linear_fit(x[i:b+1], y[i:b+1])
         r2 = lf.linear_r2(x[i:b+1], y[i:b+1], coef)
-        #r2 = get_r2(x[i:b+1], y[i:b+1])
         scores.append(r2)
     scores = np.array(scores)
-    #print(f'Naive scores: {scores}')
-    #idx = (np.abs(scores - t)).argmin()
     idx = np.argmax(scores > t)
 
     return a+idx
@@ -71,7 +67,6 @@ def perpendicular_distance_points(pt, start, end):
 
 
 def mapping(indexes, points_reduced, removed):
-
     rv = []
     j = 0
     count = 0

@@ -12,7 +12,59 @@ import numpy as np
 import knee.linear_fit as lf
 
 
-def performance(points: np.ndarray, knees: np.ndarray):
+def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float = 0.9):
+    x = points[:,0]
+    y = points[:,1]
+    return get_neighbourhood(x, y, a, b, t)
+
+
+def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9):
+    r2 = 1.0
+    i = a - 1
+    slope = 1.0
+    
+    while r2 > t and i > b:
+        previous_res = (i, r2, slope)
+        i -= 1
+        coef = lf.linear_fit(x[i:a+1], y[i:a+1])
+        r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
+        _, slope = coef
+
+    if r2 > t:
+        return i, r2, slope
+    else:
+        return previous_res
+
+
+def performance_individual(points: np.ndarray, knees: np.ndarray):
+    x = points[:,0]
+    y = points[:,1]
+
+    slopes = []
+    coeffients = []
+
+    previous_knee = 0
+    for i in range(0, len(knees)):
+        _, r2, slope  = get_neighbourhood(x, y, knees[i], previous_knee)
+        coeffients.append(r2)
+        slopes.append(slope)
+        previous_knee = knees[i]
+    
+    slopes = np.array(slopes)
+    slopes = slopes/slopes.max()
+
+    coeffients = np.array(coeffients)
+    coeffients = coeffients/coeffients.max()
+
+    average_slope = np.average(slopes)
+    average_coeffients = np.average(coeffients)
+
+    cost = 1.0 / (average_slope * average_coeffients) 
+
+    return average_slope, average_coeffients, cost
+
+
+def performance(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, float, float, float]:
     x = points[:,0]
     y = points[:,1]
 
