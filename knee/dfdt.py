@@ -21,9 +21,12 @@ logger = logging.getLogger(__name__)
 def get_knee(x: np.ndarray, y: np.ndarray) -> int:
     """Return the index of the knee point based on the DFDT method.
 
-    Keyword arguments:
-    x -- x axis coordinates
-    y -- y axis coordinates
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+    
+    Returns:
+        int: the index of the knee point
     """
     gradient = np.gradient(y, x, edge_order=1)
     return get_knee_gradient(gradient)
@@ -32,8 +35,11 @@ def get_knee(x: np.ndarray, y: np.ndarray) -> int:
 def get_knee_gradient(gradient: np.ndarray) -> int:
     """Return the index of the knee point based on the DFDT method.
 
-    Keyword arguments:
-    gradient -- the first order gradient of the points
+    Args:
+        gradient (np.ndarray): the first order gradient of the trace points
+    
+    Returns:
+        int: the index of the knee point
     """
     t = thresholding.isodata(gradient)
     diff = np.absolute(gradient - t)
@@ -43,10 +49,14 @@ def get_knee_gradient(gradient: np.ndarray) -> int:
 
 def knee_points(points: np.ndarray) -> int:
     """Returns the index of the knee point based on the DFDT method.
+    
     It uses the iterative refinement  method.
 
-    Keyword arguments:
-    points -- numpy array with the points (x, y)
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        int: the index of the knee point
     """
     x = points[:,0]
     y = points[:,1]
@@ -64,16 +74,18 @@ def knee_points(points: np.ndarray) -> int:
     return knee
 
 
-def multi_knee(points: np.ndarray, t1=0.99, t2=2):
+def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=2) -> np.ndarray:
     """Recursive knee point detection based on DFDT.
+    
     It returns the knee points on the curve.
 
     Args:
-        points: numpy array with the points (x, y)
-        t1: coefficient of determination threshold (default 0.99)
-        t2: number of points threshold (default 2)
+        points (np.ndarray): numpy array with the points (x, y)
+        t1 (float): coefficient of determination threshold (default 0.99)
+        t2 (int): number of points threshold (default 2)
 
     Returns:
-        The knee points on the curve.
+        np.ndarray: The knee points on the curve
+
     """
     return mk.multi_knee(knee_points, points, t1, t2)
