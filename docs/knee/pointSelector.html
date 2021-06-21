@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>knee.pointSelector API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML" integrity="sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>knee.pointSelector</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import numpy as np
+import logging
+from math import ceil, fabs
+from uts.zscore import zscore_array
+#from PyMimircache import Cachecow
+#from scipy.misc import derivative
+#from scipy.stats import zscore
+
+
+logger = logging.getLogger(__name__)
+
+
+def dict_to_lists(d):
+        x = []
+        y = []
+        for k, v in d.items():
+                x.append(k)
+                y.append(v)
+        return (np.array(x), np.array(y))
+
+
+def dict_to_points(d):
+        points = []
+        for k, v in d.items():
+                points.append([k, v])
+        return np.array(points)
+
+
+def points_to_dict(points):
+        rv = {}
+        for point in points:
+                rv[point[0]] = point[1]
+        return rv
+
+
+def lists_to_dict(x, y):
+        rv = {}
+        for i in range(len(x)):
+                rv[x[i]] = y[i]
+        return rv
+
+
+def map_index(a, b):
+        sort_idx = np.argsort(a)
+        out = sort_idx[np.searchsorted(a, b, sorter = sort_idx)]
+        return out
+        
+        #index = 
+        #sorted_x = x[index]
+        #sorted_index = np.searchsorted(sorted_x, y)
+
+
+def get_knees_points(points):
+        x = points[:, 0]
+        y = points[:, 1]
+        return get_knees(x, y)
+
+
+def get_knees(x, y):
+        mrc = lists_to_dict(x, y)
+        rv = getPoints(mrc)
+        #convert x points into indexes:
+        return map_index(x, np.array(rv))
+
+
+def getPoints(mrc, x_dist=0.05, y_dist=0.05, delta_z=0.05, plot=False):
+        &#39;&#39;&#39;
+        use our outlier method to find interesting points in an MRC
+        @mrc: MRC dict of some trace
+        @x_dist: % of max cache size between points
+        @y_dist: % of max - min miss ratio between points
+        @plot: set True if you want to return data useful for plotting
+        &#39;&#39;&#39;
+
+        uniq_reqs = len(mrc)
+                
+        if uniq_reqs &lt; 3:
+                print(&#39;pointSelector: &lt; 3 unique requests in workload&#39;)
+                return []
+                
+        if min(mrc.values()) == 1:
+                logger.warning(&#39;pointSelector: workload completely random (dont bother caching)&#39;)
+                return []
+
+        # get absolute x and y distances
+        x_width = max(1, int(uniq_reqs  * x_dist))
+        y_height = (max(mrc.values())-  min(mrc.values())) * y_dist
+
+        # get 2nd derivative yd2 using central difference formula
+        #x_range = np.linspace(1, uniq_reqs, uniq_reqs, dtype=int)
+        #def mrc_wrapper(x):
+        # return np.array([mrc[int(i)] for i in x])
+        #yd2_temp = derivative(mrc_wrapper, x_range[1:-1], dx=1.0, n=2)
+        # since using central dif, first and last element can not be calculated
+        #yd2 = [0] + list(yd2_temp) + [0]
+
+        x, y = dict_to_lists(mrc)
+        yd2 = np.gradient(y, x, edge_order=2)
+
+        #logger.info(&#39;yd2 = %s&#39;, yd2)
+
+        # remove negative 2nd derivatives
+        #yd2 = np.array([x if x &gt; 0 else 0 for x in yd2])
+        #yd2 = [y if y &gt; 0 else fabs(y) for y in yd2]
+        yd2 = np.fabs(yd2)
+        # get zscore of yd2
+        #z_yd2 = zscore(yd2)
+        z_yd2 = zscore_array(x, yd2)
+        min_zscore = min(z_yd2)
+                
+        # optimization: create an mrc with points that have &gt;= 0 z-score 
+        zero_mrc = {x[0]:[x[1],z] for x,z in zip(mrc.items(), z_yd2) if z &gt;= 0}
+        
+        # main loop. start with outliers &gt;= 3 z-score
+        outlier_z = 3
+        outlier_points = {}
+        while True:
+
+                # need to track points added each iteration for optimized outlier_dict handling
+                points_added = 0
+                #outlier_dict = {x:[y,z] for x,y,z in zip(list(mrc.keys()), list(mrc.values()), z_yd2) if (z &gt;= outlier_z)
+                #       and all(abs(x-i) &gt;= x_width for i in outlier_points.keys()) and
+                #       all(abs(y-j) &gt;= y_height for j in outlier_points.values())}
+                
+                # optimization: use zero_mrc (which is much smaller) until z &lt; 0
+                if outlier_z &gt;= 0:
+                        outlier_dict = {x[0]:x[1][0] for x in zero_mrc.items() if (x[1][1] &gt;= outlier_z)
+                                and all((abs(x[0]-i) &gt;= x_width) and (abs(x[1][0]-j) &gt;= y_height) for i,j in outlier_points.items())}
+                elif outlier_z == (0 - delta_z):
+                        outlier_dict = {x[0]:x[1] for x,y in zip(mrc.items(), z_yd2) if (y &gt;= outlier_z)
+                                and all((abs(x[0]-i) &gt;= x_width) and (abs(x[1]-j) &gt;= y_height) for i,j in outlier_points.items())}
+
+                group = []
+                for k,v in sorted(outlier_dict.items()):
+                        if len(group) == 0:
+                                group += [[k,v]]
+                        elif (k - group[-1][0]) &lt; x_width:
+                                group += [[k,v]]
+                        else:
+                                # NOTE: outlier_best is only picking from the points in the group, NOT the entire MRC window
+                                outlier_best = min(group, key=lambda x: x[1])
+                                if all(abs(outlier_best[1]-i) &gt;= y_height for i in outlier_points.values()):
+                                        outlier_points[outlier_best[0]] = outlier_best[1]
+                                        points_added += 1
+                                group = [[k,v]]
+                if len(group) &gt; 0:
+                        outlier_best = min(group, key=lambda x: x[1])
+                        if all(abs(outlier_best[1]-i) &gt;= y_height for i in outlier_points.values()):
+                                outlier_points[outlier_best[0]] = outlier_best[1]
+                                points_added += 1
+                
+                # terminating condition. there are no more candidate points
+                if outlier_z &lt;= min_zscore and points_added == 0:
+                        break
+
+                outlier_z -= delta_z
+
+                
+        # sweep through and points to avoid picking concavity issues
+        outlier_min_mr = 1.0
+        outlier_keys = list(sorted(outlier_points.keys()))
+        for k in outlier_keys:
+                if outlier_points[k] &gt; outlier_min_mr:
+                        del outlier_points[k]
+                else:
+                        outlier_min_mr = outlier_points[k]
+
+        # returns sorted list of cache sizes
+        if not plot:
+                return sorted(outlier_points.keys())
+        else:
+                return (outlier_points, z_yd2)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="knee.pointSelector.dict_to_lists"><code class="name flex">
+<span>def <span class="ident">dict_to_lists</span></span>(<span>d)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dict_to_lists(d):
+        x = []
+        y = []
+        for k, v in d.items():
+                x.append(k)
+                y.append(v)
+        return (np.array(x), np.array(y))</code></pre>
+</details>
+</dd>
+<dt id="knee.pointSelector.dict_to_points"><code class="name flex">
+<span>def <span class="ident">dict_to_points</span></span>(<span>d)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dict_to_points(d):
+        points = []
+        for k, v in d.items():
+                points.append([k, v])
+        return np.array(points)</code></pre>
+</details>
+</dd>
+<dt id="knee.pointSelector.getPoints"><code class="name flex">
+<span>def <span class="ident">getPoints</span></span>(<span>mrc, x_dist=0.05, y_dist=0.05, delta_z=0.05, plot=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>use our outlier method to find interesting points in an MRC
+@mrc: MRC dict of some trace
+@x_dist: % of max cache size between points
+@y_dist: % of max - min miss ratio between points
+@plot: set True if you want to return data useful for plotting</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getPoints(mrc, x_dist=0.05, y_dist=0.05, delta_z=0.05, plot=False):
+        &#39;&#39;&#39;
+        use our outlier method to find interesting points in an MRC
+        @mrc: MRC dict of some trace
+        @x_dist: % of max cache size between points
+        @y_dist: % of max - min miss ratio between points
+        @plot: set True if you want to return data useful for plotting
+        &#39;&#39;&#39;
+
+        uniq_reqs = len(mrc)
+                
+        if uniq_reqs &lt; 3:
+                print(&#39;pointSelector: &lt; 3 unique requests in workload&#39;)
+                return []
+                
+        if min(mrc.values()) == 1:
+                logger.warning(&#39;pointSelector: workload completely random (dont bother caching)&#39;)
+                return []
+
+        # get absolute x and y distances
+        x_width = max(1, int(uniq_reqs  * x_dist))
+        y_height = (max(mrc.values())-  min(mrc.values())) * y_dist
+
+        # get 2nd derivative yd2 using central difference formula
+        #x_range = np.linspace(1, uniq_reqs, uniq_reqs, dtype=int)
+        #def mrc_wrapper(x):
+        # return np.array([mrc[int(i)] for i in x])
+        #yd2_temp = derivative(mrc_wrapper, x_range[1:-1], dx=1.0, n=2)
+        # since using central dif, first and last element can not be calculated
+        #yd2 = [0] + list(yd2_temp) + [0]
+
+        x, y = dict_to_lists(mrc)
+        yd2 = np.gradient(y, x, edge_order=2)
+
+        #logger.info(&#39;yd2 = %s&#39;, yd2)
+
+        # remove negative 2nd derivatives
+        #yd2 = np.array([x if x &gt; 0 else 0 for x in yd2])
+        #yd2 = [y if y &gt; 0 else fabs(y) for y in yd2]
+        yd2 = np.fabs(yd2)
+        # get zscore of yd2
+        #z_yd2 = zscore(yd2)
+        z_yd2 = zscore_array(x, yd2)
+        min_zscore = min(z_yd2)
+                
+        # optimization: create an mrc with points that have &gt;= 0 z-score 
+        zero_mrc = {x[0]:[x[1],z] for x,z in zip(mrc.items(), z_yd2) if z &gt;= 0}
+        
+        # main loop. start with outliers &gt;= 3 z-score
+        outlier_z = 3
+        outlier_points = {}
+        while True:
+
+                # need to track points added each iteration for optimized outlier_dict handling
+                points_added = 0
+                #outlier_dict = {x:[y,z] for x,y,z in zip(list(mrc.keys()), list(mrc.values()), z_yd2) if (z &gt;= outlier_z)
+                #       and all(abs(x-i) &gt;= x_width for i in outlier_points.keys()) and
+                #       all(abs(y-j) &gt;= y_height for j in outlier_points.values())}
+                
+                # optimization: use zero_mrc (which is much smaller) until z &lt; 0
+                if outlier_z &gt;= 0:
+                        outlier_dict = {x[0]:x[1][0] for x in zero_mrc.items() if (x[1][1] &gt;= outlier_z)
+                                and all((abs(x[0]-i) &gt;= x_width) and (abs(x[1][0]-j) &gt;= y_height) for i,j in outlier_points.items())}
+                elif outlier_z == (0 - delta_z):
+                        outlier_dict = {x[0]:x[1] for x,y in zip(mrc.items(), z_yd2) if (y &gt;= outlier_z)
+                                and all((abs(x[0]-i) &gt;= x_width) and (abs(x[1]-j) &gt;= y_height) for i,j in outlier_points.items())}
+
+                group = []
+                for k,v in sorted(outlier_dict.items()):
+                        if len(group) == 0:
+                                group += [[k,v]]
+                        elif (k - group[-1][0]) &lt; x_width:
+                                group += [[k,v]]
+                        else:
+                                # NOTE: outlier_best is only picking from the points in the group, NOT the entire MRC window
+                                outlier_best = min(group, key=lambda x: x[1])
+                                if all(abs(outlier_best[1]-i) &gt;= y_height for i in outlier_points.values()):
+                                        outlier_points[outlier_best[0]] = outlier_best[1]
+                                        points_added += 1
+                                group = [[k,v]]
+                if len(group) &gt; 0:
+                        outlier_best = min(group, key=lambda x: x[1])
+                        if all(abs(outlier_best[1]-i) &gt;= y_height for i in outlier_points.values()):
+                                outlier_points[outlier_best[0]] = outlier_best[1]
+                                points_added += 1
+                
+                # terminating condition. there are no more candidate points
+                if outlier_z &lt;= min_zscore and points_added == 0:
+                        break
+
+                outlier_z -= delta_z
+
+                
+        # sweep through and points to avoid picking concavity issues
+        outlier_min_mr = 1.0
+        outlier_keys = list(sorted(outlier_points.keys()))
+        for k in outlier_keys:
+                if outlier_points[k] &gt; outlier_min_mr:
+                        del outlier_points[k]
+                else:
+                        outlier_min_mr = outlier_points[k]
+
+        # returns sorted list of cache sizes
+        if not plot:
+                return sorted(outlier_points.keys())
+        else:
+                return (outlier_points, z_yd2)</code></pre>
+</details>
+</dd>
+<dt id="knee.pointSelector.get_knees"><code class="name flex">
+<span>def <span class="ident">get_knees</span></span>(<span>x, y)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_knees(x, y):
+        mrc = lists_to_dict(x, y)
+        rv = getPoints(mrc)
+        #convert x points into indexes:
+        return map_index(x, np.array(rv))</code></pre>
+</details>
+</dd>
+<dt id="knee.pointSelector.get_knees_points"><code class="name flex">
+<span>def <span class="ident">get_knees_points</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_knees_points(points):
+        x = points[:, 0]
+        y = points[:, 1]
+        return get_knees(x, y)</code></pre>
+</details>
+</dd>
+<dt id="knee.pointSelector.lists_to_dict"><code class="name flex">
+<span>def <span class="ident">lists_to_dict</span></span>(<span>x, y)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lists_to_dict(x, y):
+        rv = {}
+        for i in range(len(x)):
+                rv[x[i]] = y[i]
+        return rv</code></pre>
+</details>
+</dd>
+<dt id="knee.pointSelector.map_index"><code class="name flex">
+<span>def <span class="ident">map_index</span></span>(<span>a, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_index(a, b):
+        sort_idx = np.argsort(a)
+        out = sort_idx[np.searchsorted(a, b, sorter = sort_idx)]
+        return out
+        
+        #index = 
+        #sorted_x = x[index]
+        #sorted_index = np.searchsorted(sorted_x, y)</code></pre>
+</details>
+</dd>
+<dt id="knee.pointSelector.points_to_dict"><code class="name flex">
+<span>def <span class="ident">points_to_dict</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def points_to_dict(points):
+        rv = {}
+        for point in points:
+                rv[point[0]] = point[1]
+        return rv</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="knee" href="index.html">knee</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="knee.pointSelector.dict_to_lists" href="#knee.pointSelector.dict_to_lists">dict_to_lists</a></code></li>
+<li><code><a title="knee.pointSelector.dict_to_points" href="#knee.pointSelector.dict_to_points">dict_to_points</a></code></li>
+<li><code><a title="knee.pointSelector.getPoints" href="#knee.pointSelector.getPoints">getPoints</a></code></li>
+<li><code><a title="knee.pointSelector.get_knees" href="#knee.pointSelector.get_knees">get_knees</a></code></li>
+<li><code><a title="knee.pointSelector.get_knees_points" href="#knee.pointSelector.get_knees_points">get_knees_points</a></code></li>
+<li><code><a title="knee.pointSelector.lists_to_dict" href="#knee.pointSelector.lists_to_dict">lists_to_dict</a></code></li>
+<li><code><a title="knee.pointSelector.map_index" href="#knee.pointSelector.map_index">map_index</a></code></li>
+<li><code><a title="knee.pointSelector.points_to_dict" href="#knee.pointSelector.points_to_dict">points_to_dict</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

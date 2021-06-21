@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>knee.kneedle API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML" integrity="sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>knee.kneedle</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># coding: utf-8
+
+__author__ = &#39;Mário Antunes&#39;
+__version__ = &#39;0.1&#39;
+__email__ = &#39;mariolpantunes@gmail.com&#39;
+__status__ = &#39;Development&#39;
+
+
+import math
+import enum
+import logging
+import numpy as np
+from knee.linear_fit import linear_fit_points
+import knee.multi_knee as mk
+from uts import ema, peak_detection
+
+
+logger = logging.getLogger(__name__)
+
+
+class Direction(enum.Enum):
+    Increasing=&#39;increasing&#39;
+    Decreasing=&#39;decreasing&#39;
+
+    def __str__(self):
+        return self.value
+
+
+class Concavity(enum.Enum):
+    Counterclockwise=&#39;counter-clockwise&#39;
+    Clockwise=&#39;clockwise&#39;
+
+    def __str__(self):
+        return self.value
+
+
+def differences(points, cd, cc):
+    rv = np.empty(points.shape)
+    
+    if cd is Direction.Decreasing and cc is Concavity.Clockwise:
+        for i in range(0, len(points)):
+            rv[i][0] = points[i][0]
+            rv[i][1] = points[i][0] + points[i][1] # x + y
+    elif cd is Direction.Decreasing and cc is Concavity.Counterclockwise:
+        for i in range(0, len(points)):
+            rv[i][0] = points[i][0]
+            rv[i][1] = 1.0 - (points[i][0] + points[i][1]) # 1.0 - (x + y)
+    elif cd is Direction.Increasing and cc is Concavity.Clockwise:
+        for i in range(0, len(points)):
+            rv[i][0] = points[i][0]
+            rv[i][1] = points[i][1] - points[i][0] # y - x
+    else:
+        for i in range(0, len(points)):
+            rv[i][0] = points[i][0]
+            rv[i][1] = math.fabs(points[i][1] - points[i][0]) # abs(y - x)
+    
+    return rv
+
+
+def single_knee(points, t, cd, cc):
+    Ds = ema.linear(points, t)
+    pmin = Ds.min(axis = 0)
+    pmax = Ds.max(axis = 0)
+    Dn = (Ds - pmin)/(pmax - pmin)
+    Dd = differences(Dn, cd, cc)
+    peaks = peak_detection.all_peaks(Dd)
+    idx = peak_detection.highest_peak(points, peaks)
+    if idx == -1:
+        return None
+    else:
+        return idx
+
+
+def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
+    Ds = ema.linear(points, 1.0)
+    #print(Ds)
+
+    pmin = Ds.min(axis = 0)
+    pmax = Ds.max(axis = 0)
+    Dn = (Ds - pmin)/(pmax - pmin)
+    #print(Dn)
+
+    Dd = differences(Dn, cd, cc)
+    #print(Dd)
+
+    idx = []
+    lmxThresholds = []
+    detectKneeForLastLmx = False
+    knees=[]
+
+    for i in range(1, len(Dd)-1):
+        y0 = Dd[i-1][1]
+        y = Dd[i][1]
+        y1 = Dd[i+1][1]
+        
+        if y0 &lt; y and y &gt; y1:
+            idx.append(i)
+            tlmx = y - sensitivity / (len(Dd) - 1)
+            lmxThresholds.append(tlmx)
+            detectKneeForLastLmx = True
+        
+        if detectKneeForLastLmx:
+            if y1 &lt; lmxThresholds[-1]:
+                knees.append(idx[-1])
+                detectKneeForLastLmx = False
+
+    if debug:
+        return {&#39;knees&#39;: np.array(knees),
+        &#39;Ds&#39;:Ds, &#39;Dn&#39;: Dn, &#39;Dd&#39;:Dd}        
+
+    return np.array(knees)
+
+
+def knee2(points, sensitivity, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
+    Ds = ema.linear(points, 1.0)
+    #print(Ds)
+
+    pmin = Ds.min(axis = 0)
+    pmax = Ds.max(axis = 0)
+    Dn = (Ds - pmin)/(pmax - pmin)
+    #print(Dn)
+
+    Dd = differences(Dn, cd, cc)
+    #print(Dd)
+
+    # Original Code
+    idx = []
+    lmxThresholds = []
+    detectKneeForLastLmx = False
+    knees=[]
+
+    for i in range(1, len(Dd)-1):
+        y0 = Dd[i-1][1]
+        y = Dd[i][1]
+        y1 = Dd[i+1][1]
+        
+        if y0 &lt; y and y &gt; y1:
+            idx.append(i)
+            tlmx = y - sensitivity / (len(Dd) - 1)
+            lmxThresholds.append(tlmx)
+            detectKneeForLastLmx = True
+        
+        if detectKneeForLastLmx:
+            if y1 &lt; lmxThresholds[-1]:
+                knees.append(idx[-1])
+                detectKneeForLastLmx = False
+
+    # New version
+    peaks_idx = peak_detection.all_peaks(Dd)
+
+    significant_peaks_idx =  peak_detection.significant_peaks(Dd, peaks_idx, 0.25)
+    
+    knees_significant=[]
+    for i in range(0, len(significant_peaks_idx)):
+        if significant_peaks_idx[i]:
+            knees_significant.append(i)
+
+    significant_peaks_idx =  peak_detection.significant_zscore_peaks(Dd, peaks_idx)
+    
+    knees_z=[]
+    for i in range(0, len(significant_peaks_idx)):
+        if significant_peaks_idx[i]:
+            knees_z.append(i)
+    
+    knees_iso = []
+    significant_peaks_idx = peak_detection.significant_zscore_peaks_iso(Dd, peaks_idx)
+    for i in range(0, len(significant_peaks_idx)):
+        if significant_peaks_idx[i]:
+            knees_iso.append(i)
+
+    #print(knees)
+
+    if debug:
+        return {
+        &#39;knees_z&#39;: np.array(knees_z),
+        &#39;knees&#39;: np.array(knees),
+        &#39;knees_significant&#39;: np.array(knees_significant),
+        &#39;knees_iso&#39;: np.array(knees_iso),
+        &#39;Ds&#39;:Ds, &#39;Dn&#39;: Dn, &#39;Dd&#39;:Dd}        
+
+    return np.array(knees)
+
+
+def auto_knee(points, sensitivity=1.0, debug=False):
+    start = points[0]
+    end = points[-1]
+
+    m = (end[1] - start[1]) / (end[0] - start[0])
+    b = start[1] - (m * start[0])
+
+    if m &gt; 0.0:
+        cd = Direction.Increasing
+    else:
+        cd = Direction.Decreasing
+    
+    #y = np.transpose(points)[1]
+    #x = points[:,0]
+    y = points[:,1]
+    yhat = np.empty(len(points))
+    for i in range(0, len(points)):
+        yhat[i] = points[i][0]*m+b
+
+    vote = np.sum(y - yhat)
+
+    if cd is Direction.Increasing and vote &gt; 0:
+        cc = Concavity.Clockwise
+    elif cd is Direction.Increasing and vote &lt;= 0:
+        cc = Concavity.Counterclockwise
+    elif cd is Direction.Decreasing and vote &gt; 0:
+        cc = Concavity.Clockwise
+    else:
+        cc = Concavity.Counterclockwise
+    
+    knees_1 = knee2(points, sensitivity, cd, cc, debug)
+    
+    if cc is Concavity.Clockwise:
+        knees_2 = knee2(points, sensitivity, cd, Concavity.Counterclockwise, debug)
+    else:
+        knees_2 = knee2(points, sensitivity, cd, Concavity.Clockwise, debug)
+
+
+    if debug:
+        # Merge results from dual kneedle
+        keys = [&#39;knees_z&#39;, &#39;knees&#39;, &#39;knees_significant&#39;, &#39;knees_iso&#39;]
+        knees = knees_1
+
+        for key in keys:
+            tmp_1 = knees_1[key]
+            tmp_2 = knees_2[key]
+            tmp = np.concatenate((tmp_1, tmp_2))
+            tmp = np.unique(tmp)
+            tmp.sort
+            knees[key] = tmp
+    else:
+        knees = np.concatenate((knees_1, knees_2))
+        knees = np.unique(knees)
+        knees.sort
+         
+    return knees
+
+
+def get_knee(points, t=1):
+    b, m = linear_fit_points(points)
+    
+    if m &gt; 0.0:
+        cd = Direction.Increasing
+    else:
+        cd = Direction.Decreasing
+
+    y = points[:,1]
+    yhat = np.empty(len(points))
+    for i in range(0, len(points)):
+        yhat[i] = points[i][0]*m+b
+
+    vote = np.sum(y - yhat)
+
+    if cd is Direction.Increasing and vote &gt; 0:
+        cc = Concavity.Clockwise
+    elif cd is Direction.Increasing and vote &lt;= 0:
+        cc = Concavity.Counterclockwise
+    elif cd is Direction.Decreasing and vote &gt; 0:
+        cc = Concavity.Clockwise
+    else:
+        cc = Concavity.Counterclockwise
+    
+    return single_knee(points, t, cd, cc)
+
+
+def multi_knee(points, t1=0.99, t2=2):
+    return mk.multi_knee(get_knee, points, t1, t2)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="knee.kneedle.auto_knee"><code class="name flex">
+<span>def <span class="ident">auto_knee</span></span>(<span>points, sensitivity=1.0, debug=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def auto_knee(points, sensitivity=1.0, debug=False):
+    start = points[0]
+    end = points[-1]
+
+    m = (end[1] - start[1]) / (end[0] - start[0])
+    b = start[1] - (m * start[0])
+
+    if m &gt; 0.0:
+        cd = Direction.Increasing
+    else:
+        cd = Direction.Decreasing
+    
+    #y = np.transpose(points)[1]
+    #x = points[:,0]
+    y = points[:,1]
+    yhat = np.empty(len(points))
+    for i in range(0, len(points)):
+        yhat[i] = points[i][0]*m+b
+
+    vote = np.sum(y - yhat)
+
+    if cd is Direction.Increasing and vote &gt; 0:
+        cc = Concavity.Clockwise
+    elif cd is Direction.Increasing and vote &lt;= 0:
+        cc = Concavity.Counterclockwise
+    elif cd is Direction.Decreasing and vote &gt; 0:
+        cc = Concavity.Clockwise
+    else:
+        cc = Concavity.Counterclockwise
+    
+    knees_1 = knee2(points, sensitivity, cd, cc, debug)
+    
+    if cc is Concavity.Clockwise:
+        knees_2 = knee2(points, sensitivity, cd, Concavity.Counterclockwise, debug)
+    else:
+        knees_2 = knee2(points, sensitivity, cd, Concavity.Clockwise, debug)
+
+
+    if debug:
+        # Merge results from dual kneedle
+        keys = [&#39;knees_z&#39;, &#39;knees&#39;, &#39;knees_significant&#39;, &#39;knees_iso&#39;]
+        knees = knees_1
+
+        for key in keys:
+            tmp_1 = knees_1[key]
+            tmp_2 = knees_2[key]
+            tmp = np.concatenate((tmp_1, tmp_2))
+            tmp = np.unique(tmp)
+            tmp.sort
+            knees[key] = tmp
+    else:
+        knees = np.concatenate((knees_1, knees_2))
+        knees = np.unique(knees)
+        knees.sort
+         
+    return knees</code></pre>
+</details>
+</dd>
+<dt id="knee.kneedle.differences"><code class="name flex">
+<span>def <span class="ident">differences</span></span>(<span>points, cd, cc)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def differences(points, cd, cc):
+    rv = np.empty(points.shape)
+    
+    if cd is Direction.Decreasing and cc is Concavity.Clockwise:
+        for i in range(0, len(points)):
+            rv[i][0] = points[i][0]
+            rv[i][1] = points[i][0] + points[i][1] # x + y
+    elif cd is Direction.Decreasing and cc is Concavity.Counterclockwise:
+        for i in range(0, len(points)):
+            rv[i][0] = points[i][0]
+            rv[i][1] = 1.0 - (points[i][0] + points[i][1]) # 1.0 - (x + y)
+    elif cd is Direction.Increasing and cc is Concavity.Clockwise:
+        for i in range(0, len(points)):
+            rv[i][0] = points[i][0]
+            rv[i][1] = points[i][1] - points[i][0] # y - x
+    else:
+        for i in range(0, len(points)):
+            rv[i][0] = points[i][0]
+            rv[i][1] = math.fabs(points[i][1] - points[i][0]) # abs(y - x)
+    
+    return rv</code></pre>
+</details>
+</dd>
+<dt id="knee.kneedle.get_knee"><code class="name flex">
+<span>def <span class="ident">get_knee</span></span>(<span>points, t=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_knee(points, t=1):
+    b, m = linear_fit_points(points)
+    
+    if m &gt; 0.0:
+        cd = Direction.Increasing
+    else:
+        cd = Direction.Decreasing
+
+    y = points[:,1]
+    yhat = np.empty(len(points))
+    for i in range(0, len(points)):
+        yhat[i] = points[i][0]*m+b
+
+    vote = np.sum(y - yhat)
+
+    if cd is Direction.Increasing and vote &gt; 0:
+        cc = Concavity.Clockwise
+    elif cd is Direction.Increasing and vote &lt;= 0:
+        cc = Concavity.Counterclockwise
+    elif cd is Direction.Decreasing and vote &gt; 0:
+        cc = Concavity.Clockwise
+    else:
+        cc = Concavity.Counterclockwise
+    
+    return single_knee(points, t, cd, cc)</code></pre>
+</details>
+</dd>
+<dt id="knee.kneedle.knee"><code class="name flex">
+<span>def <span class="ident">knee</span></span>(<span>points, sensitivity=1.0, cd=decreasing, cc=clockwise, debug=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def knee(points, sensitivity = 1.0, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
+    Ds = ema.linear(points, 1.0)
+    #print(Ds)
+
+    pmin = Ds.min(axis = 0)
+    pmax = Ds.max(axis = 0)
+    Dn = (Ds - pmin)/(pmax - pmin)
+    #print(Dn)
+
+    Dd = differences(Dn, cd, cc)
+    #print(Dd)
+
+    idx = []
+    lmxThresholds = []
+    detectKneeForLastLmx = False
+    knees=[]
+
+    for i in range(1, len(Dd)-1):
+        y0 = Dd[i-1][1]
+        y = Dd[i][1]
+        y1 = Dd[i+1][1]
+        
+        if y0 &lt; y and y &gt; y1:
+            idx.append(i)
+            tlmx = y - sensitivity / (len(Dd) - 1)
+            lmxThresholds.append(tlmx)
+            detectKneeForLastLmx = True
+        
+        if detectKneeForLastLmx:
+            if y1 &lt; lmxThresholds[-1]:
+                knees.append(idx[-1])
+                detectKneeForLastLmx = False
+
+    if debug:
+        return {&#39;knees&#39;: np.array(knees),
+        &#39;Ds&#39;:Ds, &#39;Dn&#39;: Dn, &#39;Dd&#39;:Dd}        
+
+    return np.array(knees)</code></pre>
+</details>
+</dd>
+<dt id="knee.kneedle.knee2"><code class="name flex">
+<span>def <span class="ident">knee2</span></span>(<span>points, sensitivity, cd=decreasing, cc=clockwise, debug=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def knee2(points, sensitivity, cd=Direction.Decreasing, cc=Concavity.Clockwise, debug=False):
+    Ds = ema.linear(points, 1.0)
+    #print(Ds)
+
+    pmin = Ds.min(axis = 0)
+    pmax = Ds.max(axis = 0)
+    Dn = (Ds - pmin)/(pmax - pmin)
+    #print(Dn)
+
+    Dd = differences(Dn, cd, cc)
+    #print(Dd)
+
+    # Original Code
+    idx = []
+    lmxThresholds = []
+    detectKneeForLastLmx = False
+    knees=[]
+
+    for i in range(1, len(Dd)-1):
+        y0 = Dd[i-1][1]
+        y = Dd[i][1]
+        y1 = Dd[i+1][1]
+        
+        if y0 &lt; y and y &gt; y1:
+            idx.append(i)
+            tlmx = y - sensitivity / (len(Dd) - 1)
+            lmxThresholds.append(tlmx)
+            detectKneeForLastLmx = True
+        
+        if detectKneeForLastLmx:
+            if y1 &lt; lmxThresholds[-1]:
+                knees.append(idx[-1])
+                detectKneeForLastLmx = False
+
+    # New version
+    peaks_idx = peak_detection.all_peaks(Dd)
+
+    significant_peaks_idx =  peak_detection.significant_peaks(Dd, peaks_idx, 0.25)
+    
+    knees_significant=[]
+    for i in range(0, len(significant_peaks_idx)):
+        if significant_peaks_idx[i]:
+            knees_significant.append(i)
+
+    significant_peaks_idx =  peak_detection.significant_zscore_peaks(Dd, peaks_idx)
+    
+    knees_z=[]
+    for i in range(0, len(significant_peaks_idx)):
+        if significant_peaks_idx[i]:
+            knees_z.append(i)
+    
+    knees_iso = []
+    significant_peaks_idx = peak_detection.significant_zscore_peaks_iso(Dd, peaks_idx)
+    for i in range(0, len(significant_peaks_idx)):
+        if significant_peaks_idx[i]:
+            knees_iso.append(i)
+
+    #print(knees)
+
+    if debug:
+        return {
+        &#39;knees_z&#39;: np.array(knees_z),
+        &#39;knees&#39;: np.array(knees),
+        &#39;knees_significant&#39;: np.array(knees_significant),
+        &#39;knees_iso&#39;: np.array(knees_iso),
+        &#39;Ds&#39;:Ds, &#39;Dn&#39;: Dn, &#39;Dd&#39;:Dd}        
+
+    return np.array(knees)</code></pre>
+</details>
+</dd>
+<dt id="knee.kneedle.multi_knee"><code class="name flex">
+<span>def <span class="ident">multi_knee</span></span>(<span>points, t1=0.99, t2=2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def multi_knee(points, t1=0.99, t2=2):
+    return mk.multi_knee(get_knee, points, t1, t2)</code></pre>
+</details>
+</dd>
+<dt id="knee.kneedle.single_knee"><code class="name flex">
+<span>def <span class="ident">single_knee</span></span>(<span>points, t, cd, cc)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def single_knee(points, t, cd, cc):
+    Ds = ema.linear(points, t)
+    pmin = Ds.min(axis = 0)
+    pmax = Ds.max(axis = 0)
+    Dn = (Ds - pmin)/(pmax - pmin)
+    Dd = differences(Dn, cd, cc)
+    peaks = peak_detection.all_peaks(Dd)
+    idx = peak_detection.highest_peak(points, peaks)
+    if idx == -1:
+        return None
+    else:
+        return idx</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="knee.kneedle.Concavity"><code class="flex name class">
+<span>class <span class="ident">Concavity</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Concavity(enum.Enum):
+    Counterclockwise=&#39;counter-clockwise&#39;
+    Clockwise=&#39;clockwise&#39;
+
+    def __str__(self):
+        return self.value</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="knee.kneedle.Concavity.Clockwise"><code class="name">var <span class="ident">Clockwise</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.kneedle.Concavity.Counterclockwise"><code class="name">var <span class="ident">Counterclockwise</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="knee.kneedle.Direction"><code class="flex name class">
+<span>class <span class="ident">Direction</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Direction(enum.Enum):
+    Increasing=&#39;increasing&#39;
+    Decreasing=&#39;decreasing&#39;
+
+    def __str__(self):
+        return self.value</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="knee.kneedle.Direction.Decreasing"><code class="name">var <span class="ident">Decreasing</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.kneedle.Direction.Increasing"><code class="name">var <span class="ident">Increasing</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="knee" href="index.html">knee</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="knee.kneedle.auto_knee" href="#knee.kneedle.auto_knee">auto_knee</a></code></li>
+<li><code><a title="knee.kneedle.differences" href="#knee.kneedle.differences">differences</a></code></li>
+<li><code><a title="knee.kneedle.get_knee" href="#knee.kneedle.get_knee">get_knee</a></code></li>
+<li><code><a title="knee.kneedle.knee" href="#knee.kneedle.knee">knee</a></code></li>
+<li><code><a title="knee.kneedle.knee2" href="#knee.kneedle.knee2">knee2</a></code></li>
+<li><code><a title="knee.kneedle.multi_knee" href="#knee.kneedle.multi_knee">multi_knee</a></code></li>
+<li><code><a title="knee.kneedle.single_knee" href="#knee.kneedle.single_knee">single_knee</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="knee.kneedle.Concavity" href="#knee.kneedle.Concavity">Concavity</a></code></h4>
+<ul class="">
+<li><code><a title="knee.kneedle.Concavity.Clockwise" href="#knee.kneedle.Concavity.Clockwise">Clockwise</a></code></li>
+<li><code><a title="knee.kneedle.Concavity.Counterclockwise" href="#knee.kneedle.Concavity.Counterclockwise">Counterclockwise</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="knee.kneedle.Direction" href="#knee.kneedle.Direction">Direction</a></code></h4>
+<ul class="">
+<li><code><a title="knee.kneedle.Direction.Decreasing" href="#knee.kneedle.Direction.Decreasing">Decreasing</a></code></li>
+<li><code><a title="knee.kneedle.Direction.Increasing" href="#knee.kneedle.Direction.Increasing">Increasing</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

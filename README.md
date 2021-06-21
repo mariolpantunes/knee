@@ -17,7 +17,7 @@ Run the following commands to the produce the documentation for this library.
 
 ```bash
 pip install pdoc3
-pdoc --html knee --force
+pdoc -c latex_math=True --html -o docs knee --force
 ```
 
 ## Instalation
