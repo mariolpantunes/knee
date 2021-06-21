@@ -47,7 +47,7 @@ def get_knee_gradient(gradient: np.ndarray) -> int:
     return knee
 
 
-def knee_points(points: np.ndarray) -> int:
+def knee(points: np.ndarray) -> int:
     """Returns the index of the knee point based on the DFDT method.
     
     It uses the iterative refinement  method.
@@ -74,7 +74,7 @@ def knee_points(points: np.ndarray) -> int:
     return knee
 
 
-def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=2) -> np.ndarray:
+def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=3) -> np.ndarray:
     """Recursive knee point detection based on DFDT.
     
     It returns the knee points on the curve.
@@ -82,10 +82,10 @@ def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=2) -> np.ndarray:
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t1 (float): coefficient of determination threshold (default 0.99)
-        t2 (int): number of points threshold (default 2)
+        t2 (int): number of points threshold (default 3)
 
     Returns:
         np.ndarray: The knee points on the curve
 
     """
-    return mk.multi_knee(knee_points, points, t1, t2)
+    return mk.multi_knee(knee, points, t1, t2)

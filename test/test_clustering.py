@@ -61,3 +61,7 @@ class TestClustering(unittest.TestCase):
         result = average_linkage(points, 0.2)
         desired = np.array([0,1,2,3,4])
         np.testing.assert_array_equal(result, desired)
+
+
+if __name__ == '__main__':
+    unittest.main()

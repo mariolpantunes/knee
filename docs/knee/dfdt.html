@@ -76,7 +76,7 @@ def get_knee_gradient(gradient: np.ndarray) -&gt; int:
     return knee
 
 
-def knee_points(points: np.ndarray) -&gt; int:
+def knee(points: np.ndarray) -&gt; int:
     &#34;&#34;&#34;Returns the index of the knee point based on the DFDT method.
     
     It uses the iterative refinement  method.
@@ -103,7 +103,7 @@ def knee_points(points: np.ndarray) -&gt; int:
     return knee
 
 
-def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=2) -&gt; np.ndarray:
+def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=3) -&gt; np.ndarray:
     &#34;&#34;&#34;Recursive knee point detection based on DFDT.
     
     It returns the knee points on the curve.
@@ -111,13 +111,13 @@ def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=2) -&gt; np.ndarray:
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t1 (float): coefficient of determination threshold (default 0.99)
-        t2 (int): number of points threshold (default 2)
+        t2 (int): number of points threshold (default 3)
 
     Returns:
         np.ndarray: The knee points on the curve
 
     &#34;&#34;&#34;
-    return mk.multi_knee(knee_points, points, t1, t2)</code></pre>
+    return mk.multi_knee(knee, points, t1, t2)</code></pre>
 </details>
 </section>
 <section>
@@ -196,8 +196,8 @@ def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=2) -&gt; np.ndarray:
     return knee</code></pre>
 </details>
 </dd>
-<dt id="knee.dfdt.knee_points"><code class="name flex">
-<span>def <span class="ident">knee_points</span></span>(<span>points: numpy.ndarray) ‑> int</span>
+<dt id="knee.dfdt.knee"><code class="name flex">
+<span>def <span class="ident">knee</span></span>(<span>points: numpy.ndarray) ‑> int</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the index of the knee point based on the DFDT method.</p>
@@ -217,7 +217,7 @@ method.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def knee_points(points: np.ndarray) -&gt; int:
+<pre><code class="python">def knee(points: np.ndarray) -&gt; int:
     &#34;&#34;&#34;Returns the index of the knee point based on the DFDT method.
     
     It uses the iterative refinement  method.
@@ -245,7 +245,7 @@ method.</p>
 </details>
 </dd>
 <dt id="knee.dfdt.multi_knee"><code class="name flex">
-<span>def <span class="ident">multi_knee</span></span>(<span>points: numpy.ndarray, t1: float = 0.99, t2: int = 2) ‑> numpy.ndarray</span>
+<span>def <span class="ident">multi_knee</span></span>(<span>points: numpy.ndarray, t1: float = 0.99, t2: int = 3) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Recursive knee point detection based on DFDT.</p>
@@ -257,7 +257,7 @@ method.</p>
 <dt><strong><code>t1</code></strong> :&ensp;<code>float</code></dt>
 <dd>coefficient of determination threshold (default 0.99)</dd>
 <dt><strong><code>t2</code></strong> :&ensp;<code>int</code></dt>
-<dd>number of points threshold (default 2)</dd>
+<dd>number of points threshold (default 3)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -268,7 +268,7 @@ method.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=2) -&gt; np.ndarray:
+<pre><code class="python">def multi_knee(points: np.ndarray, t1:float=0.99, t2:int=3) -&gt; np.ndarray:
     &#34;&#34;&#34;Recursive knee point detection based on DFDT.
     
     It returns the knee points on the curve.
@@ -276,13 +276,13 @@ method.</p>
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t1 (float): coefficient of determination threshold (default 0.99)
-        t2 (int): number of points threshold (default 2)
+        t2 (int): number of points threshold (default 3)
 
     Returns:
         np.ndarray: The knee points on the curve
 
     &#34;&#34;&#34;
-    return mk.multi_knee(knee_points, points, t1, t2)</code></pre>
+    return mk.multi_knee(knee, points, t1, t2)</code></pre>
 </details>
 </dd>
 </dl>
@@ -305,7 +305,7 @@ method.</p>
 <ul class="">
 <li><code><a title="knee.dfdt.get_knee" href="#knee.dfdt.get_knee">get_knee</a></code></li>
 <li><code><a title="knee.dfdt.get_knee_gradient" href="#knee.dfdt.get_knee_gradient">get_knee_gradient</a></code></li>
-<li><code><a title="knee.dfdt.knee_points" href="#knee.dfdt.knee_points">knee_points</a></code></li>
+<li><code><a title="knee.dfdt.knee" href="#knee.dfdt.knee">knee</a></code></li>
 <li><code><a title="knee.dfdt.multi_knee" href="#knee.dfdt.multi_knee">multi_knee</a></code></li>
 </ul>
 </li>
