@@ -14,37 +14,58 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def single_linkage(points, t=0.2):
+def single_linkage(points:np.ndarray, t:float=0.01) -> np.ndarray:
+    """Computes the 1D clustering of the input points.
+
+    Efficient implementation that uses a single pass to compute
+    the clusters.
+    Computes the single linkage clustering based only the x axis:
+    $$
+        D(C_1, C_2) = \\min_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the threshold for merging (in percentage)
+    
+    Returns:
+        np.ndarray: the clusters ids
+    """
     clusters = []
-    cluster_index = -1
-    inside_cluster = False
+    cluster_index = 0
     duration = points[-1,0] - points[0,0]
 
-    for i in range (0, len(points)-1):
-        distance = math.fabs(points[i][0]-points[i+1][0])/duration
-        if distance < t:
-            
-            if not inside_cluster:
-                inside_cluster = True
-                cluster_index += 1
-                clusters.append(cluster_index)
-                clusters.append(cluster_index)
-            else:
-                clusters.append(cluster_index)
-        else:
-            if not inside_cluster:
-                cluster_index += 1
-                clusters.append(cluster_index)
-            inside_cluster = False
+    # First Point is a cluster
+    clusters.append(cluster_index)
 
-    if not inside_cluster:
-        cluster_index += 1
-        clusters.append(cluster_index)
+    for i in range (1, len(points)):
+        distance = math.fabs(points[i][0]-points[i-1][0])/duration
+        if distance < t:
+            clusters.append(cluster_index)
+        else:
+            cluster_index += 1
+            clusters.append(cluster_index)
 
     return np.array(clusters)
 
 
 def complete_linkage(points, t=0.01):
+    """Computes the 1D clustering of the input points.
+
+    Efficient implementation that uses a single pass to compute
+    the clusters.
+    Computes the complete linkage clustering based only the x axis:
+    $$
+        D(C_1, C_2) = \\max_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the threshold for merging (in percentage)
+    
+    Returns:
+        np.ndarray: the clusters ids
+    """
     clusters = []
     cluster_index = 0
     duration = points[-1,0] - points[0,0]
@@ -66,6 +87,22 @@ def complete_linkage(points, t=0.01):
 
 
 def average_linkage(points, t=0.01):
+    """Computes the 1D clustering of the input points.
+
+    Efficient implementation that uses a single pass to compute
+    the clusters.
+    Computes the average linkage clustering based only the x axis:
+    $$
+        D(C_1, C_2) = \\frac{1}{|C_1|}\\sum_{c_1 \\in C_1}d(c_1, C_2)
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the threshold for merging (in percentage)
+    
+    Returns:
+        np.ndarray: the clusters ids
+    """
     clusters = []
     cluster_index = 0
     duration = points[-1,0] - points[0,0]
@@ -74,8 +111,6 @@ def average_linkage(points, t=0.01):
     clusters.append(cluster_index)
     cluster_center = points[0, 0]
     cluster_size = 1
-
-    #logger.info('Cluster Center %s (%s)', cluster_center, cluster_size)
 
     for i in range (1, len(points)):
         distance = math.fabs(points[i][0] - cluster_center)/duration

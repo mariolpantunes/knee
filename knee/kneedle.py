@@ -20,22 +20,31 @@ logger = logging.getLogger(__name__)
 
 
 class Direction(enum.Enum):
-    Increasing='increasing'
-    Decreasing='decreasing'
+    """
+    Enum data type that represents the direction of a concavity.
+    """
+    Increasing = 'increasing'
+    Decreasing = 'decreasing'
 
     def __str__(self):
         return self.value
 
 
 class Concavity(enum.Enum):
-    Counterclockwise='counter-clockwise'
-    Clockwise='clockwise'
+    """
+    Enum data type that represents the rotation of a concavity.
+    """
+    Counterclockwise = 'counter-clockwise'
+    Clockwise = 'clockwise'
 
     def __str__(self):
         return self.value
 
 
 class PeakDetection(enum.Enum):
+    """
+    Enum data type that identifies the peak selection algorithm.
+    """
     Kneedle = 'Kneedle'
     ZScore = 'ZScore'
     Significant = 'Significant'
@@ -53,34 +62,34 @@ def differences(points: np.ndarray, cd: Direction, cc: Concavity) -> np.ndarray:
         points (np.ndarray): numpy array with the points (x, y)
         cd (Direction): direction of the concavity
         cc (Concavity): rotation of the concavity
-    
+
     Returns:
         np.ndarray: the points array with the differences
     """
-    
+
     rv = np.empty(points.shape)
-    
+
     if cd is Direction.Decreasing and cc is Concavity.Clockwise:
         for i in range(0, len(points)):
             rv[i][0] = points[i][0]
-            rv[i][1] = points[i][0] + points[i][1] # x + y
+            rv[i][1] = points[i][0] + points[i][1]  # x + y
     elif cd is Direction.Decreasing and cc is Concavity.Counterclockwise:
         for i in range(0, len(points)):
             rv[i][0] = points[i][0]
-            rv[i][1] = 1.0 - (points[i][0] + points[i][1]) # 1.0 - (x + y)
+            rv[i][1] = 1.0 - (points[i][0] + points[i][1])  # 1.0 - (x + y)
     elif cd is Direction.Increasing and cc is Concavity.Clockwise:
         for i in range(0, len(points)):
             rv[i][0] = points[i][0]
-            rv[i][1] = points[i][1] - points[i][0] # y - x
+            rv[i][1] = points[i][1] - points[i][0]  # y - x
     else:
         for i in range(0, len(points)):
             rv[i][0] = points[i][0]
-            rv[i][1] = math.fabs(points[i][1] - points[i][0]) # abs(y - x)
-    
+            rv[i][1] = math.fabs(points[i][1] - points[i][0])  # abs(y - x)
+
     return rv
 
 
-def single_knee(points: np.ndarray, t: float, cd:Direction, cc:Concavity) -> int:
+def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
     """Returns the index of the knee point based on the Kneedle method.
 
     Args:
@@ -93,8 +102,8 @@ def single_knee(points: np.ndarray, t: float, cd:Direction, cc:Concavity) -> int
         int: the index of the knee point
     """
     Ds = ema.linear(points, t)
-    pmin = Ds.min(axis = 0)
-    pmax = Ds.max(axis = 0)
+    pmin = Ds.min(axis=0)
+    pmax = Ds.max(axis=0)
     Dn = (Ds - pmin)/(pmax - pmin)
     Dd = differences(Dn, cd, cc)
     peaks = pd.all_peaks(Dd)
@@ -105,7 +114,7 @@ def single_knee(points: np.ndarray, t: float, cd:Direction, cc:Concavity) -> int
         return idx
 
 
-def knees(points:np.ndarray, t:float, sensitivity:float, cd:Direction, cc:Concavity, p:PeakDetection)->np.ndarray:
+def knees(points: np.ndarray, t: float, sensitivity: float, cd: Direction, cc: Concavity, p: PeakDetection) -> np.ndarray:
     """Returns the index of the knees point based on the Kneedle method.
 
     This implementation uses an heuristic to automatically define
@@ -130,13 +139,13 @@ def knees(points:np.ndarray, t:float, sensitivity:float, cd:Direction, cc:Concav
     """
     Ds = ema.linear(points, t)
 
-    pmin = Ds.min(axis = 0)
-    pmax = Ds.max(axis = 0)
+    pmin = Ds.min(axis=0)
+    pmax = Ds.max(axis=0)
     Dn = (Ds - pmin)/(pmax - pmin)
 
     Dd = differences(Dn, cd, cc)
-    
-    knees=[]
+
+    knees = []
 
     if p is PeakDetection.Kneedle:
         idx = []
@@ -146,13 +155,13 @@ def knees(points:np.ndarray, t:float, sensitivity:float, cd:Direction, cc:Concav
             y0 = Dd[i-1][1]
             y = Dd[i][1]
             y1 = Dd[i+1][1]
-            
+
             if y0 < y and y > y1:
                 idx.append(i)
                 tlmx = y - sensitivity / (len(Dd) - 1)
                 lmxThresholds.append(tlmx)
                 detectKneeForLastLmx = True
-            
+
             if detectKneeForLastLmx:
                 if y1 < lmxThresholds[-1]:
                     knees.append(idx[-1])
@@ -161,16 +170,16 @@ def knees(points:np.ndarray, t:float, sensitivity:float, cd:Direction, cc:Concav
 
     elif p is PeakDetection.Significant:
         peaks_idx = pd.all_peaks(Dd)
-        knees =  pd.significant_peaks(Dd, peaks_idx, sensitivity)
+        knees = pd.significant_peaks(Dd, peaks_idx, sensitivity)
 
     elif p is PeakDetection.ZScore:
         peaks_idx = pd.all_peaks(Dd)
-        knees =  pd.significant_zscore_peaks(Dd, peaks_idx, sensitivity)
-   
+        knees = pd.significant_zscore_peaks(Dd, peaks_idx, sensitivity)
+
     return knees
 
 
-def auto_knees(points: np.ndarray,  t:float=1.0, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle) -> np.ndarray:
+def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p: PeakDetection = PeakDetection.Kneedle) -> np.ndarray:
     """Returns the index of the knees point based on the Kneedle method.
 
     This implementation uses an heuristic to automatically define
@@ -197,18 +206,18 @@ def auto_knees(points: np.ndarray,  t:float=1.0, sensitivity:float=1.0, p:PeakDe
         cd = Direction.Increasing
     else:
         cd = Direction.Decreasing
-    
+
     knees_1 = knees(points, sensitivity, t, cd, Concavity.Counterclockwise, p)
     knees_2 = knees(points, sensitivity, t, cd, Concavity.Clockwise, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
-   
+
     return knees_idx
 
 
-def auto_knee(points: np.ndarray, t:float=1.0) -> int:
+def auto_knee(points: np.ndarray, t: float = 1.0) -> int:
     """Returns the index of the knee point based on the Kneedle method.
 
     This implementation uses an heuristic to automatically define
@@ -222,13 +231,13 @@ def auto_knee(points: np.ndarray, t:float=1.0) -> int:
         int: the index of the knee point
     """
     b, m = lf.linear_fit_points(points)
-    
+
     if m > 0.0:
         cd = Direction.Increasing
     else:
         cd = Direction.Decreasing
 
-    y = points[:,1]
+    y = points[:, 1]
     yhat = np.empty(len(points))
     for i in range(0, len(points)):
         yhat[i] = points[i][0]*m+b
@@ -243,13 +252,13 @@ def auto_knee(points: np.ndarray, t:float=1.0) -> int:
         cc = Concavity.Clockwise
     else:
         cc = Concavity.Counterclockwise
-    
+
     return single_knee(points, t, cd, cc)
 
 
 def multi_knee(points, t1=0.99, t2=3):
     """Recursive knee point detection based on Kneedle.
-    
+
     It returns the knee points on the curve.
 
     Args:
