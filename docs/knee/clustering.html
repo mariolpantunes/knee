@@ -43,7 +43,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def single_linkage(points:np.ndarray, t:float=0.01) -&gt; np.ndarray:
+def single_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
     Efficient implementation that uses a single pass to compute
@@ -55,19 +55,19 @@ def single_linkage(points:np.ndarray, t:float=0.01) -&gt; np.ndarray:
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t (float): the threshold for merging (in percentage)
-    
+        t (float): the threshold for merging (in percentage, default 0.01)
+
     Returns:
         np.ndarray: the clusters ids
     &#34;&#34;&#34;
     clusters = []
     cluster_index = 0
-    duration = points[-1,0] - points[0,0]
+    duration = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
 
-    for i in range (1, len(points)):
+    for i in range(1, len(points)):
         distance = math.fabs(points[i][0]-points[i-1][0])/duration
         if distance &lt; t:
             clusters.append(cluster_index)
@@ -78,7 +78,7 @@ def single_linkage(points:np.ndarray, t:float=0.01) -&gt; np.ndarray:
     return np.array(clusters)
 
 
-def complete_linkage(points, t=0.01):
+def complete_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
     Efficient implementation that uses a single pass to compute
@@ -90,21 +90,22 @@ def complete_linkage(points, t=0.01):
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t (float): the threshold for merging (in percentage)
-    
+        t (float): the threshold for merging (in percentage, default 0.01)
+
     Returns:
         np.ndarray: the clusters ids
     &#34;&#34;&#34;
     clusters = []
     cluster_index = 0
-    duration = points[-1,0] - points[0,0]
+    duration = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
     cluster_point_idx = 0
 
-    for i in range (1, len(points)):
-        distance = math.fabs(points[i][0]-points[cluster_point_idx][0])/duration
+    for i in range(1, len(points)):
+        distance = math.fabs(
+            points[i][0]-points[cluster_point_idx][0])/duration
         if distance &lt; t:
             clusters.append(cluster_index)
         else:
@@ -115,7 +116,7 @@ def complete_linkage(points, t=0.01):
     return np.array(clusters)
 
 
-def average_linkage(points, t=0.01):
+def average_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
     Efficient implementation that uses a single pass to compute
@@ -127,26 +128,27 @@ def average_linkage(points, t=0.01):
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t (float): the threshold for merging (in percentage)
-    
+        t (float): the threshold for merging (in percentage, default 0.01)
+
     Returns:
         np.ndarray: the clusters ids
     &#34;&#34;&#34;
     clusters = []
     cluster_index = 0
-    duration = points[-1,0] - points[0,0]
+    duration = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
     cluster_center = points[0, 0]
     cluster_size = 1
 
-    for i in range (1, len(points)):
+    for i in range(1, len(points)):
         distance = math.fabs(points[i][0] - cluster_center)/duration
         if distance &lt; t:
             clusters.append(cluster_index)
             # Update center
-            cluster_center = (cluster_size/(cluster_size+1)) * cluster_center + (1/(cluster_size+1)) * points[i][0]
+            cluster_center = (cluster_size/(cluster_size+1)) * \
+                cluster_center + (1/(cluster_size+1)) * points[i][0]
             cluster_size += 1
             #logger.info(&#39;Cluster Center %s (%s)&#39;, cluster_center, cluster_size)
         else:
@@ -167,7 +169,7 @@ def average_linkage(points, t=0.01):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.clustering.average_linkage"><code class="name flex">
-<span>def <span class="ident">average_linkage</span></span>(<span>points, t=0.01)</span>
+<span>def <span class="ident">average_linkage</span></span>(<span>points: numpy.ndarray, t: float = 0.01) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the 1D clustering of the input points.</p>
@@ -184,7 +186,7 @@ D(C_1, C_2) = \frac{1}{|C_1|}\sum_{c_1 \in C_1}d(c_1, C_2)
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
-<dd>the threshold for merging (in percentage)</dd>
+<dd>the threshold for merging (in percentage, default 0.01)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -195,7 +197,7 @@ D(C_1, C_2) = \frac{1}{|C_1|}\sum_{c_1 \in C_1}d(c_1, C_2)
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def average_linkage(points, t=0.01):
+<pre><code class="python">def average_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
     Efficient implementation that uses a single pass to compute
@@ -207,26 +209,27 @@ D(C_1, C_2) = \frac{1}{|C_1|}\sum_{c_1 \in C_1}d(c_1, C_2)
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t (float): the threshold for merging (in percentage)
-    
+        t (float): the threshold for merging (in percentage, default 0.01)
+
     Returns:
         np.ndarray: the clusters ids
     &#34;&#34;&#34;
     clusters = []
     cluster_index = 0
-    duration = points[-1,0] - points[0,0]
+    duration = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
     cluster_center = points[0, 0]
     cluster_size = 1
 
-    for i in range (1, len(points)):
+    for i in range(1, len(points)):
         distance = math.fabs(points[i][0] - cluster_center)/duration
         if distance &lt; t:
             clusters.append(cluster_index)
             # Update center
-            cluster_center = (cluster_size/(cluster_size+1)) * cluster_center + (1/(cluster_size+1)) * points[i][0]
+            cluster_center = (cluster_size/(cluster_size+1)) * \
+                cluster_center + (1/(cluster_size+1)) * points[i][0]
             cluster_size += 1
             #logger.info(&#39;Cluster Center %s (%s)&#39;, cluster_center, cluster_size)
         else:
@@ -240,7 +243,7 @@ D(C_1, C_2) = \frac{1}{|C_1|}\sum_{c_1 \in C_1}d(c_1, C_2)
 </details>
 </dd>
 <dt id="knee.clustering.complete_linkage"><code class="name flex">
-<span>def <span class="ident">complete_linkage</span></span>(<span>points, t=0.01)</span>
+<span>def <span class="ident">complete_linkage</span></span>(<span>points: numpy.ndarray, t: float = 0.01) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the 1D clustering of the input points.</p>
@@ -259,7 +262,7 @@ D(C_1, C_2) = \max_{c_1
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
-<dd>the threshold for merging (in percentage)</dd>
+<dd>the threshold for merging (in percentage, default 0.01)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -270,7 +273,7 @@ D(C_1, C_2) = \max_{c_1
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def complete_linkage(points, t=0.01):
+<pre><code class="python">def complete_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
     Efficient implementation that uses a single pass to compute
@@ -282,21 +285,22 @@ D(C_1, C_2) = \max_{c_1
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t (float): the threshold for merging (in percentage)
-    
+        t (float): the threshold for merging (in percentage, default 0.01)
+
     Returns:
         np.ndarray: the clusters ids
     &#34;&#34;&#34;
     clusters = []
     cluster_index = 0
-    duration = points[-1,0] - points[0,0]
+    duration = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
     cluster_point_idx = 0
 
-    for i in range (1, len(points)):
-        distance = math.fabs(points[i][0]-points[cluster_point_idx][0])/duration
+    for i in range(1, len(points)):
+        distance = math.fabs(
+            points[i][0]-points[cluster_point_idx][0])/duration
         if distance &lt; t:
             clusters.append(cluster_index)
         else:
@@ -327,7 +331,7 @@ D(C_1, C_2) = \min_{c_1
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
-<dd>the threshold for merging (in percentage)</dd>
+<dd>the threshold for merging (in percentage, default 0.01)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -338,7 +342,7 @@ D(C_1, C_2) = \min_{c_1
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def single_linkage(points:np.ndarray, t:float=0.01) -&gt; np.ndarray:
+<pre><code class="python">def single_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
     Efficient implementation that uses a single pass to compute
@@ -350,19 +354,19 @@ D(C_1, C_2) = \min_{c_1
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t (float): the threshold for merging (in percentage)
-    
+        t (float): the threshold for merging (in percentage, default 0.01)
+
     Returns:
         np.ndarray: the clusters ids
     &#34;&#34;&#34;
     clusters = []
     cluster_index = 0
-    duration = points[-1,0] - points[0,0]
+    duration = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
 
-    for i in range (1, len(points)):
+    for i in range(1, len(points)):
         distance = math.fabs(points[i][0]-points[i-1][0])/duration
         if distance &lt; t:
             clusters.append(cluster_index)

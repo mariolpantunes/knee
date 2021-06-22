@@ -15,17 +15,44 @@ import knee.linear_fit as lf
 logger = logging.getLogger(__name__)
 
 
-def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float):
-    x = points[:,0]
-    y = points[:,1]
+def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -> tuple[int, float, float]:
+    """Get the neighbourhood (closest points) from a to b.
+
+    The neighbourhood is defined as the longest straitgh line (defined by R2).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        a (int): the initial point of the search
+        b (int): the left limit of the search
+        t (float): R2 threshold
+
+    Returns:
+        tuple: (neighbourhood index, r2, slope)
+    """
+    x = points[:, 0]
+    y = points[:, 1]
     return get_neighbourhood(x, y, a, b, t)
 
 
-def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7):
+def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -> tuple[int, float, float]:
+    """Get the neighbourhood (closest points) from a to b.
+
+    The neighbourhood is defined as the longest straitgh line (defined by R2).
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        a (int): the initial point of the search
+        b (int): the left limit of the search
+        t (float): R2 threshold
+
+    Returns:
+        tuple: (neighbourhood index, r2, slope)
+    """
     r2 = 1.0
     i = a - 1
     _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
-    
+
     while r2 > t and i > b:
         previous_res = (i, r2, slope)
         i -= 1
@@ -40,8 +67,20 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
 
 
 def accuracy_knee(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, float, float, float]:
-    x = points[:,0]
-    y = points[:,1]
+    """Compute the accuracy heuristic for a set of knees.
+
+    The heuristic is based on the average distance of X and Y axis, the slope and the R2.
+    In this version it is used the left neighbourhood of the knee.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+
+    Returns:
+        tuple: (average_x, average_y, average_slope, average_coeffients, cost)
+    """
+    x = points[:, 0]
+    y = points[:, 1]
 
     total_x = math.fabs(x[-1] - x[0])
     total_y = math.fabs(y[-1] - y[0])
@@ -53,8 +92,8 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, 
 
     previous_knee = 0
     for i in range(0, len(knees)):
-        idx, r2, slope  = get_neighbourhood(x, y, knees[i], previous_knee)
-        
+        idx, r2, slope = get_neighbourhood(x, y, knees[i], previous_knee)
+
         delta_x = x[idx] - x[knees[i]]
         delta_y = y[idx] - y[knees[i]]
 
@@ -62,9 +101,9 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, 
         distances_y.append(math.fabs(delta_y))
         slopes.append(math.fabs(slope))
         coeffients.append(r2)
-        
+
         previous_knee = knees[i]
-    
+
     slopes = np.array(slopes)
     slopes = slopes/slopes.max()
 
@@ -88,8 +127,20 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, 
 
 
 def accuracy_trace(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, float, float, float]:
-    x = points[:,0]
-    y = points[:,1]
+    """Compute the accuracy heuristic for a set of knees.
+
+    The heuristic is based on the average distance of X and Y axis, the slope and the R2.
+    In this version it is used the points from the current knee to the previous.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+
+    Returns:
+        tuple: (average_x, average_y, average_slope, average_coeffients, cost)
+    """
+    x = points[:, 0]
+    y = points[:, 1]
 
     distances_x = []
     distances_y = []
@@ -106,7 +157,6 @@ def accuracy_trace(points: np.ndarray, knees: np.ndarray) -> tuple[float, float,
     delta_y = y[0] - previous_knee_y
     distances_x.append(math.fabs(delta_x))
     distances_y.append(math.fabs(delta_y))
-    
 
     coef = lf.linear_fit(x[0:knees[0]+1], y[0:knees[0]+1])
     r2 = lf.linear_r2(x[0:knees[0]+1], y[0:knees[0]+1], coef)
@@ -121,9 +171,11 @@ def accuracy_trace(points: np.ndarray, knees: np.ndarray) -> tuple[float, float,
         delta_x = previous_knee_x - knee_x
         delta_y = previous_knee_y - knee_y
 
-        coef = lf.linear_fit(x[knees[i-1]:knees[i]+1], y[knees[i-1]:knees[i]+1])
-        r2 = lf.linear_r2(x[knees[i-1]:knees[i]+1], y[knees[i-1]:knees[i]+1], coef)
-    
+        coef = lf.linear_fit(x[knees[i-1]:knees[i]+1],
+                             y[knees[i-1]:knees[i]+1])
+        r2 = lf.linear_r2(x[knees[i-1]:knees[i]+1],
+                          y[knees[i-1]:knees[i]+1], coef)
+
         distances_x.append(math.fabs(delta_x))
         distances_y.append(math.fabs(delta_y))
         _, slope = coef
@@ -132,7 +184,7 @@ def accuracy_trace(points: np.ndarray, knees: np.ndarray) -> tuple[float, float,
 
         previous_knee_x = knee_x
         previous_knee_y = knee_y
-    
+
     distances_x = np.array(distances_x)/total_x
     distances_y = np.array(distances_y)/total_y
     slopes = np.array(slopes)
