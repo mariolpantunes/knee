@@ -37,22 +37,28 @@ __status__ = &#39;Development&#39;
 
 import logging
 import numpy as np
-from uts import ema
 import knee.multi_knee as mk
-from knee.linear_fit import linear_fit, linear_r2
 
 
 logger = logging.getLogger(__name__)
 
 
-def get_knee_points(points):
-    x = points[:,0]
-    y = points[:,1]
+def knee(points: np.ndarray) -&gt; int:
+    &#34;&#34;&#34;Returns the index of the knee point based on the curvature equations:
+    $$
+    k = \\frac{|f&#39;&#39;(x)|}{(1+[f&#39;(2)]^2)^{\\frac{3}{2}}}
+    $$
 
-    return get_knee(x, y)
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
 
+    Returns:
+        int: the index of the knee point
+    &#34;&#34;&#34;
 
-def get_knee(x, y):
+    x = points[:, 0]
+    y = points[:, 1]
+
     gradient1 = np.gradient(y, x, edge_order=1)
     gradient2 = np.gradient(y, x, edge_order=2)
 
@@ -60,68 +66,21 @@ def get_knee(x, y):
     return np.argmax(curvature[0:-2])
 
 
-def multiknee_rec(x, y, left, right, t, debug):
-    logger.info(&#39;MultiKnee [%s, %s]&#39;, left, right)
-    response = get_knee(x[left:right], y[left:right])
-    knee_idx = response + left
-    response = knee_idx
+def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 3) -&gt; np.ndarray:
+    &#34;&#34;&#34;Recursive knee point detection based on the curvature equations.
 
-    if (knee_idx+1-left) &gt; 4:
-        
-        coef_left = linear_fit(x[left:knee_idx+1], y[left:knee_idx+1])
-        r2_left = linear_r2(x[left:knee_idx+1], y[left:knee_idx+1], coef_left)
-        if r2_left &lt;= t:
-            responce_left = multiknee_rec(x, y, left, knee_idx, t, debug)
-            rv = responce_left
-            rv.append(response)
-        else:
-            rv = [response]
-    else:
-        rv = [response]
+    It returns the knee points on the curve.
 
-    #logger.info(&#39;R2[%s, %s] Left Part [%s, %s] Right Part [%s, %s]&#39;, r2_left, r2_right, left, knee_idx+1, knee_idx+1, right)
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t1 (float): coefficient of determination threshold (default 0.99)
+        t2 (int): number of points threshold (default 3)
 
-    #if r2_left &lt; 0:
-    #    logger.error(&#39;Coef %s Points [%s, %s]&#39;, coef_left, (x[left], y[left]),(x[knee_idx], y[knee_idx]))
-    #    logger.error(&#39;%s&#39;, x[left:knee_idx+1])
-    #    logger.error(&#39;%s&#39;, y[left:knee_idx+1])
+    Returns:
+        np.ndarray: The knee points on the curve
 
-
-    if (right-(knee_idx+1)) &gt; 4:
-        coef_right = linear_fit(x[knee_idx+1:right], y[knee_idx+1:right])
-        r2_right = linear_r2(x[knee_idx+1:right], y[knee_idx+1:right], coef_right)
-
-        if r2_right &lt;= t:
-            response_right = multiknee_rec(x, y, knee_idx+1, right, t, debug)
-            rv.extend(response_right)
-    return rv
-
-
-def multiknee(points, t = 0.99, debug=False):
-    Ds = ema.linear(points, 1.0)
-    pmin = Ds.min(axis = 0)
-    pmax = Ds.max(axis = 0)
-    Dn = (Ds - pmin)/(pmax - pmin)
-
-    x = Dn[:,0]
-    y = Dn[:,1]
-
-    coef = linear_fit(x, y)
-    if linear_r2(x, y, coef) &lt;= t:
-        response = multiknee_rec(x,y, 0, len(points), t, debug)
-        if debug:
-            return {&#39;knees&#39;: response, &#39;Ds&#39;:Ds, &#39;Dn&#39;: Dn}
-        else:
-            return np.array(response)
-    else:
-        if debug:
-            return {&#39;knees&#39;: np.array([]), &#39;Ds&#39;:Ds, &#39;Dn&#39;: Dn}
-        else:
-            np.array([])
-
-
-def multi_knee(points, t1=0.99, t2=4):
-    return mk.multi_knee(get_knee_points, points, t1, t2)</code></pre>
+    &#34;&#34;&#34;
+    return mk.multi_knee(knee, points, t1, t2)</code></pre>
 </details>
 </section>
 <section>
@@ -131,16 +90,46 @@ def multi_knee(points, t1=0.99, t2=4):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="knee.curvature.get_knee"><code class="name flex">
-<span>def <span class="ident">get_knee</span></span>(<span>x, y)</span>
+<dt id="knee.curvature.knee"><code class="name flex">
+<span>def <span class="ident">knee</span></span>(<span>points: numpy.ndarray) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Returns the index of the knee point based on the curvature equations:
+<span><span class="MathJax_Preview">
+k = \frac{|f''(x)|}{(1+[f'(2)]^2)^{\frac{3}{2}}}
+</span><script type="math/tex; mode=display">
+k = \frac{|f''(x)|}{(1+[f'(2)]^2)^{\frac{3}{2}}}
+</script></span></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>the index of the knee point</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_knee(x, y):
+<pre><code class="python">def knee(points: np.ndarray) -&gt; int:
+    &#34;&#34;&#34;Returns the index of the knee point based on the curvature equations:
+    $$
+    k = \\frac{|f&#39;&#39;(x)|}{(1+[f&#39;(2)]^2)^{\\frac{3}{2}}}
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        int: the index of the knee point
+    &#34;&#34;&#34;
+
+    x = points[:, 0]
+    y = points[:, 1]
+
     gradient1 = np.gradient(y, x, edge_order=1)
     gradient2 = np.gradient(y, x, edge_order=2)
 
@@ -148,111 +137,45 @@ def multi_knee(points, t1=0.99, t2=4):
     return np.argmax(curvature[0:-2])</code></pre>
 </details>
 </dd>
-<dt id="knee.curvature.get_knee_points"><code class="name flex">
-<span>def <span class="ident">get_knee_points</span></span>(<span>points)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_knee_points(points):
-    x = points[:,0]
-    y = points[:,1]
-
-    return get_knee(x, y)</code></pre>
-</details>
-</dd>
 <dt id="knee.curvature.multi_knee"><code class="name flex">
-<span>def <span class="ident">multi_knee</span></span>(<span>points, t1=0.99, t2=4)</span>
+<span>def <span class="ident">multi_knee</span></span>(<span>points: numpy.ndarray, t1: float = 0.99, t2: int = 3) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Recursive knee point detection based on the curvature equations.</p>
+<p>It returns the knee points on the curve.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>t1</code></strong> :&ensp;<code>float</code></dt>
+<dd>coefficient of determination threshold (default 0.99)</dd>
+<dt><strong><code>t2</code></strong> :&ensp;<code>int</code></dt>
+<dd>number of points threshold (default 3)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>The knee points on the curve</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee(points, t1=0.99, t2=4):
-    return mk.multi_knee(get_knee_points, points, t1, t2)</code></pre>
-</details>
-</dd>
-<dt id="knee.curvature.multiknee"><code class="name flex">
-<span>def <span class="ident">multiknee</span></span>(<span>points, t=0.99, debug=False)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def multiknee(points, t = 0.99, debug=False):
-    Ds = ema.linear(points, 1.0)
-    pmin = Ds.min(axis = 0)
-    pmax = Ds.max(axis = 0)
-    Dn = (Ds - pmin)/(pmax - pmin)
+<pre><code class="python">def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 3) -&gt; np.ndarray:
+    &#34;&#34;&#34;Recursive knee point detection based on the curvature equations.
 
-    x = Dn[:,0]
-    y = Dn[:,1]
+    It returns the knee points on the curve.
 
-    coef = linear_fit(x, y)
-    if linear_r2(x, y, coef) &lt;= t:
-        response = multiknee_rec(x,y, 0, len(points), t, debug)
-        if debug:
-            return {&#39;knees&#39;: response, &#39;Ds&#39;:Ds, &#39;Dn&#39;: Dn}
-        else:
-            return np.array(response)
-    else:
-        if debug:
-            return {&#39;knees&#39;: np.array([]), &#39;Ds&#39;:Ds, &#39;Dn&#39;: Dn}
-        else:
-            np.array([])</code></pre>
-</details>
-</dd>
-<dt id="knee.curvature.multiknee_rec"><code class="name flex">
-<span>def <span class="ident">multiknee_rec</span></span>(<span>x, y, left, right, t, debug)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def multiknee_rec(x, y, left, right, t, debug):
-    logger.info(&#39;MultiKnee [%s, %s]&#39;, left, right)
-    response = get_knee(x[left:right], y[left:right])
-    knee_idx = response + left
-    response = knee_idx
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t1 (float): coefficient of determination threshold (default 0.99)
+        t2 (int): number of points threshold (default 3)
 
-    if (knee_idx+1-left) &gt; 4:
-        
-        coef_left = linear_fit(x[left:knee_idx+1], y[left:knee_idx+1])
-        r2_left = linear_r2(x[left:knee_idx+1], y[left:knee_idx+1], coef_left)
-        if r2_left &lt;= t:
-            responce_left = multiknee_rec(x, y, left, knee_idx, t, debug)
-            rv = responce_left
-            rv.append(response)
-        else:
-            rv = [response]
-    else:
-        rv = [response]
+    Returns:
+        np.ndarray: The knee points on the curve
 
-    #logger.info(&#39;R2[%s, %s] Left Part [%s, %s] Right Part [%s, %s]&#39;, r2_left, r2_right, left, knee_idx+1, knee_idx+1, right)
-
-    #if r2_left &lt; 0:
-    #    logger.error(&#39;Coef %s Points [%s, %s]&#39;, coef_left, (x[left], y[left]),(x[knee_idx], y[knee_idx]))
-    #    logger.error(&#39;%s&#39;, x[left:knee_idx+1])
-    #    logger.error(&#39;%s&#39;, y[left:knee_idx+1])
-
-
-    if (right-(knee_idx+1)) &gt; 4:
-        coef_right = linear_fit(x[knee_idx+1:right], y[knee_idx+1:right])
-        r2_right = linear_r2(x[knee_idx+1:right], y[knee_idx+1:right], coef_right)
-
-        if r2_right &lt;= t:
-            response_right = multiknee_rec(x, y, knee_idx+1, right, t, debug)
-            rv.extend(response_right)
-    return rv</code></pre>
+    &#34;&#34;&#34;
+    return mk.multi_knee(knee, points, t1, t2)</code></pre>
 </details>
 </dd>
 </dl>
@@ -273,11 +196,8 @@ def multi_knee(points, t1=0.99, t2=4):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="knee.curvature.get_knee" href="#knee.curvature.get_knee">get_knee</a></code></li>
-<li><code><a title="knee.curvature.get_knee_points" href="#knee.curvature.get_knee_points">get_knee_points</a></code></li>
+<li><code><a title="knee.curvature.knee" href="#knee.curvature.knee">knee</a></code></li>
 <li><code><a title="knee.curvature.multi_knee" href="#knee.curvature.multi_knee">multi_knee</a></code></li>
-<li><code><a title="knee.curvature.multiknee" href="#knee.curvature.multiknee">multiknee</a></code></li>
-<li><code><a title="knee.curvature.multiknee_rec" href="#knee.curvature.multiknee_rec">multiknee_rec</a></code></li>
 </ul>
 </li>
 </ul>
