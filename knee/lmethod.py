@@ -9,14 +9,11 @@ __status__ = 'Development'
 import math
 import logging
 import numpy as np
-from knee.rdp import get_r2, perpendicular_distance
-from knee.linear_fit import linear_fit, linear_residuals, linear_r2
-from uts import ema
+import knee.linear_fit as lf 
 import knee.multi_knee as mk
+
+
 from enum import Enum
-
-
-import cProfile
 
 
 logger = logging.getLogger(__name__)
@@ -42,10 +39,10 @@ def get_knee(x, y, fit=Fit.point_fit):
         error = r_left[0]*(left_length/length) + r_rigth[0]*(right_length/length)
         #error = (r_left[0] + r_rigth[0]) / 2.0
     else:
-        coef_left = linear_fit(x[0:index+1], y[0:index+1])
-        coef_right = linear_fit(x[index:], y[index:])
-        r_left = linear_residuals(x[0:index+1], y[0:index+1], coef_left)
-        r_rigth = linear_residuals(x[index:], y[index:], coef_right)
+        coef_left = lf.linear_fit(x[0:index+1], y[0:index+1])
+        coef_right = lf.linear_fit(x[index:], y[index:])
+        r_left = lf.linear_residuals(x[0:index+1], y[0:index+1], coef_left)
+        r_rigth = lf.linear_residuals(x[index:], y[index:], coef_right)
         error = r_left*(left_length/length) + r_rigth*(right_length/length)
         #error = (r_left + r_rigth) / 2.0
     
@@ -61,10 +58,10 @@ def get_knee(x, y, fit=Fit.point_fit):
             current_error = r_left[0]*(left_length/length) + r_rigth[0]*(right_length/length)
             #current_error = (r_left[0] + r_rigth[0]) / 2.0
         else:
-            i_coef_left = linear_fit(x[0:i+1], y[0:i+1])
-            i_coef_right = linear_fit(x[i:], y[i:])
-            r_left = linear_residuals(x[0:i+1], y[0:i+1], i_coef_left)
-            r_rigth = linear_residuals(x[i:], y[i:], i_coef_right)
+            i_coef_left = lf.linear_fit(x[0:i+1], y[0:i+1])
+            i_coef_right = lf.linear_fit(x[i:], y[i:])
+            r_left = lf.linear_residuals(x[0:i+1], y[0:i+1], i_coef_left)
+            r_rigth = lf.linear_residuals(x[i:], y[i:], i_coef_right)
             current_error = r_left*(left_length/length) + r_rigth*(right_length/length)
             #current_error = (r_left + r_rigth) / 2.0
         

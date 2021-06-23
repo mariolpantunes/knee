@@ -14,20 +14,6 @@ import knee.linear_fit as lf
 logger = logging.getLogger(__name__)
 
 
-def get_r2_points(points):
-    x = points[:,0]
-    y = points[:,1]
-    return get_r2(x, y)
-
-
-def get_r2(x, y):
-    #r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
-    if len(x) <= 2:
-        return 1.0
-    else:
-        r2 = (np.corrcoef(x, y)[0,1])**2.0
-        return r2
-
 
 def straight_line(points, a, b, t=0.9):
     #corner case

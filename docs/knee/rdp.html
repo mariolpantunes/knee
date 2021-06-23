@@ -43,20 +43,6 @@ import knee.linear_fit as lf
 logger = logging.getLogger(__name__)
 
 
-def get_r2_points(points):
-    x = points[:,0]
-    y = points[:,1]
-    return get_r2(x, y)
-
-
-def get_r2(x, y):
-    #r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
-    if len(x) &lt;= 2:
-        return 1.0
-    else:
-        r2 = (np.corrcoef(x, y)[0,1])**2.0
-        return r2
-
 
 def straight_line(points, a, b, t=0.9):
     #corner case
@@ -140,39 +126,6 @@ def rdp(points, r=0.9):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="knee.rdp.get_r2"><code class="name flex">
-<span>def <span class="ident">get_r2</span></span>(<span>x, y)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_r2(x, y):
-    #r2 = (np.corrcoef(x[i:b+1], y[i:b+1])[0,1])**2.0
-    if len(x) &lt;= 2:
-        return 1.0
-    else:
-        r2 = (np.corrcoef(x, y)[0,1])**2.0
-        return r2</code></pre>
-</details>
-</dd>
-<dt id="knee.rdp.get_r2_points"><code class="name flex">
-<span>def <span class="ident">get_r2_points</span></span>(<span>points)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_r2_points(points):
-    x = points[:,0]
-    y = points[:,1]
-    return get_r2(x, y)</code></pre>
-</details>
-</dd>
 <dt id="knee.rdp.mapping"><code class="name flex">
 <span>def <span class="ident">mapping</span></span>(<span>indexes, points_reduced, removed)</span>
 </code></dt>
@@ -320,8 +273,6 @@ def rdp(points, r=0.9):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="knee.rdp.get_r2" href="#knee.rdp.get_r2">get_r2</a></code></li>
-<li><code><a title="knee.rdp.get_r2_points" href="#knee.rdp.get_r2_points">get_r2_points</a></code></li>
 <li><code><a title="knee.rdp.mapping" href="#knee.rdp.mapping">mapping</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance" href="#knee.rdp.perpendicular_distance">perpendicular_distance</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance_index" href="#knee.rdp.perpendicular_distance_index">perpendicular_distance_index</a></code></li>

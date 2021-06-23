@@ -81,7 +81,21 @@ def linear_r2(x, y, coef):
 def linear_residuals(x, y, coef):
     y_hat = linear_transform(x, coef)
     rss = np.sum((y-y_hat)**2)
-    return rss</code></pre>
+    return rss
+
+
+def r2_points(points):
+    x = points[:,0]
+    y = points[:,1]
+    return r2(x, y)
+
+
+def r2(x, y):
+    if len(x) &lt;= 2:
+        return 1.0
+    else:
+        r2 = (np.corrcoef(x, y)[0,1])**2.0
+        return r2</code></pre>
 </details>
 </section>
 <section>
@@ -186,6 +200,38 @@ def linear_residuals(x, y, coef):
     return y_hat</code></pre>
 </details>
 </dd>
+<dt id="knee.linear_fit.r2"><code class="name flex">
+<span>def <span class="ident">r2</span></span>(<span>x, y)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def r2(x, y):
+    if len(x) &lt;= 2:
+        return 1.0
+    else:
+        r2 = (np.corrcoef(x, y)[0,1])**2.0
+        return r2</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.r2_points"><code class="name flex">
+<span>def <span class="ident">r2_points</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def r2_points(points):
+    x = points[:,0]
+    y = points[:,1]
+    return r2(x, y)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -210,6 +256,8 @@ def linear_residuals(x, y, coef):
 <li><code><a title="knee.linear_fit.linear_r2_points" href="#knee.linear_fit.linear_r2_points">linear_r2_points</a></code></li>
 <li><code><a title="knee.linear_fit.linear_residuals" href="#knee.linear_fit.linear_residuals">linear_residuals</a></code></li>
 <li><code><a title="knee.linear_fit.linear_transform" href="#knee.linear_fit.linear_transform">linear_transform</a></code></li>
+<li><code><a title="knee.linear_fit.r2" href="#knee.linear_fit.r2">r2</a></code></li>
+<li><code><a title="knee.linear_fit.r2_points" href="#knee.linear_fit.r2_points">r2_points</a></code></li>
 </ul>
 </li>
 </ul>

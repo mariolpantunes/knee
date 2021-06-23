@@ -53,3 +53,17 @@ def linear_residuals(x, y, coef):
     y_hat = linear_transform(x, coef)
     rss = np.sum((y-y_hat)**2)
     return rss
+
+
+def r2_points(points):
+    x = points[:,0]
+    y = points[:,1]
+    return r2(x, y)
+
+
+def r2(x, y):
+    if len(x) <= 2:
+        return 1.0
+    else:
+        r2 = (np.corrcoef(x, y)[0,1])**2.0
+        return r2

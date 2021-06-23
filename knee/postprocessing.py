@@ -15,47 +15,6 @@ import matplotlib.pyplot as plt
 logger = logging.getLogger(__name__)
 
 
-def corner_point(points, knee, t=0.01):
-    x = points[:,0]
-    y = points[:,1]
-
-    lenght = x[-1] - x[0]
-    fxp = y[knee]
-    i = knee + 1
-    done = False
-    rv = True
-
-    #logger.info('Is corner Point (%s): %s', i-1, rv)
-
-    while not done and rv:
-        if y[i] >= fxp:
-            rv = False
-        #logger.info('Is corner Point (%s): %s', i, rv)
-        
-        p = (x[i] - x[knee])/lenght
-        if p >= t:
-            done = True
-        
-        i += 1
-        if i > len(points) - 1: 
-            done = True
-    #logger.info('(Last) Is corner Point (%s): %s', i, rv)
-
-    return rv
-
-
-def filter_corner_point(points, knees, t=0.01):
-    logger.info('Filter Corner Points')
-
-    rv = []
-
-    for knee in knees:
-        if not corner_point(points, knee, t):
-            rv.append(knee)
-    
-    return np.array(rv)
-
-
 def filter_worst_knees(points, knees):
     filtered_knees = []
 

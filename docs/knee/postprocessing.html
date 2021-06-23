@@ -44,47 +44,6 @@ import matplotlib.pyplot as plt
 logger = logging.getLogger(__name__)
 
 
-def corner_point(points, knee, t=0.01):
-    x = points[:,0]
-    y = points[:,1]
-
-    lenght = x[-1] - x[0]
-    fxp = y[knee]
-    i = knee + 1
-    done = False
-    rv = True
-
-    #logger.info(&#39;Is corner Point (%s): %s&#39;, i-1, rv)
-
-    while not done and rv:
-        if y[i] &gt;= fxp:
-            rv = False
-        #logger.info(&#39;Is corner Point (%s): %s&#39;, i, rv)
-        
-        p = (x[i] - x[knee])/lenght
-        if p &gt;= t:
-            done = True
-        
-        i += 1
-        if i &gt; len(points) - 1: 
-            done = True
-    #logger.info(&#39;(Last) Is corner Point (%s): %s&#39;, i, rv)
-
-    return rv
-
-
-def filter_corner_point(points, knees, t=0.01):
-    logger.info(&#39;Filter Corner Points&#39;)
-
-    rv = []
-
-    for knee in knees:
-        if not corner_point(points, knee, t):
-            rv.append(knee)
-    
-    return np.array(rv)
-
-
 def filter_worst_knees(points, knees):
     filtered_knees = []
 
@@ -137,44 +96,6 @@ def filter_clustring(points, knees, clustering, t=0.01, method=ranking.ClusterRa
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="knee.postprocessing.corner_point"><code class="name flex">
-<span>def <span class="ident">corner_point</span></span>(<span>points, knee, t=0.01)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def corner_point(points, knee, t=0.01):
-    x = points[:,0]
-    y = points[:,1]
-
-    lenght = x[-1] - x[0]
-    fxp = y[knee]
-    i = knee + 1
-    done = False
-    rv = True
-
-    #logger.info(&#39;Is corner Point (%s): %s&#39;, i-1, rv)
-
-    while not done and rv:
-        if y[i] &gt;= fxp:
-            rv = False
-        #logger.info(&#39;Is corner Point (%s): %s&#39;, i, rv)
-        
-        p = (x[i] - x[knee])/lenght
-        if p &gt;= t:
-            done = True
-        
-        i += 1
-        if i &gt; len(points) - 1: 
-            done = True
-    #logger.info(&#39;(Last) Is corner Point (%s): %s&#39;, i, rv)
-
-    return rv</code></pre>
-</details>
-</dd>
 <dt id="knee.postprocessing.filter_clustring"><code class="name flex">
 <span>def <span class="ident">filter_clustring</span></span>(<span>points, knees, clustering, t=0.01, method=left, plot=False)</span>
 </code></dt>
@@ -212,27 +133,6 @@ def filter_clustring(points, knees, clustering, t=0.01, method=ranking.ClusterRa
             plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
             plt.show()
     return np.array(filtered_knees)</code></pre>
-</details>
-</dd>
-<dt id="knee.postprocessing.filter_corner_point"><code class="name flex">
-<span>def <span class="ident">filter_corner_point</span></span>(<span>points, knees, t=0.01)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def filter_corner_point(points, knees, t=0.01):
-    logger.info(&#39;Filter Corner Points&#39;)
-
-    rv = []
-
-    for knee in knees:
-        if not corner_point(points, knee, t):
-            rv.append(knee)
-    
-    return np.array(rv)</code></pre>
 </details>
 </dd>
 <dt id="knee.postprocessing.filter_worst_knees"><code class="name flex">
@@ -277,9 +177,7 @@ def filter_clustring(points, knees, clustering, t=0.01, method=ranking.ClusterRa
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="knee.postprocessing.corner_point" href="#knee.postprocessing.corner_point">corner_point</a></code></li>
 <li><code><a title="knee.postprocessing.filter_clustring" href="#knee.postprocessing.filter_clustring">filter_clustring</a></code></li>
-<li><code><a title="knee.postprocessing.filter_corner_point" href="#knee.postprocessing.filter_corner_point">filter_corner_point</a></code></li>
 <li><code><a title="knee.postprocessing.filter_worst_knees" href="#knee.postprocessing.filter_worst_knees">filter_worst_knees</a></code></li>
 </ul>
 </li>
