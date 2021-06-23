@@ -6,64 +6,173 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import logging
 import math
+import enum
+import logging
 import numpy as np
 
 
 logger = logging.getLogger(__name__)
 
 
-def linear_fit_points(points):
+class R2(enum.Enum):
+    """
+    Enum data type that types of coefficient of determination
+    """
+    adjusted = 'adjusted'
+    classic = 'classic'
+
+    def __str__(self):
+        return self.value
+
+
+def linear_fit_points(points: np.ndarray) -> tuple:
+    """Computes the linear fit for the points.
+
+    This methods approximates the linear fit using only the
+    first and last points in a curve.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        tuple: (b, m)
+    """
     x = points[:, 0]
     y = points[:, 1]
     return linear_fit(x, y)
 
 
-def linear_fit(x, y):
+def linear_fit(x: np.ndarray, y: np.ndarray) -> tuple:
+    """Computes the linear fit for the points.
+
+    This methods approximates the linear fit using only the
+    first and last points in a curve.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+
+    Returns:
+        tuple: (b, m)
+    """
     m = (y[0] - y[-1])/(x[0] - x[-1])
     b = y[0] - (m*x[0])
-    coef = (b, m)
-    return coef
+    return (b, m)
 
 
-def linear_transform(x, coef):
+def linear_transform(x: np.ndarray, coef: tuple) -> np.ndarray:
+    """Computes the (x,y) points for an x array and the given coefficients.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        tuple: (b, m)
+    """
     b, m = coef
     y_hat = x * m + b
     return y_hat
 
 
-def linear_r2_points(points, coef):
+def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -> float:
+    """Computes the coefficient of determination (R2).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+        r2 (R2): select the type of coefficient of determination
+
+    Returns:
+        float: coefficient of determination (R2)
+    """
     x = points[:, 0]
     y = points[:, 1]
-    return linear_r2(x, y, coef)
+    return linear_r2(x, y, coef, r2)
 
 
-def linear_r2(x, y, coef):
+def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -> float:
+    """Computes the coefficient of determination (R2).
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        coef (tuple): the coefficients from the linear fit
+        r2 (R2): select the type of coefficient of determination
+
+    Returns:
+        float: coefficient of determination (R2)
+    """
     y_hat = linear_transform(x, coef)
     y_mean = np.mean(y)
     rss = np.sum((y-y_hat)**2)
     tss = np.sum((y-y_mean)**2)
+    rv = 0.0
+
     if tss == 0:
-        return  1.0 - rss
-    return 1.0 - (rss/tss)
+        rv = 1.0 - rss
+    else:
+        rv = 1.0 - (rss/tss)
+
+    if r2 is R2.adjusted:
+        rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
+
+    return rv
 
 
-def linear_residuals(x, y, coef):
+def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
+    """Computes the residual error of the linear fit.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        coef (tuple): the coefficients from the linear fit
+        
+    Returns:
+        float: residual error of the linear fit
+    """
     y_hat = linear_transform(x, coef)
     rss = np.sum((y-y_hat)**2)
     return rss
 
 
-def r2_points(points):
-    x = points[:,0]
-    y = points[:,1]
-    return r2(x, y)
+def r2_points(points: np.ndarray, r2: R2 = R2.classic) -> float:
+    """Computes the coefficient of determination (R2).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        r2 (R2): select the type of coefficient of determination
+
+    Returns:
+        float: coefficient of determination (R2)
+    """
+    x = points[:, 0]
+    y = points[:, 1]
+    return r2(x, y, r2)
 
 
-def r2(x, y):
+def r2(x: np.ndarray, y: np.ndarray, r2: R2 = R2.classic) -> float:
+    """Computes the coefficient of determination (R2).
+
+    Computes the best fit (and not the fast point fit)
+    and computes the corresponding R2.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        r2 (R2): select the type of coefficient of determination
+
+    Returns:
+        float: coefficient of determination (R2)
+    """
+    rv = 0.0
     if len(x) <= 2:
-        return 1.0
+        rv = 1.0
     else:
-        r2 = (np.corrcoef(x, y)[0,1])**2.0
-        return r2
+        rv = (np.corrcoef(x, y)[0, 1])**2.0
+    
+    if r2 is R2.adjusted:
+        rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
+
+    return rv 
