@@ -43,45 +43,69 @@ import knee.linear_fit as lf
 logger = logging.getLogger(__name__)
 
 
+def perpendicular_distance(points: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the first and last point.
 
-def straight_line(points, a, b, t=0.9):
-    #corner case
-    if abs(a - b) &lt;= 1:
-        return a
-    
-    # setup
-    x = points[:,0]
-    y = points[:,1]
-    scores = []
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
 
-    for i in range(a, b):
-        coef = lf.linear_fit(x[i:b+1], y[i:b+1])
-        r2 = lf.linear_r2(x[i:b+1], y[i:b+1], coef)
-        scores.append(r2)
-    scores = np.array(scores)
-    idx = np.argmax(scores &gt; t)
+    Returns:
+        np.ndarray: the perpendicular distances
 
-    return a+idx
+    &#34;&#34;&#34;
+    return perpendicular_distance_index(points, 0, len(points) - 1)
 
 
-def perpendicular_distance(points):
-    left = 0
-    right = len(points) - 1
-    return perpendicular_distance_index(points, left, right)
+def perpendicular_distance_index(points: np.ndarray, left: int, right: int) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        left (int): the index of the left point
+        right (int): the index of the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+    return left + perpendicular_distance_points(points[left:right+1], points[left], points[right])
 
 
-def perpendicular_distance_index(pt, left, right):
-    points = pt[left:right+1]
-    start = pt[left]
-    stop = pt[right]
-    return left + perpendicular_distance_points(points, start, stop)
+def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+    return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))
 
 
-def perpendicular_distance_points(pt, start, end):
-    return np.fabs(np.cross(end-start,pt-start)/np.linalg.norm(end-start))
+def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the reverse of the RDP method.
 
+    It maps the indexes on a simplified curve (using the rdp algorithm) into
+    the indexes of the original points.
+    This method assumes the indexes are sorted in ascending order.
 
-def mapping(indexes, points_reduced, removed):
+    Args:
+        indexes (np.ndarray): the indexes in the reduced space
+        points_reduced (np.ndarray): the points that form the reduced space
+        removed (np.ndarray): the points that were removed
+
+    Returns:
+        np.ndarray: the indexes in the original space
+    &#34;&#34;&#34;
     rv = []
     j = 0
     count = 0
@@ -99,11 +123,26 @@ def mapping(indexes, points_reduced, removed):
     return np.array(rv)
 
 
-def rdp(points, r=0.9):
+def rdp(points: np.ndarray, r: float = 0.9) -&gt; tuple:
+    &#34;&#34;&#34;
+    Ramer–Douglas–Peucker (RDP) algorithm.
+
+    Is an algorithm that decimates a curve composed of line segments 
+    to a similar curve with fewer points. This version uses the 
+    coefficient of determination to decided whenever to keep or remove 
+    a line segment.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        r(float): the coefficient of determination threshold
+
+    Returns:
+        tuple: the reduced space, the points that were removed
+    &#34;&#34;&#34;
     coef = lf.linear_fit_points(points)
     determination = lf.linear_r2_points(points, coef)
 
-    if determination &lt; r :
+    if determination &lt; r:
         d = perpendicular_distance_points(points, points[0], points[-1])
         index = np.argmax(d)
 
@@ -112,7 +151,7 @@ def rdp(points, r=0.9):
         points_removed = np.concatenate((left_points, right_points), axis=0)
         return np.concatenate((left[0:len(left)-1], right)), points_removed
     else:
-        rv = np.empty([2,2])
+        rv = np.empty([2, 2])
         rv[0] = points[0]
         rv[1] = points[-1]
         points_removed = np.array([[points[0][0], len(points) - 2.0]])
@@ -127,15 +166,47 @@ def rdp(points, r=0.9):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.rdp.mapping"><code class="name flex">
-<span>def <span class="ident">mapping</span></span>(<span>indexes, points_reduced, removed)</span>
+<span>def <span class="ident">mapping</span></span>(<span>indexes: numpy.ndarray, points_reduced: numpy.ndarray, removed: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes the reverse of the RDP method.</p>
+<p>It maps the indexes on a simplified curve (using the rdp algorithm) into
+the indexes of the original points.
+This method assumes the indexes are sorted in ascending order.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>indexes</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the indexes in the reduced space</dd>
+<dt><strong><code>points_reduced</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the points that form the reduced space</dd>
+<dt><strong><code>removed</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the points that were removed</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the indexes in the original space</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mapping(indexes, points_reduced, removed):
+<pre><code class="python">def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the reverse of the RDP method.
+
+    It maps the indexes on a simplified curve (using the rdp algorithm) into
+    the indexes of the original points.
+    This method assumes the indexes are sorted in ascending order.
+
+    Args:
+        indexes (np.ndarray): the indexes in the reduced space
+        points_reduced (np.ndarray): the points that form the reduced space
+        removed (np.ndarray): the points that were removed
+
+    Returns:
+        np.ndarray: the indexes in the original space
+    &#34;&#34;&#34;
     rv = []
     j = 0
     count = 0
@@ -154,63 +225,164 @@ def rdp(points, r=0.9):
 </details>
 </dd>
 <dt id="knee.rdp.perpendicular_distance"><code class="name flex">
-<span>def <span class="ident">perpendicular_distance</span></span>(<span>points)</span>
+<span>def <span class="ident">perpendicular_distance</span></span>(<span>points: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes the perpendicular distance from the points to the
+straight line defined by the first and last point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the perpendicular distances</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def perpendicular_distance(points):
-    left = 0
-    right = len(points) - 1
-    return perpendicular_distance_index(points, left, right)</code></pre>
+<pre><code class="python">def perpendicular_distance(points: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the first and last point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the perpendicular distances
+
+    &#34;&#34;&#34;
+    return perpendicular_distance_index(points, 0, len(points) - 1)</code></pre>
 </details>
 </dd>
 <dt id="knee.rdp.perpendicular_distance_index"><code class="name flex">
-<span>def <span class="ident">perpendicular_distance_index</span></span>(<span>pt, left, right)</span>
+<span>def <span class="ident">perpendicular_distance_index</span></span>(<span>points: numpy.ndarray, left: int, right: int) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes the perpendicular distance from the points to the
+straight line defined by the left and right point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>left</code></strong> :&ensp;<code>int</code></dt>
+<dd>the index of the left point</dd>
+<dt><strong><code>right</code></strong> :&ensp;<code>int</code></dt>
+<dd>the index of the right point</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the perpendicular distances</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def perpendicular_distance_index(pt, left, right):
-    points = pt[left:right+1]
-    start = pt[left]
-    stop = pt[right]
-    return left + perpendicular_distance_points(points, start, stop)</code></pre>
+<pre><code class="python">def perpendicular_distance_index(points: np.ndarray, left: int, right: int) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        left (int): the index of the left point
+        right (int): the index of the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+    return left + perpendicular_distance_points(points[left:right+1], points[left], points[right])</code></pre>
 </details>
 </dd>
 <dt id="knee.rdp.perpendicular_distance_points"><code class="name flex">
-<span>def <span class="ident">perpendicular_distance_points</span></span>(<span>pt, start, end)</span>
+<span>def <span class="ident">perpendicular_distance_points</span></span>(<span>pt: numpy.ndarray, start: numpy.ndarray, end: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes the perpendicular distance from the points to the
+straight line defined by the left and right point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pt</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>start</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the left point</dd>
+<dt><strong><code>end</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the right point</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the perpendicular distances</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def perpendicular_distance_points(pt, start, end):
-    return np.fabs(np.cross(end-start,pt-start)/np.linalg.norm(end-start))</code></pre>
+<pre><code class="python">def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+    return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))</code></pre>
 </details>
 </dd>
 <dt id="knee.rdp.rdp"><code class="name flex">
-<span>def <span class="ident">rdp</span></span>(<span>points, r=0.9)</span>
+<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, r: float = 0.9) ‑> tuple</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Ramer–Douglas–Peucker (RDP) algorithm.</p>
+<p>Is an algorithm that decimates a curve composed of line segments
+to a similar curve with fewer points. This version uses the
+coefficient of determination to decided whenever to keep or remove
+a line segment.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+</dl>
+<p>r(float): the coefficient of determination threshold</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>the reduced space, the points that were removed</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rdp(points, r=0.9):
+<pre><code class="python">def rdp(points: np.ndarray, r: float = 0.9) -&gt; tuple:
+    &#34;&#34;&#34;
+    Ramer–Douglas–Peucker (RDP) algorithm.
+
+    Is an algorithm that decimates a curve composed of line segments 
+    to a similar curve with fewer points. This version uses the 
+    coefficient of determination to decided whenever to keep or remove 
+    a line segment.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        r(float): the coefficient of determination threshold
+
+    Returns:
+        tuple: the reduced space, the points that were removed
+    &#34;&#34;&#34;
     coef = lf.linear_fit_points(points)
     determination = lf.linear_r2_points(points, coef)
 
-    if determination &lt; r :
+    if determination &lt; r:
         d = perpendicular_distance_points(points, points[0], points[-1])
         index = np.argmax(d)
 
@@ -219,40 +391,11 @@ def rdp(points, r=0.9):
         points_removed = np.concatenate((left_points, right_points), axis=0)
         return np.concatenate((left[0:len(left)-1], right)), points_removed
     else:
-        rv = np.empty([2,2])
+        rv = np.empty([2, 2])
         rv[0] = points[0]
         rv[1] = points[-1]
         points_removed = np.array([[points[0][0], len(points) - 2.0]])
         return rv, points_removed</code></pre>
-</details>
-</dd>
-<dt id="knee.rdp.straight_line"><code class="name flex">
-<span>def <span class="ident">straight_line</span></span>(<span>points, a, b, t=0.9)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def straight_line(points, a, b, t=0.9):
-    #corner case
-    if abs(a - b) &lt;= 1:
-        return a
-    
-    # setup
-    x = points[:,0]
-    y = points[:,1]
-    scores = []
-
-    for i in range(a, b):
-        coef = lf.linear_fit(x[i:b+1], y[i:b+1])
-        r2 = lf.linear_r2(x[i:b+1], y[i:b+1], coef)
-        scores.append(r2)
-    scores = np.array(scores)
-    idx = np.argmax(scores &gt; t)
-
-    return a+idx</code></pre>
 </details>
 </dd>
 </dl>
@@ -278,7 +421,6 @@ def rdp(points, r=0.9):
 <li><code><a title="knee.rdp.perpendicular_distance_index" href="#knee.rdp.perpendicular_distance_index">perpendicular_distance_index</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance_points" href="#knee.rdp.perpendicular_distance_points">perpendicular_distance_points</a></code></li>
 <li><code><a title="knee.rdp.rdp" href="#knee.rdp.rdp">rdp</a></code></li>
-<li><code><a title="knee.rdp.straight_line" href="#knee.rdp.straight_line">straight_line</a></code></li>
 </ul>
 </li>
 </ul>
