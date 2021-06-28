@@ -8,6 +8,7 @@ __status__ = 'Development'
 
 import logging
 import numpy as np
+import uts.gradient as grad
 import knee.multi_knee as mk
 
 
@@ -30,8 +31,8 @@ def knee(points: np.ndarray) -> int:
     x = points[:, 0]
     y = points[:, 1]
 
-    gradient1 = np.gradient(y, x, edge_order=1)
-    gradient2 = np.gradient(y, x, edge_order=2)
+    gradient1 = grad.cfd(x, y)
+    gradient2 = grad.csd(x, y)
 
     curvature = gradient2 / ((1.0 + gradient1**2.0)**(1.5))
     return np.argmax(curvature[0:-2])
