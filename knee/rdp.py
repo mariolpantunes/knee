@@ -105,7 +105,7 @@ def rdp(points: np.ndarray, r: float = 0.9) -> tuple:
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        r(float): the coefficient of determination threshold
+        r(float): the coefficient of determination threshold (default 0.9)
 
     Returns:
         tuple: the reduced space, the points that were removed

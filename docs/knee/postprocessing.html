@@ -35,6 +35,7 @@ __email__ = &#39;mariolpantunes@gmail.com&#39;
 __status__ = &#39;Development&#39;
 
 
+import typing
 import logging
 import numpy as np
 import knee.knee_ranking as ranking
@@ -59,33 +60,51 @@ def filter_worst_knees(points, knees):
     return np.array(filtered_knees)
 
 
-def filter_clustring(points, knees, clustering, t=0.01, method=ranking.ClusterRanking.left, plot=False):
-    xpoints = points[:,0]
-    ypoints = points[:,1]
-    
+def filter_clustring(points: np.ndarray, knees: np.ndarray,
+clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
+method:ranking.ClusterRanking=ranking.ClusterRanking.linear) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Filter the knee points based on clustering.
+
+    For each cluster a single point is selected based on the ranking.
+    The ranking is computed based on the slope and the improvement (on the y axis).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        clustering (typing.Callable[[np.ndarray, float]): the clustering function
+        t (float): the threshold for merging (in percentage, default 0.01)
+        method (ranking.ClusterRanking): represents the direction of the ranking within a cluster (default ranking.ClusterRanking.linear)
+
+    Returns:
+        np.ndarray: the filtered knees
+    &#34;&#34;&#34;
+
     knee_points = points[knees]
     clusters = clustering(knee_points, t)
     max_cluster = clusters.max()
     filtered_knees = []
     for i in range(0, max_cluster+1):
-        current_cluster = knees[clusters==i]
+        current_cluster = knees[clusters == i]
 
         if len(current_cluster) &gt; 1:
             rankings = ranking.cluster_ranking(points, current_cluster, method)
             #logger.info(&#39;Rankings: %s&#39;, rankings)
             idx = np.argmax(rankings)
-            best_knee = knees[clusters==i][idx]
+            best_knee = knees[clusters == i][idx]
         else:
             #logger.info(&#39;Rankings: [1.0]&#39;)
-            best_knee = knees[clusters==i][0]
+            best_knee = knees[clusters == i][0]
         filtered_knees.append(best_knee)
 
-        #plot cluster
-        if plot:
-            plt.plot(xpoints, ypoints)
-            plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
-            plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
-            plt.show()
+        # plot cluster
+        # if plot:
+        #    xpoints = points[:,0]
+        #    ypoints = points[:,1]
+        #    plt.plot(xpoints, ypoints)
+        #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
+        #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
+        #    plt.show()
     return np.array(filtered_knees)</code></pre>
 </details>
 </section>
@@ -97,41 +116,79 @@ def filter_clustring(points, knees, clustering, t=0.01, method=ranking.ClusterRa
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.postprocessing.filter_clustring"><code class="name flex">
-<span>def <span class="ident">filter_clustring</span></span>(<span>points, knees, clustering, t=0.01, method=left, plot=False)</span>
+<span>def <span class="ident">filter_clustring</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, clustering: Callable[[numpy.ndarray, float], numpy.ndarray], t: float = 0.01, method: <a title="knee.knee_ranking.ClusterRanking" href="knee_ranking.html#knee.knee_ranking.ClusterRanking">ClusterRanking</a> = linear) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Filter the knee points based on clustering.</p>
+<p>For each cluster a single point is selected based on the ranking.
+The ranking is computed based on the slope and the improvement (on the y axis).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>clustering</code></strong> :&ensp;<code>typing.Callable[[np.ndarray, float]</code></dt>
+<dd>the clustering function</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>the threshold for merging (in percentage, default 0.01)</dd>
+<dt><strong><code>method</code></strong> :&ensp;<code>ranking.ClusterRanking</code></dt>
+<dd>represents the direction of the ranking within a cluster (default ranking.ClusterRanking.linear)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the filtered knees</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def filter_clustring(points, knees, clustering, t=0.01, method=ranking.ClusterRanking.left, plot=False):
-    xpoints = points[:,0]
-    ypoints = points[:,1]
-    
+<pre><code class="python">def filter_clustring(points: np.ndarray, knees: np.ndarray,
+clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
+method:ranking.ClusterRanking=ranking.ClusterRanking.linear) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Filter the knee points based on clustering.
+
+    For each cluster a single point is selected based on the ranking.
+    The ranking is computed based on the slope and the improvement (on the y axis).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        clustering (typing.Callable[[np.ndarray, float]): the clustering function
+        t (float): the threshold for merging (in percentage, default 0.01)
+        method (ranking.ClusterRanking): represents the direction of the ranking within a cluster (default ranking.ClusterRanking.linear)
+
+    Returns:
+        np.ndarray: the filtered knees
+    &#34;&#34;&#34;
+
     knee_points = points[knees]
     clusters = clustering(knee_points, t)
     max_cluster = clusters.max()
     filtered_knees = []
     for i in range(0, max_cluster+1):
-        current_cluster = knees[clusters==i]
+        current_cluster = knees[clusters == i]
 
         if len(current_cluster) &gt; 1:
             rankings = ranking.cluster_ranking(points, current_cluster, method)
             #logger.info(&#39;Rankings: %s&#39;, rankings)
             idx = np.argmax(rankings)
-            best_knee = knees[clusters==i][idx]
+            best_knee = knees[clusters == i][idx]
         else:
             #logger.info(&#39;Rankings: [1.0]&#39;)
-            best_knee = knees[clusters==i][0]
+            best_knee = knees[clusters == i][0]
         filtered_knees.append(best_knee)
 
-        #plot cluster
-        if plot:
-            plt.plot(xpoints, ypoints)
-            plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
-            plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
-            plt.show()
+        # plot cluster
+        # if plot:
+        #    xpoints = points[:,0]
+        #    ypoints = points[:,1]
+        #    plt.plot(xpoints, ypoints)
+        #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
+        #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
+        #    plt.show()
     return np.array(filtered_knees)</code></pre>
 </details>
 </dd>

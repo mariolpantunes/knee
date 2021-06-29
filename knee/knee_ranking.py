@@ -10,7 +10,6 @@ import math
 import enum
 import logging
 import numpy as np
-#import knee.rdp as rdp
 import knee.linear_fit as lf
 import knee.evaluation as ev
 
