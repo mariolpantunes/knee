@@ -21,7 +21,6 @@ import knee.curvature as curvature
 import knee.postprocessing as pp
 import matplotlib.pyplot as plt
 import knee.clustering as clustering
-import knee.max_perpendicular_distance as maxpd
 import knee.pointSelector as ps
 import knee.knee_ranking as ranking 
 from plot import get_dimention, plot_lines_knees_ranking, plot_lines_knees
