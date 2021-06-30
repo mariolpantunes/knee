@@ -36,6 +36,7 @@ __status__ = &#39;Development&#39;
 
 
 import math
+import typing
 import logging
 import numpy as np
 
@@ -43,8 +44,19 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-# hill climbing local search algorithm
-def hillclimbing(objective, bounds, n_iterations=200, step_size=.01):
+def hillclimbing(objective:typing.Callable, bounds:np.ndarray, n_iterations:int=200, step_size:float=.01) -&gt; list:
+    &#34;&#34;&#34;
+    Hill climbing local search algorithm.
+
+    Args:
+        objective (typing.Callable): objective fucntion
+        bounds (np.ndarray): the bounds of valid solutions
+        n_iterations (int): the number of iterations (default 200)
+        step_size (float): the step size (default 0.01)
+
+    Returns:
+        list: [solution, solution_cost]
+    &#34;&#34;&#34;
     # min and max for each bound
     bounds_max = bounds.max(axis = 1)
     bounds_min = bounds.min(axis = 1)
@@ -74,9 +86,21 @@ def hillclimbing(objective, bounds, n_iterations=200, step_size=.01):
             #logger.info(&#39;&gt;%d f(%s) = %.5f&#39;, i, solution, solution_cost)
     return [solution, solution_cost]
 
-        
-# simulated annealing algorithm
-def simulated_annealing(objective, bounds, n_iterations=200, step_size=0.01, temp=20):
+
+def simulated_annealing(objective:typing.Callable, bounds:np.ndarray, n_iterations:int=200, step_size:float=0.01, temp:float=20.0) -&gt; list:
+    &#34;&#34;&#34;
+    Simulated annealing algorithm.
+
+    Args:
+        objective (typing.Callable): objective fucntion
+        bounds (np.ndarray): the bounds of valid solutions
+        n_iterations (int): the number of iterations (default 200)
+        step_size (float): the step size (default 0.01)
+        temp (float): initial temperature (default 20.0)
+
+    Returns:
+        list: [solution, solution_cost]
+    &#34;&#34;&#34;
         # min and max for each bound
     bounds_max = bounds.max(axis = 1)
     bounds_min = bounds.min(axis = 1)
@@ -115,7 +139,16 @@ def simulated_annealing(objective, bounds, n_iterations=200, step_size=0.01, tem
     return [best, best_eval]
 
 
-def get_random_solution(bounds):
+def get_random_solution(bounds:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Generates a random solutions that is within the bounds.
+
+    Args:
+        bounds (np.ndarray): the bounds of valid solutions
+
+    Returns:
+        np.ndarray: a random solutions that is within the bounds
+    &#34;&#34;&#34;
     solution = bounds[:, 0] + np.random.rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
     solution = np.minimum(solution, bounds.max(axis = 1))
     solution = np.maximum(solution, bounds.min(axis = 1))
@@ -123,36 +156,55 @@ def get_random_solution(bounds):
 
 
 # genetic algorithm
-def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=100, n_pop=10, r_cross=0.9, r_mut=0.2):
+def genetic_algorithm(objective:typing.Callable, bounds:np.ndarray,
+selection:typing.Callable, crossover:typing.Callable, mutation:typing.Callable,
+n_iter:int=100, n_pop:int=10, r_cross:float=0.9, r_mut:float=0.2) -&gt; list:
+    &#34;&#34;&#34;
+    Genetic optimization algorithm.
+
+    Args:
+        objective (typing.Callable): objective fucntion
+        bounds (np.ndarray): the bounds of valid solutions
+        selection (typing.Callable): selection fucntion
+        crossover (typing.Callable): crossover fucntion
+        mutation (typing.Callable): mutation fucntion
+        n_iter (int): the number of iterations (default 100)
+        n_pop (int): the number of elements in the population (default 10)
+        r_cross (float): ratio of crossover (default 0.9)
+        r_mut (float): ratio of mutation (default 0.2)
+
+    Returns:
+        list: [solution, solution_cost]
+    &#34;&#34;&#34;
     # initial population of random bitstring
-        pop = [get_random_solution(bounds) for _ in range(n_pop)]
+    pop = [get_random_solution(bounds) for _ in range(n_pop)]
         # keep track of best solution
-        best, best_eval = 0, objective(pop[0])
+    best, best_eval = 0, objective(pop[0])
         # enumerate generations
-        for _ in range(n_iter):
-                # evaluate all candidates in the population
-                scores = [objective(c) for c in pop]
-                # check for new best solution
-                for i in range(n_pop):
-                        if scores[i] &lt; best_eval:
-                                best, best_eval = pop[i], scores[i]
-                                #logger.info(&#39;&gt;%d, new best f(%s) = %.3f&#39; % (gen,  pop[i], scores[i]))
-                # select parents
-                selected = [selection(pop, scores) for _ in range(n_pop)]
-                # create the next generation
-                children = list()
-                for i in range(0, n_pop, 2):
-                        # get selected parents in pairs
-                        p1, p2 = selected[i], selected[i+1]
-                        # crossover and mutation
-                        for c in crossover(p1, p2, r_cross):
-                                # mutation
-                                mutation(c, r_mut, bounds)
-                                # store for next generation
-                                children.append(c)
-                # replace population
-                pop = children
-        return [best, best_eval]</code></pre>
+    for _ in range(n_iter):
+        # evaluate all candidates in the population
+        scores = [objective(c) for c in pop]
+        # check for new best solution
+        for i in range(n_pop):
+            if scores[i] &lt; best_eval:
+                best, best_eval = pop[i], scores[i]
+                #logger.info(&#39;&gt;%d, new best f(%s) = %.3f&#39; % (gen,  pop[i], scores[i]))
+        # select parents
+        selected = [selection(pop, scores) for _ in range(n_pop)]
+        # create the next generation
+        children = list()
+        for i in range(0, n_pop, 2):
+            # get selected parents in pairs
+            p1, p2 = selected[i], selected[i+1]
+            # crossover and mutation
+            for c in crossover(p1, p2, r_cross):
+                # mutation
+                mutation(c, r_mut, bounds)
+                # store for next generation
+                children.append(c)
+        # replace population
+        pop = children
+    return [best, best_eval]</code></pre>
 </details>
 </section>
 <section>
@@ -163,56 +215,120 @@ def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.optimization.genetic_algorithm"><code class="name flex">
-<span>def <span class="ident">genetic_algorithm</span></span>(<span>objective, bounds, selection, crossover, mutation, n_iter=100, n_pop=10, r_cross=0.9, r_mut=0.2)</span>
+<span>def <span class="ident">genetic_algorithm</span></span>(<span>objective: Callable, bounds: numpy.ndarray, selection: Callable, crossover: Callable, mutation: Callable, n_iter: int = 100, n_pop: int = 10, r_cross: float = 0.9, r_mut: float = 0.2) ‑> list</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Genetic optimization algorithm.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>objective</code></strong> :&ensp;<code>typing.Callable</code></dt>
+<dd>objective fucntion</dd>
+<dt><strong><code>bounds</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the bounds of valid solutions</dd>
+<dt><strong><code>selection</code></strong> :&ensp;<code>typing.Callable</code></dt>
+<dd>selection fucntion</dd>
+<dt><strong><code>crossover</code></strong> :&ensp;<code>typing.Callable</code></dt>
+<dd>crossover fucntion</dd>
+<dt><strong><code>mutation</code></strong> :&ensp;<code>typing.Callable</code></dt>
+<dd>mutation fucntion</dd>
+<dt><strong><code>n_iter</code></strong> :&ensp;<code>int</code></dt>
+<dd>the number of iterations (default 100)</dd>
+<dt><strong><code>n_pop</code></strong> :&ensp;<code>int</code></dt>
+<dd>the number of elements in the population (default 10)</dd>
+<dt><strong><code>r_cross</code></strong> :&ensp;<code>float</code></dt>
+<dd>ratio of crossover (default 0.9)</dd>
+<dt><strong><code>r_mut</code></strong> :&ensp;<code>float</code></dt>
+<dd>ratio of mutation (default 0.2)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>[solution, solution_cost]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=100, n_pop=10, r_cross=0.9, r_mut=0.2):
+<pre><code class="python">def genetic_algorithm(objective:typing.Callable, bounds:np.ndarray,
+selection:typing.Callable, crossover:typing.Callable, mutation:typing.Callable,
+n_iter:int=100, n_pop:int=10, r_cross:float=0.9, r_mut:float=0.2) -&gt; list:
+    &#34;&#34;&#34;
+    Genetic optimization algorithm.
+
+    Args:
+        objective (typing.Callable): objective fucntion
+        bounds (np.ndarray): the bounds of valid solutions
+        selection (typing.Callable): selection fucntion
+        crossover (typing.Callable): crossover fucntion
+        mutation (typing.Callable): mutation fucntion
+        n_iter (int): the number of iterations (default 100)
+        n_pop (int): the number of elements in the population (default 10)
+        r_cross (float): ratio of crossover (default 0.9)
+        r_mut (float): ratio of mutation (default 0.2)
+
+    Returns:
+        list: [solution, solution_cost]
+    &#34;&#34;&#34;
     # initial population of random bitstring
-        pop = [get_random_solution(bounds) for _ in range(n_pop)]
+    pop = [get_random_solution(bounds) for _ in range(n_pop)]
         # keep track of best solution
-        best, best_eval = 0, objective(pop[0])
+    best, best_eval = 0, objective(pop[0])
         # enumerate generations
-        for _ in range(n_iter):
-                # evaluate all candidates in the population
-                scores = [objective(c) for c in pop]
-                # check for new best solution
-                for i in range(n_pop):
-                        if scores[i] &lt; best_eval:
-                                best, best_eval = pop[i], scores[i]
-                                #logger.info(&#39;&gt;%d, new best f(%s) = %.3f&#39; % (gen,  pop[i], scores[i]))
-                # select parents
-                selected = [selection(pop, scores) for _ in range(n_pop)]
-                # create the next generation
-                children = list()
-                for i in range(0, n_pop, 2):
-                        # get selected parents in pairs
-                        p1, p2 = selected[i], selected[i+1]
-                        # crossover and mutation
-                        for c in crossover(p1, p2, r_cross):
-                                # mutation
-                                mutation(c, r_mut, bounds)
-                                # store for next generation
-                                children.append(c)
-                # replace population
-                pop = children
-        return [best, best_eval]</code></pre>
+    for _ in range(n_iter):
+        # evaluate all candidates in the population
+        scores = [objective(c) for c in pop]
+        # check for new best solution
+        for i in range(n_pop):
+            if scores[i] &lt; best_eval:
+                best, best_eval = pop[i], scores[i]
+                #logger.info(&#39;&gt;%d, new best f(%s) = %.3f&#39; % (gen,  pop[i], scores[i]))
+        # select parents
+        selected = [selection(pop, scores) for _ in range(n_pop)]
+        # create the next generation
+        children = list()
+        for i in range(0, n_pop, 2):
+            # get selected parents in pairs
+            p1, p2 = selected[i], selected[i+1]
+            # crossover and mutation
+            for c in crossover(p1, p2, r_cross):
+                # mutation
+                mutation(c, r_mut, bounds)
+                # store for next generation
+                children.append(c)
+        # replace population
+        pop = children
+    return [best, best_eval]</code></pre>
 </details>
 </dd>
 <dt id="knee.optimization.get_random_solution"><code class="name flex">
-<span>def <span class="ident">get_random_solution</span></span>(<span>bounds)</span>
+<span>def <span class="ident">get_random_solution</span></span>(<span>bounds: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Generates a random solutions that is within the bounds.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>bounds</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the bounds of valid solutions</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>a random solutions that is within the bounds</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_random_solution(bounds):
+<pre><code class="python">def get_random_solution(bounds:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Generates a random solutions that is within the bounds.
+
+    Args:
+        bounds (np.ndarray): the bounds of valid solutions
+
+    Returns:
+        np.ndarray: a random solutions that is within the bounds
+    &#34;&#34;&#34;
     solution = bounds[:, 0] + np.random.rand(len(bounds)) * (bounds[:, 1] - bounds[:, 0])
     solution = np.minimum(solution, bounds.max(axis = 1))
     solution = np.maximum(solution, bounds.min(axis = 1))
@@ -220,15 +336,43 @@ def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=
 </details>
 </dd>
 <dt id="knee.optimization.hillclimbing"><code class="name flex">
-<span>def <span class="ident">hillclimbing</span></span>(<span>objective, bounds, n_iterations=200, step_size=0.01)</span>
+<span>def <span class="ident">hillclimbing</span></span>(<span>objective: Callable, bounds: numpy.ndarray, n_iterations: int = 200, step_size: float = 0.01) ‑> list</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Hill climbing local search algorithm.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>objective</code></strong> :&ensp;<code>typing.Callable</code></dt>
+<dd>objective fucntion</dd>
+<dt><strong><code>bounds</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the bounds of valid solutions</dd>
+<dt><strong><code>n_iterations</code></strong> :&ensp;<code>int</code></dt>
+<dd>the number of iterations (default 200)</dd>
+<dt><strong><code>step_size</code></strong> :&ensp;<code>float</code></dt>
+<dd>the step size (default 0.01)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>[solution, solution_cost]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def hillclimbing(objective, bounds, n_iterations=200, step_size=.01):
+<pre><code class="python">def hillclimbing(objective:typing.Callable, bounds:np.ndarray, n_iterations:int=200, step_size:float=.01) -&gt; list:
+    &#34;&#34;&#34;
+    Hill climbing local search algorithm.
+
+    Args:
+        objective (typing.Callable): objective fucntion
+        bounds (np.ndarray): the bounds of valid solutions
+        n_iterations (int): the number of iterations (default 200)
+        step_size (float): the step size (default 0.01)
+
+    Returns:
+        list: [solution, solution_cost]
+    &#34;&#34;&#34;
     # min and max for each bound
     bounds_max = bounds.max(axis = 1)
     bounds_min = bounds.min(axis = 1)
@@ -260,15 +404,46 @@ def genetic_algorithm(objective, bounds, selection, crossover, mutation, n_iter=
 </details>
 </dd>
 <dt id="knee.optimization.simulated_annealing"><code class="name flex">
-<span>def <span class="ident">simulated_annealing</span></span>(<span>objective, bounds, n_iterations=200, step_size=0.01, temp=20)</span>
+<span>def <span class="ident">simulated_annealing</span></span>(<span>objective: Callable, bounds: numpy.ndarray, n_iterations: int = 200, step_size: float = 0.01, temp: float = 20.0) ‑> list</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Simulated annealing algorithm.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>objective</code></strong> :&ensp;<code>typing.Callable</code></dt>
+<dd>objective fucntion</dd>
+<dt><strong><code>bounds</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the bounds of valid solutions</dd>
+<dt><strong><code>n_iterations</code></strong> :&ensp;<code>int</code></dt>
+<dd>the number of iterations (default 200)</dd>
+<dt><strong><code>step_size</code></strong> :&ensp;<code>float</code></dt>
+<dd>the step size (default 0.01)</dd>
+<dt><strong><code>temp</code></strong> :&ensp;<code>float</code></dt>
+<dd>initial temperature (default 20.0)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>[solution, solution_cost]</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def simulated_annealing(objective, bounds, n_iterations=200, step_size=0.01, temp=20):
+<pre><code class="python">def simulated_annealing(objective:typing.Callable, bounds:np.ndarray, n_iterations:int=200, step_size:float=0.01, temp:float=20.0) -&gt; list:
+    &#34;&#34;&#34;
+    Simulated annealing algorithm.
+
+    Args:
+        objective (typing.Callable): objective fucntion
+        bounds (np.ndarray): the bounds of valid solutions
+        n_iterations (int): the number of iterations (default 200)
+        step_size (float): the step size (default 0.01)
+        temp (float): initial temperature (default 20.0)
+
+    Returns:
+        list: [solution, solution_cost]
+    &#34;&#34;&#34;
         # min and max for each bound
     bounds_max = bounds.max(axis = 1)
     bounds_min = bounds.min(axis = 1)
