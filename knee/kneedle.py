@@ -257,7 +257,8 @@ def auto_knee(points: np.ndarray, t: float = 1.0) -> int:
 
 
 def multi_knee(points, t1=0.99, t2=3):
-    """Recursive knee point detection based on Kneedle.
+    """
+    Recursive knee point detection based on Kneedle.
 
     It returns the knee points on the curve.
 
@@ -267,7 +268,7 @@ def multi_knee(points, t1=0.99, t2=3):
         t2 (int): number of points threshold (default 3)
 
     Returns:
-        np.ndarray: The knee points on the curve
+        np.ndarray: knee points on the curve
 
     """
     return mk.multi_knee(auto_knee, points, t1, t2)

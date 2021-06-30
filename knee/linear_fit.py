@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class R2(enum.Enum):
     """
-    Enum data type that types of coefficient of determination
+    Enum that defines the types of coefficient of determination
     """
     adjusted = 'adjusted'
     classic = 'classic'

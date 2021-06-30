@@ -20,6 +20,9 @@ logger = logging.getLogger(__name__)
 
 
 class Fit(Enum):
+    """
+    Enum that defines the types of linear fitting
+    """
     best_fit = 'bestfit'
     point_fit = 'pointfit'
 
@@ -27,7 +30,21 @@ class Fit(Enum):
         return self.value
 
 
-def get_knee(x, y, fit=Fit.point_fit):
+def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -> int:
+    """
+    Returns the index of the knee point based on menger curvature.
+
+    This method uses the iterative refinement.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        fit (Fit): select between point fit and best fit
+
+    Returns:
+        int: the index of the knee point
+    """
+
     index = 2
     length = x[-1] - x[0]
     left_length = x[index] - x[0]
@@ -76,7 +93,20 @@ def get_knee(x, y, fit=Fit.point_fit):
     return (index, coef_left, coef_right)
 
 
-def knee(x, y, fit, debug=False):
+def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -> int:
+    """
+    Returns the index of the knee point based on menger curvature.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        fit (Fit): select between point fit and best fit
+
+    Returns:
+        int: the index of the knee point
+    """
+
+    x = points[:,0]
+    y = points[:,1]
 
     last_knee = -1
     cutoff  = current_knee = len(x)
@@ -85,24 +115,25 @@ def knee(x, y, fit, debug=False):
     done = False
     while current_knee != last_knee and not done:
         last_knee = current_knee
-        current_knee, coef_left, coef_right = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
-        #input('wait...')
+        current_knee, _, _ = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
         cutoff = int((current_knee + last_knee)/2)
         if cutoff < 10:
             done = True
         
-    #return index
-    if debug:
-        return {'knee': current_knee, 'coef_left': coef_left, 'coef_right': coef_right}
-    else:
-        return current_knee
+    return current_knee
 
 
-def knee_points(points, fit=Fit.point_fit, debug=False):
-    x = points[:,0]
-    y = points[:,1]
-    return knee(x, y, fit, debug)
+def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 4) -> np.ndarray:
+    """Recursive knee point detection based on the L-method.
 
+    It returns the knee points on the curve.
 
-def multi_knee(points, t1=0.99, t2=4):
-    return mk.multi_knee(knee_points, points, t1, t2)
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t1 (float): coefficient of determination threshold (default 0.99)
+        t2 (int): number of points threshold (default 3)
+
+    Returns:
+        np.ndarray: knee points on the curve
+    """
+    return mk.multi_knee(knee, points, t1, t2)

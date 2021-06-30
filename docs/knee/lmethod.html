@@ -49,6 +49,9 @@ logger = logging.getLogger(__name__)
 
 
 class Fit(Enum):
+    &#34;&#34;&#34;
+    Enum that defines the types of linear fitting
+    &#34;&#34;&#34;
     best_fit = &#39;bestfit&#39;
     point_fit = &#39;pointfit&#39;
 
@@ -56,7 +59,21 @@ class Fit(Enum):
         return self.value
 
 
-def get_knee(x, y, fit=Fit.point_fit):
+def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -&gt; int:
+    &#34;&#34;&#34;
+    Returns the index of the knee point based on menger curvature.
+
+    This method uses the iterative refinement.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        fit (Fit): select between point fit and best fit
+
+    Returns:
+        int: the index of the knee point
+    &#34;&#34;&#34;
+
     index = 2
     length = x[-1] - x[0]
     left_length = x[index] - x[0]
@@ -105,7 +122,20 @@ def get_knee(x, y, fit=Fit.point_fit):
     return (index, coef_left, coef_right)
 
 
-def knee(x, y, fit, debug=False):
+def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -&gt; int:
+    &#34;&#34;&#34;
+    Returns the index of the knee point based on menger curvature.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        fit (Fit): select between point fit and best fit
+
+    Returns:
+        int: the index of the knee point
+    &#34;&#34;&#34;
+
+    x = points[:,0]
+    y = points[:,1]
 
     last_knee = -1
     cutoff  = current_knee = len(x)
@@ -114,27 +144,28 @@ def knee(x, y, fit, debug=False):
     done = False
     while current_knee != last_knee and not done:
         last_knee = current_knee
-        current_knee, coef_left, coef_right = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
-        #input(&#39;wait...&#39;)
+        current_knee, _, _ = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
         cutoff = int((current_knee + last_knee)/2)
         if cutoff &lt; 10:
             done = True
         
-    #return index
-    if debug:
-        return {&#39;knee&#39;: current_knee, &#39;coef_left&#39;: coef_left, &#39;coef_right&#39;: coef_right}
-    else:
-        return current_knee
+    return current_knee
 
 
-def knee_points(points, fit=Fit.point_fit, debug=False):
-    x = points[:,0]
-    y = points[:,1]
-    return knee(x, y, fit, debug)
+def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 4) -&gt; np.ndarray:
+    &#34;&#34;&#34;Recursive knee point detection based on the L-method.
 
+    It returns the knee points on the curve.
 
-def multi_knee(points, t1=0.99, t2=4):
-    return mk.multi_knee(knee_points, points, t1, t2)</code></pre>
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t1 (float): coefficient of determination threshold (default 0.99)
+        t2 (int): number of points threshold (default 3)
+
+    Returns:
+        np.ndarray: knee points on the curve
+    &#34;&#34;&#34;
+    return mk.multi_knee(knee, points, t1, t2)</code></pre>
 </details>
 </section>
 <section>
@@ -145,15 +176,44 @@ def multi_knee(points, t1=0.99, t2=4):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.lmethod.get_knee"><code class="name flex">
-<span>def <span class="ident">get_knee</span></span>(<span>x, y, fit=pointfit)</span>
+<span>def <span class="ident">get_knee</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, fit=pointfit) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Returns the index of the knee point based on menger curvature.</p>
+<p>This method uses the iterative refinement.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the value of the points in the x axis coordinates</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the value of the points in the y axis coordinates</dd>
+<dt><strong><code>fit</code></strong> :&ensp;<code><a title="knee.lmethod.Fit" href="#knee.lmethod.Fit">Fit</a></code></dt>
+<dd>select between point fit and best fit</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>the index of the knee point</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_knee(x, y, fit=Fit.point_fit):
+<pre><code class="python">def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -&gt; int:
+    &#34;&#34;&#34;
+    Returns the index of the knee point based on menger curvature.
+
+    This method uses the iterative refinement.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        fit (Fit): select between point fit and best fit
+
+    Returns:
+        int: the index of the knee point
+    &#34;&#34;&#34;
+
     index = 2
     length = x[-1] - x[0]
     left_length = x[index] - x[0]
@@ -203,15 +263,40 @@ def multi_knee(points, t1=0.99, t2=4):
 </details>
 </dd>
 <dt id="knee.lmethod.knee"><code class="name flex">
-<span>def <span class="ident">knee</span></span>(<span>x, y, fit, debug=False)</span>
+<span>def <span class="ident">knee</span></span>(<span>points: numpy.ndarray, fit: <a title="knee.lmethod.Fit" href="#knee.lmethod.Fit">Fit</a> = pointfit) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Returns the index of the knee point based on menger curvature.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>fit</code></strong> :&ensp;<code><a title="knee.lmethod.Fit" href="#knee.lmethod.Fit">Fit</a></code></dt>
+<dd>select between point fit and best fit</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>the index of the knee point</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def knee(x, y, fit, debug=False):
+<pre><code class="python">def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -&gt; int:
+    &#34;&#34;&#34;
+    Returns the index of the knee point based on menger curvature.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        fit (Fit): select between point fit and best fit
+
+    Returns:
+        int: the index of the knee point
+    &#34;&#34;&#34;
+
+    x = points[:,0]
+    y = points[:,1]
 
     last_knee = -1
     cutoff  = current_knee = len(x)
@@ -220,45 +305,52 @@ def multi_knee(points, t1=0.99, t2=4):
     done = False
     while current_knee != last_knee and not done:
         last_knee = current_knee
-        current_knee, coef_left, coef_right = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
-        #input(&#39;wait...&#39;)
+        current_knee, _, _ = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
         cutoff = int((current_knee + last_knee)/2)
         if cutoff &lt; 10:
             done = True
         
-    #return index
-    if debug:
-        return {&#39;knee&#39;: current_knee, &#39;coef_left&#39;: coef_left, &#39;coef_right&#39;: coef_right}
-    else:
-        return current_knee</code></pre>
-</details>
-</dd>
-<dt id="knee.lmethod.knee_points"><code class="name flex">
-<span>def <span class="ident">knee_points</span></span>(<span>points, fit=pointfit, debug=False)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def knee_points(points, fit=Fit.point_fit, debug=False):
-    x = points[:,0]
-    y = points[:,1]
-    return knee(x, y, fit, debug)</code></pre>
+    return current_knee</code></pre>
 </details>
 </dd>
 <dt id="knee.lmethod.multi_knee"><code class="name flex">
-<span>def <span class="ident">multi_knee</span></span>(<span>points, t1=0.99, t2=4)</span>
+<span>def <span class="ident">multi_knee</span></span>(<span>points: numpy.ndarray, t1: float = 0.99, t2: int = 4) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Recursive knee point detection based on the L-method.</p>
+<p>It returns the knee points on the curve.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>t1</code></strong> :&ensp;<code>float</code></dt>
+<dd>coefficient of determination threshold (default 0.99)</dd>
+<dt><strong><code>t2</code></strong> :&ensp;<code>int</code></dt>
+<dd>number of points threshold (default 3)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>knee points on the curve</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee(points, t1=0.99, t2=4):
-    return mk.multi_knee(knee_points, points, t1, t2)</code></pre>
+<pre><code class="python">def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 4) -&gt; np.ndarray:
+    &#34;&#34;&#34;Recursive knee point detection based on the L-method.
+
+    It returns the knee points on the curve.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t1 (float): coefficient of determination threshold (default 0.99)
+        t2 (int): number of points threshold (default 3)
+
+    Returns:
+        np.ndarray: knee points on the curve
+    &#34;&#34;&#34;
+    return mk.multi_knee(knee, points, t1, t2)</code></pre>
 </details>
 </dd>
 </dl>
@@ -271,12 +363,15 @@ def multi_knee(points, t1=0.99, t2=4):
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Enum that defines the types of linear fitting</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Fit(Enum):
+    &#34;&#34;&#34;
+    Enum that defines the types of linear fitting
+    &#34;&#34;&#34;
     best_fit = &#39;bestfit&#39;
     point_fit = &#39;pointfit&#39;
 
@@ -317,7 +412,6 @@ def multi_knee(points, t1=0.99, t2=4):
 <ul class="">
 <li><code><a title="knee.lmethod.get_knee" href="#knee.lmethod.get_knee">get_knee</a></code></li>
 <li><code><a title="knee.lmethod.knee" href="#knee.lmethod.knee">knee</a></code></li>
-<li><code><a title="knee.lmethod.knee_points" href="#knee.lmethod.knee_points">knee_points</a></code></li>
 <li><code><a title="knee.lmethod.multi_knee" href="#knee.lmethod.multi_knee">multi_knee</a></code></li>
 </ul>
 </li>
