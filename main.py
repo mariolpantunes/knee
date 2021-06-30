@@ -126,7 +126,7 @@ def main(args):
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
 
     names = ['kneedle', 'kneedke(Rec)', 'l-method', 'dfdt', 'menger', 'curvature', 'Tyler (RDP)', 'Tyler', 'RDP'] 
-    methods = [kneedle.auto_knees, kneedle.multi_knee, lmethod.multi_knee, dfdt.multi_knee, menger.multi_knee, curvature.multi_knee, ps.get_knees_points]
+    methods = [kneedle.auto_knees, kneedle.multi_knee, lmethod.multi_knee, dfdt.multi_knee, menger.multi_knee, curvature.multi_knee, ps.knees]
     knees = []
     knees_raw = []
 
@@ -138,7 +138,7 @@ def main(args):
         knees_raw.append(raw_indexes)
     
     # Tyler
-    candidates = ps.get_knees_points(points)
+    candidates = ps.knees(points)
     knees.append(candidates)
     knees_raw.append(candidates)
     
