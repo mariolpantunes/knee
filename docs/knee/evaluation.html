@@ -221,8 +221,10 @@ def accuracy_trace(points: np.ndarray, knees: np.ndarray) -&gt; tuple[float, flo
 
     coeffients = np.array(coeffients)
     coeffients = coeffients/coeffients.max()
-
+    
+    coeffients[coeffients &lt; 0] = 0.0
     p = slopes * distances_y * coeffients
+    #p = slopes * distances_y
 
     average_x = np.average(distances_x)
     average_y = np.average(distances_y)
@@ -231,7 +233,115 @@ def accuracy_trace(points: np.ndarray, knees: np.ndarray) -&gt; tuple[float, flo
 
     cost = average_x / np.average(p)
 
-    return average_x, average_y, average_slope, average_coeffients, cost</code></pre>
+    return average_x, average_y, average_slope, average_coeffients, cost
+
+
+def mae(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, e_size: bool = False) -&gt; float:
+    &#34;&#34;&#34;
+    Estimates the worst case Mean Absolute Error (MAE) for the given
+    knee and expected points.
+
+    Suppports different size arrays, and estimates the MAE based 
+    on the worst case.
+    It uses the euclidean distance to find the closer points,
+    and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        e_size (bool): flag that indicates to consider the size of expected points (default False)
+
+    Returns:
+        float: the worst case MAE
+    &#34;&#34;&#34;
+    # get the knee points
+    knee_points = points[knees]
+
+    error = 0.0
+    total = 0.0
+
+    # since the lenght of the expected and knee points can vary
+    # we use the array with more elements (worst case)
+    if len(expected) &gt; len(knees) or e_size:
+        for expected_point in expected:
+            distances = np.linalg.norm(knee_points-expected_point, axis=1)
+            idx = np.argmin(distances)
+            error += np.sum(np.abs(expected_point-knee_points[idx]))
+        total = len(expected) * 2.0
+    else:
+        for knee_point in knee_points:
+            distances = np.linalg.norm(expected-knee_point, axis=1)
+            idx = np.argmin(distances)
+            error += np.sum(np.abs(knee_point-expected[idx]))
+        total = len(knee_points) * 2.0
+
+    return error / total
+
+
+def mse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, e_size: bool = False) -&gt; float:
+    &#34;&#34;&#34;
+    Estimates the worst case Mean Squared Error (MSE) for the given
+    knee and expected points.
+
+    Suppports different size arrays, and estimates the MSE based 
+    on the worst case.
+    It uses the euclidean distance to find the closer points,
+    and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        e_size (bool): flag that indicates to consider the size of expected points (default False)
+
+    Returns:
+        float: the worst case MSE
+    &#34;&#34;&#34;
+    # get the knee points
+    knee_points = points[knees]
+
+    error = 0.0
+    total = 0.0
+
+    # since the lenght of the expected and knee points can vary
+    # we use the array with more elements (worst case)
+    if len(expected) &gt; len(knees) or e_size:
+        for expected_point in expected:
+            distances = np.linalg.norm(knee_points-expected_point, axis=1)
+            idx = np.argmin(distances)
+            error += np.sum(np.square(expected_point-knee_points[idx]))
+        total = len(expected) * 2.0
+    else:
+        for knee_point in knee_points:
+            distances = np.linalg.norm(expected-knee_point, axis=1)
+            idx = np.argmin(distances)
+            error += np.sum(np.square(knee_point-expected[idx]))
+        total = len(knee_points) * 2.0
+
+    return error / total
+
+
+def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, e_size: bool = False) -&gt; float:
+    &#34;&#34;&#34;
+    Estimates the worst case Root Mean Squared Error (RMSE) for the given
+    knee and expected points.
+
+    Suppports different size arrays, and estimates the RMSE based 
+    on the worst case.
+    It uses the euclidean distance to find the closer points,
+    and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        e_size (bool): flag that indicates to consider the size of expected points (default False)
+
+    Returns:
+        float: the worst case RMSE
+    &#34;&#34;&#34;
+    return math.sqrt(mse(points, knees, expected, e_size))</code></pre>
 </details>
 </section>
 <section>
@@ -413,8 +523,10 @@ In this version it is used the points from the current knee to the previous.</p>
 
     coeffients = np.array(coeffients)
     coeffients = coeffients/coeffients.max()
-
+    
+    coeffients[coeffients &lt; 0] = 0.0
     p = slopes * distances_y * coeffients
+    #p = slopes * distances_y
 
     average_x = np.average(distances_x)
     average_y = np.average(distances_y)
@@ -531,6 +643,204 @@ In this version it is used the points from the current knee to the previous.</p>
     return get_neighbourhood(x, y, a, b, t)</code></pre>
 </details>
 </dd>
+<dt id="knee.evaluation.mae"><code class="name flex">
+<span>def <span class="ident">mae</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, e_size: bool = False) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Estimates the worst case Mean Absolute Error (MAE) for the given
+knee and expected points.</p>
+<p>Suppports different size arrays, and estimates the MAE based
+on the worst case.
+It uses the euclidean distance to find the closer points,
+and computes the error based on the closest point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>expected</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the expected knee points (x, y)</dd>
+<dt><strong><code>e_size</code></strong> :&ensp;<code>bool</code></dt>
+<dd>flag that indicates to consider the size of expected points (default False)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the worst case MAE</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mae(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, e_size: bool = False) -&gt; float:
+    &#34;&#34;&#34;
+    Estimates the worst case Mean Absolute Error (MAE) for the given
+    knee and expected points.
+
+    Suppports different size arrays, and estimates the MAE based 
+    on the worst case.
+    It uses the euclidean distance to find the closer points,
+    and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        e_size (bool): flag that indicates to consider the size of expected points (default False)
+
+    Returns:
+        float: the worst case MAE
+    &#34;&#34;&#34;
+    # get the knee points
+    knee_points = points[knees]
+
+    error = 0.0
+    total = 0.0
+
+    # since the lenght of the expected and knee points can vary
+    # we use the array with more elements (worst case)
+    if len(expected) &gt; len(knees) or e_size:
+        for expected_point in expected:
+            distances = np.linalg.norm(knee_points-expected_point, axis=1)
+            idx = np.argmin(distances)
+            error += np.sum(np.abs(expected_point-knee_points[idx]))
+        total = len(expected) * 2.0
+    else:
+        for knee_point in knee_points:
+            distances = np.linalg.norm(expected-knee_point, axis=1)
+            idx = np.argmin(distances)
+            error += np.sum(np.abs(knee_point-expected[idx]))
+        total = len(knee_points) * 2.0
+
+    return error / total</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.mse"><code class="name flex">
+<span>def <span class="ident">mse</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, e_size: bool = False) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Estimates the worst case Mean Squared Error (MSE) for the given
+knee and expected points.</p>
+<p>Suppports different size arrays, and estimates the MSE based
+on the worst case.
+It uses the euclidean distance to find the closer points,
+and computes the error based on the closest point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>expected</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the expected knee points (x, y)</dd>
+<dt><strong><code>e_size</code></strong> :&ensp;<code>bool</code></dt>
+<dd>flag that indicates to consider the size of expected points (default False)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the worst case MSE</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, e_size: bool = False) -&gt; float:
+    &#34;&#34;&#34;
+    Estimates the worst case Mean Squared Error (MSE) for the given
+    knee and expected points.
+
+    Suppports different size arrays, and estimates the MSE based 
+    on the worst case.
+    It uses the euclidean distance to find the closer points,
+    and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        e_size (bool): flag that indicates to consider the size of expected points (default False)
+
+    Returns:
+        float: the worst case MSE
+    &#34;&#34;&#34;
+    # get the knee points
+    knee_points = points[knees]
+
+    error = 0.0
+    total = 0.0
+
+    # since the lenght of the expected and knee points can vary
+    # we use the array with more elements (worst case)
+    if len(expected) &gt; len(knees) or e_size:
+        for expected_point in expected:
+            distances = np.linalg.norm(knee_points-expected_point, axis=1)
+            idx = np.argmin(distances)
+            error += np.sum(np.square(expected_point-knee_points[idx]))
+        total = len(expected) * 2.0
+    else:
+        for knee_point in knee_points:
+            distances = np.linalg.norm(expected-knee_point, axis=1)
+            idx = np.argmin(distances)
+            error += np.sum(np.square(knee_point-expected[idx]))
+        total = len(knee_points) * 2.0
+
+    return error / total</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.rmse"><code class="name flex">
+<span>def <span class="ident">rmse</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, e_size: bool = False) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Estimates the worst case Root Mean Squared Error (RMSE) for the given
+knee and expected points.</p>
+<p>Suppports different size arrays, and estimates the RMSE based
+on the worst case.
+It uses the euclidean distance to find the closer points,
+and computes the error based on the closest point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>expected</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the expected knee points (x, y)</dd>
+<dt><strong><code>e_size</code></strong> :&ensp;<code>bool</code></dt>
+<dd>flag that indicates to consider the size of expected points (default False)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the worst case RMSE</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, e_size: bool = False) -&gt; float:
+    &#34;&#34;&#34;
+    Estimates the worst case Root Mean Squared Error (RMSE) for the given
+    knee and expected points.
+
+    Suppports different size arrays, and estimates the RMSE based 
+    on the worst case.
+    It uses the euclidean distance to find the closer points,
+    and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        e_size (bool): flag that indicates to consider the size of expected points (default False)
+
+    Returns:
+        float: the worst case RMSE
+    &#34;&#34;&#34;
+    return math.sqrt(mse(points, knees, expected, e_size))</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -553,6 +863,9 @@ In this version it is used the points from the current knee to the previous.</p>
 <li><code><a title="knee.evaluation.accuracy_trace" href="#knee.evaluation.accuracy_trace">accuracy_trace</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood" href="#knee.evaluation.get_neighbourhood">get_neighbourhood</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_points" href="#knee.evaluation.get_neighbourhood_points">get_neighbourhood_points</a></code></li>
+<li><code><a title="knee.evaluation.mae" href="#knee.evaluation.mae">mae</a></code></li>
+<li><code><a title="knee.evaluation.mse" href="#knee.evaluation.mse">mse</a></code></li>
+<li><code><a title="knee.evaluation.rmse" href="#knee.evaluation.rmse">rmse</a></code></li>
 </ul>
 </li>
 </ul>

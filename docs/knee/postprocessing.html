@@ -45,7 +45,20 @@ import matplotlib.pyplot as plt
 logger = logging.getLogger(__name__)
 
 
-def filter_worst_knees(points, knees):
+def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Filter the worst knees points.
+
+    A worst knee is a knee that is higher (at y axis) than a previous knee.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+
+    Returns:
+        np.ndarray: the filtered knees
+    &#34;&#34;&#34;
+
     filtered_knees = []
 
     filtered_knees.append(knees[0])
@@ -62,7 +75,7 @@ def filter_worst_knees(points, knees):
 
 def filter_clustring(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
-method:ranking.ClusterRanking=ranking.ClusterRanking.linear) -&gt; np.ndarray:
+method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Filter the knee points based on clustering.
 
@@ -146,7 +159,7 @@ The ranking is computed based on the slope and the improvement (on the y axis).<
 </summary>
 <pre><code class="python">def filter_clustring(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
-method:ranking.ClusterRanking=ranking.ClusterRanking.linear) -&gt; np.ndarray:
+method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Filter the knee points based on clustering.
 
@@ -193,15 +206,41 @@ method:ranking.ClusterRanking=ranking.ClusterRanking.linear) -&gt; np.ndarray:
 </details>
 </dd>
 <dt id="knee.postprocessing.filter_worst_knees"><code class="name flex">
-<span>def <span class="ident">filter_worst_knees</span></span>(<span>points, knees)</span>
+<span>def <span class="ident">filter_worst_knees</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Filter the worst knees points.</p>
+<p>A worst knee is a knee that is higher (at y axis) than a previous knee.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the filtered knees</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def filter_worst_knees(points, knees):
+<pre><code class="python">def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Filter the worst knees points.
+
+    A worst knee is a knee that is higher (at y axis) than a previous knee.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+
+    Returns:
+        np.ndarray: the filtered knees
+    &#34;&#34;&#34;
+
     filtered_knees = []
 
     filtered_knees.append(knees[0])

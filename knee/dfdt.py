@@ -85,6 +85,5 @@ def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 3) -> np.ndarray:
 
     Returns:
         np.ndarray: The knee points on the curve
-
     """
     return mk.multi_knee(knee, points, t1, t2)

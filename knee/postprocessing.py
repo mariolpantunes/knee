@@ -16,7 +16,20 @@ import matplotlib.pyplot as plt
 logger = logging.getLogger(__name__)
 
 
-def filter_worst_knees(points, knees):
+def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
+    """
+    Filter the worst knees points.
+
+    A worst knee is a knee that is higher (at y axis) than a previous knee.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+
+    Returns:
+        np.ndarray: the filtered knees
+    """
+
     filtered_knees = []
 
     filtered_knees.append(knees[0])
@@ -33,7 +46,7 @@ def filter_worst_knees(points, knees):
 
 def filter_clustring(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
-method:ranking.ClusterRanking=ranking.ClusterRanking.linear) -> np.ndarray:
+method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
     """
     Filter the knee points based on clustering.
 

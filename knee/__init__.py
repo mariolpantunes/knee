@@ -1,4 +1,14 @@
-from os.path import dirname, basename, isfile, join
-import glob
-modules = glob.glob(join(dirname(__file__), "*.py"))
-__all__ = [ basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py')]
+import knee.clustering
+import knee.curvature
+import knee.dfdt
+import knee.evaluation
+import knee.knee_ranking
+import knee.kneedle
+import knee.linear_fit
+import knee.lmethod
+import knee.menger
+import knee.multi_knee
+import knee.optimization
+import knee.pointSelector
+import knee.postprocessing
+import knee.rdp

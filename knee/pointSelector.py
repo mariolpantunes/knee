@@ -1,17 +1,26 @@
+# coding: utf-8
+
+
 import numpy as np
 import logging
 from math import ceil, fabs
 from uts.zscore import zscore_array
 import uts.gradient as grad
-#from PyMimircache import Cachecow
-#from scipy.misc import derivative
-#from scipy.stats import zscore
 
 
 logger = logging.getLogger(__name__)
 
 
-def dict_to_lists(d):
+def dict_to_lists(d: dict) -> tuple:
+    """
+    Convert a dict of points into a tuple of lists.
+
+    Args:
+        d (dict): dict with the points (x, y)
+
+    Returns:
+        tuple: (array(x), array(y))
+    """
     x = []
     y = []
     for k, v in d.items():
@@ -20,58 +29,102 @@ def dict_to_lists(d):
     return (np.array(x), np.array(y))
 
 
-def dict_to_points(d):
+def dict_to_points(d: dict) -> np.ndarray:
+    """
+    Convert a dict of points into an array of points.
+
+    Args:
+        d (dict): dict with the points (x, y)
+
+    Returns:
+        np.ndarray: numpy array with the points (x, y)
+    """
     points = []
     for k, v in d.items():
         points.append([k, v])
     return np.array(points)
 
 
-def points_to_dict(points):
+def points_to_dict(points:np.ndarray) -> dict:
+    """
+    Convert an array of points into a dict of points.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        dict: dict with the points (x, y)
+    """
     rv = {}
     for point in points:
         rv[point[0]] = point[1]
     return rv
 
 
-def lists_to_dict(x, y):
+def lists_to_dict(x:np.ndarray, y: np.ndarray) -> dict:
+    """
+    Convert two array of points into a dict of points.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+
+    Returns:
+        dict: dict with the points (x, y)
+    """
     rv = {}
     for i in range(len(x)):
         rv[x[i]] = y[i]
     return rv
 
 
-def map_index(a, b):
+def map_index(a:np.ndarray, b:np.ndarray) -> np.ndarray:
+    """
+    Maps the knee points into indexes.
+
+    Args:
+        a (np.ndarray): numpy array with the points (x)
+        b (np.ndarray): numpy array with the knee points points (x)
+    Returns:
+        np.ndarray: The knee indexes
+    """
     sort_idx = np.argsort(a)
     out = sort_idx[np.searchsorted(a, b, sorter=sort_idx)]
     return out
 
-    # index =
-    #sorted_x = x[index]
-    #sorted_index = np.searchsorted(sorted_x, y)
 
+def knees(points:np.ndarray) -> np.ndarray:
+    """
+    Given an array of points, it computes the knees.
 
-def get_knees_points(points):
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: The knee points on the curve
+    """
     x = points[:, 0]
     y = points[:, 1]
-    return get_knees(x, y)
-
-
-def get_knees(x, y):
     mrc = lists_to_dict(x, y)
     rv = getPoints(mrc)
     # convert x points into indexes:
     return map_index(x, np.array(rv))
 
 
-def getPoints(mrc, x_dist=0.05, y_dist=0.05, delta_z=0.05, plot=False):
-    '''
-    use our outlier method to find interesting points in an MRC
-    @mrc: MRC dict of some trace
-    @x_dist: % of max cache size between points
-    @y_dist: % of max - min miss ratio between points
-    @plot: set True if you want to return data useful for plotting
-    '''
+def getPoints(mrc:dict, x_dist:float=0.05, y_dist:float=0.05, delta_z:float=0.05, plot:bool=False) -> list:
+    """
+    Use our outlier method to find interesting points in an MRC.
+    
+    Args:
+        mrc (dict): dict with the points (x, y)
+        x_dist (float): % of max cache size between points (default 0.05)
+        y_dist (float): % of max - min miss ratio between points (default 0.05)
+        delta_z (float): (default 0.05)
+        plot (bool): set True if you want to return data useful for plotting
+
+    Returns:
+        list: list with the knees x coordinate
+    """
 
     uniq_reqs = len(mrc)
 
