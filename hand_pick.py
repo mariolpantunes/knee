@@ -14,7 +14,6 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backend_bases import MouseButton
-import scipy.spatial as sp
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
