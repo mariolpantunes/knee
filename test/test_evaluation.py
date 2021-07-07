@@ -17,7 +17,7 @@ class TestEvaluation(unittest.TestCase):
         points = np.array([[0,0], [1,1], [2,2]])
         knees = np.array([0,1,2])
         expected = np.array([[1,1], [2,2]])
-        result = evaluation.mae(points, knees, expected)
+        result = evaluation.mae(points, knees, expected, evaluation.Strategy.worst)
         desired = 1/3
         self.assertAlmostEqual(result, desired)
     
@@ -41,7 +41,7 @@ class TestEvaluation(unittest.TestCase):
         points = np.array([[0,0], [1,1], [2,2]])
         knees = np.array([0,1,2])
         expected = np.array([[1,1], [2,2]])
-        result = evaluation.mse(points, knees, expected)
+        result = evaluation.mse(points, knees, expected, evaluation.Strategy.worst)
         desired = 1/3
         self.assertAlmostEqual(result, desired)
     
@@ -65,7 +65,7 @@ class TestEvaluation(unittest.TestCase):
         points = np.array([[0,0], [1,1], [2,2]])
         knees = np.array([0,1,2])
         expected = np.array([[1,1], [2,2]])
-        result = evaluation.rmse(points, knees, expected)
+        result = evaluation.rmse(points, knees, expected, evaluation.Strategy.worst)
         desired = math.sqrt(1/3)
         self.assertAlmostEqual(result, desired)
     
