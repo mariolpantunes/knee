@@ -77,7 +77,8 @@ def onclick(event):
 def main(args):
     # get the expected file from the input file
     dirname = os.path.dirname(args.i)
-    output = os.path.join(os.path.normpath(dirname), 'expected.csv')
+    filename = os.path.splitext(os.path.basename(args.i))[0]
+    output = os.path.join(os.path.normpath(dirname), f'{filename}_expected.csv')
 
     # trying to load the dataset
     global dataset

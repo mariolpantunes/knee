@@ -8,10 +8,10 @@ __status__ = 'Development'
 
 import os
 import csv
+import math
 import argparse
 import numpy as np
 import logging
-
 
 from enum import Enum
 import knee.rdp as rdp
@@ -108,12 +108,13 @@ def plot_knees(points, knees, names):
 def main(args):
     # get the expected file from the input file
     dirname = os.path.dirname(args.i)
-    output = os.path.join(os.path.normpath(dirname), 'expected.csv')
+    filename = os.path.splitext(os.path.basename(args.i))[0]
+    expected_file = os.path.join(os.path.normpath(dirname), f'{filename}_expected.csv')
 
     expected = None
 
-    if os.path.exists(output):
-        with open(output, 'r') as f:
+    if os.path.exists(expected_file):
+        with open(expected_file, 'r') as f:
             reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
             expected = list(reader)
     else:
@@ -148,7 +149,7 @@ def main(args):
     raw_indexes = rdp.mapping(candidates, points_reduced, points_removed)
     knees_raw.append(raw_indexes)
 
-    plot_knees(points, knees_raw, names)
+    #plot_knees(points, knees_raw, names)
 
     cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
 
@@ -156,6 +157,8 @@ def main(args):
     filtered_knees_raw = []
     rankings = []
     for k, n in zip(knees, names):
+        # remove 0 index in the knees:
+        k = k[k != 0]
         if n == 'Tyler':
             filtered_knees_raw.append(k)
             ranks = np.full(len(k), 1.0)
@@ -168,13 +171,18 @@ def main(args):
             raw_indexes = rdp.mapping(filtered_knees, points_reduced, points_removed)
             filtered_knees_raw.append(raw_indexes)
     
-    logger.info(f'Model         MSE      MSE(exp) Cost(tr) Cost(kn)')
+    logger.info(f'Model          MSE(knees)   MSE(exp)   Cost(tr)   Cost(kn)')
+    logger.info(f'----------------------------------------------------------')
     for k, n in zip(filtered_knees_raw, names):
-        error_mse = evaluation.mse(points, k, expected)
-        error_mse_exp = evaluation.mse(points, k, expected, True)
+        if len(expected) > 0:
+            error_mse = evaluation.mse(points, k, expected, evaluation.Strategy.knees)
+            error_mse_exp = evaluation.mse(points, k, expected, evaluation.Strategy.expected)
+        else:
+            error_mse = math.nan
+            error_mse_exp = math.nan
         _,_,_,_,cost_trace = evaluation.accuracy_trace (points, k)
         _,_,_,_,cost_knee = evaluation.accuracy_knee (points, k)
-        logger.info(f'{n:<13} {error_mse:.2E} {error_mse_exp:.2E} {cost_trace:.2E} {cost_knee:.2E}')
+        logger.info(f'{n:<13}| {error_mse:10.2E} {error_mse_exp:10.2E} {cost_trace:10.2E} {cost_knee:10.2E}')
 
     plot_knees_ranking(points, filtered_knees_raw, names, rankings, expected)
 
