@@ -59,3 +59,18 @@ def plot_ranking(plt, points, knees, ranking, title):
 
     fig.tight_layout()
     #fig.suptitle(title)
+
+
+def plot_knees(plt, points, knees, title):
+    fig, ax = plt.subplots()
+    xpoints = points[:,0]
+    ypoints = points[:,1]
+    plot_lines(ax, xpoints, ypoints, title)
+    #rankings_relative = ranking(points, knees)
+    
+    for i in range(0, len(knees)):
+        idx = knees[i]
+        ax.plot([xpoints[idx]], [ypoints[idx]], marker='o', markersize=3, color='red')
+
+    fig.tight_layout()
+    #fig.suptitle(title)

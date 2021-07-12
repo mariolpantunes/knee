@@ -71,7 +71,7 @@ def main(args):
     profiler.disable()
     # End of the model code
     
-    stats = pstats.Stats(profiler).sort_stats('ncalls')
+    stats = pstats.Stats(profiler).sort_stats('cumtime')
     stats.print_stats()
     
     logger.info(f'MSE(knees)   MSE(exp)   Cost(tr)   Cost(kn)')

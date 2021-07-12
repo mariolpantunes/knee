@@ -13,13 +13,12 @@ import logging
 
 from enum import Enum
 
-from knee.knee_ranking import rank, slope_ranking
 from knee.postprocessing import filter_clustring, filter_worst_knees
 import matplotlib.pyplot as plt
 from knee.rdp import rdp, mapping
 import knee.clustering as clustering
-from plot import plot_ranking
 
+import cProfile, pstats
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
@@ -49,7 +48,14 @@ def postprocessing(points, knees, args):
 
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
+    
+    profiler = cProfile.Profile()
+    profiler.enable()
     points_reduced, removed = rdp(points, args.r)
+    profiler.disable()
+    stats = pstats.Stats(profiler).sort_stats('cumtime')
+    stats.print_stats()
+    
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
     

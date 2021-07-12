@@ -122,7 +122,7 @@ def map_index(a:np.ndarray, b:np.ndarray) -&gt; np.ndarray:
     return out
 
 
-def knees(points:np.ndarray) -&gt; np.ndarray:
+def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Given an array of points, it computes the knees.
 
@@ -135,7 +135,7 @@ def knees(points:np.ndarray) -&gt; np.ndarray:
     x = points[:, 0]
     y = points[:, 1]
     mrc = lists_to_dict(x, y)
-    rv = getPoints(mrc)
+    rv = getPoints(mrc, dx, dy, dz)
     # convert x points into indexes:
     return map_index(x, np.array(rv))
 
@@ -477,7 +477,7 @@ def getPoints(mrc:dict, x_dist:float=0.05, y_dist:float=0.05, delta_z:float=0.05
 </details>
 </dd>
 <dt id="knee.pointSelector.knees"><code class="name flex">
-<span>def <span class="ident">knees</span></span>(<span>points: numpy.ndarray) ‑> numpy.ndarray</span>
+<span>def <span class="ident">knees</span></span>(<span>points: numpy.ndarray, dx: float = 0.05, dy: float = 0.05, dz: float = 0.05) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Given an array of points, it computes the knees.</p>
@@ -495,7 +495,7 @@ def getPoints(mrc:dict, x_dist:float=0.05, y_dist:float=0.05, delta_z:float=0.05
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def knees(points:np.ndarray) -&gt; np.ndarray:
+<pre><code class="python">def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Given an array of points, it computes the knees.
 
@@ -508,7 +508,7 @@ def getPoints(mrc:dict, x_dist:float=0.05, y_dist:float=0.05, delta_z:float=0.05
     x = points[:, 0]
     y = points[:, 1]
     mrc = lists_to_dict(x, y)
-    rv = getPoints(mrc)
+    rv = getPoints(mrc, dx, dy, dz)
     # convert x points into indexes:
     return map_index(x, np.array(rv))</code></pre>
 </details>

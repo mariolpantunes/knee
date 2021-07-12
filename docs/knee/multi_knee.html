@@ -44,7 +44,7 @@ from knee.linear_fit import linear_fit_points, linear_r2_points
 logger = logging.getLogger(__name__)
 
 
-def multi_knee(get_knee:typing.Callable, points:np.ndarray, t1:float=0.99, t2:int=3) -&gt; np.ndarray:
+def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.9, t2: int = 3) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -53,7 +53,7 @@ def multi_knee(get_knee:typing.Callable, points:np.ndarray, t1:float=0.99, t2:in
     Args:
         get_knee (typing.Callable): method that returns a single knee point
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): the coefficient of determination used as a threshold (default 0.99)
+        t1 (float): the coefficient of determination used as a threshold (default 0.9)
         t2 (int): the mininum number of points used as a threshold (default 3)
 
     Returns:
@@ -62,7 +62,7 @@ def multi_knee(get_knee:typing.Callable, points:np.ndarray, t1:float=0.99, t2:in
     return np.array(multi_knee_rec(get_knee, points, 0, len(points), t1, t2))
 
 
-def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:int, t1:float, t2:int) -&gt; np.ndarray:
+def multi_knee_rec(get_knee: typing.Callable, points: np.ndarray, left: int, right: int,  t1: float = 0.9, t2: int = 3) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -88,8 +88,10 @@ def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:
             logger.debug(&#39;RV -&gt; %s&#39;, rv)
             if rv is not None:
                 idx = rv + left
-                left_knees = multi_knee_rec(get_knee, points, left, idx+1, t1, t2)
-                right_knees = multi_knee_rec(get_knee, points, idx+1, right, t1, t2)
+                left_knees = multi_knee_rec(
+                    get_knee, points, left, idx+1, t1, t2)
+                right_knees = multi_knee_rec(
+                    get_knee, points, idx+1, right, t1, t2)
                 return left_knees + [idx] + right_knees
             else:
                 return []
@@ -107,7 +109,7 @@ def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.multi_knee.multi_knee"><code class="name flex">
-<span>def <span class="ident">multi_knee</span></span>(<span>get_knee: Callable, points: numpy.ndarray, t1: float = 0.99, t2: int = 3) ‑> numpy.ndarray</span>
+<span>def <span class="ident">multi_knee</span></span>(<span>get_knee: Callable, points: numpy.ndarray, t1: float = 0.9, t2: int = 3) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Wrapper that convert a single knee point detection into a multi knee point detector.</p>
@@ -119,7 +121,7 @@ def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t1</code></strong> :&ensp;<code>float</code></dt>
-<dd>the coefficient of determination used as a threshold (default 0.99)</dd>
+<dd>the coefficient of determination used as a threshold (default 0.9)</dd>
 <dt><strong><code>t2</code></strong> :&ensp;<code>int</code></dt>
 <dd>the mininum number of points used as a threshold (default 3)</dd>
 </dl>
@@ -132,7 +134,7 @@ def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee(get_knee:typing.Callable, points:np.ndarray, t1:float=0.99, t2:int=3) -&gt; np.ndarray:
+<pre><code class="python">def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.9, t2: int = 3) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -141,7 +143,7 @@ def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:
     Args:
         get_knee (typing.Callable): method that returns a single knee point
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): the coefficient of determination used as a threshold (default 0.99)
+        t1 (float): the coefficient of determination used as a threshold (default 0.9)
         t2 (int): the mininum number of points used as a threshold (default 3)
 
     Returns:
@@ -151,7 +153,7 @@ def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:
 </details>
 </dd>
 <dt id="knee.multi_knee.multi_knee_rec"><code class="name flex">
-<span>def <span class="ident">multi_knee_rec</span></span>(<span>get_knee: Callable, points: numpy.ndarray, left: int, right: int, t1: float, t2: int) ‑> numpy.ndarray</span>
+<span>def <span class="ident">multi_knee_rec</span></span>(<span>get_knee: Callable, points: numpy.ndarray, left: int, right: int, t1: float = 0.9, t2: int = 3) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Wrapper that convert a single knee point detection into a multi knee point detector.</p>
@@ -180,7 +182,7 @@ def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:int, t1:float, t2:int) -&gt; np.ndarray:
+<pre><code class="python">def multi_knee_rec(get_knee: typing.Callable, points: np.ndarray, left: int, right: int,  t1: float = 0.9, t2: int = 3) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -206,8 +208,10 @@ def multi_knee_rec(get_knee:typing.Callable, points:np.ndarray, left:int, right:
             logger.debug(&#39;RV -&gt; %s&#39;, rv)
             if rv is not None:
                 idx = rv + left
-                left_knees = multi_knee_rec(get_knee, points, left, idx+1, t1, t2)
-                right_knees = multi_knee_rec(get_knee, points, idx+1, right, t1, t2)
+                left_knees = multi_knee_rec(
+                    get_knee, points, left, idx+1, t1, t2)
+                right_knees = multi_knee_rec(
+                    get_knee, points, idx+1, right, t1, t2)
                 return left_knees + [idx] + right_knees
             else:
                 return []

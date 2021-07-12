@@ -180,8 +180,8 @@ def main(args):
         else:
             error_mse = math.nan
             error_mse_exp = math.nan
-        _,_,_,_,cost_trace = evaluation.accuracy_trace (points, k)
-        _,_,_,_,cost_knee = evaluation.accuracy_knee (points, k)
+        _,_,_,_,cost_trace = evaluation.accuracy_trace(points, k)
+        _,_,_,_,cost_knee = evaluation.accuracy_knee(points, k)
         logger.info(f'{n:<13}| {error_mse:10.2E} {error_mse_exp:10.2E} {cost_trace:10.2E} {cost_knee:10.2E}')
 
     plot_knees_ranking(points, filtered_knees_raw, names, rankings, expected)
@@ -192,7 +192,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-r', type=float, help='RDP R2', default=0.9)
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
-    parser.add_argument('-t', type=float, help='clustering threshold', default=0.02)
+    parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
     parser.add_argument('-m', type=ClusterRanking, choices=list(ClusterRanking), default='left')
     args = parser.parse_args()
     

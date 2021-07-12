@@ -93,7 +93,7 @@ def map_index(a:np.ndarray, b:np.ndarray) -> np.ndarray:
     return out
 
 
-def knees(points:np.ndarray) -> np.ndarray:
+def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05) -> np.ndarray:
     """
     Given an array of points, it computes the knees.
 
@@ -106,7 +106,7 @@ def knees(points:np.ndarray) -> np.ndarray:
     x = points[:, 0]
     y = points[:, 1]
     mrc = lists_to_dict(x, y)
-    rv = getPoints(mrc)
+    rv = getPoints(mrc, dx, dy, dz)
     # convert x points into indexes:
     return map_index(x, np.array(rv))
 

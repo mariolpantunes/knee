@@ -129,7 +129,7 @@ def get_random_solution(bounds:np.ndarray) -> np.ndarray:
 # genetic algorithm
 def genetic_algorithm(objective:typing.Callable, bounds:np.ndarray,
 selection:typing.Callable, crossover:typing.Callable, mutation:typing.Callable,
-n_iter:int=100, n_pop:int=10, r_cross:float=0.9, r_mut:float=0.2) -> list:
+n_iter:int=50, n_pop:int=10, r_cross:float=0.9, r_mut:float=0.2) -> list:
     """
     Genetic optimization algorithm.
 
@@ -152,14 +152,14 @@ n_iter:int=100, n_pop:int=10, r_cross:float=0.9, r_mut:float=0.2) -> list:
 	# keep track of best solution
     best, best_eval = 0, objective(pop[0])
 	# enumerate generations
-    for _ in range(n_iter):
+    for gen in range(n_iter):
         # evaluate all candidates in the population
         scores = [objective(c) for c in pop]
         # check for new best solution
         for i in range(n_pop):
             if scores[i] < best_eval:
                 best, best_eval = pop[i], scores[i]
-                #logger.info('>%d, new best f(%s) = %.3f' % (gen,  pop[i], scores[i]))
+                logger.info('>%d, new best f(%s) = %.3f' % (gen,  pop[i], scores[i]))
         # select parents
         selected = [selection(pop, scores) for _ in range(n_pop)]
         # create the next generation

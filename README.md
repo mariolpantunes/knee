@@ -22,6 +22,12 @@ pdoc -c latex_math=True --html -o docs knee --force
 
 ## Instalation
 
+## Runing the demos
 
+The demos can be execute as python modules using the following code:
+
+```bash
+python -m demos.kneedle
+```
 
 ![Python CI](https://github.com/mariolpantunes/knee/workflows/Python%20CI/badge.svg)

@@ -116,9 +116,12 @@ def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt;
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
-    x = points[:, 0]
-    y = points[:, 1]
-    return linear_r2(x, y, coef, r2)
+    if len(points) &lt;=2:
+        return 1.0
+    else:
+        x = points[:, 0]
+        y = points[:, 1]
+        return linear_r2(x, y, coef, r2)
 
 
 def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
@@ -133,21 +136,25 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
-    y_hat = linear_transform(x, coef)
-    y_mean = np.mean(y)
-    rss = np.sum((y-y_hat)**2)
-    tss = np.sum((y-y_mean)**2)
-    rv = 0.0
 
-    if tss == 0:
-        rv = 1.0 - rss
+    if len(x) &lt;= 2:
+        return 1.0
     else:
-        rv = 1.0 - (rss/tss)
+        y_hat = linear_transform(x, coef)
+        y_mean = np.mean(y)
+        rss = np.sum((y-y_hat)**2)
+        tss = np.sum((y-y_mean)**2)
+        rv = 0.0
 
-    if r2 is R2.adjusted:
-        rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
+        if tss == 0:
+            rv = 1.0 - rss
+        else:
+            rv = 1.0 - (rss/tss)
 
-    return rv
+        if r2 is R2.adjusted:
+            rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
+
+        return rv
 
 
 def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
@@ -166,22 +173,25 @@ def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
     return rss
 
 
-def r2_points(points: np.ndarray, r2: R2 = R2.classic) -&gt; float:
+def r2_points(points: np.ndarray, t: R2 = R2.classic) -&gt; float:
     &#34;&#34;&#34;Computes the coefficient of determination (R2).
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        r2 (R2): select the type of coefficient of determination
+        t (R2): select the type of coefficient of determination
 
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
-    x = points[:, 0]
-    y = points[:, 1]
-    return r2(x, y, r2)
+    if len(points) &lt;= 2:
+        return 1.0
+    else:
+        x = points[:, 0]
+        y = points[:, 1]
+        return r2(x, y, r2)
 
 
-def r2(x: np.ndarray, y: np.ndarray, r2: R2 = R2.classic) -&gt; float:
+def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -&gt; float:
     &#34;&#34;&#34;Computes the coefficient of determination (R2).
 
     Computes the best fit (and not the fast point fit)
@@ -190,7 +200,7 @@ def r2(x: np.ndarray, y: np.ndarray, r2: R2 = R2.classic) -&gt; float:
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
         y (np.ndarray): the value of the points in the y axis coordinates
-        r2 (R2): select the type of coefficient of determination
+        t (R2): select the type of coefficient of determination
 
     Returns:
         float: coefficient of determination (R2)
@@ -201,7 +211,7 @@ def r2(x: np.ndarray, y: np.ndarray, r2: R2 = R2.classic) -&gt; float:
     else:
         rv = (np.corrcoef(x, y)[0, 1])**2.0
     
-    if r2 is R2.adjusted:
+    if t is R2.adjusted:
         rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
 
     return rv </code></pre>
@@ -330,21 +340,25 @@ first and last points in a curve.</p>
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
-    y_hat = linear_transform(x, coef)
-    y_mean = np.mean(y)
-    rss = np.sum((y-y_hat)**2)
-    tss = np.sum((y-y_mean)**2)
-    rv = 0.0
 
-    if tss == 0:
-        rv = 1.0 - rss
+    if len(x) &lt;= 2:
+        return 1.0
     else:
-        rv = 1.0 - (rss/tss)
+        y_hat = linear_transform(x, coef)
+        y_mean = np.mean(y)
+        rss = np.sum((y-y_hat)**2)
+        tss = np.sum((y-y_mean)**2)
+        rv = 0.0
 
-    if r2 is R2.adjusted:
-        rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
+        if tss == 0:
+            rv = 1.0 - rss
+        else:
+            rv = 1.0 - (rss/tss)
 
-    return rv</code></pre>
+        if r2 is R2.adjusted:
+            rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
+
+        return rv</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_r2_points"><code class="name flex">
@@ -381,9 +395,12 @@ first and last points in a curve.</p>
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
-    x = points[:, 0]
-    y = points[:, 1]
-    return linear_r2(x, y, coef, r2)</code></pre>
+    if len(points) &lt;=2:
+        return 1.0
+    else:
+        x = points[:, 0]
+        y = points[:, 1]
+        return linear_r2(x, y, coef, r2)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_residuals"><code class="name flex">
@@ -462,7 +479,7 @@ first and last points in a curve.</p>
 </details>
 </dd>
 <dt id="knee.linear_fit.r2"><code class="name flex">
-<span>def <span class="ident">r2</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, r2: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
+<span>def <span class="ident">r2</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, t: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the coefficient of determination (R2).</p>
@@ -474,7 +491,7 @@ and computes the corresponding R2.</p>
 <dd>the value of the points in the x axis coordinates</dd>
 <dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>the value of the points in the y axis coordinates</dd>
-<dt><strong><code>r2</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
+<dt><strong><code>t</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
 <dd>select the type of coefficient of determination</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -486,7 +503,7 @@ and computes the corresponding R2.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def r2(x: np.ndarray, y: np.ndarray, r2: R2 = R2.classic) -&gt; float:
+<pre><code class="python">def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -&gt; float:
     &#34;&#34;&#34;Computes the coefficient of determination (R2).
 
     Computes the best fit (and not the fast point fit)
@@ -495,7 +512,7 @@ and computes the corresponding R2.</p>
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
         y (np.ndarray): the value of the points in the y axis coordinates
-        r2 (R2): select the type of coefficient of determination
+        t (R2): select the type of coefficient of determination
 
     Returns:
         float: coefficient of determination (R2)
@@ -506,14 +523,14 @@ and computes the corresponding R2.</p>
     else:
         rv = (np.corrcoef(x, y)[0, 1])**2.0
     
-    if r2 is R2.adjusted:
+    if t is R2.adjusted:
         rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
 
     return rv </code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.r2_points"><code class="name flex">
-<span>def <span class="ident">r2_points</span></span>(<span>points: numpy.ndarray, r2: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
+<span>def <span class="ident">r2_points</span></span>(<span>points: numpy.ndarray, t: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the coefficient of determination (R2).</p>
@@ -521,7 +538,7 @@ and computes the corresponding R2.</p>
 <dl>
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
-<dt><strong><code>r2</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
+<dt><strong><code>t</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
 <dd>select the type of coefficient of determination</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -533,19 +550,22 @@ and computes the corresponding R2.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def r2_points(points: np.ndarray, r2: R2 = R2.classic) -&gt; float:
+<pre><code class="python">def r2_points(points: np.ndarray, t: R2 = R2.classic) -&gt; float:
     &#34;&#34;&#34;Computes the coefficient of determination (R2).
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        r2 (R2): select the type of coefficient of determination
+        t (R2): select the type of coefficient of determination
 
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
-    x = points[:, 0]
-    y = points[:, 1]
-    return r2(x, y, r2)</code></pre>
+    if len(points) &lt;= 2:
+        return 1.0
+    else:
+        x = points[:, 0]
+        y = points[:, 1]
+        return r2(x, y, r2)</code></pre>
 </details>
 </dd>
 </dl>
