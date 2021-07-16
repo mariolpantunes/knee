@@ -59,20 +59,21 @@ def main(args):
 
 
     # Start of the model code
-    profiler = cProfile.Profile()
-    profiler.enable()
+    #profiler = cProfile.Profile()
+    #profiler.enable()
 
     points_reduced, points_removed = rdp.rdp(points, args.r)
     knees = kneedle.auto_knees(points_reduced)
     t_k = pp.filter_worst_knees(points_reduced, knees)
+    t_k = pp.filter_corner_knees(points_reduced, t_k)
     filtered_knees = pp.filter_clustring(points_reduced, t_k, cmethod[args.c], args.t, args.m)
     knees = rdp.mapping(filtered_knees, points_reduced, points_removed)
     
-    profiler.disable()
+    #profiler.disable()
     # End of the model code
     
-    stats = pstats.Stats(profiler).sort_stats('cumtime')
-    stats.print_stats()
+    #stats = pstats.Stats(profiler).sort_stats('cumtime')
+    #stats.print_stats()
     
     logger.info(f'MSE(knees)   MSE(exp)   Cost(tr)   Cost(kn)')
     logger.info(f'-------------------------------------------')

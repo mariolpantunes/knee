@@ -87,12 +87,9 @@ def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -> fl
     Returns:
         float: coefficient of determination (R2)
     """
-    if len(points) <=2:
-        return 1.0
-    else:
-        x = points[:, 0]
-        y = points[:, 1]
-        return linear_r2(x, y, coef, r2)
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_r2(x, y, coef, r2)
 
 
 def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -> float:
@@ -107,25 +104,21 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) ->
     Returns:
         float: coefficient of determination (R2)
     """
+    y_hat = linear_transform(x, coef)
+    y_mean = np.mean(y)
+    rss = np.sum((y-y_hat)**2)
+    tss = np.sum((y-y_mean)**2)
+    rv = 0.0
 
-    if len(x) <= 2:
-        return 1.0
+    if tss == 0:
+        rv = 1.0 - rss
     else:
-        y_hat = linear_transform(x, coef)
-        y_mean = np.mean(y)
-        rss = np.sum((y-y_hat)**2)
-        tss = np.sum((y-y_mean)**2)
-        rv = 0.0
+        rv = 1.0 - (rss/tss)
 
-        if tss == 0:
-            rv = 1.0 - rss
-        else:
-            rv = 1.0 - (rss/tss)
+    if r2 is R2.adjusted:
+        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
 
-        if r2 is R2.adjusted:
-            rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
-
-        return rv
+    return rv
 
 
 def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
