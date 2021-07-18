@@ -85,9 +85,13 @@ def linear_fit(x: np.ndarray, y: np.ndarray) -&gt; tuple:
     Returns:
         tuple: (b, m)
     &#34;&#34;&#34;
-    m = (y[0] - y[-1])/(x[0] - x[-1])
-    b = y[0] - (m*x[0])
-    return (b, m)
+    d = x[0] - x[-1]
+    if d != 0:
+        m = (y[0] - y[-1])/d
+        b = y[0] - (m*x[0])
+        return (b, m)
+    else:
+        return (0,0)
 
 
 def linear_transform(x: np.ndarray, coef: tuple) -&gt; np.ndarray:
@@ -116,12 +120,9 @@ def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt;
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
-    if len(points) &lt;=2:
-        return 1.0
-    else:
-        x = points[:, 0]
-        y = points[:, 1]
-        return linear_r2(x, y, coef, r2)
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_r2(x, y, coef, r2)
 
 
 def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
@@ -136,25 +137,21 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
+    y_hat = linear_transform(x, coef)
+    y_mean = np.mean(y)
+    rss = np.sum((y-y_hat)**2)
+    tss = np.sum((y-y_mean)**2)
+    rv = 0.0
 
-    if len(x) &lt;= 2:
-        return 1.0
+    if tss == 0:
+        rv = 1.0 - rss
     else:
-        y_hat = linear_transform(x, coef)
-        y_mean = np.mean(y)
-        rss = np.sum((y-y_hat)**2)
-        tss = np.sum((y-y_mean)**2)
-        rv = 0.0
+        rv = 1.0 - (rss/tss)
 
-        if tss == 0:
-            rv = 1.0 - rss
-        else:
-            rv = 1.0 - (rss/tss)
+    if r2 is R2.adjusted:
+        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
 
-        if r2 is R2.adjusted:
-            rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
-
-        return rv
+    return rv
 
 
 def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
@@ -260,9 +257,13 @@ first and last points in a curve.</p>
     Returns:
         tuple: (b, m)
     &#34;&#34;&#34;
-    m = (y[0] - y[-1])/(x[0] - x[-1])
-    b = y[0] - (m*x[0])
-    return (b, m)</code></pre>
+    d = x[0] - x[-1]
+    if d != 0:
+        m = (y[0] - y[-1])/d
+        b = y[0] - (m*x[0])
+        return (b, m)
+    else:
+        return (0,0)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_fit_points"><code class="name flex">
@@ -340,25 +341,21 @@ first and last points in a curve.</p>
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
+    y_hat = linear_transform(x, coef)
+    y_mean = np.mean(y)
+    rss = np.sum((y-y_hat)**2)
+    tss = np.sum((y-y_mean)**2)
+    rv = 0.0
 
-    if len(x) &lt;= 2:
-        return 1.0
+    if tss == 0:
+        rv = 1.0 - rss
     else:
-        y_hat = linear_transform(x, coef)
-        y_mean = np.mean(y)
-        rss = np.sum((y-y_hat)**2)
-        tss = np.sum((y-y_mean)**2)
-        rv = 0.0
+        rv = 1.0 - (rss/tss)
 
-        if tss == 0:
-            rv = 1.0 - rss
-        else:
-            rv = 1.0 - (rss/tss)
+    if r2 is R2.adjusted:
+        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
 
-        if r2 is R2.adjusted:
-            rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
-
-        return rv</code></pre>
+    return rv</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_r2_points"><code class="name flex">
@@ -395,12 +392,9 @@ first and last points in a curve.</p>
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
-    if len(points) &lt;=2:
-        return 1.0
-    else:
-        x = points[:, 0]
-        y = points[:, 1]
-        return linear_r2(x, y, coef, r2)</code></pre>
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_r2(x, y, coef, r2)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_residuals"><code class="name flex">

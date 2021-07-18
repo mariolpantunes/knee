@@ -38,11 +38,98 @@ __status__ = &#39;Development&#39;
 import typing
 import logging
 import numpy as np
+#import knee.linear_fit as lf
 import knee.knee_ranking as ranking
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger(__name__)
+
+
+def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the percentage of the overlap for two rectangles.
+
+    Args:
+        amin (np.ndarray): the low point in rectangle A
+        amax (np.ndarray): the high point in rectangle A
+        bmin (np.ndarray): the low point in rectangle B
+        bmax (np.ndarray): the high point in rectangle B
+
+    Returns:
+        float: percentage of the overlap of two rectangles
+    &#34;&#34;&#34;
+    #logger.info(&#39;%s %s %s %s&#39;, amin, amax, bmin, bmax)
+    dx = max(0.0, min(amax[0], bmax[0]) - max(amin[0], bmin[0]))
+    dy = max(0.0, min(amax[1], bmax[1]) - max(amin[1], bmin[1]))
+    #logger.info(&#39;dx %s dy %s&#39;, dx, dy)
+    overlap = dx * dy
+    #logger.info(&#39;overlap = %s&#39;, overlap)
+    if overlap &gt; 0.0:
+        a = np.abs(amax-amin)
+        b = np.abs(bmax-bmin)
+        total_area = a[0]*a[1] + b[0]*b[1] - overlap
+        #print(f&#39;overlap area = {overlap} total area =  {total_area}&#39;)
+        return overlap / total_area
+    else:
+        return 0.0
+
+
+def rect(p1: np.ndarray, p2: np.ndarray) -&gt; tuple:
+    &#34;&#34;&#34;
+    Creates the low and high rectangle coordinates from 2 points.
+
+    Args:
+        p1 (np.ndarray): one of the points in the rectangle
+        p2 (np.ndarray): one of the points in the rectangle
+
+    Returns:
+        tuple: tuple with two points (low and high)
+    &#34;&#34;&#34;
+    p1x, p1y = p1
+    p2x, p2y = p2
+    return np.array([min(p1x, p2x), min(p1y, p2y)]), np.array([max(p1x, p2x), max(p1y, p2y)])
+
+
+def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Filter the left upper corner knees points.
+
+    A left upper knee corner does not provide a significant improvement to be considered.
+    The detection method relies on a three point rectangle fitting and overlap.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): overlap treshold (default 0.33)
+
+    Returns:
+        np.ndarray: the filtered knees
+    &#34;&#34;&#34;
+
+    filtered_knees = []
+
+    for i in range(0, len(knees)-1):
+        idx = knees[i]
+        p0, p1 ,p2 = points[idx-1:idx+2]
+        #print(f&#39;{p0}, {p1}, {p2}&#39;)
+        
+        corner0 = np.array([p0[0], p1[1]])
+        corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+        amin, amax = rect(corner0, corner1)
+        #print(f&#39;{amin}, {amax}&#39;)
+
+        bmin, bmax = rect(p0, p2)
+        #print(f&#39;{bmin}, {bmax}&#39;)
+        
+        p = rect_overlap(amin, amax, bmin, bmax)
+        #print(f&#39;knee {idx}, p {p} ({p &lt; t})&#39;)
+        if p &lt; t:
+            filtered_knees.append(idx)
+    
+    filtered_knees.append(knees[-1])
+
+    return np.array(filtered_knees)
 
 
 def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
@@ -205,6 +292,72 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
     return np.array(filtered_knees)</code></pre>
 </details>
 </dd>
+<dt id="knee.postprocessing.filter_corner_knees"><code class="name flex">
+<span>def <span class="ident">filter_corner_knees</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, t: float = 0.33) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Filter the left upper corner knees points.</p>
+<p>A left upper knee corner does not provide a significant improvement to be considered.
+The detection method relies on a three point rectangle fitting and overlap.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>overlap treshold (default 0.33)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the filtered knees</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Filter the left upper corner knees points.
+
+    A left upper knee corner does not provide a significant improvement to be considered.
+    The detection method relies on a three point rectangle fitting and overlap.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): overlap treshold (default 0.33)
+
+    Returns:
+        np.ndarray: the filtered knees
+    &#34;&#34;&#34;
+
+    filtered_knees = []
+
+    for i in range(0, len(knees)-1):
+        idx = knees[i]
+        p0, p1 ,p2 = points[idx-1:idx+2]
+        #print(f&#39;{p0}, {p1}, {p2}&#39;)
+        
+        corner0 = np.array([p0[0], p1[1]])
+        corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+        amin, amax = rect(corner0, corner1)
+        #print(f&#39;{amin}, {amax}&#39;)
+
+        bmin, bmax = rect(p0, p2)
+        #print(f&#39;{bmin}, {bmax}&#39;)
+        
+        p = rect_overlap(amin, amax, bmin, bmax)
+        #print(f&#39;knee {idx}, p {p} ({p &lt; t})&#39;)
+        if p &lt; t:
+            filtered_knees.append(idx)
+    
+    filtered_knees.append(knees[-1])
+
+    return np.array(filtered_knees)</code></pre>
+</details>
+</dd>
 <dt id="knee.postprocessing.filter_worst_knees"><code class="name flex">
 <span>def <span class="ident">filter_worst_knees</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
@@ -255,6 +408,97 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
     return np.array(filtered_knees)</code></pre>
 </details>
 </dd>
+<dt id="knee.postprocessing.rect"><code class="name flex">
+<span>def <span class="ident">rect</span></span>(<span>p1: numpy.ndarray, p2: numpy.ndarray) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates the low and high rectangle coordinates from 2 points.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>p1</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>one of the points in the rectangle</dd>
+<dt><strong><code>p2</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>one of the points in the rectangle</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>tuple with two points (low and high)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rect(p1: np.ndarray, p2: np.ndarray) -&gt; tuple:
+    &#34;&#34;&#34;
+    Creates the low and high rectangle coordinates from 2 points.
+
+    Args:
+        p1 (np.ndarray): one of the points in the rectangle
+        p2 (np.ndarray): one of the points in the rectangle
+
+    Returns:
+        tuple: tuple with two points (low and high)
+    &#34;&#34;&#34;
+    p1x, p1y = p1
+    p2x, p2y = p2
+    return np.array([min(p1x, p2x), min(p1y, p2y)]), np.array([max(p1x, p2x), max(p1y, p2y)])</code></pre>
+</details>
+</dd>
+<dt id="knee.postprocessing.rect_overlap"><code class="name flex">
+<span>def <span class="ident">rect_overlap</span></span>(<span>amin: numpy.ndarray, amax: numpy.ndarray, bmin: numpy.ndarray, bmax: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the percentage of the overlap for two rectangles.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>amin</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the low point in rectangle A</dd>
+<dt><strong><code>amax</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the high point in rectangle A</dd>
+<dt><strong><code>bmin</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the low point in rectangle B</dd>
+<dt><strong><code>bmax</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the high point in rectangle B</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>percentage of the overlap of two rectangles</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the percentage of the overlap for two rectangles.
+
+    Args:
+        amin (np.ndarray): the low point in rectangle A
+        amax (np.ndarray): the high point in rectangle A
+        bmin (np.ndarray): the low point in rectangle B
+        bmax (np.ndarray): the high point in rectangle B
+
+    Returns:
+        float: percentage of the overlap of two rectangles
+    &#34;&#34;&#34;
+    #logger.info(&#39;%s %s %s %s&#39;, amin, amax, bmin, bmax)
+    dx = max(0.0, min(amax[0], bmax[0]) - max(amin[0], bmin[0]))
+    dy = max(0.0, min(amax[1], bmax[1]) - max(amin[1], bmin[1]))
+    #logger.info(&#39;dx %s dy %s&#39;, dx, dy)
+    overlap = dx * dy
+    #logger.info(&#39;overlap = %s&#39;, overlap)
+    if overlap &gt; 0.0:
+        a = np.abs(amax-amin)
+        b = np.abs(bmax-bmin)
+        total_area = a[0]*a[1] + b[0]*b[1] - overlap
+        #print(f&#39;overlap area = {overlap} total area =  {total_area}&#39;)
+        return overlap / total_area
+    else:
+        return 0.0</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -274,7 +518,10 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="knee.postprocessing.filter_clustring" href="#knee.postprocessing.filter_clustring">filter_clustring</a></code></li>
+<li><code><a title="knee.postprocessing.filter_corner_knees" href="#knee.postprocessing.filter_corner_knees">filter_corner_knees</a></code></li>
 <li><code><a title="knee.postprocessing.filter_worst_knees" href="#knee.postprocessing.filter_worst_knees">filter_worst_knees</a></code></li>
+<li><code><a title="knee.postprocessing.rect" href="#knee.postprocessing.rect">rect</a></code></li>
+<li><code><a title="knee.postprocessing.rect_overlap" href="#knee.postprocessing.rect_overlap">rect_overlap</a></code></li>
 </ul>
 </li>
 </ul>

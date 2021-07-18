@@ -139,8 +139,12 @@ def rdp(points: np.ndarray, r: float = 0.9) -&gt; tuple:
     Returns:
         tuple: the reduced space, the points that were removed
     &#34;&#34;&#34;
-    coef = lf.linear_fit_points(points)
-    determination = lf.linear_r2_points(points, coef)
+
+    if len(points) &lt;= 2:
+        determination = 1.0
+    else:
+        coef = lf.linear_fit_points(points)
+        determination = lf.linear_r2_points(points, coef)
 
     if determination &lt; r:
         d = perpendicular_distance_points(points, points[0], points[-1])
@@ -379,8 +383,12 @@ a line segment.</p>
     Returns:
         tuple: the reduced space, the points that were removed
     &#34;&#34;&#34;
-    coef = lf.linear_fit_points(points)
-    determination = lf.linear_r2_points(points, coef)
+
+    if len(points) &lt;= 2:
+        determination = 1.0
+    else:
+        coef = lf.linear_fit_points(points)
+        determination = lf.linear_r2_points(points, coef)
 
     if determination &lt; r:
         d = perpendicular_distance_points(points, points[0], points[-1])

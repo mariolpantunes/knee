@@ -17,8 +17,18 @@ import knee.knee_ranking as ranking
 logger = logging.getLogger(__name__)
 
 
-def rect_overlap(amin, amax, bmin, bmax) -> float:
+def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -> float:
     """
+    Computes the percentage of the overlap for two rectangles.
+
+    Args:
+        amin (np.ndarray): the low point in rectangle A
+        amax (np.ndarray): the high point in rectangle A
+        bmin (np.ndarray): the low point in rectangle B
+        bmax (np.ndarray): the high point in rectangle B
+
+    Returns:
+        float: percentage of the overlap of two rectangles
     """
     #logger.info('%s %s %s %s', amin, amax, bmin, bmax)
     dx = max(0.0, min(amax[0], bmax[0]) - max(amin[0], bmin[0]))
@@ -38,6 +48,14 @@ def rect_overlap(amin, amax, bmin, bmax) -> float:
 
 def rect(p1: np.ndarray, p2: np.ndarray) -> tuple:
     """
+    Creates the low and high rectangle coordinates from 2 points.
+
+    Args:
+        p1 (np.ndarray): one of the points in the rectangle
+        p2 (np.ndarray): one of the points in the rectangle
+
+    Returns:
+        tuple: tuple with two points (low and high)
     """
     p1x, p1y = p1
     p2x, p2y = p2
@@ -46,6 +64,18 @@ def rect(p1: np.ndarray, p2: np.ndarray) -> tuple:
 
 def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -> np.ndarray:
     """
+    Filter the left upper corner knees points.
+
+    A left upper knee corner does not provide a significant improvement to be considered.
+    The detection method relies on a three point rectangle fitting and overlap.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): overlap treshold (default 0.33)
+
+    Returns:
+        np.ndarray: the filtered knees
     """
 
     filtered_knees = []
