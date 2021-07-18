@@ -19,7 +19,7 @@ def single_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
 
     Efficient implementation that uses a single pass to compute
     the clusters.
-    Computes the single linkage clustering based only the x axis:
+    Computes the single linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\min_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
     $$
@@ -54,7 +54,7 @@ def complete_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
 
     Efficient implementation that uses a single pass to compute
     the clusters.
-    Computes the complete linkage clustering based only the x axis:
+    Computes the complete linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\max_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
     $$
@@ -92,7 +92,7 @@ def average_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
 
     Efficient implementation that uses a single pass to compute
     the clusters.
-    Computes the average linkage clustering based only the x axis:
+    Computes the average linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\frac{1}{|C_1|}\\sum_{c_1 \\in C_1}d(c_1, C_2)
     $$
