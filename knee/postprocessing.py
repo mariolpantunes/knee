@@ -14,20 +14,8 @@ import knee.knee_ranking as ranking
 #import matplotlib.pyplot as plt
 
 
-
 logger = logging.getLogger(__name__)
 
-
-def cos_sim(a: np.ndarray, b: np.ndarray) -> float:
-    """
-    """
-    n = np.dot(a, b)
-    d = (np.linalg.norm(a) * np.linalg.norm(b))
-    rv = n/d
-    if d == 0:
-        logger.info('a %s b %s', a, b)
-        logger.info('n = %s d = %s', n, d)
-    return rv
 
 def rect_overlap(amin, amax, bmin, bmax) -> float:
     """
@@ -38,50 +26,25 @@ def rect_overlap(amin, amax, bmin, bmax) -> float:
     #logger.info('dx %s dy %s', dx, dy)
     overlap = dx * dy
     #logger.info('overlap = %s', overlap)
-    a = np.abs(amax-amin)
-    b = np.abs(bmax-bmin)
-    total_area = a[0]*a[1] + b[0]*b[1] - overlap
-    #print(f'overlap area = {overlap} total area =  {total_area}')
-    return overlap / total_area
+    if overlap > 0.0:
+        a = np.abs(amax-amin)
+        b = np.abs(bmax-bmin)
+        total_area = a[0]*a[1] + b[0]*b[1] - overlap
+        #print(f'overlap area = {overlap} total area =  {total_area}')
+        return overlap / total_area
+    else:
+        return 0.0
 
-def rect_fit(p0, p1, p2) -> float:
+
+def rect(p1: np.ndarray, p2: np.ndarray) -> tuple:
     """
     """
-    # normalize data
-    #logger.info('%s %s %s', p0, p1, p2)
-    x = np.array([p0, p1, p2])
-    x_normed = x / x.ptp(0)
-    p0, p1, p2 = x_normed
-    #logger.info('%s %s %s', p0, p1, p2)
-
-    p1x, p1y = p1
-    p0x, _ = p0
-    _, p2y = p2
-    
-    av = p0 - p1
-    bv = np.array([p0x-p1x, 0])
-    
-    ah = p2 - p1
-    bh = np.array([0, p2y-p1y]) if p2y < p1y else np.array([0, -p2y])
-    
-    if not np.any(bh):
-        logger.info('BH error')
-
-    v = cos_sim(av, bv)
-    h = cos_sim(ah, bh)
-
-    #logger.info('%s %s', v, h)
-
-    return (v + h) / 2.0
-
-
-def rect(p1, p2):
     p1x, p1y = p1
     p2x, p2y = p2
-
     return np.array([min(p1x, p2x), min(p1y, p2y)]), np.array([max(p1x, p2x), max(p1y, p2y)])
 
-def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .5) -> np.ndarray:
+
+def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -> np.ndarray:
     """
     """
 
@@ -90,22 +53,19 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .5) -> 
     for i in range(0, len(knees)-1):
         idx = knees[i]
         p0, p1 ,p2 = points[idx-1:idx+2]
-        logger.info('%s %s %s', p0, p1 ,p2)
-        #p = rec_fit(p0, p1, p2)
+        #print(f'{p0}, {p1}, {p2}')
         
-        amin = np.array([p0[0], p1[1]])
-        amax = np.array([p1[0], p2[1]])
+        corner0 = np.array([p0[0], p1[1]])
+        corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+        amin, amax = rect(corner0, corner1)
+        #print(f'{amin}, {amax}')
 
-        amin, amax = rect(amin, amax)
-
-        logger.info('%s %s', amin, amax)
-
-        bmin, bmax = rect(p0, p1)
-
+        bmin, bmax = rect(p0, p2)
+        #print(f'{bmin}, {bmax}')
         
         p = rect_overlap(amin, amax, bmin, bmax)
-        logger.info('knee %s, p %s (%s)', idx, p, (p <= t))
-        if p <= t:
+        #print(f'knee {idx}, p {p} ({p < t})')
+        if p < t:
             filtered_knees.append(idx)
     
     filtered_knees.append(knees[-1])

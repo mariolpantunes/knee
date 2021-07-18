@@ -14,7 +14,7 @@ from enum import Enum
 from knee.evaluation import accuracy_trace, accuracy_knee
 from knee.optimization import hillclimbing, simulated_annealing, genetic_algorithm, get_random_solution
 from knee.knee_ranking import rank, slope_ranking
-from knee.postprocessing import filter_clustring, filter_worst_knees
+from knee.postprocessing import filter_clustring, filter_worst_knees, filter_corner_knees
 import matplotlib.pyplot as plt
 from knee.rdp import rdp, mapping
 from knee.knee_ranking import ClusterRanking
@@ -52,6 +52,7 @@ class Accuracy(Enum):
 
 def postprocessing(points, knees, c=Clustering.average, t=0.1, m=ClusterRanking.left):
     knees = filter_worst_knees(points, knees)
+    knees = filter_corner_knees(points, knees)
     cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
     current_knees = filter_clustring(points, knees, cmethod[c], t, m)
     return current_knees
@@ -156,7 +157,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP Optimal Knee')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-a', type=Accuracy, choices=list(Accuracy), default='trace')
+    parser.add_argument('-a', type=Accuracy, choices=list(Accuracy), default='knee')
     parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()
     

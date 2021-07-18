@@ -6,7 +6,6 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import os
 import argparse
 import numpy as np
 import logging
@@ -41,14 +40,14 @@ def postprocessing(points, knees, args):
     logger.info('Initial #Knees: %s', len(knees))
     wknees = filter_worst_knees(points, knees)
 
-    plot_knees(plt, points, knees, 'Worst Knees')
-    logger.info('After Worst #Knees: %s', len(knees))
+    #plot_knees(plt, points, knees, 'Worst Knees')
+    #logger.info('After Worst #Knees: %s', len(knees))
     
     knees = filter_corner_knees(points, wknees)
-    plot_knees(plt, points, knees, 'Corner Knees')
+    #plot_knees(plt, points, knees, 'Corner Knees')
 
     diff = np.setdiff1d(wknees, knees)
-    plot_knees(plt, points, diff, 'Diff Knees')
+    #plot_knees(plt, points, diff, 'Diff Knees')
 
     logger.info('After Corner #Knees: %s', len(knees))
     #logger.info('Worst Knees: %s', len(knees))
@@ -89,13 +88,10 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-r', type=float, help='RDP R2', default=0.9)
-    parser.add_argument('-c', type=Clustering,
-                        choices=list(Clustering), default='average')
-    parser.add_argument(
-        '-t', type=float, help='clustering threshold', default=0.01)
-    parser.add_argument('-m', type=ClusterRanking,
-                        choices=list(ClusterRanking), default='left')
+    parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
+    parser.add_argument('-c', type=Clustering,choices=list(Clustering), default='average')
+    parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
+    parser.add_argument('-m', type=ClusterRanking,choices=list(ClusterRanking), default='left')
     #parser.add_argument('-o', type=str, required=True, help='output file')
     args = parser.parse_args()
 

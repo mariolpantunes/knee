@@ -56,9 +56,13 @@ def linear_fit(x: np.ndarray, y: np.ndarray) -> tuple:
     Returns:
         tuple: (b, m)
     """
-    m = (y[0] - y[-1])/(x[0] - x[-1])
-    b = y[0] - (m*x[0])
-    return (b, m)
+    d = x[0] - x[-1]
+    if d != 0:
+        m = (y[0] - y[-1])/d
+        b = y[0] - (m*x[0])
+        return (b, m)
+    else:
+        return (0,0)
 
 
 def linear_transform(x: np.ndarray, coef: tuple) -> np.ndarray:

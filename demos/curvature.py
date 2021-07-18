@@ -16,7 +16,7 @@ import logging
 
 from enum import Enum
 import knee.rdp as rdp
-import knee.curvature as curvature
+import knee.kneedle as kneedle
 import knee.postprocessing as pp
 import knee.clustering as clustering
 import knee.evaluation as evaluation
@@ -58,7 +58,7 @@ def main(args):
     ## Knee detection code ##
 
     points_reduced, points_removed = rdp.rdp(points, args.r)
-    knees = curvature.multi_knee(points_reduced)
+    knees = kneedle.auto_knees(points_reduced)
     t_k = pp.filter_worst_knees(points_reduced, knees)
     t_k = pp.filter_corner_knees(points_reduced, t_k)
     filtered_knees = pp.filter_clustring(points_reduced, t_k, cmethod[args.c], args.t, args.m)

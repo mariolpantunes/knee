@@ -110,8 +110,12 @@ def rdp(points: np.ndarray, r: float = 0.9) -> tuple:
     Returns:
         tuple: the reduced space, the points that were removed
     """
-    coef = lf.linear_fit_points(points)
-    determination = lf.linear_r2_points(points, coef)
+
+    if len(points) <= 2:
+        determination = 1.0
+    else:
+        coef = lf.linear_fit_points(points)
+        determination = lf.linear_r2_points(points, coef)
 
     if determination < r:
         d = perpendicular_distance_points(points, points[0], points[-1])
