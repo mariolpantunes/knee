@@ -36,17 +36,17 @@ class Clustering(Enum):
 
 def postprocessing(points, knees, args):
     logger.info('Post Processing')
-    logger.info('Knees: %s', knees)
+    #logger.info('Knees: %s', knees)
     logger.info('Initial #Knees: %s', len(knees))
     wknees = filter_worst_knees(points, knees)
 
     #plot_knees(plt, points, knees, 'Worst Knees')
-    #logger.info('After Worst #Knees: %s', len(knees))
+    logger.info('After Worst #Knees: %s', len(knees))
     
     knees = filter_corner_knees(points, wknees)
     #plot_knees(plt, points, knees, 'Corner Knees')
 
-    diff = np.setdiff1d(wknees, knees)
+    #diff = np.setdiff1d(wknees, knees)
     #plot_knees(plt, points, diff, 'Diff Knees')
 
     logger.info('After Corner #Knees: %s', len(knees))
