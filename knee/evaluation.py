@@ -29,7 +29,7 @@ class Strategy(enum.Enum):
         return self.value
 
 
-def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -> tuple[int, float, float]:
+def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -> tuple:
     """Get the neighbourhood (closest points) from a to b.
 
     The neighbourhood is defined as the longest straitgh line (defined by R2).
@@ -48,7 +48,7 @@ def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -> tu
     return get_neighbourhood(x, y, a, b, t)
 
 
-def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -> tuple[int, float, float]:
+def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -> tuple:
     """Get the neighbourhood (closest points) from a to b.
 
     The neighbourhood is defined as the longest straitgh line (defined by R2).
@@ -80,7 +80,7 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
         return previous_res
 
 
-def accuracy_knee(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, float, float, float]:
+def accuracy_knee(points: np.ndarray, knees: np.ndarray) -> tuple:
     """Compute the accuracy heuristic for a set of knees.
 
     The heuristic is based on the average distance of X and Y axis, the slope and the R2.
@@ -140,7 +140,7 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, 
     return average_x, average_y, average_slope, average_coeffients, cost
 
 
-def accuracy_trace(points: np.ndarray, knees: np.ndarray) -> tuple[float, float, float, float, float]:
+def accuracy_trace(points: np.ndarray, knees: np.ndarray) -> tuple:
     """Compute the accuracy heuristic for a set of knees.
 
     The heuristic is based on the average distance of X and Y axis, the slope and the R2.
