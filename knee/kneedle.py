@@ -211,6 +211,8 @@ def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p:
     knees_2 = knees(points, sensitivity, t, cd, Concavity.Clockwise, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))
+    # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
+    knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
 
