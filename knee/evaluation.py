@@ -63,6 +63,7 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
     Returns:
         tuple: (neighbourhood index, r2, slope)
     """
+    
     r2 = 1.0
     i = a - 1
     _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])

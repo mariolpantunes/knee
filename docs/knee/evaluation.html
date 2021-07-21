@@ -92,6 +92,7 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
     Returns:
         tuple: (neighbourhood index, r2, slope)
     &#34;&#34;&#34;
+    
     r2 = 1.0
     i = a - 1
     _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
@@ -615,6 +616,7 @@ In this version it is used the points from the current knee to the previous.</p>
     Returns:
         tuple: (neighbourhood index, r2, slope)
     &#34;&#34;&#34;
+    
     r2 = 1.0
     i = a - 1
     _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])

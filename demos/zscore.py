@@ -55,6 +55,7 @@ def main(args):
     ## Knee detection code ##
 
     knees = ps.knees(points)
+    knees = knees[knees>0]
 
     ##########################
 
