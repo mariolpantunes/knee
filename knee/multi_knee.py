@@ -50,13 +50,15 @@ def multi_knee_rec(get_knee: typing.Callable, points: np.ndarray, left: int, rig
     Returns:
         np.ndarray: knee points on the curve
     """
-    logger.debug('[%s, %s]', left, right)
+    #logger.debug('[%s, %s]', left, right)
+    #print(f'[{left}, {right}] ')
     pt = points[left:right]
     if len(pt) > t2:
         coef = linear_fit_points(pt)
         if linear_r2_points(pt, coef) < t1:
             rv = get_knee(pt)
-            logger.debug('RV -> %s', rv)
+            #logger.debug('RV -> %s', rv)
+            #print(f'RV = {rv}')
             if rv is not None:
                 idx = rv + left
                 left_knees = multi_knee_rec(
