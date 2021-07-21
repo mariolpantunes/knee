@@ -240,6 +240,8 @@ def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p:
     knees_2 = knees(points, sensitivity, t, cd, Concavity.Clockwise, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))
+    # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
+    knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
 
@@ -300,7 +302,8 @@ def multi_knee(points, t1=0.99, t2=3):
         np.ndarray: knee points on the curve
 
     &#34;&#34;&#34;
-    return mk.multi_knee(auto_knee, points, t1, t2)</code></pre>
+    knees = mk.multi_knee(auto_knee, points, t1, t2)
+    return knees</code></pre>
 </details>
 </section>
 <section>
@@ -438,6 +441,8 @@ relevant knees:
     knees_2 = knees(points, sensitivity, t, cd, Concavity.Clockwise, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))
+    # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
+    knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
 
@@ -646,7 +651,8 @@ relevant knees:
         np.ndarray: knee points on the curve
 
     &#34;&#34;&#34;
-    return mk.multi_knee(auto_knee, points, t1, t2)</code></pre>
+    knees = mk.multi_knee(auto_knee, points, t1, t2)
+    return knees</code></pre>
 </details>
 </dd>
 <dt id="knee.kneedle.single_knee"><code class="name flex">

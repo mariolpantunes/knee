@@ -273,4 +273,5 @@ def multi_knee(points, t1=0.99, t2=3):
         np.ndarray: knee points on the curve
 
     """
-    return mk.multi_knee(auto_knee, points, t1, t2)
+    knees = mk.multi_knee(auto_knee, points, t1, t2)
+    return knees

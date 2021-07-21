@@ -59,11 +59,9 @@ def main(args):
 
     points_reduced, points_removed = rdp.rdp(points, args.r)
     knees = kneedle.auto_knees(points_reduced)
-    print(knees)
     t_k = pp.filter_worst_knees(points_reduced, knees)
     t_k = pp.filter_corner_knees(points_reduced, t_k)
     filtered_knees = pp.filter_clustring(points_reduced, t_k, cmethod[args.c], args.t, args.m)
-    print(filtered_knees)
     knees = rdp.mapping(filtered_knees, points_reduced, points_removed)
     
     ##########################

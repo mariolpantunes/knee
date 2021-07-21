@@ -58,7 +58,7 @@ class Strategy(enum.Enum):
         return self.value
 
 
-def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -&gt; tuple[int, float, float]:
+def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -&gt; tuple:
     &#34;&#34;&#34;Get the neighbourhood (closest points) from a to b.
 
     The neighbourhood is defined as the longest straitgh line (defined by R2).
@@ -77,7 +77,7 @@ def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -&gt;
     return get_neighbourhood(x, y, a, b, t)
 
 
-def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -&gt; tuple[int, float, float]:
+def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -&gt; tuple:
     &#34;&#34;&#34;Get the neighbourhood (closest points) from a to b.
 
     The neighbourhood is defined as the longest straitgh line (defined by R2).
@@ -109,7 +109,7 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
         return previous_res
 
 
-def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple[float, float, float, float, float]:
+def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple:
     &#34;&#34;&#34;Compute the accuracy heuristic for a set of knees.
 
     The heuristic is based on the average distance of X and Y axis, the slope and the R2.
@@ -169,7 +169,7 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple[float, floa
     return average_x, average_y, average_slope, average_coeffients, cost
 
 
-def accuracy_trace(points: np.ndarray, knees: np.ndarray) -&gt; tuple[float, float, float, float, float]:
+def accuracy_trace(points: np.ndarray, knees: np.ndarray) -&gt; tuple:
     &#34;&#34;&#34;Compute the accuracy heuristic for a set of knees.
 
     The heuristic is based on the average distance of X and Y axis, the slope and the R2.
@@ -408,7 +408,7 @@ In this version it is used the left neighbourhood of the knee.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple[float, float, float, float, float]:
+<pre><code class="python">def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple:
     &#34;&#34;&#34;Compute the accuracy heuristic for a set of knees.
 
     The heuristic is based on the average distance of X and Y axis, the slope and the R2.
@@ -491,7 +491,7 @@ In this version it is used the points from the current knee to the previous.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def accuracy_trace(points: np.ndarray, knees: np.ndarray) -&gt; tuple[float, float, float, float, float]:
+<pre><code class="python">def accuracy_trace(points: np.ndarray, knees: np.ndarray) -&gt; tuple:
     &#34;&#34;&#34;Compute the accuracy heuristic for a set of knees.
 
     The heuristic is based on the average distance of X and Y axis, the slope and the R2.
@@ -600,7 +600,7 @@ In this version it is used the points from the current knee to the previous.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -&gt; tuple[int, float, float]:
+<pre><code class="python">def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -&gt; tuple:
     &#34;&#34;&#34;Get the neighbourhood (closest points) from a to b.
 
     The neighbourhood is defined as the longest straitgh line (defined by R2).
@@ -658,7 +658,7 @@ In this version it is used the points from the current knee to the previous.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -&gt; tuple[int, float, float]:
+<pre><code class="python">def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -&gt; tuple:
     &#34;&#34;&#34;Get the neighbourhood (closest points) from a to b.
 
     The neighbourhood is defined as the longest straitgh line (defined by R2).

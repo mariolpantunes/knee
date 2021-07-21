@@ -145,19 +145,22 @@ def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
     Returns:
         np.ndarray: the filtered knees
     &#34;&#34;&#34;
+    
+    if len(knees) &lt;= 1:
+        return knees
+    else:
+        filtered_knees = []
 
-    filtered_knees = []
+        filtered_knees.append(knees[0])
+        h_min = points[knees[0]][1]
 
-    filtered_knees.append(knees[0])
-    h_min = points[knees[0]][1]
+        for i in range(1, len(knees)):
+            h = points[knees[i]][1]
+            if h &lt;= h_min:
+                filtered_knees.append(knees[i])
+                h_min = h
 
-    for i in range(1, len(knees)):
-        h = points[knees[i]][1]
-        if h &lt;= h_min:
-            filtered_knees.append(knees[i])
-            h_min = h
-
-    return np.array(filtered_knees)
+        return np.array(filtered_knees)
 
 
 def filter_clustring(points: np.ndarray, knees: np.ndarray,
@@ -180,32 +183,35 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
         np.ndarray: the filtered knees
     &#34;&#34;&#34;
 
-    knee_points = points[knees]
-    clusters = clustering(knee_points, t)
-    max_cluster = clusters.max()
-    filtered_knees = []
-    for i in range(0, max_cluster+1):
-        current_cluster = knees[clusters == i]
+    if len(knees) &lt;= 1:
+        return knees
+    else:
+        knee_points = points[knees]
+        clusters = clustering(knee_points, t)
+        max_cluster = clusters.max()
+        filtered_knees = []
+        for i in range(0, max_cluster+1):
+            current_cluster = knees[clusters == i]
 
-        if len(current_cluster) &gt; 1:
-            rankings = ranking.cluster_ranking(points, current_cluster, method)
-            #logger.info(&#39;Rankings: %s&#39;, rankings)
-            idx = np.argmax(rankings)
-            best_knee = knees[clusters == i][idx]
-        else:
-            #logger.info(&#39;Rankings: [1.0]&#39;)
-            best_knee = knees[clusters == i][0]
-        filtered_knees.append(best_knee)
+            if len(current_cluster) &gt; 1:
+                rankings = ranking.cluster_ranking(points, current_cluster, method)
+                #logger.info(&#39;Rankings: %s&#39;, rankings)
+                idx = np.argmax(rankings)
+                best_knee = knees[clusters == i][idx]
+            else:
+                #logger.info(&#39;Rankings: [1.0]&#39;)
+                best_knee = knees[clusters == i][0]
+            filtered_knees.append(best_knee)
 
-        # plot cluster
-        # if plot:
-        #    xpoints = points[:,0]
-        #    ypoints = points[:,1]
-        #    plt.plot(xpoints, ypoints)
-        #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
-        #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
-        #    plt.show()
-    return np.array(filtered_knees)</code></pre>
+            # plot cluster
+            # if plot:
+            #    xpoints = points[:,0]
+            #    ypoints = points[:,1]
+            #    plt.plot(xpoints, ypoints)
+            #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
+            #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
+            #    plt.show()
+        return np.array(filtered_knees)</code></pre>
 </details>
 </section>
 <section>
@@ -264,32 +270,35 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
         np.ndarray: the filtered knees
     &#34;&#34;&#34;
 
-    knee_points = points[knees]
-    clusters = clustering(knee_points, t)
-    max_cluster = clusters.max()
-    filtered_knees = []
-    for i in range(0, max_cluster+1):
-        current_cluster = knees[clusters == i]
+    if len(knees) &lt;= 1:
+        return knees
+    else:
+        knee_points = points[knees]
+        clusters = clustering(knee_points, t)
+        max_cluster = clusters.max()
+        filtered_knees = []
+        for i in range(0, max_cluster+1):
+            current_cluster = knees[clusters == i]
 
-        if len(current_cluster) &gt; 1:
-            rankings = ranking.cluster_ranking(points, current_cluster, method)
-            #logger.info(&#39;Rankings: %s&#39;, rankings)
-            idx = np.argmax(rankings)
-            best_knee = knees[clusters == i][idx]
-        else:
-            #logger.info(&#39;Rankings: [1.0]&#39;)
-            best_knee = knees[clusters == i][0]
-        filtered_knees.append(best_knee)
+            if len(current_cluster) &gt; 1:
+                rankings = ranking.cluster_ranking(points, current_cluster, method)
+                #logger.info(&#39;Rankings: %s&#39;, rankings)
+                idx = np.argmax(rankings)
+                best_knee = knees[clusters == i][idx]
+            else:
+                #logger.info(&#39;Rankings: [1.0]&#39;)
+                best_knee = knees[clusters == i][0]
+            filtered_knees.append(best_knee)
 
-        # plot cluster
-        # if plot:
-        #    xpoints = points[:,0]
-        #    ypoints = points[:,1]
-        #    plt.plot(xpoints, ypoints)
-        #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
-        #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
-        #    plt.show()
-    return np.array(filtered_knees)</code></pre>
+            # plot cluster
+            # if plot:
+            #    xpoints = points[:,0]
+            #    ypoints = points[:,1]
+            #    plt.plot(xpoints, ypoints)
+            #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
+            #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
+            #    plt.show()
+        return np.array(filtered_knees)</code></pre>
 </details>
 </dd>
 <dt id="knee.postprocessing.filter_corner_knees"><code class="name flex">
@@ -393,19 +402,22 @@ The detection method relies on a three point rectangle fitting and overlap.</p>
     Returns:
         np.ndarray: the filtered knees
     &#34;&#34;&#34;
+    
+    if len(knees) &lt;= 1:
+        return knees
+    else:
+        filtered_knees = []
 
-    filtered_knees = []
+        filtered_knees.append(knees[0])
+        h_min = points[knees[0]][1]
 
-    filtered_knees.append(knees[0])
-    h_min = points[knees[0]][1]
+        for i in range(1, len(knees)):
+            h = points[knees[i]][1]
+            if h &lt;= h_min:
+                filtered_knees.append(knees[i])
+                h_min = h
 
-    for i in range(1, len(knees)):
-        h = points[knees[i]][1]
-        if h &lt;= h_min:
-            filtered_knees.append(knees[i])
-            h_min = h
-
-    return np.array(filtered_knees)</code></pre>
+        return np.array(filtered_knees)</code></pre>
 </details>
 </dd>
 <dt id="knee.postprocessing.rect"><code class="name flex">
