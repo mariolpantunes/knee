@@ -6,9 +6,11 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
+import math
 import typing
 import logging
 import numpy as np
+import uts.gradient as grad
 #import knee.linear_fit as lf
 import knee.knee_ranking as ranking
 #import matplotlib.pyplot as plt
@@ -183,3 +185,75 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
             #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker='o', markersize=5, color='red')
             #    plt.show()
         return np.array(filtered_knees)
+
+
+def add_points_even(points: np.ndarray, knees: np.ndarray, tx:float=0.1) -> np.ndarray:
+    """
+    Add evenly space points between knees points.
+
+    Whenever two knew points are further away than  tx (on the X axis), 
+    even spaced points are added to the result.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): the threshold for adding points (in percentage, default 0.1)
+
+    Returns:
+        np.ndarray: the resulting knees
+    """
+    # new knees
+    new_knees = []
+    # compute the delta x of the complete trace
+    dx = points[-1][0] - points[0][0]
+    # check the top of the sequence
+    left = 0
+    right = knees[0]
+    d = (points[right][0] - points[left][0])/dx
+    if d > tx:
+        number_points = int(math.ceil(d/tx))
+        #logger.info(f'number of points = {number_points}')
+        inc = int((right-left)/number_points)
+        idx = left
+        for _ in range(number_points):
+            idx = idx + inc
+            new_knees.append(idx)
+        
+    # check missing points between knees
+    for i in range(1, len(knees)):
+        logger.info(f'Knee {i}/{len(knees)}')
+        left = knees[i-1]
+        right = knees[i]
+        d = (points[right][0] - points[left][0])/dx
+
+        if d > tx:
+            number_points = int(math.ceil(d/tx))
+            #logger.info(f'number of points = {number_points}')
+            inc = int((right-left)/number_points)
+            idx = left
+            for _ in range(number_points):
+                idx = idx + inc
+                new_knees.append(idx)
+    
+    # check the tail of the sequence
+    left = knees[-1]
+    right = len(points)-1
+    d = (points[right][0] - points[left][0])/dx
+    if d > tx:
+        number_points = int(math.ceil(d/tx))
+        #logger.info(f'number of points = {number_points}')
+        inc = int((right-left)/number_points)
+        idx = left
+        for _ in range(number_points):
+            idx = idx + inc
+            new_knees.append(idx)
+
+    knees_idx = np.concatenate((knees, new_knees))
+    # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
+    knees_idx = knees_idx.astype(int)
+    knees_idx = np.unique(knees_idx)
+    knees_idx.sort()
+
+    print(knees_idx)
+
+    return knees_idx

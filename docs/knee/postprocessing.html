@@ -35,9 +35,11 @@ __email__ = &#39;mariolpantunes@gmail.com&#39;
 __status__ = &#39;Development&#39;
 
 
+import math
 import typing
 import logging
 import numpy as np
+import uts.gradient as grad
 #import knee.linear_fit as lf
 import knee.knee_ranking as ranking
 #import matplotlib.pyplot as plt
@@ -211,7 +213,79 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
             #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
             #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
             #    plt.show()
-        return np.array(filtered_knees)</code></pre>
+        return np.array(filtered_knees)
+
+
+def add_points_even(points: np.ndarray, knees: np.ndarray, tx:float=0.1) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Add evenly space points between knees points.
+
+    Whenever two knew points are further away than  tx (on the X axis), 
+    even spaced points are added to the result.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): the threshold for adding points (in percentage, default 0.1)
+
+    Returns:
+        np.ndarray: the resulting knees
+    &#34;&#34;&#34;
+    # new knees
+    new_knees = []
+    # compute the delta x of the complete trace
+    dx = points[-1][0] - points[0][0]
+    # check the top of the sequence
+    left = 0
+    right = knees[0]
+    d = (points[right][0] - points[left][0])/dx
+    if d &gt; tx:
+        number_points = int(math.ceil(d/tx))
+        #logger.info(f&#39;number of points = {number_points}&#39;)
+        inc = int((right-left)/number_points)
+        idx = left
+        for _ in range(number_points):
+            idx = idx + inc
+            new_knees.append(idx)
+        
+    # check missing points between knees
+    for i in range(1, len(knees)):
+        logger.info(f&#39;Knee {i}/{len(knees)}&#39;)
+        left = knees[i-1]
+        right = knees[i]
+        d = (points[right][0] - points[left][0])/dx
+
+        if d &gt; tx:
+            number_points = int(math.ceil(d/tx))
+            #logger.info(f&#39;number of points = {number_points}&#39;)
+            inc = int((right-left)/number_points)
+            idx = left
+            for _ in range(number_points):
+                idx = idx + inc
+                new_knees.append(idx)
+    
+    # check the tail of the sequence
+    left = knees[-1]
+    right = len(points)-1
+    d = (points[right][0] - points[left][0])/dx
+    if d &gt; tx:
+        number_points = int(math.ceil(d/tx))
+        #logger.info(f&#39;number of points = {number_points}&#39;)
+        inc = int((right-left)/number_points)
+        idx = left
+        for _ in range(number_points):
+            idx = idx + inc
+            new_knees.append(idx)
+
+    knees_idx = np.concatenate((knees, new_knees))
+    # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
+    knees_idx = knees_idx.astype(int)
+    knees_idx = np.unique(knees_idx)
+    knees_idx.sort()
+
+    print(knees_idx)
+
+    return knees_idx</code></pre>
 </details>
 </section>
 <section>
@@ -221,6 +295,104 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="knee.postprocessing.add_points_even"><code class="name flex">
+<span>def <span class="ident">add_points_even</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, tx: float = 0.1) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add evenly space points between knees points.</p>
+<p>Whenever two knew points are further away than
+tx (on the X axis),
+even spaced points are added to the result.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>the threshold for adding points (in percentage, default 0.1)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the resulting knees</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_points_even(points: np.ndarray, knees: np.ndarray, tx:float=0.1) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Add evenly space points between knees points.
+
+    Whenever two knew points are further away than  tx (on the X axis), 
+    even spaced points are added to the result.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): the threshold for adding points (in percentage, default 0.1)
+
+    Returns:
+        np.ndarray: the resulting knees
+    &#34;&#34;&#34;
+    # new knees
+    new_knees = []
+    # compute the delta x of the complete trace
+    dx = points[-1][0] - points[0][0]
+    # check the top of the sequence
+    left = 0
+    right = knees[0]
+    d = (points[right][0] - points[left][0])/dx
+    if d &gt; tx:
+        number_points = int(math.ceil(d/tx))
+        #logger.info(f&#39;number of points = {number_points}&#39;)
+        inc = int((right-left)/number_points)
+        idx = left
+        for _ in range(number_points):
+            idx = idx + inc
+            new_knees.append(idx)
+        
+    # check missing points between knees
+    for i in range(1, len(knees)):
+        logger.info(f&#39;Knee {i}/{len(knees)}&#39;)
+        left = knees[i-1]
+        right = knees[i]
+        d = (points[right][0] - points[left][0])/dx
+
+        if d &gt; tx:
+            number_points = int(math.ceil(d/tx))
+            #logger.info(f&#39;number of points = {number_points}&#39;)
+            inc = int((right-left)/number_points)
+            idx = left
+            for _ in range(number_points):
+                idx = idx + inc
+                new_knees.append(idx)
+    
+    # check the tail of the sequence
+    left = knees[-1]
+    right = len(points)-1
+    d = (points[right][0] - points[left][0])/dx
+    if d &gt; tx:
+        number_points = int(math.ceil(d/tx))
+        #logger.info(f&#39;number of points = {number_points}&#39;)
+        inc = int((right-left)/number_points)
+        idx = left
+        for _ in range(number_points):
+            idx = idx + inc
+            new_knees.append(idx)
+
+    knees_idx = np.concatenate((knees, new_knees))
+    # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
+    knees_idx = knees_idx.astype(int)
+    knees_idx = np.unique(knees_idx)
+    knees_idx.sort()
+
+    print(knees_idx)
+
+    return knees_idx</code></pre>
+</details>
+</dd>
 <dt id="knee.postprocessing.filter_clustring"><code class="name flex">
 <span>def <span class="ident">filter_clustring</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, clustering: Callable[[numpy.ndarray, float], numpy.ndarray], t: float = 0.01, method: <a title="knee.knee_ranking.ClusterRanking" href="knee_ranking.html#knee.knee_ranking.ClusterRanking">ClusterRanking</a> = linear) ‑> numpy.ndarray</span>
 </code></dt>
@@ -528,7 +700,8 @@ The detection method relies on a three point rectangle fitting and overlap.</p>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="knee.postprocessing.add_points_even" href="#knee.postprocessing.add_points_even">add_points_even</a></code></li>
 <li><code><a title="knee.postprocessing.filter_clustring" href="#knee.postprocessing.filter_clustring">filter_clustring</a></code></li>
 <li><code><a title="knee.postprocessing.filter_corner_knees" href="#knee.postprocessing.filter_corner_knees">filter_corner_knees</a></code></li>
 <li><code><a title="knee.postprocessing.filter_worst_knees" href="#knee.postprocessing.filter_worst_knees">filter_worst_knees</a></code></li>

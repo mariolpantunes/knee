@@ -34,7 +34,7 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
     stack = [(0, len(points))]
     knees = []
 
-    while len(stack) > 0:
+    while stack:
         left, right = stack.pop()
         
         pt = points[left:right]

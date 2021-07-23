@@ -13,7 +13,7 @@ import logging
 from enum import Enum
 from knee.evaluation import accuracy_trace
 from knee.knee_ranking import rank, slope_ranking
-from knee.postprocessing import filter_clustring, filter_worst_knees, filter_corner_knees
+from knee.postprocessing import filter_clustring, filter_worst_knees, filter_corner_knees, add_points_even
 import matplotlib.pyplot as plt
 from knee.rdp import rdp, mapping
 from knee.knee_ranking import ClusterRanking
@@ -53,8 +53,7 @@ def postprocessing(points, knees, args):
     #logger.info('Worst Knees: %s', len(knees))
     cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete:
                clustering.complete_linkage, Clustering.average: clustering.average_linkage}
-    current_knees = filter_clustring(
-        points, knees, cmethod[args.c], args.t, args.m)
+    current_knees = filter_clustring(points, knees, cmethod[args.c], args.t, args.m)
     logger.info('Clustering Knees: %s', len(current_knees))
 
     return current_knees
@@ -68,19 +67,28 @@ def main(args):
 
     knees = np.arange(1, len(points_reduced))
     raw_knees = mapping(knees, points_reduced, removed)
-    plot_knees(plt, points, raw_knees, 'Knees')
+    #plot_knees(plt, points, raw_knees, 'Knees')
     #logger.info('Knee extraction')
     filtered_knees = postprocessing(points_reduced, knees, args)
-    rankings = slope_ranking(points_reduced, filtered_knees)
+    #rankings = slope_ranking(points_reduced, filtered_knees)
     #logger.info('Clustering and ranking')
     filtered_knees = mapping(filtered_knees, points_reduced, removed)
+    plot_knees(plt, points, filtered_knees, 'Knees')
     #logger.info('Mapping into raw plot')
+
+    logger.info(f'Add curvature points...')
+    previous_size = len(filtered_knees)
+    filtered_knees = add_points_even(points, filtered_knees)
+    current_size = len(filtered_knees)
+    logger.info(f'Add curvature points ({current_size-previous_size})')
+    plot_knees(plt, points, filtered_knees, 'Knees (Add points)')
 
     # Compute performance evalution
     average_x, average_y, average_slope, average_coeffients, cost = accuracy_trace(points, filtered_knees)
     logger.info('Performance %s %s %s %s %s', average_x, average_y, average_slope, average_coeffients, cost)
 
-    plot_ranking(plt, points, filtered_knees, rankings, '')  # args.o)
+    #plot_ranking(plt, points, filtered_knees, rankings, '')  # args.o)
+    plot_knees(plt, points, filtered_knees, 'Knees (Final)')
     plt.show()
     # plt.savefig(args.o)
 

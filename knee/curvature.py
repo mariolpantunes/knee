@@ -36,7 +36,7 @@ def knee(points: np.ndarray) -> int:
     gradient2 = grad.csd(x, y)
 
     curvature = gradient2 / ((1.0 + gradient1**2.0)**(1.5))
-    return np.argmax(curvature[0:-2])
+    return np.argmax(curvature[0:-1])
 
 
 def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 3) -> np.ndarray:
