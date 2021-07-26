@@ -71,6 +71,18 @@ def main(args):
     _,_,_,_,cost_knee = evaluation.accuracy_knee (points, knees)
     logger.info(f'{error_mse:10.2E} {error_mse_exp:10.2E} {cost_trace:10.2E} {cost_knee:10.2E}')
 
+    # store outpout
+    if args.o:
+        dirname = os.path.dirname(args.i)
+        filename = os.path.splitext(os.path.basename(args.i))[0]
+        output = os.path.join(os.path.normpath(dirname), f'{filename}_output.csv')
+
+        dataset = points[knees]
+
+        with open(output, 'w') as f:
+            writer = csv.writer(f)
+            writer.writerows(dataset)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
@@ -79,6 +91,7 @@ if __name__ == '__main__':
     #parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
     #parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
     #parser.add_argument('-m', type=ClusterRanking, choices=list(ClusterRanking), default='left')
+    parser.add_argument('-o', help='store output (debug)', action='store_true')
     args = parser.parse_args()
     
     main(args)

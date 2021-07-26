@@ -189,7 +189,7 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
         return np.array(filtered_knees)
 
 
-def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, plt, tx:float=0.05, ty:float=0.05) -> np.ndarray:
+def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05) -> np.ndarray:
     """
     Add evenly spaced points between knees points.
 
