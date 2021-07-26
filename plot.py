@@ -74,3 +74,22 @@ def plot_knees(plt, points, knees, title):
 
     fig.tight_layout()
     #fig.suptitle(title)
+
+
+def plot_knees_candidates(plt, points, knees, candidates, title):
+    fig, ax = plt.subplots()
+    xpoints = points[:,0]
+    ypoints = points[:,1]
+    plot_lines(ax, xpoints, ypoints, title)
+    #rankings_relative = ranking(points, knees)
+    
+    for i in range(0, len(knees)):
+        idx = knees[i]
+        ax.plot([xpoints[idx]], [ypoints[idx]], marker='o', markersize=3, color='red')
+
+    for i in range(0, len(candidates)):
+        l,r = candidates[i]
+        
+        ax.axvspan(xpoints[l], xpoints[r], color='red', alpha=0.15)
+
+    fig.tight_layout()

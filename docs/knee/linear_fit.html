@@ -155,6 +155,14 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&
     return rv
 
 
+def rmspe(y_true, y_pred):
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+    EPSILON =  1e-10 # Yes, Python is awesome and supports scientific notation!
+    rv = (np.sqrt(np.mean(np.square((y_true - y_pred) / (y_true + EPSILON))))) * 100.0
+    return rv
+
+
 def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
     &#34;&#34;&#34;Computes the residual error of the linear fit.
 
@@ -563,6 +571,23 @@ and computes the corresponding R2.</p>
         return r2(x, y, r2)</code></pre>
 </details>
 </dd>
+<dt id="knee.linear_fit.rmspe"><code class="name flex">
+<span>def <span class="ident">rmspe</span></span>(<span>y_true, y_pred)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmspe(y_true, y_pred):
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+    EPSILON =  1e-10 # Yes, Python is awesome and supports scientific notation!
+    rv = (np.sqrt(np.mean(np.square((y_true - y_pred) / (y_true + EPSILON))))) * 100.0
+    return rv</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -628,6 +653,7 @@ and computes the corresponding R2.</p>
 <li><code><a title="knee.linear_fit.linear_transform" href="#knee.linear_fit.linear_transform">linear_transform</a></code></li>
 <li><code><a title="knee.linear_fit.r2" href="#knee.linear_fit.r2">r2</a></code></li>
 <li><code><a title="knee.linear_fit.r2_points" href="#knee.linear_fit.r2_points">r2_points</a></code></li>
+<li><code><a title="knee.linear_fit.rmspe" href="#knee.linear_fit.rmspe">rmspe</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

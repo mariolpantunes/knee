@@ -13,8 +13,10 @@ import numpy as np
 import uts.gradient as grad
 #import knee.linear_fit as lf
 import knee.knee_ranking as ranking
+import knee.linear_fit as lf
+import knee.rdp as rdp
 #import matplotlib.pyplot as plt
-
+from plot import plot_knees_candidates
 
 logger = logging.getLogger(__name__)
 
@@ -187,61 +189,57 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
         return np.array(filtered_knees)
 
 
-def add_points_even(points: np.ndarray, knees: np.ndarray, tx:float=0.1) -> np.ndarray:
+def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, plt, tx:float=0.05, ty:float=0.05) -> np.ndarray:
     """
-    Add evenly space points between knees points.
+    Add evenly spaced points between knees points.
 
-    Whenever two knew points are further away than  tx (on the X axis), 
-    even spaced points are added to the result.
+    Whenever a smooth segment between two knew points are further away than tx (on the X-axis) and ty (on the Y axis), even spaced points are added to the result.
+    This function will map the knees (in RDP space) into the space of the complete set of points.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        knees (np.ndarray): knees indexes
-        t (float): the threshold for adding points (in percentage, default 0.1)
+        points_reduced (np.ndarray): numpy array with the points (x, y) (simplified by RDP)
+        knees (np.ndarray): knees indexes (from the complete set of points)
+        removed (np.ndarray): the points that were removed
+        tx (float): the threshold (X-axis) for adding points (in percentage, default 0.05)
+        ty (float): the threshold (Y-axis) for adding points (in percentage, default 0.05)
 
     Returns:
-        np.ndarray: the resulting knees
+        np.ndarray: the resulting knees (mapped into the complete set of points)
     """
     # new knees
     new_knees = []
-    # compute the delta x of the complete trace
-    dx = points[-1][0] - points[0][0]
-    # check the top of the sequence
-    left = 0
-    right = knees[0]
-    d = (points[right][0] - points[left][0])/dx
-    if d > tx:
-        number_points = int(math.ceil(d/tx))
-        #logger.info(f'number of points = {number_points}')
-        inc = int((right-left)/number_points)
-        idx = left
-        for _ in range(number_points):
-            idx = idx + inc
-            new_knees.append(idx)
-        
-    # check missing points between knees
-    for i in range(1, len(knees)):
-        logger.info(f'Knee {i}/{len(knees)}')
-        left = knees[i-1]
-        right = knees[i]
-        d = (points[right][0] - points[left][0])/dx
 
-        if d > tx:
-            number_points = int(math.ceil(d/tx))
-            #logger.info(f'number of points = {number_points}')
-            inc = int((right-left)/number_points)
-            idx = left
-            for _ in range(number_points):
-                idx = idx + inc
-                new_knees.append(idx)
+    # compute the delta x and y for the complete trace
+    dx = math.fabs(points[-1][0] - points[0][0])
+    dy = math.fabs(points[-1][1] - points[0][1])
     
-    # check the tail of the sequence
-    left = knees[-1]
-    right = len(points)-1
-    d = (points[right][0] - points[left][0])/dx
-    if d > tx:
-        number_points = int(math.ceil(d/tx))
-        #logger.info(f'number of points = {number_points}')
+    # compute the candidates
+    candidates = []
+
+    # check between knees
+    for i in range(1, len(points_reduced)):
+        left = i-1
+        right = i
+        pdx = math.fabs(points_reduced[right][0] - points_reduced[left][0])/dx
+        pdy = math.fabs(points_reduced[right][1] - points_reduced[left][1])/dy
+        if pdx > (2.0*tx) and pdy > ty:
+            candidates.append(left)
+            candidates.append(right)
+    
+    # Map candidates into the complete set of points
+    candidates = np.array(candidates)
+    candidates = rdp.mapping(candidates, points_reduced, removed)
+
+    # Map knees into the complete set of points
+    knees = rdp.mapping(knees, points_reduced, removed)
+
+    # Process candidates as pairs
+    for i in range(0, len(candidates), 2):
+        left = candidates[i]
+        right = candidates[i+1]
+        pdx = math.fabs(points[right][0] - points[left][0])/dx
+        number_points = int(math.ceil(pdx/(2.0*tx)))
         inc = int((right-left)/number_points)
         idx = left
         for _ in range(number_points):
@@ -253,7 +251,5 @@ def add_points_even(points: np.ndarray, knees: np.ndarray, tx:float=0.1) -> np.n
     knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
-
-    print(knees_idx)
 
     return knees_idx

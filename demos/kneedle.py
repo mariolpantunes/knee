@@ -42,7 +42,7 @@ def main(args):
     # get the expected file from the input file
     dirname = os.path.dirname(args.i)
     filename = os.path.splitext(os.path.basename(args.i))[0]
-    expected_file = os.path.join(os.path.normpath(dirname), f'{filename}_expected.csv')
+    expected_file = os.path.join(os.path.normpath(dirname), f'{filename}-expected.csv')
 
     expected = None
 
@@ -65,7 +65,7 @@ def main(args):
     knees = rdp.mapping(filtered_knees, points_reduced, points_removed)
     
     ##########################
-    
+
     logger.info(f'MSE(knees)   MSE(exp)   Cost(tr)   Cost(kn)')
     logger.info(f'-------------------------------------------')
     if len(expected) > 0:
@@ -77,6 +77,17 @@ def main(args):
     _,_,_,_,cost_trace = evaluation.accuracy_trace (points, knees)
     _,_,_,_,cost_knee = evaluation.accuracy_knee (points, knees)
     logger.info(f'{error_mse:10.2E} {error_mse_exp:10.2E} {cost_trace:10.2E} {cost_knee:10.2E}')
+
+    # store outpout
+    dirname = os.path.dirname(args.i)
+    filename = os.path.splitext(os.path.basename(args.i))[0]
+    output = os.path.join(os.path.normpath(dirname), f'{filename}-output.csv')
+
+    dataset = points[knees]
+
+    with open(output, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerows(dataset)
 
 
 if __name__ == '__main__':

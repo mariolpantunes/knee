@@ -126,6 +126,14 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) ->
     return rv
 
 
+def rmspe(y_true, y_pred):
+    """
+    """
+    EPSILON =  1e-10 # Yes, Python is awesome and supports scientific notation!
+    rv = (np.sqrt(np.mean(np.square((y_true - y_pred) / (y_true + EPSILON))))) * 100.0
+    return rv
+
+
 def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
     """Computes the residual error of the linear fit.
 

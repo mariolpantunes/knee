@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 fig, ax = plt.subplots()
 points = None
 dataset = None
+output = None
 
 
 def onclick(event):
@@ -78,18 +79,29 @@ def main(args):
     # get the expected file from the input file
     dirname = os.path.dirname(args.i)
     filename = os.path.splitext(os.path.basename(args.i))[0]
-    output = os.path.join(os.path.normpath(dirname), f'{filename}_expected.csv')
+    expected_file = os.path.join(os.path.normpath(dirname), f'{filename}-expected.csv')
+    output_file = os.path.join(os.path.normpath(dirname), f'{filename}-output.csv')
 
     # trying to load the dataset
     global dataset
 
-    if os.path.exists(output):
-        with open(output, 'r') as f:
+    if os.path.exists(expected_file):
+        with open(expected_file, 'r') as f:
             reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
             dataset = list(reader)
     else:
         dataset = []
     logger.info('Loaded dataset: %s', dataset)
+
+    # trying to load the output file (with debug knees)
+    global output
+    if os.path.exists(output_file):
+        with open(output_file, 'r') as f:
+            reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
+            output = list(reader)
+    else:
+        output = []
+    logger.info('Loaded output: %s', output)
 
     global points
     points = np.genfromtxt(args.i, delimiter=',')
@@ -102,11 +114,14 @@ def main(args):
         logger.info('(%s, %s)', x, y)
         ax.plot(x, y, marker='o', markersize=3, color='red')
     
+    for x,y in output:
+        ax.plot(x, y, marker='o', markersize=3, color='blue')
+    
     _ = fig.canvas.mpl_connect('button_press_event', onclick)
     plt.show()
 
     # Store the dataset into a CSV
-    with open(output, 'w') as f:
+    with open(expected_file, 'w') as f:
         writer = csv.writer(f)
         writer.writerows(dataset) 
 
