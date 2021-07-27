@@ -325,8 +325,6 @@ def mse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy
         idx = np.argmin(distances)
         error += np.sum(np.square(p-b[idx]))
 
-    print(error)
-
     return error / (len(a)*2.0)
 
 
