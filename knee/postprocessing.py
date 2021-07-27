@@ -251,5 +251,5 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
     knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
-
-    return knees_idx
+    # filter worst knees that may be added due in this function
+    return filter_worst_knees(points, knees_idx)
