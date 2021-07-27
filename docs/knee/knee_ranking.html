@@ -116,9 +116,6 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -&gt; n
             rankings.append(math.fabs(slope))
 
         rankings = np.array(rankings)
-
-        #print(f&#39;Rankings = {rankings}&#39;)
-
         rankings = rank(rankings)
         # Min Max normalization
         if len(rankings) &gt; 1:
@@ -428,9 +425,6 @@ The left neighbourhood is computed based on the R2 metric.</p>
             rankings.append(math.fabs(slope))
 
         rankings = np.array(rankings)
-
-        #print(f&#39;Rankings = {rankings}&#39;)
-
         rankings = rank(rankings)
         # Min Max normalization
         if len(rankings) &gt; 1:

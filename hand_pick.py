@@ -79,8 +79,8 @@ def main(args):
     # get the expected file from the input file
     dirname = os.path.dirname(args.i)
     filename = os.path.splitext(os.path.basename(args.i))[0]
-    expected_file = os.path.join(os.path.normpath(dirname), f'{filename}-expected.csv')
-    output_file = os.path.join(os.path.normpath(dirname), f'{filename}-output.csv')
+    expected_file = os.path.join(os.path.normpath(dirname), f'{filename}_expected.csv')
+    output_file = os.path.join(os.path.normpath(dirname), f'{filename}_output.csv')
 
     # trying to load the dataset
     global dataset

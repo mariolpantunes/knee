@@ -87,9 +87,6 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.n
             rankings.append(math.fabs(slope))
 
         rankings = np.array(rankings)
-
-        #print(f'Rankings = {rankings}')
-
         rankings = rank(rankings)
         # Min Max normalization
         if len(rankings) > 1:

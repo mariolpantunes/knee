@@ -218,7 +218,7 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
         return np.array(filtered_knees)
 
 
-def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, plt, tx:float=0.05, ty:float=0.05) -&gt; np.ndarray:
+def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Add evenly spaced points between knees points.
 
@@ -280,8 +280,8 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
     knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
-
-    return knees_idx</code></pre>
+    # filter worst knees that may be added due in this function
+    return filter_worst_knees(points, knees_idx)</code></pre>
 </details>
 </section>
 <section>
@@ -292,7 +292,7 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.postprocessing.add_points_even"><code class="name flex">
-<span>def <span class="ident">add_points_even</span></span>(<span>points: numpy.ndarray, points_reduced: numpy.ndarray, knees: numpy.ndarray, removed: numpy.ndarray, plt, tx: float = 0.05, ty: float = 0.05) ‑> numpy.ndarray</span>
+<span>def <span class="ident">add_points_even</span></span>(<span>points: numpy.ndarray, points_reduced: numpy.ndarray, knees: numpy.ndarray, removed: numpy.ndarray, tx: float = 0.05, ty: float = 0.05) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add evenly spaced points between knees points.</p>
@@ -322,7 +322,7 @@ This function will map the knees (in RDP space) into the space of the complete s
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, plt, tx:float=0.05, ty:float=0.05) -&gt; np.ndarray:
+<pre><code class="python">def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Add evenly spaced points between knees points.
 
@@ -384,8 +384,8 @@ This function will map the knees (in RDP space) into the space of the complete s
     knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
-
-    return knees_idx</code></pre>
+    # filter worst knees that may be added due in this function
+    return filter_worst_knees(points, knees_idx)</code></pre>
 </details>
 </dd>
 <dt id="knee.postprocessing.filter_clustring"><code class="name flex">

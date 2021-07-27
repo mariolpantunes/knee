@@ -72,13 +72,110 @@ def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -&gt;
     Returns:
         tuple: (neighbourhood index, r2, slope)
     &#34;&#34;&#34;
+
     x = points[:, 0]
     y = points[:, 1]
     return get_neighbourhood(x, y, a, b, t)
 
 
-def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -&gt; tuple:
+def get_neighbourhood_fast_points(points: np.ndarray, a: int, b: int, t: float) -&gt; tuple:
     &#34;&#34;&#34;Get the neighbourhood (closest points) from a to b.
+
+    The neighbourhood is defined as the longest straitgh line (defined by R2).
+    This version uses a inaccurate binary search to speedup the search.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        a (int): the initial point of the search
+        b (int): the left limit of the search
+        t (float): R2 threshold
+
+    Returns:
+        tuple: (neighbourhood index, r2, slope)
+    &#34;&#34;&#34;
+
+    x = points[:, 0]
+    y = points[:, 1]
+    return get_neighbourhood_fast(x, y, a, b, t)
+
+
+def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a:int, b:int, t=0.9) -&gt; int:
+    &#34;&#34;&#34;
+    Get the index of the point within the range [b, a] where the R2 is close to the threshold.
+
+    This version uses a inaccurate binary search to speedup the search.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        a (int): the initial point of the search
+        b (int): the left limit of the search
+        t (float): R2 threshold (default 0.9)
+
+    Returns:
+        int: index of the point
+    &#34;&#34;&#34;
+    
+    i = b
+    right = a
+
+    while abs(i-right) &gt; 1:
+        coef = lf.linear_fit(x[i:a+1], y[i:a+1])
+        r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
+        
+        if r2 &lt; t:
+            i = int((i+right)/2.0)
+        else:
+            right = i
+            i = int((b+right)/2.0)
+            
+        
+    return i
+
+    &#34;&#34;&#34;if right != a:
+        return right
+    else:
+        return i&#34;&#34;&#34;
+
+def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9) -&gt; tuple:
+    &#34;&#34;&#34;
+    Get the neighbourhood (closest points) from a to b.
+
+    The neighbourhood is defined as the longest straitgh line (defined by R2).
+    This version uses a inaccurate binary search to speedup the search.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        a (int): the initial point of the search
+        b (int): the left limit of the search
+        t (float): R2 threshold (default 0.9)
+
+    Returns:
+        tuple: (neighbourhood index, r2, slope)
+    &#34;&#34;&#34;
+    print(f&#39;a = {a} b = {b} a-b={a-b}&#39;)
+
+    # speedup when the search using an inaccurate binary search
+    i = get_neighbourhood_binary(x, y, a, b, t)
+    b, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
+    r2 = lf.linear_r2(x[i:a+1], y[i:a+1], (b, slope))
+    previous_res = (i, r2, slope)
+    
+    # Linear search to improve accuracy
+    while r2 &lt; t and i &lt; a:
+        i += 1
+        coef = lf.linear_fit(x[i:a+1], y[i:a+1])
+        r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
+        _, slope = coef
+        previous_res = (i, r2, slope)
+    
+    return previous_res
+
+
+def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9) -&gt; tuple:
+    &#34;&#34;&#34;
+    Get the neighbourhood (closest points) from a to b.
 
     The neighbourhood is defined as the longest straitgh line (defined by R2).
 
@@ -87,30 +184,31 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
         y (np.ndarray): the value of the points in the y axis coordinates
         a (int): the initial point of the search
         b (int): the left limit of the search
-        t (float): R2 threshold
+        t (float): R2 threshold (default 0.9)
 
     Returns:
         tuple: (neighbourhood index, r2, slope)
     &#34;&#34;&#34;
-    
+
     r2 = 1.0
     i = a - 1
     _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
 
     while r2 &gt; t and i &gt; b:
+        #print(&#39;.&#39;)
         previous_res = (i, r2, slope)
         i -= 1
         coef = lf.linear_fit(x[i:a+1], y[i:a+1])
         r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
         _, slope = coef
+        #print(f&#39;{i} -&gt; {r2}&#39;)
 
     if r2 &gt; t:
         return i, r2, slope
     else:
         return previous_res
 
-
-def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple:
+def accuracy_knee(points: np.ndarray, knees: np.ndarray, t: float = 0.9) -&gt; tuple:
     &#34;&#34;&#34;Compute the accuracy heuristic for a set of knees.
 
     The heuristic is based on the average distance of X and Y axis, the slope and the R2.
@@ -119,6 +217,7 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple:
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
+        t (float): R2 threshold (default 0.9)
 
     Returns:
         tuple: (average_x, average_y, average_slope, average_coeffients, cost)
@@ -135,7 +234,8 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple:
     coeffients = []
 
     previous_knee = 0
-    for i in range(0, len(knees)):
+    for i in range(len(knees)):
+        print(f&#39;{i}/{len(knees)}&#39;)
         idx, r2, slope = get_neighbourhood(x, y, knees[i], previous_knee)
 
         delta_x = x[idx] - x[knees[i]]
@@ -387,7 +487,7 @@ def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strateg
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.evaluation.accuracy_knee"><code class="name flex">
-<span>def <span class="ident">accuracy_knee</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray) ‑> tuple</span>
+<span>def <span class="ident">accuracy_knee</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, t: float = 0.9) ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Compute the accuracy heuristic for a set of knees.</p>
@@ -399,6 +499,8 @@ In this version it is used the left neighbourhood of the knee.</p>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>knees indexes</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>R2 threshold (default 0.9)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -409,7 +511,7 @@ In this version it is used the left neighbourhood of the knee.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def accuracy_knee(points: np.ndarray, knees: np.ndarray) -&gt; tuple:
+<pre><code class="python">def accuracy_knee(points: np.ndarray, knees: np.ndarray, t: float = 0.9) -&gt; tuple:
     &#34;&#34;&#34;Compute the accuracy heuristic for a set of knees.
 
     The heuristic is based on the average distance of X and Y axis, the slope and the R2.
@@ -418,6 +520,7 @@ In this version it is used the left neighbourhood of the knee.</p>
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
+        t (float): R2 threshold (default 0.9)
 
     Returns:
         tuple: (average_x, average_y, average_slope, average_coeffients, cost)
@@ -434,7 +537,8 @@ In this version it is used the left neighbourhood of the knee.</p>
     coeffients = []
 
     previous_knee = 0
-    for i in range(0, len(knees)):
+    for i in range(len(knees)):
+        print(f&#39;{i}/{len(knees)}&#39;)
         idx, r2, slope = get_neighbourhood(x, y, knees[i], previous_knee)
 
         delta_x = x[idx] - x[knees[i]]
@@ -574,7 +678,7 @@ In this version it is used the points from the current knee to the previous.</p>
 </details>
 </dd>
 <dt id="knee.evaluation.get_neighbourhood"><code class="name flex">
-<span>def <span class="ident">get_neighbourhood</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, a: int, b: int, t: float = 0.7) ‑> tuple</span>
+<span>def <span class="ident">get_neighbourhood</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, a: int, b: int, t: float = 0.9) ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Get the neighbourhood (closest points) from a to b.</p>
@@ -585,6 +689,201 @@ In this version it is used the points from the current knee to the previous.</p>
 <dd>the value of the points in the x axis coordinates</dd>
 <dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>the value of the points in the y axis coordinates</dd>
+<dt><strong><code>a</code></strong> :&ensp;<code>int</code></dt>
+<dd>the initial point of the search</dd>
+<dt><strong><code>b</code></strong> :&ensp;<code>int</code></dt>
+<dd>the left limit of the search</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>R2 threshold (default 0.9)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>(neighbourhood index, r2, slope)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9) -&gt; tuple:
+    &#34;&#34;&#34;
+    Get the neighbourhood (closest points) from a to b.
+
+    The neighbourhood is defined as the longest straitgh line (defined by R2).
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        a (int): the initial point of the search
+        b (int): the left limit of the search
+        t (float): R2 threshold (default 0.9)
+
+    Returns:
+        tuple: (neighbourhood index, r2, slope)
+    &#34;&#34;&#34;
+
+    r2 = 1.0
+    i = a - 1
+    _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
+
+    while r2 &gt; t and i &gt; b:
+        #print(&#39;.&#39;)
+        previous_res = (i, r2, slope)
+        i -= 1
+        coef = lf.linear_fit(x[i:a+1], y[i:a+1])
+        r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
+        _, slope = coef
+        #print(f&#39;{i} -&gt; {r2}&#39;)
+
+    if r2 &gt; t:
+        return i, r2, slope
+    else:
+        return previous_res</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.get_neighbourhood_binary"><code class="name flex">
+<span>def <span class="ident">get_neighbourhood_binary</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, a: int, b: int, t=0.9) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the index of the point within the range [b, a] where the R2 is close to the threshold.</p>
+<p>This version uses a inaccurate binary search to speedup the search.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the value of the points in the x axis coordinates</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the value of the points in the y axis coordinates</dd>
+<dt><strong><code>a</code></strong> :&ensp;<code>int</code></dt>
+<dd>the initial point of the search</dd>
+<dt><strong><code>b</code></strong> :&ensp;<code>int</code></dt>
+<dd>the left limit of the search</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>R2 threshold (default 0.9)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>index of the point</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a:int, b:int, t=0.9) -&gt; int:
+    &#34;&#34;&#34;
+    Get the index of the point within the range [b, a] where the R2 is close to the threshold.
+
+    This version uses a inaccurate binary search to speedup the search.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        a (int): the initial point of the search
+        b (int): the left limit of the search
+        t (float): R2 threshold (default 0.9)
+
+    Returns:
+        int: index of the point
+    &#34;&#34;&#34;
+    
+    i = b
+    right = a
+
+    while abs(i-right) &gt; 1:
+        coef = lf.linear_fit(x[i:a+1], y[i:a+1])
+        r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
+        
+        if r2 &lt; t:
+            i = int((i+right)/2.0)
+        else:
+            right = i
+            i = int((b+right)/2.0)
+            
+        
+    return i
+
+    &#34;&#34;&#34;if right != a:
+        return right
+    else:
+        return i&#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.get_neighbourhood_fast"><code class="name flex">
+<span>def <span class="ident">get_neighbourhood_fast</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, a: int, b: int, t: float = 0.9) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the neighbourhood (closest points) from a to b.</p>
+<p>The neighbourhood is defined as the longest straitgh line (defined by R2).
+This version uses a inaccurate binary search to speedup the search.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the value of the points in the x axis coordinates</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the value of the points in the y axis coordinates</dd>
+<dt><strong><code>a</code></strong> :&ensp;<code>int</code></dt>
+<dd>the initial point of the search</dd>
+<dt><strong><code>b</code></strong> :&ensp;<code>int</code></dt>
+<dd>the left limit of the search</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>R2 threshold (default 0.9)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>(neighbourhood index, r2, slope)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9) -&gt; tuple:
+    &#34;&#34;&#34;
+    Get the neighbourhood (closest points) from a to b.
+
+    The neighbourhood is defined as the longest straitgh line (defined by R2).
+    This version uses a inaccurate binary search to speedup the search.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        a (int): the initial point of the search
+        b (int): the left limit of the search
+        t (float): R2 threshold (default 0.9)
+
+    Returns:
+        tuple: (neighbourhood index, r2, slope)
+    &#34;&#34;&#34;
+    print(f&#39;a = {a} b = {b} a-b={a-b}&#39;)
+
+    # speedup when the search using an inaccurate binary search
+    i = get_neighbourhood_binary(x, y, a, b, t)
+    b, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
+    r2 = lf.linear_r2(x[i:a+1], y[i:a+1], (b, slope))
+    previous_res = (i, r2, slope)
+    
+    # Linear search to improve accuracy
+    while r2 &lt; t and i &lt; a:
+        i += 1
+        coef = lf.linear_fit(x[i:a+1], y[i:a+1])
+        r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
+        _, slope = coef
+        previous_res = (i, r2, slope)
+    
+    return previous_res</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.get_neighbourhood_fast_points"><code class="name flex">
+<span>def <span class="ident">get_neighbourhood_fast_points</span></span>(<span>points: numpy.ndarray, a: int, b: int, t: float) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the neighbourhood (closest points) from a to b.</p>
+<p>The neighbourhood is defined as the longest straitgh line (defined by R2).
+This version uses a inaccurate binary search to speedup the search.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>a</code></strong> :&ensp;<code>int</code></dt>
 <dd>the initial point of the search</dd>
 <dt><strong><code>b</code></strong> :&ensp;<code>int</code></dt>
@@ -601,14 +900,14 @@ In this version it is used the points from the current knee to the previous.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.7) -&gt; tuple:
+<pre><code class="python">def get_neighbourhood_fast_points(points: np.ndarray, a: int, b: int, t: float) -&gt; tuple:
     &#34;&#34;&#34;Get the neighbourhood (closest points) from a to b.
 
     The neighbourhood is defined as the longest straitgh line (defined by R2).
+    This version uses a inaccurate binary search to speedup the search.
 
     Args:
-        x (np.ndarray): the value of the points in the x axis coordinates
-        y (np.ndarray): the value of the points in the y axis coordinates
+        points (np.ndarray): numpy array with the points (x, y)
         a (int): the initial point of the search
         b (int): the left limit of the search
         t (float): R2 threshold
@@ -616,22 +915,10 @@ In this version it is used the points from the current knee to the previous.</p>
     Returns:
         tuple: (neighbourhood index, r2, slope)
     &#34;&#34;&#34;
-    
-    r2 = 1.0
-    i = a - 1
-    _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
 
-    while r2 &gt; t and i &gt; b:
-        previous_res = (i, r2, slope)
-        i -= 1
-        coef = lf.linear_fit(x[i:a+1], y[i:a+1])
-        r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
-        _, slope = coef
-
-    if r2 &gt; t:
-        return i, r2, slope
-    else:
-        return previous_res</code></pre>
+    x = points[:, 0]
+    y = points[:, 1]
+    return get_neighbourhood_fast(x, y, a, b, t)</code></pre>
 </details>
 </dd>
 <dt id="knee.evaluation.get_neighbourhood_points"><code class="name flex">
@@ -674,6 +961,7 @@ In this version it is used the points from the current knee to the previous.</p>
     Returns:
         tuple: (neighbourhood index, r2, slope)
     &#34;&#34;&#34;
+
     x = points[:, 0]
     y = points[:, 1]
     return get_neighbourhood(x, y, a, b, t)</code></pre>
@@ -967,6 +1255,9 @@ and computes the error based on the closest point.</p>
 <li><code><a title="knee.evaluation.accuracy_knee" href="#knee.evaluation.accuracy_knee">accuracy_knee</a></code></li>
 <li><code><a title="knee.evaluation.accuracy_trace" href="#knee.evaluation.accuracy_trace">accuracy_trace</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood" href="#knee.evaluation.get_neighbourhood">get_neighbourhood</a></code></li>
+<li><code><a title="knee.evaluation.get_neighbourhood_binary" href="#knee.evaluation.get_neighbourhood_binary">get_neighbourhood_binary</a></code></li>
+<li><code><a title="knee.evaluation.get_neighbourhood_fast" href="#knee.evaluation.get_neighbourhood_fast">get_neighbourhood_fast</a></code></li>
+<li><code><a title="knee.evaluation.get_neighbourhood_fast_points" href="#knee.evaluation.get_neighbourhood_fast_points">get_neighbourhood_fast_points</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_points" href="#knee.evaluation.get_neighbourhood_points">get_neighbourhood_points</a></code></li>
 <li><code><a title="knee.evaluation.mae" href="#knee.evaluation.mae">mae</a></code></li>
 <li><code><a title="knee.evaluation.mse" href="#knee.evaluation.mse">mse</a></code></li>
