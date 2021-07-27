@@ -106,7 +106,7 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray) -> tuple:
     coeffients = []
 
     previous_knee = 0
-    for i in range(0, len(knees)):
+    for i in range(len(knees)):
         idx, r2, slope = get_neighbourhood(x, y, knees[i], previous_knee)
 
         delta_x = x[idx] - x[knees[i]]
@@ -324,6 +324,8 @@ def mse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy
         distances = np.linalg.norm(b-p, axis=1)
         idx = np.argmin(distances)
         error += np.sum(np.square(p-b[idx]))
+
+    print(error)
 
     return error / (len(a)*2.0)
 

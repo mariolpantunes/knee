@@ -12,8 +12,8 @@ python -m unittest
 
 ## Documentation
 
-This library was documented using the google style docstring.
-Run the following commands to the produce the documentation for this library.
+This library was documented using the google style docstring, it can be accessed [here](https://mariolpantunes.github.io/knee/).
+Run the following commands to produce the documentation for this library.
 
 ```bash
 pip install pdoc3
@@ -27,7 +27,34 @@ pdoc -c latex_math=True --html -o docs knee --force
 The demos can be execute as python modules using the following code:
 
 ```bash
-python -m demos.kneedle
+python -m demos.curvature -i [trace]
+python -m demos.dfdt -i [trace]
+python -m demos.kneedle -i [trace]
+python -m demos.kneedle_rec -i [trace]
+python -m demos.lmethod -i [trace]
+python -m demos.menger -i [trace]
+python -m demos.rdp -i [trace]
+python -m demos.zscore -i [trace]
+```
+Most demos have the same parameters (with the exception of zscore):
+
+```bash
+python -m demos.curvature -h
+usage: curvature.py [-h] -i I [-r R] [-c {single,complete,average}] [-t T] [-m {left,linear,right}] [-a] [-o]
+
+Multi Knee evaluation app
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i I                  input file
+  -r R                  RDP R2
+  -c {single,complete,average}
+                        clustering metric
+  -t T                  clustering threshold
+  -m {left,linear,right}
+                        direction of the cluster ranking
+  -a                    add even spaced points
+  -o                    store output (debug)
 ```
 
 ![Python CI](https://github.com/mariolpantunes/knee/workflows/Python%20CI/badge.svg)
