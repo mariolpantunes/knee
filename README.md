@@ -40,7 +40,7 @@ Most demos have the same parameters (with the exception of zscore):
 
 ```bash
 python -m demos.curvature -h
-usage: curvature.py [-h] -i I [-r R] [-c {single,complete,average}] [-t T] [-m {left,linear,right}] [-a] [-o]
+usage: curvature.py [-h] -i I [-r R] [-c {single,complete,average}] [-t T] [-m {left,linear,right}] [-o] [-a | -b]
 
 Multi Knee evaluation app
 
@@ -53,8 +53,9 @@ optional arguments:
   -t T                  clustering threshold
   -m {left,linear,right}
                         direction of the cluster ranking
-  -a                    add even spaced points
   -o                    store output (debug)
+  -a                    add even spaced points (rdp based)
+  -b                    add even spaced points (knee based)
 ```
 
 ![Python CI](https://github.com/mariolpantunes/knee/workflows/Python%20CI/badge.svg)
