@@ -226,6 +226,7 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
         if pdx > (2.0*tx) and pdy > ty:
             candidates.append(left)
             candidates.append(right)
+    #print(f'candidates: {candidates}')
     
     # Map candidates into the complete set of points
     candidates = np.array(candidates)
