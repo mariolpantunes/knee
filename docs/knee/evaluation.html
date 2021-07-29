@@ -154,8 +154,6 @@ def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: floa
     Returns:
         tuple: (neighbourhood index, r2, slope)
     &#34;&#34;&#34;
-    print(f&#39;a = {a} b = {b} a-b={a-b}&#39;)
-
     # speedup when the search using an inaccurate binary search
     i = get_neighbourhood_binary(x, y, a, b, t)
     b, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
@@ -235,8 +233,7 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray, t: float = 0.9) -&gt; t
 
     previous_knee = 0
     for i in range(len(knees)):
-        print(f&#39;{i}/{len(knees)}&#39;)
-        idx, r2, slope = get_neighbourhood(x, y, knees[i], previous_knee)
+        idx, r2, slope = get_neighbourhood_fast(x, y, knees[i], previous_knee)
 
         delta_x = x[idx] - x[knees[i]]
         delta_y = y[idx] - y[knees[i]]
@@ -538,8 +535,7 @@ In this version it is used the left neighbourhood of the knee.</p>
 
     previous_knee = 0
     for i in range(len(knees)):
-        print(f&#39;{i}/{len(knees)}&#39;)
-        idx, r2, slope = get_neighbourhood(x, y, knees[i], previous_knee)
+        idx, r2, slope = get_neighbourhood_fast(x, y, knees[i], previous_knee)
 
         delta_x = x[idx] - x[knees[i]]
         delta_y = y[idx] - y[knees[i]]
@@ -854,8 +850,6 @@ This version uses a inaccurate binary search to speedup the search.</p>
     Returns:
         tuple: (neighbourhood index, r2, slope)
     &#34;&#34;&#34;
-    print(f&#39;a = {a} b = {b} a-b={a-b}&#39;)
-
     # speedup when the search using an inaccurate binary search
     i = get_neighbourhood_binary(x, y, a, b, t)
     b, slope = lf.linear_fit(x[i:a+1], y[i:a+1])

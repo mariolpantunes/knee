@@ -199,7 +199,7 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         points_reduced (np.ndarray): numpy array with the points (x, y) (simplified by RDP)
-        knees (np.ndarray): knees indexes (from the complete set of points)
+        knees (np.ndarray): knees indexes
         removed (np.ndarray): the points that were removed
         tx (float): the threshold (X-axis) for adding points (in percentage, default 0.05)
         ty (float): the threshold (Y-axis) for adding points (in percentage, default 0.05)
@@ -238,6 +238,79 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
     for i in range(0, len(candidates), 2):
         left = candidates[i]
         right = candidates[i+1]
+        pdx = math.fabs(points[right][0] - points[left][0])/dx
+        number_points = int(math.ceil(pdx/(2.0*tx)))
+        inc = int((right-left)/number_points)
+        idx = left
+        for _ in range(number_points):
+            idx = idx + inc
+            new_knees.append(idx)
+
+    knees_idx = np.concatenate((knees, new_knees))
+    # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
+    knees_idx = knees_idx.astype(int)
+    knees_idx = np.unique(knees_idx)
+    knees_idx.sort()
+    # filter worst knees that may be added due in this function
+    return filter_worst_knees(points, knees_idx)
+
+
+def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, ty:float=0.05) -> np.ndarray:
+    """
+    Add evenly spaced points between knees points (using knee as markers).
+
+    Whenever the distance between two consequetive knees is greater than 
+    tx (on the X-axis) and ty (on the Y axis), even spaced points are added to the result.
+    The knees have to be mapped in the complete set of points.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        tx (float): the threshold (X-axis) for adding points (in percentage, default 0.05)
+        ty (float): the threshold (Y-axis) for adding points (in percentage, default 0.05)
+
+    Returns:
+        np.ndarray: the resulting knees
+    """
+    # new knees
+    new_knees = []
+
+    # compute the delta x and y for the complete trace
+    dx = math.fabs(points[-1][0] - points[0][0])
+    dy = math.fabs(points[-1][1] - points[0][1])
+    
+    # compute the candidates
+    candidates = []
+
+    # check top part
+    left = 0
+    right = knees[0]
+    pdx = math.fabs(points[right][0] - points[left][0])/dx
+    pdy = math.fabs(points[right][1] - points[left][1])/dy
+
+    if pdx > (2.0*tx) and pdy > ty:
+        candidates.append((left, right))
+    
+    # check between knees
+    for i in range(1, len(knees)):
+        left = knees[i-1]
+        right = knees[i]
+        pdx = math.fabs(points[right][0] - points[left][0])/dx
+        pdy = math.fabs(points[right][1] - points[left][1])/dy
+        if pdx > (2.0*tx) and pdy > ty:
+            candidates.append((left, right))
+    
+    # check last part
+    left = knees[-1]
+    right = len(points)-1
+    pdx = math.fabs(points[right][0] - points[left][0])/dx
+    pdy = math.fabs(points[right][1] - points[left][1])/dy
+
+    if pdx > (2.0*tx) and pdy > ty:
+        candidates.append((left, right))
+
+    # Process candidates as pairs
+    for left, right in candidates:
         pdx = math.fabs(points[right][0] - points[left][0])/dx
         number_points = int(math.ceil(pdx/(2.0*tx)))
         inc = int((right-left)/number_points)

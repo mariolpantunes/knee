@@ -63,6 +63,9 @@ def main(args):
     filtered_knees = pp.filter_clustring(points_reduced, t_k, cmethod[args.c], args.t, args.m)
     if args.a:
         knees = pp.add_points_even(points, points_reduced, filtered_knees, points_removed)
+    elif args.b:
+        knees = rdp.mapping(filtered_knees, points_reduced, points_removed)
+        knees = pp.add_points_even_knees(points, knees)
     else:
         knees = rdp.mapping(filtered_knees, points_reduced, points_removed)
     
@@ -100,8 +103,10 @@ if __name__ == '__main__':
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), help='clustering metric', default='average')
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
     parser.add_argument('-m', type=ClusterRanking, choices=list(ClusterRanking), help='direction of the cluster ranking', default='left')
-    parser.add_argument('-a', help='add even spaced points', action='store_true')
     parser.add_argument('-o', help='store output (debug)', action='store_true')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-a', help='add even spaced points (rdp based)', action='store_true')
+    group.add_argument('-b', help='add even spaced points (knee based)', action='store_true')
     args = parser.parse_args()
     
     main(args)
