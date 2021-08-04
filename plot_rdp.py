@@ -6,44 +6,18 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import os
 import argparse
 import numpy as np
 import logging
 
-from enum import Enum
-
-from knee.postprocessing import filter_clustring, filter_worst_knees
 import matplotlib.pyplot as plt
 from knee.rdp import rdp, mapping
-import knee.clustering as clustering
+
 
 import cProfile, pstats
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
-
-
-class Clustering(Enum):
-    single = 'single'
-    complete = 'complete'
-    average = 'average'
-
-    def __str__(self):
-        return self.value
-
-
-def postprocessing(points, knees, args):
-    logger.info('Post Processing')
-    logger.info('Knees: %s', knees)
-    logger.info('Initial #Knees: %s', len(knees))
-    knees = filter_worst_knees(points, knees)
-    logger.info('Worst Knees: %s', len(knees))
-    cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
-    current_knees = filter_clustring(points, knees, cmethod[args.c], args.t)
-    logger.info('Clustering Knees: %s', len(current_knees))
-
-    return current_knees
 
 
 def main(args):

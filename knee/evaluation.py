@@ -447,7 +447,45 @@ def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strateg
     return math.sqrt(mse(points, knees, expected, s))
 
 
-def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01) -> np.ndarray:
+def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps:float = 1e-10) -> float:
+
+    # get the knee points
+    knee_points = points[knees]
+
+    if s is Strategy.knees:
+        a = knee_points
+        b = expected
+    elif s is Strategy.expected:
+        a = expected
+        b = knee_points
+    elif s is Strategy.best:
+        if len(expected) <= len(knee_points):
+            a = expected
+            b = knee_points
+        else:
+            a = knee_points
+            b = expected
+    else:
+        if len(expected) >= len(knee_points):
+            a = expected
+            b = knee_points
+        else:
+            a = knee_points
+            b = expected
+    
+    errors = []
+
+    for p in a:
+        distances = np.linalg.norm(b-p, axis=1)
+        idx = np.argmin(distances)
+        e = (p - b[idx]) / (p + eps)
+        errors.extend(e)
+    errors = np.array(errors)
+
+    return np.sqrt(np.mean(np.square(errors)))
+    
+
+def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -> np.ndarray:
     """
     """
 
