@@ -15,9 +15,8 @@ import logging
 
 
 from enum import Enum
-import knee.pointSelector as ps
+import knee.zmethod as zmethod
 import knee.evaluation as evaluation
-from knee.knee_ranking import ClusterRanking
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -54,7 +53,7 @@ def main(args):
 
     ## Knee detection code ##
 
-    knees = ps.knees(points)
+    knees = zmethod.knees(points)
     knees = knees[knees>0]
 
     ##########################
@@ -87,10 +86,6 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    #parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
-    #parser.add_argument('-c', type=Clustering, choices=list(Clustering), default='average')
-    #parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
-    #parser.add_argument('-m', type=ClusterRanking, choices=list(ClusterRanking), default='left')
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     args = parser.parse_args()
     

@@ -9,6 +9,6 @@ import knee.lmethod
 import knee.menger
 import knee.multi_knee
 import knee.optimization
-import knee.pointSelector
+import knee.zmethod
 import knee.postprocessing
 import knee.rdp
