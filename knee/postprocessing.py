@@ -170,22 +170,12 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
 
             if len(current_cluster) > 1:
                 rankings = ranking.cluster_ranking(points, current_cluster, method)
-                #logger.info('Rankings: %s', rankings)
                 idx = np.argmax(rankings)
                 best_knee = knees[clusters == i][idx]
             else:
-                #logger.info('Rankings: [1.0]')
                 best_knee = knees[clusters == i][0]
             filtered_knees.append(best_knee)
 
-            # plot cluster
-            # if plot:
-            #    xpoints = points[:,0]
-            #    ypoints = points[:,1]
-            #    plt.plot(xpoints, ypoints)
-            #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker='x', markersize=3, color='green')
-            #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker='o', markersize=5, color='red')
-            #    plt.show()
         return np.array(filtered_knees)
 
 
