@@ -1,81 +1,18 @@
 # coding: utf-8
 
+__author__ = 'Tyler Estro'
+__version__ = '0.1'
+__email__ = 'testro@cs.stonybrook.edu'
+__status__ = 'Development'
+
 
 import numpy as np
 import logging
-from math import ceil, fabs
 from uts.zscore import zscore_array
 import uts.gradient as grad
 
 
 logger = logging.getLogger(__name__)
-
-
-def dict_to_lists(d: dict) -> tuple:
-    """
-    Convert a dict of points into a tuple of lists.
-
-    Args:
-        d (dict): dict with the points (x, y)
-
-    Returns:
-        tuple: (array(x), array(y))
-    """
-    x = []
-    y = []
-    for k, v in d.items():
-        x.append(k)
-        y.append(v)
-    return (np.array(x), np.array(y))
-
-
-def dict_to_points(d: dict) -> np.ndarray:
-    """
-    Convert a dict of points into an array of points.
-
-    Args:
-        d (dict): dict with the points (x, y)
-
-    Returns:
-        np.ndarray: numpy array with the points (x, y)
-    """
-    points = []
-    for k, v in d.items():
-        points.append([k, v])
-    return np.array(points)
-
-
-def points_to_dict(points:np.ndarray) -> dict:
-    """
-    Convert an array of points into a dict of points.
-
-    Args:
-        points (np.ndarray): numpy array with the points (x, y)
-
-    Returns:
-        dict: dict with the points (x, y)
-    """
-    rv = {}
-    for point in points:
-        rv[point[0]] = point[1]
-    return rv
-
-
-def lists_to_dict(x:np.ndarray, y: np.ndarray) -> dict:
-    """
-    Convert two array of points into a dict of points.
-
-    Args:
-        x (np.ndarray): the value of the points in the x axis coordinates
-        y (np.ndarray): the value of the points in the y axis coordinates
-
-    Returns:
-        dict: dict with the points (x, y)
-    """
-    rv = {}
-    for i in range(len(x)):
-        rv[x[i]] = y[i]
-    return rv
 
 
 def map_index(a:np.ndarray, b:np.ndarray) -> np.ndarray:
@@ -93,125 +30,131 @@ def map_index(a:np.ndarray, b:np.ndarray) -> np.ndarray:
     return out
 
 
-def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05) -> np.ndarray:
+def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, x_max:int=None, y_range:list=None) -> np.ndarray:
     """
     Given an array of points, it computes the knees.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
+        dx (float): % of max cache size between points (default 0.05)
+        dy (float): % of max - min miss ratio between points (default 0.05)
+        dz (float): amount we decrease outlier_z every iteration (default 0.05)
+        x_max (int): max cache size of original (pre-RDP) MRC  (default None)
+        y_max (list): [max, min] miss ratio of original (pre-RDP) MRC (default None)
 
     Returns:
         np.ndarray: The knee points on the curve
     """
     x = points[:, 0]
-    y = points[:, 1]
-    mrc = lists_to_dict(x, y)
-    rv = getPoints(mrc, dx, dy, dz)
+    rv = getPoints(points, dx, dy, dz, False, x_max, y_range)
     # convert x points into indexes:
     return map_index(x, np.array(rv))
 
 
-def getPoints(mrc:dict, x_dist:float=0.05, y_dist:float=0.05, delta_z:float=0.05, plot:bool=False) -> list:
+def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, plot:bool=False, x_max:int=None, y_range:list=None) -> np.ndarray:
     """
     Use our outlier method to find interesting points in an MRC.
     
     Args:
-        mrc (dict): dict with the points (x, y)
-        x_dist (float): % of max cache size between points (default 0.05)
-        y_dist (float): % of max - min miss ratio between points (default 0.05)
-        delta_z (float): (default 0.05)
+        points (np.ndarray): numpy array with the points (x, y)
+        dx (float): % of max cache size between points (default 0.05)
+        dy (float): % of max - min miss ratio between points (default 0.05)
+        dz (float): amount we decrease outlier_z every iteration (default 0.05)
         plot (bool): set True if you want to return data useful for plotting
+        x_max (int): max cache size of original (pre-RDP) MRC (default None)
+        y_max (list): [max, min] miss ratio of original (pre-RDP) MRC (default None)
 
     Returns:
         list: list with the knees x coordinate
     """
+    
+    # in case we use RDP, we need the original MRC x/y ranges: x_max,y_range vars
+    x_max = x_max if x_max else len(points)
+    if y_range:
+        y_max,y_min = y_range
+    else:
+        y_max,y_min = max(points.max(axis=1),points.min(axis=1))
 
-    uniq_reqs = len(mrc)
-
-    if uniq_reqs < 3:
-        print('pointSelector: < 3 unique requests in workload')
+    if x_max < 3:
+        logger.warning('pointSelector: < 3 unique requests in workload')
         return []
 
-    if min(mrc.values()) == 1:
-        logger.warning(
-            'pointSelector: workload completely random (dont bother caching)')
+    if y_min == 1:
+        logger.warning('pointSelector: workload completely random (dont bother caching)')
         return []
 
     # get absolute x and y distances
-    x_width = max(1, int(uniq_reqs * x_dist))
-    y_height = (max(mrc.values()) - min(mrc.values())) * y_dist
-
-    # get 2nd derivative yd2 using central difference formula
-    #x_range = np.linspace(1, uniq_reqs, uniq_reqs, dtype=int)
-    # def mrc_wrapper(x):
-    # return np.array([mrc[int(i)] for i in x])
-    #yd2_temp = derivative(mrc_wrapper, x_range[1:-1], dx=1.0, n=2)
-    # since using central dif, first and last element can not be calculated
-    #yd2 = [0] + list(yd2_temp) + [0]
-
-    x, y = dict_to_lists(mrc)
-    #yd2 = np.gradient(y, x, edge_order=2)
+    x_width = max(1, int(x_max * dx))
+    y_height = (y_max - y_min) * dy
+    
+    # get z-score
+    x = points[:, 0]
+    y = points[:, 1]
     yd2 = grad.csd(x, y)
-    #logger.info('yd2 = %s', yd2)
-
-    # remove negative 2nd derivatives
-    #yd2 = np.array([x if x > 0 else 0 for x in yd2])
-    #yd2 = [y if y > 0 else fabs(y) for y in yd2]
-    yd2 = np.fabs(yd2)
-    # get zscore of yd2
-    #z_yd2 = zscore(yd2)
     z_yd2 = zscore_array(x, yd2)
     min_zscore = min(z_yd2)
+    # stack the 2nd derivative zscore with the points
+    points = np.column_stack((points, z_yd2))
 
-    # optimization: create an mrc with points that have >= 0 z-score
-    zero_mrc = {x[0]: [x[1], z] for x, z in zip(mrc.items(), z_yd2) if z >= 0}
-
+    # outlier_points holds our final selected points
+    outlier_points = np.empty((0,2))
+    
     # main loop. start with outliers >= 3 z-score
     outlier_z = 3
-    outlier_points = {}
     while True:
-
-        # need to track points added each iteration for optimized outlier_dict handling
+    
         points_added = 0
-        # outlier_dict = {x:[y,z] for x,y,z in zip(list(mrc.keys()), list(mrc.values()), z_yd2) if (z >= outlier_z)
-        #	and all(abs(x-i) >= x_width for i in outlier_points.keys()) and
-        #	all(abs(y-j) >= y_height for j in outlier_points.values())}
-
-        # optimization: use zero_mrc (which is much smaller) until z < 0
-        if outlier_z >= 0:
-            outlier_dict = {x[0]: x[1][0] for x in zero_mrc.items() if (x[1][1] >= outlier_z)
-                            and all((abs(x[0]-i) >= x_width) and (abs(x[1][0]-j) >= y_height) for i, j in outlier_points.items())}
-        elif outlier_z == (0 - delta_z):
-            outlier_dict = {x[0]: x[1] for x, y in zip(mrc.items(), z_yd2) if (y >= outlier_z)
-                            and all((abs(x[0]-i) >= x_width) and (abs(x[1]-j) >= y_height) for i, j in outlier_points.items())}
-
-        group = []
-        for k, v in sorted(outlier_dict.items()):
-            if len(group) == 0:
-                group += [[k, v]]
-            elif (k - group[-1][0]) < x_width:
-                group += [[k, v]]
-            else:
-                # NOTE: outlier_best is only picking from the points in the group, NOT the entire MRC window
-                outlier_best = min(group, key=lambda x: x[1])
-                if all(abs(outlier_best[1]-i) >= y_height for i in outlier_points.values()):
-                    outlier_points[outlier_best[0]] = outlier_best[1]
+        # candidate points have a zscore >= outlier_z
+        candidates = points[points[:,2] >= outlier_z]
+        #print('Candidates: ' + str(len(candidates)) + ' Points: ' + str(len(points)) + ' Outlier_Points: ' +
+        #        str(len(outlier_points)) + ' Outlier_Z: '  + str(round(outlier_z,3)))
+        
+        if len(candidates) > 0:
+            x_diff = np.argwhere(np.diff(candidates, axis=0)[:,0] >= x_width).flatten()
+            if len(x_diff) == 0:
+                outlier_best = candidates[np.argmin(candidates[:,1])] # best miss ratio in range
+                if all(abs(outlier_best[1]-i) >= y_height for i in outlier_points[:,1]):
+                    outlier_points = np.append(outlier_points, [[outlier_best[0], outlier_best[1]]], axis=0)
+                    points = points[np.where(((points[:,0] <= (outlier_best[0] - x_width)) | (points[:,0] >= (outlier_best[0] + x_width))) & \
+                                ((points[:,1] <= (outlier_best[1] - y_height)) | (points[:,1] >= (outlier_best[1] + y_height))))]
                     points_added += 1
-                group = [[k, v]]
-        if len(group) > 0:
-            outlier_best = min(group, key=lambda x: x[1])
-            if all(abs(outlier_best[1]-i) >= y_height for i in outlier_points.values()):
-                outlier_points[outlier_best[0]] = outlier_best[1]
-                points_added += 1
+            else:
+                candidate_outliers = np.empty((0,3))
+                x_diff = np.hstack(([0],x_diff,[len(candidates)-1]))
+                
+                # first create an array of candidate outliers
+                for i in range(0, len(x_diff)-1):
+                    # points in this form (0, 1) [1,2) ... [n,End)
+                    if i == 0:
+                        x_range = candidates[candidates[:,0] <= candidates[x_diff[i+1]][0]]
+                    else:
+                        x_range = candidates[(candidates[:,0] > candidates[x_diff[i]][0]) & (candidates[:,0] <= candidates[x_diff[i+1]][0])]
+                    
+                    outlier_best = x_range[np.argmin(x_range[:,1])] # point with best miss ratio in range
+                    outlier_best_z = x_range[np.argmin(x_range[:,2])][2] # best z-score in range
+                    outlier_best[2] = outlier_best_z
+                    candidate_outliers = np.append(candidate_outliers, [outlier_best], axis=0)
+                
+                # sort all the candidate outliers by z-score in descending order
+                candidate_outliers = candidate_outliers[np.argsort(candidate_outliers[:,2])][::-1]
+                for outlier_best in candidate_outliers:
+                    if all(abs(outlier_best[1]-i) >= y_height for i in outlier_points[:,1]):
+                        outlier_points = np.append(outlier_points, [[outlier_best[0], outlier_best[1]]], axis=0)
+                        points = points[np.where(((points[:,0] <= (outlier_best[0] - x_width)) | (points[:,0] >= (outlier_best[0] + x_width))) & \
+                                    ((points[:,1] <= (outlier_best[1] - y_height)) | (points[:,1] >= (outlier_best[1] + y_height))))]
+                        points_added += 1
 
-        # terminating condition. there are no more candidate points
-        if outlier_z <= min_zscore and points_added == 0:
+        # terminating conditions (i think len(points) == 0 is all we need now)
+        if len(points) == 0 or ((outlier_z <= min_zscore) and points_added == 0):
             break
 
-        outlier_z -= delta_z
+        outlier_z -= dz
 
     # sweep through and points to avoid picking concavity issues
     outlier_min_mr = 1.0
+    
+    # convert to a dict so we can delete in-place
+    outlier_points = {int(x[0]):x[1] for x in outlier_points}
     outlier_keys = list(sorted(outlier_points.keys()))
     for k in outlier_keys:
         if outlier_points[k] > outlier_min_mr:
@@ -221,6 +164,6 @@ def getPoints(mrc:dict, x_dist:float=0.05, y_dist:float=0.05, delta_z:float=0.05
 
     # returns sorted list of cache sizes
     if not plot:
-        return sorted(outlier_points.keys())
+        return np.array(list(sorted(outlier_points.keys())))
     else:
         return (outlier_points, z_yd2)
