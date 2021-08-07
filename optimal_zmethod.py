@@ -18,7 +18,7 @@ import knee.rdp as rdp
 
 import matplotlib.pyplot as plt
 
-import knee.pointSelector as ps
+import knee.zmethod as zmethod
 
 import knee.evaluation as evaluation
 from knee.knee_ranking import ClusterRanking
@@ -56,7 +56,7 @@ class Accuracy(Enum):
 
 
 def compute_knee_points(dx, dy, dz):
-    knees = ps.knees(points, dx, dy, dz)
+    knees = zmethod.knees(points, dx, dy, dz)
     return knees
 
 
@@ -126,7 +126,7 @@ def main(args):
     dz = round(best[2]*100.0)/100.0
     logger.info('%s (%s, %s, %s, %s) = %s', args.i, dx, dy, dz, args.a, score)
 
-    knees = ps.knees(points, dx, dy, dz)
+    knees = zmethod.knees(points, dx, dy, dz)
     
     if args.o is None:
         plot_knees(plt, points, knees, '')

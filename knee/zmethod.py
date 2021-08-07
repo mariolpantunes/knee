@@ -8,8 +8,8 @@ __status__ = 'Development'
 
 import numpy as np
 import logging
-from uts.zscore import zscore_array
 import uts.gradient as grad
+from uts.zscore import zscore_array
 
 
 logger = logging.getLogger(__name__)
