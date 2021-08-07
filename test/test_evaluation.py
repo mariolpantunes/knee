@@ -76,6 +76,30 @@ class TestEvaluation(unittest.TestCase):
         result = evaluation.rmse(points, knees, expected)
         desired = math.sqrt(1/2)
         self.assertAlmostEqual(result, desired)
+    
+    def test_rmspe_0(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([0,1,2])
+        expected = np.array([[0,0], [1,1], [2,2]])
+        result = evaluation.rmspe(points, knees, expected)
+        desired = 0.0
+        self.assertAlmostEqual(result, desired)
+    
+    def test_rmspe_1(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([0,1,2])
+        expected = np.array([[1,1], [2,2]])
+        result = evaluation.rmspe(points, knees, expected, evaluation.Strategy.worst)
+        desired = 5773502691.896257
+        self.assertAlmostEqual(result, desired)
+    
+    def test_rmspe_2(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([1])
+        expected = np.array([[1,1], [2,2]])
+        result = evaluation.rmspe(points, knees, expected)
+        desired = 0.3535533905755961
+        self.assertAlmostEqual(result, desired)
 
 if __name__ == '__main__':
     unittest.main()

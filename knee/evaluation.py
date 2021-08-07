@@ -445,3 +445,86 @@ def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strateg
         float: the worst case RMSE
     """
     return math.sqrt(mse(points, knees, expected, s))
+
+
+def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps:float = 1e-10) -> float:
+
+    # get the knee points
+    knee_points = points[knees]
+
+    if s is Strategy.knees:
+        a = knee_points
+        b = expected
+    elif s is Strategy.expected:
+        a = expected
+        b = knee_points
+    elif s is Strategy.best:
+        if len(expected) <= len(knee_points):
+            a = expected
+            b = knee_points
+        else:
+            a = knee_points
+            b = expected
+    else:
+        if len(expected) >= len(knee_points):
+            a = expected
+            b = knee_points
+        else:
+            a = knee_points
+            b = expected
+    
+    errors = []
+
+    for p in a:
+        distances = np.linalg.norm(b-p, axis=1)
+        idx = np.argmin(distances)
+        e = (p - b[idx]) / (p + eps)
+        errors.extend(e)
+    errors = np.array(errors)
+
+    return np.sqrt(np.mean(np.square(errors)))
+    
+
+def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -> np.ndarray:
+    """
+    """
+
+    dx = math.fabs(points[-1][0] - points[0][0])
+    knees_points_x = points[knees][:, 0]
+    tp = fn = fp = tn = 0
+    for px, _ in expected:
+        distances = np.fabs(knees_points_x - px)/dx
+        idx = np.argmin(distances)
+        if distances[idx] <= t:
+            tp += 1
+        else:
+            fn += 1 
+    fp = len(knees) - tp
+    tn = len(points) - (tp+fp+fn)
+
+    #print(f'{tp} {fp} {fn} {tn}')
+    return np.array([[tp, fp], [fn, tn]])
+
+
+def accuracy(cm:np.ndarray) -> float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    return (tp+tn)/(tp+tn+fp+fn)
+
+
+def f1score(cm:np.ndarray) -> float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    return (2.0*tp)/(2*tp+fp+fn)
+
+
+def mcc(cm:np.ndarray) -> float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    n = tp*tn - fp*fn
+    d = math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
+
+    return n/d
