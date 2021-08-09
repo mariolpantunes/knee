@@ -15,9 +15,10 @@ import logging
 
 
 from enum import Enum
+import knee.rdp as rdp
 import knee.zmethod as zmethod
 import knee.evaluation as evaluation
-
+import knee.postprocessing as pp
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
@@ -41,8 +42,6 @@ class Evaluation(Enum):
 
 
 def main(args):
-    # define clustering methods
-    # cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
     # get the expected file from the input file
     dirname = os.path.dirname(args.i)
     filename = os.path.splitext(os.path.basename(args.i))[0]
@@ -59,12 +58,24 @@ def main(args):
     expected = np.array(expected)
     points = np.genfromtxt(args.i, delimiter=',')
 
-    ## Knee detection code ##
+    # get original x_max and y_ranges
+    x_max = [max(x) for x in zip(*points)][0]
+    y_range = [[max(y),min(y)] for y in zip(*points)][1]
 
-    knees = zmethod.knees(points)
+    # run rdp
+    points_reduced, points_removed = rdp.rdp(points, args.r)
+
+    ## Knee detection code ##
+    knees = zmethod.knees(points_reduced, x_max=x_max, y_range=y_range)
     knees = knees[knees>0]
 
     ##########################
+
+    # add even points
+    if args.a:
+        knees = pp.add_points_even(points, points_reduced, knees, points_removed)
+    else:
+        knees = rdp.mapping(knees, points_reduced, points_removed)
 
     if args.e is Evaluation.regression:
         logger.info(f'MSE(knees)   MSE(exp)   Cost(tr)   Cost(kn) RMSPE(knees) RMPSE(exp)')
@@ -106,9 +117,11 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
+    parser.add_argument('-a', help='add even spaced points', action='store_true')
+    parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-e', type=Evaluation, choices=list(Evaluation), help='Evaluation type', default='regression')
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     args = parser.parse_args()
-    
+
     main(args)

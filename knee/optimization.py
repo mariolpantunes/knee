@@ -129,7 +129,7 @@ def get_random_solution(bounds:np.ndarray) -> np.ndarray:
 # genetic algorithm
 def genetic_algorithm(objective:typing.Callable, bounds:np.ndarray,
 selection:typing.Callable, crossover:typing.Callable, mutation:typing.Callable,
-n_iter:int=50, n_pop:int=10, r_cross:float=0.9, r_mut:float=0.2) -> list:
+n_iter:int=200, n_pop:int=20, r_cross:float=0.9, r_mut:float=0.3) -> list:
     """
     Genetic optimization algorithm.
 
