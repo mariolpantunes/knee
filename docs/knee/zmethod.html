@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>knee.zmethod API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML" integrity="sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>knee.zmethod</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># coding: utf-8
+
+__author__ = &#39;Tyler Estro&#39;
+__version__ = &#39;0.1&#39;
+__email__ = &#39;testro@cs.stonybrook.edu&#39;
+__status__ = &#39;Development&#39;
+
+
+import numpy as np
+import logging
+import uts.gradient as grad
+from uts.zscore import zscore_array
+
+
+logger = logging.getLogger(__name__)
+
+
+def map_index(a:np.ndarray, b:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Maps the knee points into indexes.
+
+    Args:
+        a (np.ndarray): numpy array with the points (x)
+        b (np.ndarray): numpy array with the knee points points (x)
+    Returns:
+        np.ndarray: The knee indexes
+    &#34;&#34;&#34;
+    sort_idx = np.argsort(a)
+    out = sort_idx[np.searchsorted(a, b, sorter=sort_idx)]
+    return out
+
+
+def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, x_max:int=None, y_range:list=None) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Given an array of points, it computes the knees.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        dx (float): % of max cache size between points (default 0.05)
+        dy (float): % of max - min miss ratio between points (default 0.05)
+        dz (float): amount we decrease outlier_z every iteration (default 0.05)
+        x_max (int): max cache size of original (pre-RDP) MRC  (default None)
+        y_max (list): [max, min] miss ratio of original (pre-RDP) MRC (default None)
+
+    Returns:
+        np.ndarray: The knee points on the curve
+    &#34;&#34;&#34;
+    x = points[:, 0]
+    rv = getPoints(points, dx, dy, dz, False, x_max, y_range)
+    # convert x points into indexes:
+    return map_index(x, np.array(rv))
+
+
+def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, plot:bool=False, x_max:int=None, y_range:list=None) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Use our outlier method to find interesting points in an MRC.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        dx (float): % of max cache size between points (default 0.05)
+        dy (float): % of max - min miss ratio between points (default 0.05)
+        dz (float): amount we decrease outlier_z every iteration (default 0.05)
+        plot (bool): set True if you want to return data useful for plotting
+        x_max (int): max cache size of original (pre-RDP) MRC (default None)
+        y_max (list): [max, min] miss ratio of original (pre-RDP) MRC (default None)
+
+    Returns:
+        list: list with the knees x coordinate
+    &#34;&#34;&#34;
+    
+    # in case we use RDP, we need the original MRC x/y ranges: x_max,y_range vars
+    x_max = x_max if x_max else len(points)
+    if y_range:
+        y_max,y_min = y_range
+    else:
+        y_max,y_min = (points[:,1].max(),points[:,1].min())
+
+    if len(points) &lt; 4:
+        logger.warning(&#39;pointSelector: &lt; 4 unique requests in workload&#39;)
+        return []
+
+    if y_min == 1:
+        logger.warning(&#39;pointSelector: workload completely random (dont bother caching)&#39;)
+        return []
+
+    # get absolute x and y distances
+    x_width = max(1, int(x_max * dx))
+    y_height = (y_max - y_min) * dy
+    
+    # get z-score
+    x = points[:, 0]
+    y = points[:, 1]
+    yd2 = grad.csd(x, y)
+    z_yd2 = zscore_array(x, yd2)
+    min_zscore = min(z_yd2)
+    # stack the 2nd derivative zscore with the points
+    points = np.column_stack((points, z_yd2))
+
+    # outlier_points holds our final selected points
+    outlier_points = np.empty((0,2))
+    
+    # main loop. start with outliers &gt;= 3 z-score
+    outlier_z = 3
+    while True:
+    
+        points_added = 0
+        # candidate points have a zscore &gt;= outlier_z
+        candidates = points[points[:,2] &gt;= outlier_z]
+        #print(&#39;Candidates: &#39; + str(len(candidates)) + &#39; Points: &#39; + str(len(points)) + &#39; Outlier_Points: &#39; +
+        #        str(len(outlier_points)) + &#39; Outlier_Z: &#39;  + str(round(outlier_z,3)))
+        
+        if len(candidates) &gt; 0:
+            x_diff = np.argwhere(np.diff(candidates, axis=0)[:,0] &gt;= x_width).flatten()
+            if len(x_diff) == 0:
+                outlier_best = candidates[np.argmin(candidates[:,1])] # best miss ratio in range
+                if all(abs(outlier_best[1]-i) &gt;= y_height for i in outlier_points[:,1]):
+                    outlier_points = np.append(outlier_points, [[outlier_best[0], outlier_best[1]]], axis=0)
+                    points = points[np.where(((points[:,0] &lt;= (outlier_best[0] - x_width)) | (points[:,0] &gt;= (outlier_best[0] + x_width))) &amp; \
+                                ((points[:,1] &lt;= (outlier_best[1] - y_height)) | (points[:,1] &gt;= (outlier_best[1] + y_height))))]
+                    points_added += 1
+            else:
+                candidate_outliers = np.empty((0,3))
+                x_diff = np.hstack(([0],x_diff,[len(candidates)-1]))
+                
+                # first create an array of candidate outliers
+                for i in range(0, len(x_diff)-1):
+                    # points in this form (0, 1) [1,2) ... [n,End)
+                    if i == 0:
+                        x_range = candidates[candidates[:,0] &lt;= candidates[x_diff[i+1]][0]]
+                    else:
+                        x_range = candidates[(candidates[:,0] &gt; candidates[x_diff[i]][0]) &amp; (candidates[:,0] &lt;= candidates[x_diff[i+1]][0])]
+                    
+                    outlier_best = x_range[np.argmin(x_range[:,1])] # point with best miss ratio in range
+                    outlier_best_z = x_range[np.argmin(x_range[:,2])][2] # best z-score in range
+                    outlier_best[2] = outlier_best_z
+                    candidate_outliers = np.append(candidate_outliers, [outlier_best], axis=0)
+                
+                # sort all the candidate outliers by z-score in descending order
+                candidate_outliers = candidate_outliers[np.argsort(candidate_outliers[:,2])][::-1]
+                for outlier_best in candidate_outliers:
+                    if all(abs(outlier_best[1]-i) &gt;= y_height for i in outlier_points[:,1]):
+                        outlier_points = np.append(outlier_points, [[outlier_best[0], outlier_best[1]]], axis=0)
+                        points = points[np.where(((points[:,0] &lt;= (outlier_best[0] - x_width)) | (points[:,0] &gt;= (outlier_best[0] + x_width))) &amp; \
+                                    ((points[:,1] &lt;= (outlier_best[1] - y_height)) | (points[:,1] &gt;= (outlier_best[1] + y_height))))]
+                        points_added += 1
+
+        # terminating conditions (i think len(points) == 0 is all we need now)
+        if len(points) == 0 or ((outlier_z &lt;= min_zscore) and points_added == 0):
+            break
+
+        outlier_z -= dz
+
+    # sweep through and points to avoid picking concavity issues
+    outlier_min_mr = 1.0
+    
+    # convert to a dict so we can delete in-place
+    outlier_points = {int(x[0]):x[1] for x in outlier_points}
+    outlier_keys = list(sorted(outlier_points.keys()))
+    for k in outlier_keys:
+        if outlier_points[k] &gt; outlier_min_mr:
+            del outlier_points[k]
+        else:
+            outlier_min_mr = outlier_points[k]
+
+    # returns sorted list of cache sizes
+    if not plot:
+        return np.array(list(sorted(outlier_points.keys())))
+    else:
+        return (outlier_points, z_yd2)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="knee.zmethod.getPoints"><code class="name flex">
+<span>def <span class="ident">getPoints</span></span>(<span>points: numpy.ndarray, dx: float = 0.05, dy: float = 0.05, dz: float = 0.05, plot: bool = False, x_max: int = None, y_range: list = None) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Use our outlier method to find interesting points in an MRC.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>dx</code></strong> :&ensp;<code>float</code></dt>
+<dd>% of max cache size between points (default 0.05)</dd>
+<dt><strong><code>dy</code></strong> :&ensp;<code>float</code></dt>
+<dd>% of max - min miss ratio between points (default 0.05)</dd>
+<dt><strong><code>dz</code></strong> :&ensp;<code>float</code></dt>
+<dd>amount we decrease outlier_z every iteration (default 0.05)</dd>
+<dt><strong><code>plot</code></strong> :&ensp;<code>bool</code></dt>
+<dd>set True if you want to return data useful for plotting</dd>
+<dt><strong><code>x_max</code></strong> :&ensp;<code>int</code></dt>
+<dd>max cache size of original (pre-RDP) MRC (default None)</dd>
+<dt><strong><code>y_max</code></strong> :&ensp;<code>list</code></dt>
+<dd>[max, min] miss ratio of original (pre-RDP) MRC (default None)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>list with the knees x coordinate</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, plot:bool=False, x_max:int=None, y_range:list=None) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Use our outlier method to find interesting points in an MRC.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        dx (float): % of max cache size between points (default 0.05)
+        dy (float): % of max - min miss ratio between points (default 0.05)
+        dz (float): amount we decrease outlier_z every iteration (default 0.05)
+        plot (bool): set True if you want to return data useful for plotting
+        x_max (int): max cache size of original (pre-RDP) MRC (default None)
+        y_max (list): [max, min] miss ratio of original (pre-RDP) MRC (default None)
+
+    Returns:
+        list: list with the knees x coordinate
+    &#34;&#34;&#34;
+    
+    # in case we use RDP, we need the original MRC x/y ranges: x_max,y_range vars
+    x_max = x_max if x_max else len(points)
+    if y_range:
+        y_max,y_min = y_range
+    else:
+        y_max,y_min = (points[:,1].max(),points[:,1].min())
+
+    if len(points) &lt; 4:
+        logger.warning(&#39;pointSelector: &lt; 4 unique requests in workload&#39;)
+        return []
+
+    if y_min == 1:
+        logger.warning(&#39;pointSelector: workload completely random (dont bother caching)&#39;)
+        return []
+
+    # get absolute x and y distances
+    x_width = max(1, int(x_max * dx))
+    y_height = (y_max - y_min) * dy
+    
+    # get z-score
+    x = points[:, 0]
+    y = points[:, 1]
+    yd2 = grad.csd(x, y)
+    z_yd2 = zscore_array(x, yd2)
+    min_zscore = min(z_yd2)
+    # stack the 2nd derivative zscore with the points
+    points = np.column_stack((points, z_yd2))
+
+    # outlier_points holds our final selected points
+    outlier_points = np.empty((0,2))
+    
+    # main loop. start with outliers &gt;= 3 z-score
+    outlier_z = 3
+    while True:
+    
+        points_added = 0
+        # candidate points have a zscore &gt;= outlier_z
+        candidates = points[points[:,2] &gt;= outlier_z]
+        #print(&#39;Candidates: &#39; + str(len(candidates)) + &#39; Points: &#39; + str(len(points)) + &#39; Outlier_Points: &#39; +
+        #        str(len(outlier_points)) + &#39; Outlier_Z: &#39;  + str(round(outlier_z,3)))
+        
+        if len(candidates) &gt; 0:
+            x_diff = np.argwhere(np.diff(candidates, axis=0)[:,0] &gt;= x_width).flatten()
+            if len(x_diff) == 0:
+                outlier_best = candidates[np.argmin(candidates[:,1])] # best miss ratio in range
+                if all(abs(outlier_best[1]-i) &gt;= y_height for i in outlier_points[:,1]):
+                    outlier_points = np.append(outlier_points, [[outlier_best[0], outlier_best[1]]], axis=0)
+                    points = points[np.where(((points[:,0] &lt;= (outlier_best[0] - x_width)) | (points[:,0] &gt;= (outlier_best[0] + x_width))) &amp; \
+                                ((points[:,1] &lt;= (outlier_best[1] - y_height)) | (points[:,1] &gt;= (outlier_best[1] + y_height))))]
+                    points_added += 1
+            else:
+                candidate_outliers = np.empty((0,3))
+                x_diff = np.hstack(([0],x_diff,[len(candidates)-1]))
+                
+                # first create an array of candidate outliers
+                for i in range(0, len(x_diff)-1):
+                    # points in this form (0, 1) [1,2) ... [n,End)
+                    if i == 0:
+                        x_range = candidates[candidates[:,0] &lt;= candidates[x_diff[i+1]][0]]
+                    else:
+                        x_range = candidates[(candidates[:,0] &gt; candidates[x_diff[i]][0]) &amp; (candidates[:,0] &lt;= candidates[x_diff[i+1]][0])]
+                    
+                    outlier_best = x_range[np.argmin(x_range[:,1])] # point with best miss ratio in range
+                    outlier_best_z = x_range[np.argmin(x_range[:,2])][2] # best z-score in range
+                    outlier_best[2] = outlier_best_z
+                    candidate_outliers = np.append(candidate_outliers, [outlier_best], axis=0)
+                
+                # sort all the candidate outliers by z-score in descending order
+                candidate_outliers = candidate_outliers[np.argsort(candidate_outliers[:,2])][::-1]
+                for outlier_best in candidate_outliers:
+                    if all(abs(outlier_best[1]-i) &gt;= y_height for i in outlier_points[:,1]):
+                        outlier_points = np.append(outlier_points, [[outlier_best[0], outlier_best[1]]], axis=0)
+                        points = points[np.where(((points[:,0] &lt;= (outlier_best[0] - x_width)) | (points[:,0] &gt;= (outlier_best[0] + x_width))) &amp; \
+                                    ((points[:,1] &lt;= (outlier_best[1] - y_height)) | (points[:,1] &gt;= (outlier_best[1] + y_height))))]
+                        points_added += 1
+
+        # terminating conditions (i think len(points) == 0 is all we need now)
+        if len(points) == 0 or ((outlier_z &lt;= min_zscore) and points_added == 0):
+            break
+
+        outlier_z -= dz
+
+    # sweep through and points to avoid picking concavity issues
+    outlier_min_mr = 1.0
+    
+    # convert to a dict so we can delete in-place
+    outlier_points = {int(x[0]):x[1] for x in outlier_points}
+    outlier_keys = list(sorted(outlier_points.keys()))
+    for k in outlier_keys:
+        if outlier_points[k] &gt; outlier_min_mr:
+            del outlier_points[k]
+        else:
+            outlier_min_mr = outlier_points[k]
+
+    # returns sorted list of cache sizes
+    if not plot:
+        return np.array(list(sorted(outlier_points.keys())))
+    else:
+        return (outlier_points, z_yd2)</code></pre>
+</details>
+</dd>
+<dt id="knee.zmethod.knees"><code class="name flex">
+<span>def <span class="ident">knees</span></span>(<span>points: numpy.ndarray, dx: float = 0.05, dy: float = 0.05, dz: float = 0.05, x_max: int = None, y_range: list = None) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given an array of points, it computes the knees.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>dx</code></strong> :&ensp;<code>float</code></dt>
+<dd>% of max cache size between points (default 0.05)</dd>
+<dt><strong><code>dy</code></strong> :&ensp;<code>float</code></dt>
+<dd>% of max - min miss ratio between points (default 0.05)</dd>
+<dt><strong><code>dz</code></strong> :&ensp;<code>float</code></dt>
+<dd>amount we decrease outlier_z every iteration (default 0.05)</dd>
+<dt><strong><code>x_max</code></strong> :&ensp;<code>int</code></dt>
+<dd>max cache size of original (pre-RDP) MRC
+(default None)</dd>
+<dt><strong><code>y_max</code></strong> :&ensp;<code>list</code></dt>
+<dd>[max, min] miss ratio of original (pre-RDP) MRC (default None)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>The knee points on the curve</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, x_max:int=None, y_range:list=None) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Given an array of points, it computes the knees.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        dx (float): % of max cache size between points (default 0.05)
+        dy (float): % of max - min miss ratio between points (default 0.05)
+        dz (float): amount we decrease outlier_z every iteration (default 0.05)
+        x_max (int): max cache size of original (pre-RDP) MRC  (default None)
+        y_max (list): [max, min] miss ratio of original (pre-RDP) MRC (default None)
+
+    Returns:
+        np.ndarray: The knee points on the curve
+    &#34;&#34;&#34;
+    x = points[:, 0]
+    rv = getPoints(points, dx, dy, dz, False, x_max, y_range)
+    # convert x points into indexes:
+    return map_index(x, np.array(rv))</code></pre>
+</details>
+</dd>
+<dt id="knee.zmethod.map_index"><code class="name flex">
+<span>def <span class="ident">map_index</span></span>(<span>a: numpy.ndarray, b: numpy.ndarray) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Maps the knee points into indexes.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>a</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x)</dd>
+<dt><strong><code>b</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the knee points points (x)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>The knee indexes</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_index(a:np.ndarray, b:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Maps the knee points into indexes.
+
+    Args:
+        a (np.ndarray): numpy array with the points (x)
+        b (np.ndarray): numpy array with the knee points points (x)
+    Returns:
+        np.ndarray: The knee indexes
+    &#34;&#34;&#34;
+    sort_idx = np.argsort(a)
+    out = sort_idx[np.searchsorted(a, b, sorter=sort_idx)]
+    return out</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="knee" href="index.html">knee</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="knee.zmethod.getPoints" href="#knee.zmethod.getPoints">getPoints</a></code></li>
+<li><code><a title="knee.zmethod.knees" href="#knee.zmethod.knees">knees</a></code></li>
+<li><code><a title="knee.zmethod.map_index" href="#knee.zmethod.map_index">map_index</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

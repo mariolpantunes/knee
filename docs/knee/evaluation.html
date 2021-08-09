@@ -473,7 +473,90 @@ def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strateg
     Returns:
         float: the worst case RMSE
     &#34;&#34;&#34;
-    return math.sqrt(mse(points, knees, expected, s))</code></pre>
+    return math.sqrt(mse(points, knees, expected, s))
+
+
+def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps:float = 1e-10) -&gt; float:
+
+    # get the knee points
+    knee_points = points[knees]
+
+    if s is Strategy.knees:
+        a = knee_points
+        b = expected
+    elif s is Strategy.expected:
+        a = expected
+        b = knee_points
+    elif s is Strategy.best:
+        if len(expected) &lt;= len(knee_points):
+            a = expected
+            b = knee_points
+        else:
+            a = knee_points
+            b = expected
+    else:
+        if len(expected) &gt;= len(knee_points):
+            a = expected
+            b = knee_points
+        else:
+            a = knee_points
+            b = expected
+    
+    errors = []
+
+    for p in a:
+        distances = np.linalg.norm(b-p, axis=1)
+        idx = np.argmin(distances)
+        e = (p - b[idx]) / (p + eps)
+        errors.extend(e)
+    errors = np.array(errors)
+
+    return np.sqrt(np.mean(np.square(errors)))
+    
+
+def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+
+    dx = math.fabs(points[-1][0] - points[0][0])
+    knees_points_x = points[knees][:, 0]
+    tp = fn = fp = tn = 0
+    for px, _ in expected:
+        distances = np.fabs(knees_points_x - px)/dx
+        idx = np.argmin(distances)
+        if distances[idx] &lt;= t:
+            tp += 1
+        else:
+            fn += 1 
+    fp = len(knees) - tp
+    tn = len(points) - (tp+fp+fn)
+
+    #print(f&#39;{tp} {fp} {fn} {tn}&#39;)
+    return np.array([[tp, fp], [fn, tn]])
+
+
+def accuracy(cm:np.ndarray) -&gt; float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    return (tp+tn)/(tp+tn+fp+fn)
+
+
+def f1score(cm:np.ndarray) -&gt; float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    return (2.0*tp)/(2*tp+fp+fn)
+
+
+def mcc(cm:np.ndarray) -&gt; float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    n = tp*tn - fp*fn
+    d = math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
+
+    return n/d</code></pre>
 </details>
 </section>
 <section>
@@ -483,6 +566,22 @@ def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strateg
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="knee.evaluation.accuracy"><code class="name flex">
+<span>def <span class="ident">accuracy</span></span>(<span>cm: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accuracy(cm:np.ndarray) -&gt; float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    return (tp+tn)/(tp+tn+fp+fn)</code></pre>
+</details>
+</dd>
 <dt id="knee.evaluation.accuracy_knee"><code class="name flex">
 <span>def <span class="ident">accuracy_knee</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, t: float = 0.9) ‑> tuple</span>
 </code></dt>
@@ -671,6 +770,52 @@ In this version it is used the points from the current knee to the previous.</p>
     cost = average_x / np.average(p)
 
     return average_x, average_y, average_slope, average_coeffients, cost</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.cm"><code class="name flex">
+<span>def <span class="ident">cm</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, t: float = 0.02) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+
+    dx = math.fabs(points[-1][0] - points[0][0])
+    knees_points_x = points[knees][:, 0]
+    tp = fn = fp = tn = 0
+    for px, _ in expected:
+        distances = np.fabs(knees_points_x - px)/dx
+        idx = np.argmin(distances)
+        if distances[idx] &lt;= t:
+            tp += 1
+        else:
+            fn += 1 
+    fp = len(knees) - tp
+    tn = len(points) - (tp+fp+fn)
+
+    #print(f&#39;{tp} {fp} {fn} {tn}&#39;)
+    return np.array([[tp, fp], [fn, tn]])</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.f1score"><code class="name flex">
+<span>def <span class="ident">f1score</span></span>(<span>cm: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def f1score(cm:np.ndarray) -&gt; float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    return (2.0*tp)/(2*tp+fp+fn)</code></pre>
 </details>
 </dd>
 <dt id="knee.evaluation.get_neighbourhood"><code class="name flex">
@@ -1044,6 +1189,25 @@ and computes the error based on the closest point.</p>
     return error / (len(a)*2.0)</code></pre>
 </details>
 </dd>
+<dt id="knee.evaluation.mcc"><code class="name flex">
+<span>def <span class="ident">mcc</span></span>(<span>cm: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mcc(cm:np.ndarray) -&gt; float:
+    tp, fp = cm[0]
+    fn, tn = cm[1]
+
+    n = tp*tn - fp*fn
+    d = math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
+
+    return n/d</code></pre>
+</details>
+</dd>
 <dt id="knee.evaluation.mse"><code class="name flex">
 <span>def <span class="ident">mse</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, s: <a title="knee.evaluation.Strategy" href="#knee.evaluation.Strategy">Strategy</a> = expected) ‑> float</span>
 </code></dt>
@@ -1179,6 +1343,53 @@ and computes the error based on the closest point.</p>
     return math.sqrt(mse(points, knees, expected, s))</code></pre>
 </details>
 </dd>
+<dt id="knee.evaluation.rmspe"><code class="name flex">
+<span>def <span class="ident">rmspe</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, s: <a title="knee.evaluation.Strategy" href="#knee.evaluation.Strategy">Strategy</a> = expected, eps: float = 1e-10) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps:float = 1e-10) -&gt; float:
+
+    # get the knee points
+    knee_points = points[knees]
+
+    if s is Strategy.knees:
+        a = knee_points
+        b = expected
+    elif s is Strategy.expected:
+        a = expected
+        b = knee_points
+    elif s is Strategy.best:
+        if len(expected) &lt;= len(knee_points):
+            a = expected
+            b = knee_points
+        else:
+            a = knee_points
+            b = expected
+    else:
+        if len(expected) &gt;= len(knee_points):
+            a = expected
+            b = knee_points
+        else:
+            a = knee_points
+            b = expected
+    
+    errors = []
+
+    for p in a:
+        distances = np.linalg.norm(b-p, axis=1)
+        idx = np.argmin(distances)
+        e = (p - b[idx]) / (p + eps)
+        errors.extend(e)
+    errors = np.array(errors)
+
+    return np.sqrt(np.mean(np.square(errors)))</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -1246,16 +1457,21 @@ and computes the error based on the closest point.</p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="knee.evaluation.accuracy" href="#knee.evaluation.accuracy">accuracy</a></code></li>
 <li><code><a title="knee.evaluation.accuracy_knee" href="#knee.evaluation.accuracy_knee">accuracy_knee</a></code></li>
 <li><code><a title="knee.evaluation.accuracy_trace" href="#knee.evaluation.accuracy_trace">accuracy_trace</a></code></li>
+<li><code><a title="knee.evaluation.cm" href="#knee.evaluation.cm">cm</a></code></li>
+<li><code><a title="knee.evaluation.f1score" href="#knee.evaluation.f1score">f1score</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood" href="#knee.evaluation.get_neighbourhood">get_neighbourhood</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_binary" href="#knee.evaluation.get_neighbourhood_binary">get_neighbourhood_binary</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_fast" href="#knee.evaluation.get_neighbourhood_fast">get_neighbourhood_fast</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_fast_points" href="#knee.evaluation.get_neighbourhood_fast_points">get_neighbourhood_fast_points</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_points" href="#knee.evaluation.get_neighbourhood_points">get_neighbourhood_points</a></code></li>
 <li><code><a title="knee.evaluation.mae" href="#knee.evaluation.mae">mae</a></code></li>
+<li><code><a title="knee.evaluation.mcc" href="#knee.evaluation.mcc">mcc</a></code></li>
 <li><code><a title="knee.evaluation.mse" href="#knee.evaluation.mse">mse</a></code></li>
 <li><code><a title="knee.evaluation.rmse" href="#knee.evaluation.rmse">rmse</a></code></li>
+<li><code><a title="knee.evaluation.rmspe" href="#knee.evaluation.rmspe">rmspe</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

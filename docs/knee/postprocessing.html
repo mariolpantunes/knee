@@ -199,22 +199,12 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
 
             if len(current_cluster) &gt; 1:
                 rankings = ranking.cluster_ranking(points, current_cluster, method)
-                #logger.info(&#39;Rankings: %s&#39;, rankings)
                 idx = np.argmax(rankings)
                 best_knee = knees[clusters == i][idx]
             else:
-                #logger.info(&#39;Rankings: [1.0]&#39;)
                 best_knee = knees[clusters == i][0]
             filtered_knees.append(best_knee)
 
-            # plot cluster
-            # if plot:
-            #    xpoints = points[:,0]
-            #    ypoints = points[:,1]
-            #    plt.plot(xpoints, ypoints)
-            #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
-            #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
-            #    plt.show()
         return np.array(filtered_knees)
 
 
@@ -623,22 +613,12 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
 
             if len(current_cluster) &gt; 1:
                 rankings = ranking.cluster_ranking(points, current_cluster, method)
-                #logger.info(&#39;Rankings: %s&#39;, rankings)
                 idx = np.argmax(rankings)
                 best_knee = knees[clusters == i][idx]
             else:
-                #logger.info(&#39;Rankings: [1.0]&#39;)
                 best_knee = knees[clusters == i][0]
             filtered_knees.append(best_knee)
 
-            # plot cluster
-            # if plot:
-            #    xpoints = points[:,0]
-            #    ypoints = points[:,1]
-            #    plt.plot(xpoints, ypoints)
-            #    plt.plot(xpoints[current_cluster], ypoints[current_cluster], marker=&#39;x&#39;, markersize=3, color=&#39;green&#39;)
-            #    plt.plot(xpoints[best_knee], ypoints[best_knee], marker=&#39;o&#39;, markersize=5, color=&#39;red&#39;)
-            #    plt.show()
         return np.array(filtered_knees)</code></pre>
 </details>
 </dd>
