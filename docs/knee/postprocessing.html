@@ -40,12 +40,10 @@ import typing
 import logging
 import numpy as np
 import uts.gradient as grad
-#import knee.linear_fit as lf
 import knee.knee_ranking as ranking
 import knee.linear_fit as lf
 import knee.rdp as rdp
-#import matplotlib.pyplot as plt
-from plot import plot_knees_candidates
+
 
 logger = logging.getLogger(__name__)
 
@@ -245,6 +243,7 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
         if pdx &gt; (2.0*tx) and pdy &gt; ty:
             candidates.append(left)
             candidates.append(right)
+    #print(f&#39;candidates: {candidates}&#39;)
     
     # Map candidates into the complete set of points
     candidates = np.array(candidates)
@@ -422,6 +421,7 @@ This function will map the knees (in RDP space) into the space of the complete s
         if pdx &gt; (2.0*tx) and pdy &gt; ty:
             candidates.append(left)
             candidates.append(right)
+    #print(f&#39;candidates: {candidates}&#39;)
     
     # Map candidates into the complete set of points
     candidates = np.array(candidates)
