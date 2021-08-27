@@ -516,6 +516,16 @@ def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strate
 
 def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -&gt; np.ndarray:
     &#34;&#34;&#34;
+    Computes the Confusion Matrix based on the knees and expected points.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        t (float): the maximum allowed distance (in percentage)
+    
+    Returns:
+        np.ndarray: the confusion matrix
     &#34;&#34;&#34;
 
     dx = math.fabs(points[-1][0] - points[0][0])
@@ -528,14 +538,23 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02
             tp += 1
         else:
             fn += 1 
-    fp = len(knees) - tp
+    fp = max(len(knees) - tp,0)
     tn = len(points) - (tp+fp+fn)
 
-    #print(f&#39;{tp} {fp} {fn} {tn}&#39;)
     return np.array([[tp, fp], [fn, tn]])
 
 
 def accuracy(cm:np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes accuracy based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the accuracy
+    &#34;&#34;&#34;
+
     tp, fp = cm[0]
     fn, tn = cm[1]
 
@@ -543,13 +562,33 @@ def accuracy(cm:np.ndarray) -&gt; float:
 
 
 def f1score(cm:np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes F1-Score based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the F1-Score
+    &#34;&#34;&#34;
+
     tp, fp = cm[0]
-    fn, tn = cm[1]
+    fn, _ = cm[1]
 
     return (2.0*tp)/(2*tp+fp+fn)
 
 
 def mcc(cm:np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the mcc
+    &#34;&#34;&#34;
+    
     tp, fp = cm[0]
     fn, tn = cm[1]
 
@@ -570,12 +609,32 @@ def mcc(cm:np.ndarray) -&gt; float:
 <span>def <span class="ident">accuracy</span></span>(<span>cm: numpy.ndarray) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes accuracy based on a Confusion Matrix.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cm</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the confusion matrix</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the accuracy</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def accuracy(cm:np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes accuracy based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the accuracy
+    &#34;&#34;&#34;
+
     tp, fp = cm[0]
     fn, tn = cm[1]
 
@@ -776,13 +835,39 @@ In this version it is used the points from the current knee to the previous.</p>
 <span>def <span class="ident">cm</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, t: float = 0.02) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes the Confusion Matrix based on the knees and expected points.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>expected</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the expected knee points (x, y)</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>the maximum allowed distance (in percentage)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the confusion matrix</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -&gt; np.ndarray:
     &#34;&#34;&#34;
+    Computes the Confusion Matrix based on the knees and expected points.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        t (float): the maximum allowed distance (in percentage)
+    
+    Returns:
+        np.ndarray: the confusion matrix
     &#34;&#34;&#34;
 
     dx = math.fabs(points[-1][0] - points[0][0])
@@ -795,10 +880,9 @@ In this version it is used the points from the current knee to the previous.</p>
             tp += 1
         else:
             fn += 1 
-    fp = len(knees) - tp
+    fp = max(len(knees) - tp,0)
     tn = len(points) - (tp+fp+fn)
 
-    #print(f&#39;{tp} {fp} {fn} {tn}&#39;)
     return np.array([[tp, fp], [fn, tn]])</code></pre>
 </details>
 </dd>
@@ -806,14 +890,34 @@ In this version it is used the points from the current knee to the previous.</p>
 <span>def <span class="ident">f1score</span></span>(<span>cm: numpy.ndarray) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes F1-Score based on a Confusion Matrix.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cm</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the confusion matrix</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the F1-Score</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def f1score(cm:np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes F1-Score based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the F1-Score
+    &#34;&#34;&#34;
+
     tp, fp = cm[0]
-    fn, tn = cm[1]
+    fn, _ = cm[1]
 
     return (2.0*tp)/(2*tp+fp+fn)</code></pre>
 </details>
@@ -1193,12 +1297,32 @@ and computes the error based on the closest point.</p>
 <span>def <span class="ident">mcc</span></span>(<span>cm: numpy.ndarray) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cm</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the confusion matrix</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the mcc</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mcc(cm:np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the mcc
+    &#34;&#34;&#34;
+    
     tp, fp = cm[0]
     fn, tn = cm[1]
 

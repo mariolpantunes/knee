@@ -487,6 +487,16 @@ def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strate
 
 def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -> np.ndarray:
     """
+    Computes the Confusion Matrix based on the knees and expected points.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        t (float): the maximum allowed distance (in percentage)
+    
+    Returns:
+        np.ndarray: the confusion matrix
     """
 
     dx = math.fabs(points[-1][0] - points[0][0])
@@ -499,14 +509,23 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02
             tp += 1
         else:
             fn += 1 
-    fp = len(knees) - tp
+    fp = max(len(knees) - tp,0)
     tn = len(points) - (tp+fp+fn)
 
-    #print(f'{tp} {fp} {fn} {tn}')
     return np.array([[tp, fp], [fn, tn]])
 
 
 def accuracy(cm:np.ndarray) -> float:
+    """
+    Computes accuracy based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the accuracy
+    """
+
     tp, fp = cm[0]
     fn, tn = cm[1]
 
@@ -514,13 +533,33 @@ def accuracy(cm:np.ndarray) -> float:
 
 
 def f1score(cm:np.ndarray) -> float:
+    """
+    Computes F1-Score based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the F1-Score
+    """
+
     tp, fp = cm[0]
-    fn, tn = cm[1]
+    fn, _ = cm[1]
 
     return (2.0*tp)/(2*tp+fp+fn)
 
 
 def mcc(cm:np.ndarray) -> float:
+    """
+    Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.
+
+    Args:
+        cm (np.ndarray): the confusion matrix
+    
+    Returns:
+        float: the mcc
+    """
+    
     tp, fp = cm[0]
     fn, tn = cm[1]
 
