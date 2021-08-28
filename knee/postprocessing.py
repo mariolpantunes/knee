@@ -98,7 +98,7 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
     # deal with the last knee
     if len(knees) > 0:
         idx = knees[-1]
-        if len(points) < idx+2:
+        if len(points) - idx > 1:
             p0, p1 ,p2 = points[idx-1:idx+2]
             corner0 = np.array([p0[0], p1[1]])
             corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
@@ -107,6 +107,8 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
             p = rect_overlap(amin, amax, bmin, bmax)
             if p < t:
                 filtered_knees.append(idx)
+        else:
+            filtered_knees.append(idx)
 
     return np.array(filtered_knees)
 
