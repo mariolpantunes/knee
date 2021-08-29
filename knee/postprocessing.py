@@ -82,17 +82,24 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
 
     filtered_knees = []
 
-    for i in range(0, len(knees)-1):
-        idx = knees[i]
-        p0, p1 ,p2 = points[idx-1:idx+2]
-        
-        corner0 = np.array([p0[0], p1[1]])
-        corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-        amin, amax = rect(corner0, corner1)
-        bmin, bmax = rect(p0, p2)
-        p = rect_overlap(amin, amax, bmin, bmax)
-        
-        if p < t:
+    for i in range(len(knees)-1):
+        try:
+            idx = knees[i]
+            p0, p1 ,p2 = points[idx-1:idx+2]
+
+            corner0 = np.array([p0[0], p1[1]])
+            corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+            amin, amax = rect(corner0, corner1)
+            bmin, bmax = rect(p0, p2)
+            p = rect_overlap(amin, amax, bmin, bmax)
+            
+            if p < t:
+                filtered_knees.append(idx)
+        except Exception as e:
+            logger.warning('Corner detection issue: %d', idx)
+            logger.warning('Points: %s', points)
+            logger.warning('Knees : %s', knees)
+            # in this case consider the candidate point valid
             filtered_knees.append(idx)
     
     # deal with the last knee
