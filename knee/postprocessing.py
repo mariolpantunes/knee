@@ -96,9 +96,9 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
             if p < t:
                 filtered_knees.append(idx)
         except Exception as e:
-            logger.warning('Corner detection issue: %d', idx)
-            logger.warning('Points: %s', points)
-            logger.warning('Knees : %s', knees)
+            logger.debug('Corner detection issue: %d', idx)
+            logger.debug('Points: %s', points)
+            logger.debug('Knees : %s', knees)
             # in this case consider the candidate point valid
             filtered_knees.append(idx)
     
