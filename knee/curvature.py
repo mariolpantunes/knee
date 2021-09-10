@@ -36,7 +36,8 @@ def knee(points: np.ndarray) -> int:
     gradient2 = grad.csd(x, y)
 
     curvature = np.absolute(gradient2) / ((1.0 + gradient1**2.0)**(1.5))
-    idx = np.argmax(curvature[0:-1])
+    # prevents the selection of the first point
+    idx = np.argmax(curvature[1:-1]) + 1
     return idx
 
 
