@@ -485,7 +485,7 @@ def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strate
     return np.sqrt(np.mean(np.square(errors)))
     
 
-def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -> np.ndarray:
+def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01) -> np.ndarray:
     """
     Computes the Confusion Matrix based on the knees and expected points.
 
@@ -493,20 +493,22 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
         expected (np.ndarray): numpy array with the expected knee points (x, y)
-        t (float): the maximum allowed distance (in percentage)
+        t (float): the maximum allowed distance in percentage (default 0.01)
     
     Returns:
         np.ndarray: the confusion matrix
     """
 
     dx = math.fabs(points[-1][0] - points[0][0])
+    used_knees = []
     knees_points_x = points[knees][:, 0]
     tp = fn = fp = tn = 0
     for px, _ in expected:
         distances = np.fabs(knees_points_x - px)/dx
         idx = np.argmin(distances)
-        if distances[idx] <= t:
+        if distances[idx] <= t and idx not in used_knees:
             tp += 1
+            used_knees.append(idx)
         else:
             fn += 1 
     fp = max(len(knees) - tp,0)

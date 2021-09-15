@@ -100,6 +100,57 @@ class TestEvaluation(unittest.TestCase):
         result = evaluation.rmspe(points, knees, expected)
         desired = 0.3535533905755961
         self.assertAlmostEqual(result, desired)
+    
+    def test_cm_0(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([1])
+        expected = np.array([[1,1], [2,2]])
+        result = evaluation.cm(points, knees, expected)
+        desired = np.array([[1,0],[1,1]])
+        np.testing.assert_array_equal(result, desired)
+    
+    def test_cm_1(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([1])
+        expected = np.array([[0,0], [2,2]])
+        result = evaluation.cm(points, knees, expected, t=.5)
+        desired = np.array([[1,0],[1,1]])
+        np.testing.assert_array_equal(result, desired)
+    
+    def test_cm_2(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([0])
+        expected = np.array([[1,1], [2,2]])
+        result = evaluation.cm(points, knees, expected)
+        desired = np.array([[0,1],[2,0]])
+        np.testing.assert_array_equal(result, desired)
+    
+    def test_mcc_0(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([1])
+        expected = np.array([[1,1], [2,2]])
+        cm = evaluation.cm(points, knees, expected)
+        result = evaluation.mcc(cm)
+        desired = 0.5
+        self.assertAlmostEqual(result, desired)
+    
+    def test_mcc_1(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([1])
+        expected = np.array([[0,0], [2,2]])
+        cm = evaluation.cm(points, knees, expected, t=.5)
+        result = evaluation.mcc(cm)
+        desired = 0.5
+        self.assertAlmostEqual(result, desired)
+    
+    def test_mcc_2(self):
+        points = np.array([[0,0], [1,1], [2,2]])
+        knees = np.array([0])
+        expected = np.array([[1,1], [2,2]])
+        cm = evaluation.cm(points, knees, expected)
+        result = evaluation.mcc(cm)
+        desired = -1.0
+        self.assertAlmostEqual(result, desired)
 
 if __name__ == '__main__':
     unittest.main()
