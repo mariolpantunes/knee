@@ -103,11 +103,6 @@ def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a:int, b:int, t=0.9) 
         
     return i
 
-    """if right != a:
-        return right
-    else:
-        return i"""
-
 def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9) -> tuple:
     """
     Get the neighbourhood (closest points) from a to b.
