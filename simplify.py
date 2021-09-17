@@ -105,7 +105,6 @@ def rank_cluster_points_best(points, clusters):
     filtered_points = []
     for i in range(0, max_cluster+1):
         current_cluster = points[clusters == i]
-        print(current_cluster)
 
         if len(current_cluster) > 1:
             rankings = rankings_points(current_cluster)
@@ -137,19 +136,6 @@ def main(args):
 
     points = np.genfromtxt(args.i, delimiter=',')
 
-    _, axs = plt.subplots(2)
-    #fig.suptitle('Vertically stacked subplots')
-    #axs[0].plot(x, y)
-    #axs[1].plot(x, -y)
-
-    x = points[:,0]
-    y = points[:,1]
-    axs[0].plot(x, y)
-
-    for x,y in dataset:
-        
-        axs[0].plot(x, y, marker='o', markersize=3, color='red')
-    
     # Cluster expected points
     cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
     clusters = cmethod[args.c](dataset, args.t)
@@ -157,18 +143,28 @@ def main(args):
     new_dataset = rmethod[args.r](dataset, clusters)
     logger.info(f'Clustered dataset ({len(new_dataset)})')
 
-    
-    axs[1].plot(points[:,0], points[:,1])
-    for x,y in new_dataset:
-        
-        axs[1].plot(x, y, marker='o', markersize=3, color='red')
+    # Plot data if debug is active
+    if args.d:
+        _, axs = plt.subplots(2)
 
-    plt.show()
+        x = points[:,0]
+        y = points[:,1]
+        axs[0].plot(x, y)
+
+        for x,y in dataset:
+            axs[0].plot(x, y, marker='o', markersize=3, color='red')
+
+        axs[1].plot(points[:,0], points[:,1])
+        for x,y in new_dataset:
+            axs[1].plot(x, y, marker='o', markersize=3, color='red')
+
+        plt.show()
 
     # Store the dataset into a CSV
-    #with open(expected_file, 'w') as f:
-    #    writer = csv.writer(f)
-    #    writer.writerows(dataset) 
+    if args.o:
+        with open(args.o, 'w') as f:
+            writer = csv.writer(f)
+            writer.writerows(new_dataset) 
 
 
 if __name__ == '__main__':
@@ -177,6 +173,8 @@ if __name__ == '__main__':
     parser.add_argument('-c', type=Clustering, choices=list(Clustering), help='clustering metric', default='average')
     parser.add_argument('-r', type=Ranking, choices=list(Ranking), help='cluster ranking', default='best')
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
+    parser.add_argument('-d', help='debug (plot data)', action='store_true')
+    parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()
     
     main(args)
