@@ -17,8 +17,7 @@ logger = logging.getLogger(__name__)
 def single_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     """Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
+    Efficient implementation that uses a single pass to compute the clusters.
     Computes the single linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\min_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
@@ -52,8 +51,7 @@ def single_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
 def complete_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     """Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
+    Efficient implementation that uses a single pass to compute the clusters.
     Computes the complete linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\max_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
@@ -87,14 +85,13 @@ def complete_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     return np.array(clusters)
 
 
-def average_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
+def centroid_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     """Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
-    Computes the average linkage clustering based only on the x axis:
+    Efficient implementation that uses a single pass to compute the clusters.
+    Computes the centroid linkage clustering based only on the x axis:
     $$
-        D(C_1, C_2) = \\frac{1}{|C_1|}\\sum_{c_1 \\in C_1}d(c_1, C_2)
+        D(C_1, C_2) = ||c_1 - c_2 ||
     $$
 
     Args:
@@ -128,5 +125,43 @@ def average_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
             cluster_center = points[i, 0]
             cluster_size = 1
             #logger.info('Cluster Center %s (%s)', cluster_center, cluster_size)
+
+    return np.array(clusters)
+
+
+def average_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
+    """Computes the 1D clustering of the input points.
+
+    Efficient implementation that uses a single pass to compute the clusters.
+    Computes the average linkage clustering based only on the x axis:
+    $$
+        D(C_1, C_2) = ||c_1 - c_2 ||
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the threshold for merging (in percentage, default 0.01)
+
+    Returns:
+        np.ndarray: the clusters ids
+    """
+    clusters = []
+    cluster_index = 0
+    duration = points[-1, 0] - points[0, 0]
+
+    # First Point is a cluster
+    clusters.append(cluster_index)
+    idx = 0
+
+    for i in range(1, len(points)):
+        cluster_points = points[idx:i, 0]
+        distances = np.abs(cluster_points - points[i][0])
+        distance = np.sum(distances)/(len(cluster_points)*duration)
+        if distance < t:
+            clusters.append(cluster_index)
+        else:
+            cluster_index += 1
+            clusters.append(cluster_index)
+            idx = i
 
     return np.array(clusters)
