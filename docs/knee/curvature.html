@@ -64,8 +64,11 @@ def knee(points: np.ndarray) -&gt; int:
     gradient1 = grad.cfd(x, y)
     gradient2 = grad.csd(x, y)
 
-    curvature = gradient2 / ((1.0 + gradient1**2.0)**(1.5))
-    return np.argmax(curvature[0:-1])
+    curvature = np.absolute(gradient2) / ((1.0 + gradient1**2.0)**(1.5))
+    # prevents the selection of the first point
+    #idx = np.argmax(curvature[0:-1]) 
+    idx = np.argmax(curvature[1:-1]) + 1
+    return idx
 
 
 def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 3) -&gt; np.ndarray:
@@ -136,8 +139,11 @@ k = \frac{|f''(x)|}{(1+[f'(2)]^2)^{\frac{3}{2}}}
     gradient1 = grad.cfd(x, y)
     gradient2 = grad.csd(x, y)
 
-    curvature = gradient2 / ((1.0 + gradient1**2.0)**(1.5))
-    return np.argmax(curvature[0:-1])</code></pre>
+    curvature = np.absolute(gradient2) / ((1.0 + gradient1**2.0)**(1.5))
+    # prevents the selection of the first point
+    #idx = np.argmax(curvature[0:-1]) 
+    idx = np.argmax(curvature[1:-1]) + 1
+    return idx</code></pre>
 </details>
 </dd>
 <dt id="knee.curvature.multi_knee"><code class="name flex">

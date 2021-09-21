@@ -46,8 +46,7 @@ logger = logging.getLogger(__name__)
 def single_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
+    Efficient implementation that uses a single pass to compute the clusters.
     Computes the single linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\min_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
@@ -81,8 +80,7 @@ def single_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
 def complete_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
+    Efficient implementation that uses a single pass to compute the clusters.
     Computes the complete linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\max_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
@@ -116,14 +114,13 @@ def complete_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     return np.array(clusters)
 
 
-def average_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
+def centroid_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
-    Computes the average linkage clustering based only on the x axis:
+    Efficient implementation that uses a single pass to compute the clusters.
+    Computes the centroid linkage clustering based only on the x axis:
     $$
-        D(C_1, C_2) = \\frac{1}{|C_1|}\\sum_{c_1 \\in C_1}d(c_1, C_2)
+        D(C_1, C_2) = ||c_1 - c_2 ||
     $$
 
     Args:
@@ -158,6 +155,44 @@ def average_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
             cluster_size = 1
             #logger.info(&#39;Cluster Center %s (%s)&#39;, cluster_center, cluster_size)
 
+    return np.array(clusters)
+
+
+def average_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
+    &#34;&#34;&#34;Computes the 1D clustering of the input points.
+
+    Efficient implementation that uses a single pass to compute the clusters.
+    Computes the average linkage clustering based only on the x axis:
+    $$
+        D(C_1, C_2) = \\frac{1}{|C_1|}\\sum_{c_1 \\in C_1}d(c_1, C_2)
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the threshold for merging (in percentage, default 0.01)
+
+    Returns:
+        np.ndarray: the clusters ids
+    &#34;&#34;&#34;
+    clusters = []
+    cluster_index = 0
+    duration = points[-1, 0] - points[0, 0]
+
+    # First Point is a cluster
+    clusters.append(cluster_index)
+    idx = 0
+
+    for i in range(1, len(points)):
+        cluster_points = points[idx:i, 0]
+        distances = np.abs(cluster_points - points[i][0])
+        distance = np.sum(distances)/(len(cluster_points)*duration)
+        if distance &lt; t:
+            clusters.append(cluster_index)
+        else:
+            cluster_index += 1
+            clusters.append(cluster_index)
+            idx = i
+
     return np.array(clusters)</code></pre>
 </details>
 </section>
@@ -173,8 +208,7 @@ def average_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the 1D clustering of the input points.</p>
-<p>Efficient implementation that uses a single pass to compute
-the clusters.
+<p>Efficient implementation that uses a single pass to compute the clusters.
 Computes the average linkage clustering based only on the x axis:
 <span><span class="MathJax_Preview">
 D(C_1, C_2) = \frac{1}{|C_1|}\sum_{c_1 \in C_1}d(c_1, C_2)
@@ -200,11 +234,76 @@ D(C_1, C_2) = \frac{1}{|C_1|}\sum_{c_1 \in C_1}d(c_1, C_2)
 <pre><code class="python">def average_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
+    Efficient implementation that uses a single pass to compute the clusters.
     Computes the average linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\frac{1}{|C_1|}\\sum_{c_1 \\in C_1}d(c_1, C_2)
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the threshold for merging (in percentage, default 0.01)
+
+    Returns:
+        np.ndarray: the clusters ids
+    &#34;&#34;&#34;
+    clusters = []
+    cluster_index = 0
+    duration = points[-1, 0] - points[0, 0]
+
+    # First Point is a cluster
+    clusters.append(cluster_index)
+    idx = 0
+
+    for i in range(1, len(points)):
+        cluster_points = points[idx:i, 0]
+        distances = np.abs(cluster_points - points[i][0])
+        distance = np.sum(distances)/(len(cluster_points)*duration)
+        if distance &lt; t:
+            clusters.append(cluster_index)
+        else:
+            cluster_index += 1
+            clusters.append(cluster_index)
+            idx = i
+
+    return np.array(clusters)</code></pre>
+</details>
+</dd>
+<dt id="knee.clustering.centroid_linkage"><code class="name flex">
+<span>def <span class="ident">centroid_linkage</span></span>(<span>points: numpy.ndarray, t: float = 0.01) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the 1D clustering of the input points.</p>
+<p>Efficient implementation that uses a single pass to compute the clusters.
+Computes the centroid linkage clustering based only on the x axis:
+<span><span class="MathJax_Preview">
+D(C_1, C_2) = ||c_1 - c_2 ||
+</span><script type="math/tex; mode=display">
+D(C_1, C_2) = ||c_1 - c_2 ||
+</script></span></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>the threshold for merging (in percentage, default 0.01)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the clusters ids</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def centroid_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
+    &#34;&#34;&#34;Computes the 1D clustering of the input points.
+
+    Efficient implementation that uses a single pass to compute the clusters.
+    Computes the centroid linkage clustering based only on the x axis:
+    $$
+        D(C_1, C_2) = ||c_1 - c_2 ||
     $$
 
     Args:
@@ -247,8 +346,7 @@ D(C_1, C_2) = \frac{1}{|C_1|}\sum_{c_1 \in C_1}d(c_1, C_2)
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the 1D clustering of the input points.</p>
-<p>Efficient implementation that uses a single pass to compute
-the clusters.
+<p>Efficient implementation that uses a single pass to compute the clusters.
 Computes the complete linkage clustering based only on the x axis:
 <span><span class="MathJax_Preview">
 D(C_1, C_2) = \max_{c_1
@@ -276,8 +374,7 @@ D(C_1, C_2) = \max_{c_1
 <pre><code class="python">def complete_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
+    Efficient implementation that uses a single pass to compute the clusters.
     Computes the complete linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\max_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
@@ -316,8 +413,7 @@ D(C_1, C_2) = \max_{c_1
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the 1D clustering of the input points.</p>
-<p>Efficient implementation that uses a single pass to compute
-the clusters.
+<p>Efficient implementation that uses a single pass to compute the clusters.
 Computes the single linkage clustering based only on the x axis:
 <span><span class="MathJax_Preview">
 D(C_1, C_2) = \min_{c_1
@@ -345,8 +441,7 @@ D(C_1, C_2) = \min_{c_1
 <pre><code class="python">def single_linkage(points: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;Computes the 1D clustering of the input points.
 
-    Efficient implementation that uses a single pass to compute
-    the clusters.
+    Efficient implementation that uses a single pass to compute the clusters.
     Computes the single linkage clustering based only on the x axis:
     $$
         D(C_1, C_2) = \\min_{c_1  \\in C_1, c_2 \\in C_2} d(c_1, c_2)
@@ -396,6 +491,7 @@ D(C_1, C_2) = \min_{c_1
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="knee.clustering.average_linkage" href="#knee.clustering.average_linkage">average_linkage</a></code></li>
+<li><code><a title="knee.clustering.centroid_linkage" href="#knee.clustering.centroid_linkage">centroid_linkage</a></code></li>
 <li><code><a title="knee.clustering.complete_linkage" href="#knee.clustering.complete_linkage">complete_linkage</a></code></li>
 <li><code><a title="knee.clustering.single_linkage" href="#knee.clustering.single_linkage">single_linkage</a></code></li>
 </ul>

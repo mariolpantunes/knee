@@ -132,11 +132,6 @@ def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a:int, b:int, t=0.9) 
         
     return i
 
-    &#34;&#34;&#34;if right != a:
-        return right
-    else:
-        return i&#34;&#34;&#34;
-
 def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9) -&gt; tuple:
     &#34;&#34;&#34;
     Get the neighbourhood (closest points) from a to b.
@@ -514,7 +509,7 @@ def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strate
     return np.sqrt(np.mean(np.square(errors)))
     
 
-def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -&gt; np.ndarray:
+def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Computes the Confusion Matrix based on the knees and expected points.
 
@@ -522,20 +517,22 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
         expected (np.ndarray): numpy array with the expected knee points (x, y)
-        t (float): the maximum allowed distance (in percentage)
+        t (float): the maximum allowed distance in percentage (default 0.01)
     
     Returns:
         np.ndarray: the confusion matrix
     &#34;&#34;&#34;
 
     dx = math.fabs(points[-1][0] - points[0][0])
+    used_knees = []
     knees_points_x = points[knees][:, 0]
     tp = fn = fp = tn = 0
     for px, _ in expected:
         distances = np.fabs(knees_points_x - px)/dx
         idx = np.argmin(distances)
-        if distances[idx] &lt;= t:
+        if distances[idx] &lt;= t and idx not in used_knees:
             tp += 1
+            used_knees.append(idx)
         else:
             fn += 1 
     fp = max(len(knees) - tp,0)
@@ -832,7 +829,7 @@ In this version it is used the points from the current knee to the previous.</p>
 </details>
 </dd>
 <dt id="knee.evaluation.cm"><code class="name flex">
-<span>def <span class="ident">cm</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, t: float = 0.02) ‑> numpy.ndarray</span>
+<span>def <span class="ident">cm</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, t: float = 0.01) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the Confusion Matrix based on the knees and expected points.</p>
@@ -845,7 +842,7 @@ In this version it is used the points from the current knee to the previous.</p>
 <dt><strong><code>expected</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the expected knee points (x, y)</dd>
 <dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
-<dd>the maximum allowed distance (in percentage)</dd>
+<dd>the maximum allowed distance in percentage (default 0.01)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -856,7 +853,7 @@ In this version it is used the points from the current knee to the previous.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.02) -&gt; np.ndarray:
+<pre><code class="python">def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Computes the Confusion Matrix based on the knees and expected points.
 
@@ -864,20 +861,22 @@ In this version it is used the points from the current knee to the previous.</p>
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
         expected (np.ndarray): numpy array with the expected knee points (x, y)
-        t (float): the maximum allowed distance (in percentage)
+        t (float): the maximum allowed distance in percentage (default 0.01)
     
     Returns:
         np.ndarray: the confusion matrix
     &#34;&#34;&#34;
 
     dx = math.fabs(points[-1][0] - points[0][0])
+    used_knees = []
     knees_points_x = points[knees][:, 0]
     tp = fn = fp = tn = 0
     for px, _ in expected:
         distances = np.fabs(knees_points_x - px)/dx
         idx = np.argmin(distances)
-        if distances[idx] &lt;= t:
+        if distances[idx] &lt;= t and idx not in used_knees:
             tp += 1
+            used_knees.append(idx)
         else:
             fn += 1 
     fp = max(len(knees) - tp,0)
@@ -1045,12 +1044,7 @@ In this version it is used the points from the current knee to the previous.</p>
             i = int((b+right)/2.0)
             
         
-    return i
-
-    &#34;&#34;&#34;if right != a:
-        return right
-    else:
-        return i&#34;&#34;&#34;</code></pre>
+    return i</code></pre>
 </details>
 </dd>
 <dt id="knee.evaluation.get_neighbourhood_fast"><code class="name flex">

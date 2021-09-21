@@ -193,6 +193,7 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
 
     # returns sorted list of cache sizes
     if not plot:
+        #return map_index(points, outlier_points)
         return np.array(list(sorted(outlier_points.keys())))
     else:
         return (outlier_points, z_yd2)</code></pre>
@@ -349,6 +350,7 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
 
     # returns sorted list of cache sizes
     if not plot:
+        #return map_index(points, outlier_points)
         return np.array(list(sorted(outlier_points.keys())))
     else:
         return (outlier_points, z_yd2)</code></pre>

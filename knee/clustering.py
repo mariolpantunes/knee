@@ -135,7 +135,7 @@ def average_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     Efficient implementation that uses a single pass to compute the clusters.
     Computes the average linkage clustering based only on the x axis:
     $$
-        D(C_1, C_2) = ||c_1 - c_2 ||
+        D(C_1, C_2) = \\frac{1}{|C_1|}\\sum_{c_1 \\in C_1}d(c_1, C_2)
     $$
 
     Args:

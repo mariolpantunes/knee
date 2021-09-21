@@ -111,25 +111,41 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -&
 
     filtered_knees = []
 
-    for i in range(0, len(knees)-1):
-        idx = knees[i]
-        p0, p1 ,p2 = points[idx-1:idx+2]
-        #print(f&#39;{p0}, {p1}, {p2}&#39;)
-        
-        corner0 = np.array([p0[0], p1[1]])
-        corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-        amin, amax = rect(corner0, corner1)
-        #print(f&#39;{amin}, {amax}&#39;)
+    for i in range(len(knees)-1):
+        try:
+            idx = knees[i]
+            p0, p1 ,p2 = points[idx-1:idx+2]
 
-        bmin, bmax = rect(p0, p2)
-        #print(f&#39;{bmin}, {bmax}&#39;)
-        
-        p = rect_overlap(amin, amax, bmin, bmax)
-        #print(f&#39;knee {idx}, p {p} ({p &lt; t})&#39;)
-        if p &lt; t:
+            corner0 = np.array([p0[0], p1[1]])
+            corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+            amin, amax = rect(corner0, corner1)
+            bmin, bmax = rect(p0, p2)
+            p = rect_overlap(amin, amax, bmin, bmax)
+            
+            if p &lt; t:
+                filtered_knees.append(idx)
+        except Exception as e:
+            logger.debug(f&#39;Exception: {e}&#39;)
+            logger.debug(f&#39;Corner detection issue: {idx}&#39;)
+            logger.debug(f&#39;Points: {points}&#39;)
+            logger.debug(f&#39;Knees : {knees}&#39;)
+            # in this case consider the candidate point valid
             filtered_knees.append(idx)
     
-    filtered_knees.append(knees[-1])
+    # deal with the last knee
+    if len(knees) &gt; 0:
+        idx = knees[-1]
+        if len(points) - idx &gt; 1:
+            p0, p1 ,p2 = points[idx-1:idx+2]
+            corner0 = np.array([p0[0], p1[1]])
+            corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+            amin, amax = rect(corner0, corner1)
+            bmin, bmax = rect(p0, p2)
+            p = rect_overlap(amin, amax, bmin, bmax)
+            if p &lt; t:
+                filtered_knees.append(idx)
+        else:
+            filtered_knees.append(idx)
 
     return np.array(filtered_knees)
 
@@ -665,25 +681,41 @@ The detection method relies on a three point rectangle fitting and overlap.</p>
 
     filtered_knees = []
 
-    for i in range(0, len(knees)-1):
-        idx = knees[i]
-        p0, p1 ,p2 = points[idx-1:idx+2]
-        #print(f&#39;{p0}, {p1}, {p2}&#39;)
-        
-        corner0 = np.array([p0[0], p1[1]])
-        corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-        amin, amax = rect(corner0, corner1)
-        #print(f&#39;{amin}, {amax}&#39;)
+    for i in range(len(knees)-1):
+        try:
+            idx = knees[i]
+            p0, p1 ,p2 = points[idx-1:idx+2]
 
-        bmin, bmax = rect(p0, p2)
-        #print(f&#39;{bmin}, {bmax}&#39;)
-        
-        p = rect_overlap(amin, amax, bmin, bmax)
-        #print(f&#39;knee {idx}, p {p} ({p &lt; t})&#39;)
-        if p &lt; t:
+            corner0 = np.array([p0[0], p1[1]])
+            corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+            amin, amax = rect(corner0, corner1)
+            bmin, bmax = rect(p0, p2)
+            p = rect_overlap(amin, amax, bmin, bmax)
+            
+            if p &lt; t:
+                filtered_knees.append(idx)
+        except Exception as e:
+            logger.debug(f&#39;Exception: {e}&#39;)
+            logger.debug(f&#39;Corner detection issue: {idx}&#39;)
+            logger.debug(f&#39;Points: {points}&#39;)
+            logger.debug(f&#39;Knees : {knees}&#39;)
+            # in this case consider the candidate point valid
             filtered_knees.append(idx)
     
-    filtered_knees.append(knees[-1])
+    # deal with the last knee
+    if len(knees) &gt; 0:
+        idx = knees[-1]
+        if len(points) - idx &gt; 1:
+            p0, p1 ,p2 = points[idx-1:idx+2]
+            corner0 = np.array([p0[0], p1[1]])
+            corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+            amin, amax = rect(corner0, corner1)
+            bmin, bmax = rect(p0, p2)
+            p = rect_overlap(amin, amax, bmin, bmax)
+            if p &lt; t:
+                filtered_knees.append(idx)
+        else:
+            filtered_knees.append(idx)
 
     return np.array(filtered_knees)</code></pre>
 </details>
