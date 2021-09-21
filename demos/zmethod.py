@@ -24,15 +24,6 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 
-class Clustering(Enum):
-    single = 'single'
-    complete = 'complete'
-    average = 'average'
-
-    def __str__(self):
-        return self.value
-
-
 class Evaluation(Enum):
     regression = 'regression'
     classification = 'classification'

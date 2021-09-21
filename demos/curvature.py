@@ -31,6 +31,7 @@ class Clustering(Enum):
     single = 'single'
     complete = 'complete'
     average = 'average'
+    centroid = 'centroid'
 
     def __str__(self):
         return self.value
@@ -46,7 +47,8 @@ class Evaluation(Enum):
 
 def main(args):
     # define clustering methods
-    cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage, Clustering.average: clustering.average_linkage}
+    cmethod = {Clustering.single: clustering.single_linkage, Clustering.complete: clustering.complete_linkage,
+    Clustering.average: clustering.average_linkage, Clustering.centroid: clustering.centroid_linkage}
     # get the expected file from the input file
     dirname = os.path.dirname(args.i)
     filename = os.path.splitext(os.path.basename(args.i))[0]
