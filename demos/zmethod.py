@@ -24,14 +24,6 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 
-class Evaluation(Enum):
-    regression = 'regression'
-    classification = 'classification'
-
-    def __str__(self):
-        return self.value
-
-
 def main(args):
     # get the expected file from the input file
     dirname = os.path.dirname(args.i)
@@ -57,7 +49,7 @@ def main(args):
     points_reduced, points_removed = rdp.rdp(points, args.r)
 
     ## Knee detection code ##
-    knees = zmethod.knees(points_reduced, x_max=x_max, y_range=y_range)
+    knees = zmethod.knees(points_reduced, dx=args.x, dy=args.y, dz=args.z, x_max=x_max, y_range=y_range)
     knees = knees[knees>0]
 
     ##########################
@@ -68,30 +60,16 @@ def main(args):
     else:
         knees = rdp.mapping(knees, points_reduced, points_removed)
 
-    if args.e is Evaluation.regression:
-        logger.info(f'MSE(knees)   MSE(exp)   Cost(tr)   Cost(kn) RMSPE(knees) RMPSE(exp)')
-        logger.info(f'-------------------------------------------------------------------')
-        if len(expected) > 0:
-            error_mse = evaluation.mse(points, knees, expected, evaluation.Strategy.knees)
-            error_mse_exp = evaluation.mse(points, knees, expected, evaluation.Strategy.expected)
-            error_rmspe = evaluation.rmspe(points, knees, expected, evaluation.Strategy.knees)
-            error_rmspe_exp = evaluation.rmspe(points, knees, expected, evaluation.Strategy.expected)
-        else:
-            error_mse = math.nan
-            error_mse_exp = math.nan
-            error_rmspe = math.nan
-            error_rmspe_exp = math.nan
-        _,_,_,_,cost_trace = evaluation.accuracy_trace (points, knees)
-        _,_,_,_,cost_knee = evaluation.accuracy_knee (points, knees)
-        logger.info(f'{error_mse:10.2E} {error_mse_exp:10.2E} {cost_trace:10.2E} {cost_knee:10.2E} {error_rmspe:12.2E} {error_rmspe_exp:10.2E}')
-    else:
-        logger.info(f'Accuracy F1-Score  MCC')
-        logger.info(f'----------------------')
-        cm = evaluation.cm(points, knees, expected)
-        accuracy = evaluation.accuracy(cm)
-        f1score = evaluation.f1score(cm)
-        mcc = evaluation.mcc(cm)
-        logger.info(f'{accuracy:8.2} {f1score:8.2} {mcc:4.2}')
+    rmspe_k = evaluation.rmspe(points, knees, expected, evaluation.Strategy.knees)
+    rmspe_e = evaluation.rmspe(points, knees, expected, evaluation.Strategy.expected)
+    cm = evaluation.cm(points, knees, expected, t = 0.02)
+    mcc = evaluation.mcc(cm)
+
+    print(cm)
+
+    logger.info(f'MSE(knees)   MSE(exp)   MCC')
+    logger.info(f'-------------------------------------------------------------------')
+    logger.info(f'{rmspe_k:10.2E} {rmspe_e:10.2E} {mcc:10.2E}')
 
     # store outpout
     if args.o:
@@ -110,8 +88,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
     parser.add_argument('-a', help='add even spaced points', action='store_true')
     parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
+    parser.add_argument('-x', type=float, help='Parameter dx', default=0.01)
+    parser.add_argument('-y', type=float, help='Parameter dy', default=0.04)
+    parser.add_argument('-z', type=float, help='Parameter dz', default=0.19)
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-e', type=Evaluation, choices=list(Evaluation), help='Evaluation type', default='regression')
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     args = parser.parse_args()
 
