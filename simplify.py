@@ -110,7 +110,7 @@ def rank_cluster_points_best(points, clusters):
             rankings = rankings_points(current_cluster)
             idx = np.argmax(rankings)
             best_point = current_cluster[idx]
-        else:
+        elif args.s:
             best_point = points[clusters == i][0]
         filtered_points.append(best_point)
 
@@ -174,6 +174,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', type=Ranking, choices=list(Ranking), help='cluster ranking', default='best')
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
     parser.add_argument('-d', help='debug (plot data)', action='store_true')
+    parser.add_argument('-s', help='Keep single clusters', action='store_true')
     parser.add_argument('-o', type=str, help='output file')
     args = parser.parse_args()
     
