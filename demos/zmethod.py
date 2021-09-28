@@ -62,13 +62,11 @@ def main(args):
 
     rmspe_k = evaluation.rmspe(points, knees, expected, evaluation.Strategy.knees)
     rmspe_e = evaluation.rmspe(points, knees, expected, evaluation.Strategy.expected)
-    cm = evaluation.cm(points, knees, expected, t = 0.02)
+    cm = evaluation.cm(points, knees, expected, t = 0.01)
     mcc = evaluation.mcc(cm)
 
-    print(cm)
-
-    logger.info(f'MSE(knees)   MSE(exp)   MCC')
-    logger.info(f'-------------------------------------------------------------------')
+    logger.info(f'RMSE(knees)  RMSE(exp)  MCC')
+    logger.info(f'-------------------------------------------')
     logger.info(f'{rmspe_k:10.2E} {rmspe_e:10.2E} {mcc:10.2E}')
 
     # store outpout
@@ -86,12 +84,12 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
+    parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-a', help='add even spaced points', action='store_true')
     parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
     parser.add_argument('-x', type=float, help='Parameter dx', default=0.01)
-    parser.add_argument('-y', type=float, help='Parameter dy', default=0.04)
-    parser.add_argument('-z', type=float, help='Parameter dz', default=0.19)
-    parser.add_argument('-i', type=str, required=True, help='input file')
+    parser.add_argument('-y', type=float, help='Parameter dy', default=0.01)
+    parser.add_argument('-z', type=float, help='Parameter dz', default=0.5)
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     args = parser.parse_args()
 
