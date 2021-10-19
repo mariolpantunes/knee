@@ -6,7 +6,6 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import math
 import enum
 import logging
 import numpy as np

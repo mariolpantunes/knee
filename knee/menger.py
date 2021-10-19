@@ -9,8 +9,6 @@ __status__ = 'Development'
 import math
 import logging
 import numpy as np
-from knee.linear_fit import linear_fit, linear_r2
-from uts import ema
 import knee.multi_knee as mk
 
 

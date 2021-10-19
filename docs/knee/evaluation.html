@@ -523,7 +523,10 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01
         np.ndarray: the confusion matrix
     &#34;&#34;&#34;
 
-    dx = math.fabs(points[-1][0] - points[0][0])
+    #dx = math.fabs(points[-1][0] - points[0][0])
+    max_x, _ = points.max(axis=0)
+    min_x, _ = points.min(axis=0)
+    dx = math.fabs(max_x - min_x)
     used_knees = []
     knees_points_x = points[knees][:, 0]
     tp = fn = fp = tn = 0
@@ -867,7 +870,10 @@ In this version it is used the points from the current knee to the previous.</p>
         np.ndarray: the confusion matrix
     &#34;&#34;&#34;
 
-    dx = math.fabs(points[-1][0] - points[0][0])
+    #dx = math.fabs(points[-1][0] - points[0][0])
+    max_x, _ = points.max(axis=0)
+    min_x, _ = points.min(axis=0)
+    dx = math.fabs(max_x - min_x)
     used_knees = []
     knees_points_x = points[knees][:, 0]
     tp = fn = fp = tn = 0

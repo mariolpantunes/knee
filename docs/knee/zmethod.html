@@ -105,11 +105,11 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
         y_max,y_min = (points[:,1].max(),points[:,1].min())
 
     if len(points) &lt; 4:
-        logger.warning(&#39;pointSelector: &lt; 4 unique requests in workload&#39;)
+        logger.debug(&#39;pointSelector: &lt; 4 unique requests in workload&#39;)
         return []
 
     if y_min == 1:
-        logger.warning(&#39;pointSelector: workload completely random (dont bother caching)&#39;)
+        logger.debug(&#39;pointSelector: workload completely random (dont bother caching)&#39;)
         return []
 
     # get absolute x and y distances
@@ -262,11 +262,11 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
         y_max,y_min = (points[:,1].max(),points[:,1].min())
 
     if len(points) &lt; 4:
-        logger.warning(&#39;pointSelector: &lt; 4 unique requests in workload&#39;)
+        logger.debug(&#39;pointSelector: &lt; 4 unique requests in workload&#39;)
         return []
 
     if y_min == 1:
-        logger.warning(&#39;pointSelector: workload completely random (dont bother caching)&#39;)
+        logger.debug(&#39;pointSelector: workload completely random (dont bother caching)&#39;)
         return []
 
     # get absolute x and y distances

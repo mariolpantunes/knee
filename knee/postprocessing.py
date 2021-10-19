@@ -145,6 +145,7 @@ def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
 
         for i in range(1, len(knees)):
             h = points[knees[i]][1]
+
             if h <= h_min:
                 filtered_knees.append(knees[i])
                 h_min = h
@@ -193,12 +194,15 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
         return np.array(filtered_knees)
 
 
-def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05) -> np.ndarray:
+def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05, extremes:bool=False) -> np.ndarray:
     """
     Add evenly spaced points between knees points.
 
-    Whenever a smooth segment between two knew points are further away than tx (on the X-axis) and ty (on the Y axis), even spaced points are added to the result.
-    This function will map the knees (in RDP space) into the space of the complete set of points.
+    Whenever a smooth segment between two knew points are
+    further away than tx (on the X-axis) and ty (on the Y axis),
+    even spaced points are added to the result.
+    This function will map the knees (in RDP space) into 
+    the space of the complete set of points.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
@@ -207,16 +211,17 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
         removed (np.ndarray): the points that were removed
         tx (float): the threshold (X-axis) for adding points (in percentage, default 0.05)
         ty (float): the threshold (Y-axis) for adding points (in percentage, default 0.05)
+        extremes (bool): if True adds the extreme points (firt and last) (default False)
 
     Returns:
         np.ndarray: the resulting knees (mapped into the complete set of points)
     """
-    # new knees
-    new_knees = []
-
+    
     # compute the delta x and y for the complete trace
-    dx = math.fabs(points[-1][0] - points[0][0])
-    dy = math.fabs(points[-1][1] - points[0][1])
+    max_x, max_y = points.max(axis=0)
+    min_x, min_y = points.min(axis=0)
+    dx = math.fabs(max_x - min_x)
+    dy = math.fabs(max_y - min_y)
     
     # compute the candidates
     candidates = []
@@ -236,8 +241,8 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
     candidates = np.array(candidates)
     candidates = rdp.mapping(candidates, points_reduced, removed)
 
-    # Map knees into the complete set of points
-    knees = rdp.mapping(knees, points_reduced, removed)
+    # new knees
+    new_knees = []
 
     # Process candidates as pairs
     for i in range(0, len(candidates), 2):
@@ -250,22 +255,35 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
         for _ in range(number_points):
             idx = idx + inc
             new_knees.append(idx)
+    
+    # filter worst knees that may be added due in this function
+    # but keep the detected knees
+    #new_knees = filter_worst_knees(points, new_knees)
 
-    knees_idx = np.concatenate((knees, new_knees))
+    # Map knees into the complete set of points
+    knees = rdp.mapping(knees, points_reduced, removed)
+
+    # Add extremes points to the output
+    if extremes:
+        extremes_idx = [0, len(points)-1]
+        knees_idx = np.concatenate((knees, new_knees, extremes_idx))
+    else:
+        knees_idx = np.concatenate((knees, new_knees))
+    
     # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
     knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
-    # filter worst knees that may be added due in this function
+    #return knees_idx
     return filter_worst_knees(points, knees_idx)
 
-
-def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, ty:float=0.05) -> np.ndarray:
+def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, ty:float=0.05, extremes:bool=False) -> np.ndarray:
     """
     Add evenly spaced points between knees points (using knee as markers).
 
     Whenever the distance between two consequetive knees is greater than 
-    tx (on the X-axis) and ty (on the Y axis), even spaced points are added to the result.
+    tx (on the X-axis) and ty (on the Y axis), even spaced points are 
+    added to the result.
     The knees have to be mapped in the complete set of points.
 
     Args:
@@ -273,6 +291,7 @@ def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, 
         knees (np.ndarray): knees indexes
         tx (float): the threshold (X-axis) for adding points (in percentage, default 0.05)
         ty (float): the threshold (Y-axis) for adding points (in percentage, default 0.05)
+        extremes (bool): if True adds the extreme points (firt and last) (default False)
 
     Returns:
         np.ndarray: the resulting knees
@@ -281,8 +300,10 @@ def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, 
     new_knees = []
 
     # compute the delta x and y for the complete trace
-    dx = math.fabs(points[-1][0] - points[0][0])
-    dy = math.fabs(points[-1][1] - points[0][1])
+    max_x, max_y = points.max(axis=0)
+    min_x, min_y = points.min(axis=0)
+    dx = math.fabs(max_x - min_x)
+    dy = math.fabs(max_y - min_y)
     
     # compute the candidates
     candidates = []
@@ -324,7 +345,13 @@ def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, 
             idx = idx + inc
             new_knees.append(idx)
 
-    knees_idx = np.concatenate((knees, new_knees))
+    # Add extremes points to the output
+    if extremes:
+        extremes_idx = [0, len(points)]
+        knees_idx = np.concatenate((knees, new_knees, extremes_idx))
+    else:
+        knees_idx = np.concatenate((knees, new_knees))
+    
     # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
     knees_idx = knees_idx.astype(int)
     knees_idx = np.unique(knees_idx)

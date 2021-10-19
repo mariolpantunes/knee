@@ -56,18 +56,25 @@ def main(args):
     
     # add even points
     if args.a:
-        knees = pp.add_points_even(points, points_reduced, filtered_knees, points_removed)
+        knees = pp.add_points_even(points, points_reduced, filtered_knees, points_removed, 0.009, 0.009)
     else:
         knees = rdp.mapping(filtered_knees, points_reduced, points_removed)
 
-    rmspe_k = evaluation.rmspe(points, knees, expected, evaluation.Strategy.knees)
-    rmspe_e = evaluation.rmspe(points, knees, expected, evaluation.Strategy.expected)
-    cm = evaluation.cm(points, knees, expected, t = 0.01)
-    mcc = evaluation.mcc(cm)
+    nk = len(knees)
 
-    logger.info(f'RMSE(knees)  RMSE(exp)  MCC')
+    if nk > 0:
+        rmspe_k = evaluation.rmspe(points, knees, expected, evaluation.Strategy.knees)
+        rmspe_e = evaluation.rmspe(points, knees, expected, evaluation.Strategy.expected)
+        cm = evaluation.cm(points, knees, expected, t = 0.01)
+        mcc = evaluation.mcc(cm)
+    else:
+        rmspe_k = 999
+        rmspe_e = 999
+        mcc = -1
+
+    logger.info(f'RMSE(knees)  RMSE(exp)  MCC    N_Knees')
     logger.info(f'-------------------------------------------')
-    logger.info(f'{rmspe_k:10.2E} {rmspe_e:10.2E} {mcc:10.2E}')
+    logger.info(f'{rmspe_k:10.2E} {rmspe_e:10.2E} {mcc:10.2E}  {nk}')
 
     # store outpout
     if args.o:
@@ -86,9 +93,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-a', help='add even spaced points', action='store_true')
-    parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
-    parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
-    parser.add_argument('-c', type=float, help='corner threshold', default=0.33)
+    parser.add_argument('-r', type=float, help='RDP R2', default=0.93)
+    parser.add_argument('-t', type=float, help='clustering threshold', default=0.06)
+    parser.add_argument('-c', type=float, help='corner threshold', default=0.41)
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     args = parser.parse_args()
     
