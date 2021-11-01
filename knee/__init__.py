@@ -1,4 +1,5 @@
 import knee.clustering
+import knee.convex_hull
 import knee.curvature
 import knee.dfdt
 import knee.evaluation

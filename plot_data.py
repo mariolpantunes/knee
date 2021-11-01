@@ -30,7 +30,7 @@ def main(args):
     x = points[:, 0]
     y = points[:, 1]
 
-    x = (x*4096)/1073741824
+    x = (x*409600)/1073741824
 
     # Create zoom-in plot
     plt.plot(x, y)
@@ -57,7 +57,7 @@ def main(args):
     
 
     # Save figure with nice margin
-    plt.savefig('/home/mantunes/Desktop/resolution.pdf', dpi = 300, bbox_inches = 'tight')
+    plt.savefig('/home/mantunes/git/resolution.pdf', dpi = 300, bbox_inches = 'tight')
 
 
 if __name__ == '__main__':

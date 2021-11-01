@@ -11,10 +11,9 @@ import numpy as np
 import logging
 
 import matplotlib.pyplot as plt
-from knee.rdp import rdp, mapping
+import knee.rdp as rdp
+import knee.convex_hull as ch
 
-
-import cProfile, pstats
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
@@ -23,18 +22,18 @@ logger = logging.getLogger(__name__)
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
     
-    profiler = cProfile.Profile()
-    profiler.enable()
-    points_reduced, removed = rdp(points, args.r)
-    profiler.disable()
-    stats = pstats.Stats(profiler).sort_stats('cumtime')
-    stats.print_stats()
+    points_reduced, removed = rdp.rdp(points, args.r)
     
     space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
     
     indexes = np.arange(0, len(points_reduced))
-    indexes = mapping(indexes, points_reduced, removed)
+    indexes = rdp.mapping(indexes, points_reduced, removed)
+
+    #hull = ch.graham_scan(points_reduced)
+    hull = ch.graham_scan(points)
+
+    logger.info(hull)
     
     x = points[:, 0]
     y = points[:, 1]
@@ -45,6 +44,15 @@ def main(args):
     y = selected[:, 1]
 
     plt.plot(x, y, marker='o', markersize=3)
+    
+    #for p in hull:
+    #    print(p)
+    #    plt.plot(p[0], p[1], 'c')
+    x = hull[:, 0]
+    y = hull[:, 1]
+    plt.plot(x, y, 'o', mec='r', color='none', lw=1, markersize=10)
+    plt.fill(x, y, edgecolor='r', fill=False)
+    
     plt.show()
     
 
