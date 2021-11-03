@@ -30,8 +30,8 @@ def main(args):
     indexes = np.arange(0, len(points_reduced))
     indexes = rdp.mapping(indexes, points_reduced, removed)
 
-    #hull = ch.graham_scan(points_reduced)
-    hull = ch.graham_scan(points)
+    hull = ch.graham_scan(points_reduced)
+    #hull = ch.graham_scan(points)
 
     logger.info(hull)
     
@@ -48,8 +48,9 @@ def main(args):
     #for p in hull:
     #    print(p)
     #    plt.plot(p[0], p[1], 'c')
-    x = hull[:, 0]
-    y = hull[:, 1]
+    hull_points = points_reduced[hull]
+    x = hull_points[:, 0]
+    y = hull_points[:, 1]
     plt.plot(x, y, 'o', mec='r', color='none', lw=1, markersize=10)
     plt.fill(x, y, edgecolor='r', fill=False)
     
@@ -59,7 +60,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-r', type=float, help='RDP R2', default=0.9)
+    parser.add_argument('-r', type=float, help='RDP R2', default=0.99)
     args = parser.parse_args()
     
     main(args)
