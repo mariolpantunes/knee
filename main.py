@@ -9,11 +9,11 @@ __status__ = 'Development'
 import os
 import csv
 import math
+import enum
 import argparse
 import numpy as np
 import logging
 
-from enum import Enum
 import knee.rdp as rdp
 import knee.kneedle as kneedle
 import knee.lmethod as lmethod
@@ -34,7 +34,7 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 
-class Clustering(Enum):
+class Clustering(enum.Enum):
     single = 'single'
     complete = 'complete'
     average = 'average'

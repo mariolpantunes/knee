@@ -6,9 +6,11 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
+import enum
+import logging
 import argparse
 import numpy as np
-import logging
+
 
 import matplotlib.pyplot as plt
 import knee.rdp as rdp
@@ -17,6 +19,22 @@ import knee.convex_hull as ch
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
+
+
+class ConvexHullSource(enum.Enum):
+    raw = 'raw'
+    rdp = 'rdp'
+
+    def __str__(self):
+        return self.value
+
+class ConvexHull(enum.Enum):
+    hull = 'hull'
+    lower = 'lower'
+    upper = 'upper'
+
+    def __str__(self):
+        return self.value
 
 
 def main(args):
@@ -30,8 +48,14 @@ def main(args):
     indexes = np.arange(0, len(points_reduced))
     indexes = rdp.mapping(indexes, points_reduced, removed)
 
-    hull = ch.graham_scan(points_reduced)
-    #hull = ch.graham_scan(points)
+    hull_imp = {ConvexHull.hull: ch.graham_scan, ConvexHull.upper: ch.graham_scan_upper, ConvexHull.lower: ch.graham_scan_lower}
+
+    if args.s is ConvexHullSource.raw:
+        hull = hull_imp[args.c](points)
+        hull_points = points[hull]
+    else:
+        hull = hull_imp[args.c](points_reduced)
+        hull_points = points_reduced[hull]
 
     logger.info(hull)
     
@@ -45,10 +69,6 @@ def main(args):
 
     plt.plot(x, y, marker='o', markersize=3)
     
-    #for p in hull:
-    #    print(p)
-    #    plt.plot(p[0], p[1], 'c')
-    hull_points = points_reduced[hull]
     x = hull_points[:, 0]
     y = hull_points[:, 1]
     plt.plot(x, y, 'o', mec='r', color='none', lw=1, markersize=10)
@@ -60,6 +80,8 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
+    parser.add_argument('-s', type=ConvexHullSource, choices=list(ConvexHullSource), default='raw')
+    parser.add_argument('-c', type=ConvexHull, choices=list(ConvexHull), default='hull')
     parser.add_argument('-r', type=float, help='RDP R2', default=0.99)
     args = parser.parse_args()
     
