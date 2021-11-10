@@ -6,21 +6,20 @@ __version__ = '0.1'
 __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
+
 import os
 import csv
-import math
 import argparse
 import numpy as np
 import logging
 
 
-from enum import Enum
 import knee.rdp as rdp
 import knee.kneedle as kneedle
 import knee.postprocessing as pp
 import knee.clustering as clustering
 import knee.evaluation as evaluation
-from knee.knee_ranking import ClusterRanking
+import knee.knee_ranking as knee_ranking
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -50,7 +49,7 @@ def main(args):
     knees = kneedle.auto_knees(points_reduced)
     t_k = pp.filter_worst_knees(points_reduced, knees)
     t_k = pp.filter_corner_knees(points_reduced, t_k, t=args.c)
-    filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, ClusterRanking.left)
+    filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, knee_ranking.ClusterRanking.left)
     
     ##########################################################################################
     

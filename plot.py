@@ -7,7 +7,6 @@ __status__ = 'Development'
 
 
 import math
-from knee.knee_ranking import rank
 
 
 def get_dimention(lentgh: int):

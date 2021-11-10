@@ -10,7 +10,6 @@ import math
 import typing
 import logging
 import numpy as np
-import uts.gradient as grad
 import knee.knee_ranking as ranking
 import knee.linear_fit as lf
 import knee.rdp as rdp

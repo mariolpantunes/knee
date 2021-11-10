@@ -21,6 +21,7 @@ class ClusterRanking(enum.Enum):
     left = 'left'
     linear = 'linear'
     right = 'right'
+    corner = 'corner'
 
     def __str__(self):
         return self.value
@@ -97,6 +98,53 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.n
     return rankings
 
 
+def smooth_ranking(x, y, knees, t):
+    fit = [0]
+    weights = [0]
+    
+    j = knees[0]
+    peak = np.max(y[knees])
+
+    for i in range(1, len(knees)-1):
+        # R2 score
+        r2 = 0
+        if t is ClusterRanking.linear:
+            r2_left = lf.r2(x[j:knees[i]+1], y[j:knees[i]+1])
+            r2_right = lf.r2(
+                x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
+            r2 = (r2_left + r2_right) / 2.0
+        elif t is ClusterRanking.left:
+            r2 = lf.r2(x[j:knees[i]+1], y[j:knees[i]+1])
+        else:
+            r2 = lf.r2(x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
+        fit.append(r2)
+
+        # height of the segment
+        d = math.fabs(peak - y[knees[i]])
+        weights.append(d)
+
+    weights.append(0)
+    weights = np.array(weights)
+    fit.append(0)
+    fit = np.array(fit)
+
+    #max_weights = np.max(weights)
+    # if max_weights != 0:
+    #    weights = weights / max_weights
+
+    sum_weights = np.sum(weights)
+    if sum_weights != 0:
+        weights = weights / sum_weights
+
+    rankings = fit * weights
+
+    return rankings
+
+
+def corner_ranking():
+    pass
+
+
 def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = ClusterRanking.linear) -> np.ndarray:
     """Computes the rank for a cluster of knees in a curve.
 
@@ -119,47 +167,13 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = C
     elif len(knees) == 1:
         return np.array([1.0])
     else:
-        fit = [0]
-        weights = [0]
-
         x = points[:, 0]
         y = points[:, 1]
 
-        j = knees[0]
-        peak = np.max(y[knees])
-
-        for i in range(1, len(knees)-1):
-            # R2 score
-            r2 = 0
-            if t is ClusterRanking.linear:
-                r2_left = lf.r2(x[j:knees[i]+1], y[j:knees[i]+1])
-                r2_right = lf.r2(
-                    x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
-                r2 = (r2_left + r2_right) / 2.0
-            elif t is ClusterRanking.left:
-                r2 = lf.r2(x[j:knees[i]+1], y[j:knees[i]+1])
-            else:
-                r2 = lf.r2(x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
-            fit.append(r2)
-
-            # height of the segment
-            d = math.fabs(peak - y[knees[i]])
-            weights.append(d)
-
-        weights.append(0)
-        weights = np.array(weights)
-        fit.append(0)
-        fit = np.array(fit)
-
-        #max_weights = np.max(weights)
-        # if max_weights != 0:
-        #    weights = weights / max_weights
-
-        sum_weights = np.sum(weights)
-        if sum_weights != 0:
-            weights = weights / sum_weights
-
-        rankings = fit * weights
+        if t is ClusterRanking.corner:
+            rankings = []
+        else:
+            rankings = smooth_ranking(x,y,knees,t)
 
         # Compute relative ranking
         rankings = rank(rankings)

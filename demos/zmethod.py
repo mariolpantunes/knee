@@ -6,19 +6,19 @@ __version__ = '0.1'
 __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
+
 import os
 import csv
-import math
+import logging
 import argparse
 import numpy as np
-import logging
 
 
-from enum import Enum
 import knee.rdp as rdp
 import knee.zmethod as zmethod
 import knee.evaluation as evaluation
 import knee.postprocessing as pp
+
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)

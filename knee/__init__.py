@@ -1,3 +1,4 @@
+import knee.chmethod
 import knee.clustering
 import knee.convex_hull
 import knee.curvature
