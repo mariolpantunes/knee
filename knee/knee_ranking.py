@@ -14,6 +14,9 @@ import knee.linear_fit as lf
 import knee.evaluation as ev
 
 
+import matplotlib.pyplot as plt
+
+
 class ClusterRanking(enum.Enum):
     """
     Enum data type that represents the direction of the ranking within a cluster.
@@ -30,8 +33,54 @@ class ClusterRanking(enum.Enum):
 logger = logging.getLogger(__name__)
 
 
+def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -> float:
+    """
+    Computes the percentage of the overlap for two rectangles.
+
+    Args:
+        amin (np.ndarray): the low point in rectangle A
+        amax (np.ndarray): the high point in rectangle A
+        bmin (np.ndarray): the low point in rectangle B
+        bmax (np.ndarray): the high point in rectangle B
+
+    Returns:
+        float: percentage of the overlap of two rectangles
+    """
+    #logger.info('%s %s %s %s', amin, amax, bmin, bmax)
+    dx = max(0.0, min(amax[0], bmax[0]) - max(amin[0], bmin[0]))
+    dy = max(0.0, min(amax[1], bmax[1]) - max(amin[1], bmin[1]))
+    #logger.info('dx %s dy %s', dx, dy)
+    overlap = dx * dy
+    #logger.info('overlap = %s', overlap)
+    if overlap > 0.0:
+        a = np.abs(amax-amin)
+        b = np.abs(bmax-bmin)
+        total_area = a[0]*a[1] + b[0]*b[1] - overlap
+        #print(f'overlap area = {overlap} total area =  {total_area}')
+        return overlap / total_area
+    else:
+        return 0.0
+
+
+def rect(p1: np.ndarray, p2: np.ndarray) -> tuple:
+    """
+    Creates the low and high rectangle coordinates from 2 points.
+
+    Args:
+        p1 (np.ndarray): one of the points in the rectangle
+        p2 (np.ndarray): one of the points in the rectangle
+
+    Returns:
+        tuple: tuple with two points (low and high)
+    """
+    p1x, p1y = p1
+    p2x, p2y = p2
+    return np.array([min(p1x, p2x), min(p1y, p2y)]), np.array([max(p1x, p2x), max(p1y, p2y)])
+
+
 def distance_to_similarity(array: np.ndarray) -> np.ndarray:
-    """Converts an array of distances into an array of similarities.
+    """
+    Converts an array of distances into an array of similarities.
 
     Args:
         array (np.ndarray): array with distances values
@@ -43,7 +92,8 @@ def distance_to_similarity(array: np.ndarray) -> np.ndarray:
 
 
 def rank(array: np.ndarray) -> np.ndarray:
-    """Computes the rank of an array of values
+    """
+    Computes the rank of an array of values.
 
     Args:
         array (np.ndarray): array with values
@@ -141,8 +191,37 @@ def smooth_ranking(x, y, knees, t):
     return rankings
 
 
-def corner_ranking():
-    pass
+def corner_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
+    """
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+
+    Returns:
+        np.ndarray: an array with the ranks of each value
+    """
+    rankings = []
+    for i in range(len(knees)):
+        idx = knees[i]
+        p0, p1 ,p2 = points[idx-1:idx+2]
+        logger.info(f'Knee {i}/{idx} with points [{p0}, {p1}, {p2}]')
+        corner0 = np.array([p2[0], p0[1]])
+        #corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
+        amin, amax = rect(corner0, p1)
+        bmin, bmax = rect(p0, p2)
+        rankings.append(rect_overlap(amin, amax, bmin, bmax))
+    logger.info(f'Overlap: {rankings}')
+    rankings = np.array(rankings)
+    logger.info(f'Ranking: {rankings}')
+
+    # To delete
+    x = points[:, 0]
+    y = points[:, 1]
+    plt.plot(x, y)
+    plt.plot(x[knees], y[knees], 'r+')
+    plt.show()
+
+    return rankings
 
 
 def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = ClusterRanking.linear) -> np.ndarray:
@@ -167,17 +246,18 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = C
     elif len(knees) == 1:
         return np.array([1.0])
     else:
-        x = points[:, 0]
-        y = points[:, 1]
-
         if t is ClusterRanking.corner:
-            rankings = []
+            rankings = corner_ranking(points, knees)
         else:
+            x = points[:, 0]
+            y = points[:, 1]
             rankings = smooth_ranking(x,y,knees,t)
 
         # Compute relative ranking
         rankings = rank(rankings)
         # Min Max normalization
         rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+
+        logger.info(f'Final ranking: {rankings}')
 
         return rankings

@@ -50,7 +50,7 @@ def main(args):
     knees = dfdt.multi_knee(points_reduced)
     t_k = pp.filter_worst_knees(points_reduced, knees)
     t_k = pp.filter_corner_knees(points_reduced, t_k, t=args.c)
-    filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, knee_ranking.ClusterRanking.left)
+    filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, args.k)
     
     ##########################################################################################
     
@@ -99,6 +99,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', type=float, help='corner threshold', default=0.33)
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     parser.add_argument('-g', help='display output (debug)', action='store_true')
+    parser.add_argument('-k', help='Knee ranking method', type=knee_ranking.ClusterRanking, choices=list(knee_ranking.ClusterRanking), default='corner')
     args = parser.parse_args()
     
     main(args)

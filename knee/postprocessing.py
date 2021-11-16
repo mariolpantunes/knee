@@ -18,51 +18,6 @@ import knee.rdp as rdp
 logger = logging.getLogger(__name__)
 
 
-def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -> float:
-    """
-    Computes the percentage of the overlap for two rectangles.
-
-    Args:
-        amin (np.ndarray): the low point in rectangle A
-        amax (np.ndarray): the high point in rectangle A
-        bmin (np.ndarray): the low point in rectangle B
-        bmax (np.ndarray): the high point in rectangle B
-
-    Returns:
-        float: percentage of the overlap of two rectangles
-    """
-    #logger.info('%s %s %s %s', amin, amax, bmin, bmax)
-    dx = max(0.0, min(amax[0], bmax[0]) - max(amin[0], bmin[0]))
-    dy = max(0.0, min(amax[1], bmax[1]) - max(amin[1], bmin[1]))
-    #logger.info('dx %s dy %s', dx, dy)
-    overlap = dx * dy
-    #logger.info('overlap = %s', overlap)
-    if overlap > 0.0:
-        a = np.abs(amax-amin)
-        b = np.abs(bmax-bmin)
-        total_area = a[0]*a[1] + b[0]*b[1] - overlap
-        #print(f'overlap area = {overlap} total area =  {total_area}')
-        return overlap / total_area
-    else:
-        return 0.0
-
-
-def rect(p1: np.ndarray, p2: np.ndarray) -> tuple:
-    """
-    Creates the low and high rectangle coordinates from 2 points.
-
-    Args:
-        p1 (np.ndarray): one of the points in the rectangle
-        p2 (np.ndarray): one of the points in the rectangle
-
-    Returns:
-        tuple: tuple with two points (low and high)
-    """
-    p1x, p1y = p1
-    p2x, p2y = p2
-    return np.array([min(p1x, p2x), min(p1y, p2y)]), np.array([max(p1x, p2x), max(p1y, p2y)])
-
-
 def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -> np.ndarray:
     """
     Filter the left upper corner knees points.
@@ -88,9 +43,9 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
 
             corner0 = np.array([p0[0], p1[1]])
             corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-            amin, amax = rect(corner0, corner1)
-            bmin, bmax = rect(p0, p2)
-            p = rect_overlap(amin, amax, bmin, bmax)
+            amin, amax = ranking.rect(corner0, corner1)
+            bmin, bmax = ranking.rect(p0, p2)
+            p = ranking.rect_overlap(amin, amax, bmin, bmax)
             
             if p < t:
                 filtered_knees.append(idx)
@@ -109,9 +64,9 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
             p0, p1 ,p2 = points[idx-1:idx+2]
             corner0 = np.array([p0[0], p1[1]])
             corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-            amin, amax = rect(corner0, corner1)
-            bmin, bmax = rect(p0, p2)
-            p = rect_overlap(amin, amax, bmin, bmax)
+            amin, amax = ranking.rect(corner0, corner1)
+            bmin, bmax = ranking.rect(p0, p2)
+            p = ranking.rect_overlap(amin, amax, bmin, bmax)
             if p < t:
                 filtered_knees.append(idx)
         else:
@@ -181,6 +136,8 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
         filtered_knees = []
         for i in range(0, max_cluster+1):
             current_cluster = knees[clusters == i]
+
+            logger.info(f'Cluster {i} with {len(current_cluster)} elements')
 
             if len(current_cluster) > 1:
                 rankings = ranking.cluster_ranking(points, current_cluster, method)
