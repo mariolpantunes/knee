@@ -203,14 +203,17 @@ def corner_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
     rankings = []
     for i in range(len(knees)):
         idx = knees[i]
-        p0, p1 ,p2 = points[idx-1:idx+2]
+        if idx-1 >=0 and idx+1 < len(points):
+            p0, p1 ,p2 = points[idx-1:idx+2]
         
-        corner0 = np.array([p2[0], p0[1]])
-        amin, amax = rect(corner0, p1)
-        bmin, bmax = rect(p0, p2)
+            corner0 = np.array([p2[0], p0[1]])
+            amin, amax = rect(corner0, p1)
+            bmin, bmax = rect(p0, p2)
         
-        rankings.append(rect_overlap(amin, amax, bmin, bmax))
-   
+            rankings.append(rect_overlap(amin, amax, bmin, bmax))
+        else:
+            rankings.append(0)
+
     rankings = np.array(rankings)
 
     return rankings
