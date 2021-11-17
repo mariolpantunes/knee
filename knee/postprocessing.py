@@ -107,6 +107,7 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
     """
     if method is ranking.ClusterRanking.hull:
         hull = ch.graham_scan_lower(points)
+        logger.info(f'hull {len(hull)}')
 
     if len(knees) <= 1:
         return knees
@@ -121,7 +122,29 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
             logger.info(f'Cluster {i} with {len(current_cluster)} elements')
 
             if len(current_cluster) > 1:
-                rankings = ranking.cluster_ranking(points, current_cluster, method)
+                if method is ranking.ClusterRanking.corner:
+                    rankings = ranking.corner_ranking(points, current_cluster)
+                elif method is ranking.ClusterRanking.hull:
+                    # select the hull points that exist within the cluster
+                    a, b = current_cluster[[0, -1]]
+                    logger.info(f'Bounds [{a}, {b}]')
+                    idx = (hull>=a)*(hull<=b)
+                    hull_within_cluster = hull[idx]
+                    logger.info(f'Hull (W\C) {hull_within_cluster} ({len(hull_within_cluster)})')
+                    if len(hull_within_cluster) > 0:
+                        rankings = ranking.convex_hull_ranking(points, current_cluster, hull_within_cluster)
+                    else:
+                        rankings = ranking.corner_ranking(points, current_cluster)
+                else:
+                    rankings = ranking.smooth_ranking(points, current_cluster, method)
+
+                logger.info(f'Rankings {rankings}')
+
+                # Compute relative ranking
+                rankings = ranking.rank(rankings)
+                # Min Max normalization
+                rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+                
                 idx = np.argmax(rankings)
                 best_knee = knees[clusters == i][idx]
             else:

@@ -146,16 +146,34 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.n
     return rankings
 
 
-def smooth_ranking(x: np.ndarray, y: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> np.ndarray:
+def smooth_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> np.ndarray:
     """
+    Computes the rank for a cluster of knees in a curve.
+
+    The ranking is a weighted raking based on the Y axis improvement and the
+    slope/smoothed of the curve.
+    This methods tries to find the best knee within a cluster of knees, this
+    means that the boundaries for the computation are based on the cluster dimention.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (ClusterRanking): selects the direction where the curve must be smooth
+
+    Returns:
+        np.ndarray: an array with the ranks of each value
     """
-    fit = [0]
-    weights = [0]
+
+    x = points[:, 0]
+    y = points[:, 1]
+
+    fit = []
+    weights = []
     
     j = knees[0]
     peak = np.max(y[knees])
 
-    for i in range(1, len(knees)-1):
+    for i in range(0, len(knees)):
         # R2 score
         r2 = 0
         if t is ClusterRanking.linear:
@@ -173,9 +191,9 @@ def smooth_ranking(x: np.ndarray, y: np.ndarray, knees: np.ndarray, t: ClusterRa
         d = math.fabs(peak - y[knees[i]])
         weights.append(d)
 
-    weights.append(0)
+    #weights.append(0)
     weights = np.array(weights)
-    fit.append(0)
+    #fit.append(0)
     fit = np.array(fit)
 
     #max_weights = np.max(weights)
@@ -186,7 +204,11 @@ def smooth_ranking(x: np.ndarray, y: np.ndarray, knees: np.ndarray, t: ClusterRa
     if sum_weights != 0:
         weights = weights / sum_weights
 
+    #logger.info(f'Fit & Weights {fit} / {weights}')
+
     rankings = fit * weights
+
+    #logger.info(f'Smooth Ranking {rankings}')
 
     return rankings
 
@@ -219,44 +241,27 @@ def corner_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
     return rankings
 
 
-def convex_hull_ranking() -> np.ndarray:
-    return []
-
-
-def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = ClusterRanking.linear) -> np.ndarray:
-    """Computes the rank for a cluster of knees in a curve.
-
-    The ranking is a weighted raking based on the Y axis improvement and the
-    slope/smoothed of the curve.
-    This methods tries to find the best knee within a cluster of knees, this
-    means that the boundaries for the computation are based on the cluster dimention.
-
-    Args:
-        points (np.ndarray): numpy array with the points (x, y)
-        knees (np.ndarray): knees indexes
-        t (ClusterRanking): selects the direction where the curve must be smooth
-
-    Returns:
-        np.ndarray: an array with the ranks of each value
+def distances(point:np.ndarray, points:np.ndarray) -> np.ndarray:
     """
-    # trivial cases
-    if len(knees) == 0:
-        return np.array([])
-    elif len(knees) == 1:
-        return np.array([1.0])
-    else:
-        if t is ClusterRanking.corner:
-            rankings = corner_ranking(points, knees)
-        elif t is ClusterRanking().hull:
-            rankings = convex_hull_ranking(points, knees, hull)
-        else:
-            x = points[:, 0]
-            y = points[:, 1]
-            rankings = smooth_ranking(x,y,knees,t)
+    """
+    return np.sqrt(np.sum((points - point)**2, axis=1))
 
-        # Compute relative ranking
-        rankings = rank(rankings)
-        # Min Max normalization
-        rankings = (rankings - np.min(rankings))/np.ptp(rankings)
 
-        return rankings
+def convex_hull_ranking(points: np.ndarray, knees: np.ndarray, hull: np.ndarray) -> np.ndarray:
+    slopes = []
+
+    for i in range(len(hull)):
+        idx = hull[i]
+        # compute the slope of the this hull point
+        p0, p1 = points[idx-1:idx+1]
+        slope = math.fabs((p0[1] - p1[1])/(p0[0] - p1[0]))
+        slopes.append(slope)
+    
+    slopes = np.array(slopes)
+    logger.info(f'Slopes {slopes}')
+    idx = np.argmax(slopes)
+
+    bp = points[hull[idx]]
+    logger.info(f'BP {bp} ({idx})')
+    dist = distances(bp, points[knees])
+    return distance_to_similarity(dist)

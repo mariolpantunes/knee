@@ -24,6 +24,7 @@ import knee.knee_ranking as knee_ranking
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.getLogger('matplotlib').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 

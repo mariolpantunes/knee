@@ -64,3 +64,10 @@ class TestKneeRanking(unittest.TestCase):
         result = ranking.corner_ranking(points, knees)
         desired = np.array([0, 0, .5, 0])
         np.testing.assert_array_equal(result, desired)
+
+    def test_distances(self):
+        points = np.array([[0,1],[1,1],[2,0],[3,0]])
+        point = np.array([0,0])
+        result = ranking.distances(point, points)
+        desired = np.array([1, math.sqrt(2.0), 2, 3])
+        np.testing.assert_array_equal(result, desired)
