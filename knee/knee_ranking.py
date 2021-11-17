@@ -14,7 +14,7 @@ import knee.linear_fit as lf
 import knee.evaluation as ev
 
 
-import matplotlib.pyplot as plt
+logger = logging.getLogger(__name__)
 
 
 class ClusterRanking(enum.Enum):
@@ -25,12 +25,10 @@ class ClusterRanking(enum.Enum):
     linear = 'linear'
     right = 'right'
     corner = 'corner'
+    hull = 'hull'
 
     def __str__(self):
         return self.value
-
-
-logger = logging.getLogger(__name__)
 
 
 def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -> float:
@@ -148,7 +146,9 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.n
     return rankings
 
 
-def smooth_ranking(x, y, knees, t):
+def smooth_ranking(x: np.ndarray, y: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> np.ndarray:
+    """
+    """
     fit = [0]
     weights = [0]
     
@@ -204,24 +204,20 @@ def corner_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
     for i in range(len(knees)):
         idx = knees[i]
         p0, p1 ,p2 = points[idx-1:idx+2]
-        logger.info(f'Knee {i}/{idx} with points [{p0}, {p1}, {p2}]')
+        
         corner0 = np.array([p2[0], p0[1]])
-        #corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
         amin, amax = rect(corner0, p1)
         bmin, bmax = rect(p0, p2)
+        
         rankings.append(rect_overlap(amin, amax, bmin, bmax))
-    logger.info(f'Overlap: {rankings}')
+   
     rankings = np.array(rankings)
-    logger.info(f'Ranking: {rankings}')
-
-    # To delete
-    #x = points[:, 0]
-    #y = points[:, 1]
-    #plt.plot(x, y)
-    #plt.plot(x[knees], y[knees], 'r+')
-    #plt.show()
 
     return rankings
+
+
+def convex_hull_ranking() -> np.ndarray:
+    return []
 
 
 def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = ClusterRanking.linear) -> np.ndarray:
@@ -248,6 +244,8 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = C
     else:
         if t is ClusterRanking.corner:
             rankings = corner_ranking(points, knees)
+        elif t is ClusterRanking().hull:
+            rankings = convex_hull_ranking(points, knees, hull)
         else:
             x = points[:, 0]
             y = points[:, 1]
@@ -257,7 +255,5 @@ def cluster_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking = C
         rankings = rank(rankings)
         # Min Max normalization
         rankings = (rankings - np.min(rankings))/np.ptp(rankings)
-
-        logger.info(f'Final ranking: {rankings}')
 
         return rankings

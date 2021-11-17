@@ -57,3 +57,10 @@ class TestKneeRanking(unittest.TestCase):
         result = ranking.rect_overlap(amin, amax, bmin, bmax)
         desired = 0.5
         self.assertEqual(result, desired)
+    
+    def test_corner_ranking(self):
+        points = np.array([[0,1],[1,1],[2,0],[3,0]])
+        knees = np.array([1,2])
+        result = ranking.corner_ranking(points, knees)
+        desired = np.array([0, .5])
+        np.testing.assert_array_equal(result, desired)

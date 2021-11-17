@@ -10,10 +10,10 @@ import math
 import typing
 import logging
 import numpy as np
-import knee.knee_ranking as ranking
-import knee.linear_fit as lf
 import knee.rdp as rdp
-
+import knee.linear_fit as lf
+import knee.convex_hull as ch
+import knee.knee_ranking as ranking
 
 logger = logging.getLogger(__name__)
 
@@ -126,6 +126,8 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
     Returns:
         np.ndarray: the filtered knees
     """
+    if method is ranking.ClusterRanking.hull:
+        hull = ch.graham_scan_lower(points)
 
     if len(knees) <= 1:
         return knees
