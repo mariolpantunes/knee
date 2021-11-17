@@ -215,11 +215,11 @@ def corner_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
     logger.info(f'Ranking: {rankings}')
 
     # To delete
-    x = points[:, 0]
-    y = points[:, 1]
-    plt.plot(x, y)
-    plt.plot(x[knees], y[knees], 'r+')
-    plt.show()
+    #x = points[:, 0]
+    #y = points[:, 1]
+    #plt.plot(x, y)
+    #plt.plot(x[knees], y[knees], 'r+')
+    #plt.show()
 
     return rankings
 

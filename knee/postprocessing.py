@@ -41,9 +41,8 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
             idx = knees[i]
             p0, p1 ,p2 = points[idx-1:idx+2]
 
-            corner0 = np.array([p0[0], p1[1]])
-            corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-            amin, amax = ranking.rect(corner0, corner1)
+            corner0 = np.array([p0[0], p2[1]])
+            amin, amax = ranking.rect(corner0, p1)
             bmin, bmax = ranking.rect(p0, p2)
             p = ranking.rect_overlap(amin, amax, bmin, bmax)
             
@@ -62,11 +61,12 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
         idx = knees[-1]
         if len(points) - idx > 1:
             p0, p1 ,p2 = points[idx-1:idx+2]
-            corner0 = np.array([p0[0], p1[1]])
-            corner1 = np.array([p1[0], p2[1]]) if p2[1] < p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-            amin, amax = ranking.rect(corner0, corner1)
+            
+            corner0 = np.array([p0[0], p2[1]])
+            amin, amax = ranking.rect(corner0, p1)
             bmin, bmax = ranking.rect(p0, p2)
             p = ranking.rect_overlap(amin, amax, bmin, bmax)
+           
             if p < t:
                 filtered_knees.append(idx)
         else:
