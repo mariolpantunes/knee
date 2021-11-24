@@ -58,6 +58,24 @@ class TestKneeRanking(unittest.TestCase):
         desired = 0.5
         self.assertEqual(result, desired)
     
+    def test_lower_overlap_02(self):
+        points = np.array([[0,1],[1,0],[2,1]])
+        idx = 1
+        p0, p1, p2 = points[idx-1:idx+2]
+        corner0 = np.array([p2[0], p0[1]])
+        amin, amax = ranking.rect(corner0, p1)
+        bmin, bmax = ranking.rect(p0, p2)
+        result = ranking.rect_overlap(amin, amax, bmin, bmax)
+        desired = 0.0
+        self.assertEqual(result, desired)
+
+    def test_lower_overlap_03(self):
+        amin, amax = (np.array([782, 3.47059833e-01]), np.array([805, 3.49430416e-01]))
+        bmin, bmax = (np.array([759, 3.48911963e-01]), np.array([805, 3.49430416e-01]))
+        result = ranking.rect_overlap(amin, amax, bmin, bmax)
+        desired = 0.17945536158082412
+        self.assertEqual(result, desired)
+    
     def test_corner_ranking(self):
         points = np.array([[0,1],[1,1],[2,0],[3,0]])
         knees = np.array([0,1,2,3])

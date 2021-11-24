@@ -11,9 +11,11 @@ import typing
 import logging
 import numpy as np
 import knee.rdp as rdp
-import knee.linear_fit as lf
+import knee.evaluation as ev
 import knee.convex_hull as ch
 import knee.knee_ranking as ranking
+
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +111,9 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
         hull = ch.graham_scan_lower(points)
         logger.info(f'hull {len(hull)}')
 
+    x = points[:, 0]
+    y = points[:, 1]
+
     if len(knees) <= 1:
         return knees
     else:
@@ -118,8 +123,9 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
         filtered_knees = []
         for i in range(0, max_cluster+1):
             current_cluster = knees[clusters == i]
-
             logger.info(f'Cluster {i} with {len(current_cluster)} elements')
+
+            previous_source = 0
 
             if len(current_cluster) > 1:
                 if method is ranking.ClusterRanking.corner:
@@ -132,6 +138,7 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
                     hull_within_cluster = hull[idx]
                     logger.info(f'Hull (W\C) {hull_within_cluster} ({len(hull_within_cluster)})')
                     if len(hull_within_cluster) > 0:
+                        #sp = ev.get_neighbourhood(x, y, hull_within_cluster[0], previous_source, 0.9)
                         rankings = ranking.convex_hull_ranking(points, current_cluster, hull_within_cluster)
                     else:
                         rankings = ranking.corner_ranking(points, current_cluster)
@@ -149,6 +156,15 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
                 best_knee = knees[clusters == i][idx]
             else:
                 best_knee = knees[clusters == i][0]
+            
+            # plot clusters within the points
+            plt.plot(x, y)
+            plt.plot(x[current_cluster], y[current_cluster], 'ro')
+            if method is ranking.ClusterRanking.hull:
+                plt.plot(x[hull], y[hull], 'g+')
+            plt.plot(x[best_knee], y[best_knee], 'yx')
+            plt.show()
+
             filtered_knees.append(best_knee)
 
         return np.array(filtered_knees)
