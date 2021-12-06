@@ -11,9 +11,9 @@ import typing
 import logging
 import numpy as np
 import knee.rdp as rdp
-import knee.evaluation as ev
+import knee.linear_fit as lf
 import knee.convex_hull as ch
-import knee.knee_ranking as ranking
+import knee.knee_ranking as kr
 
 import matplotlib.pyplot as plt
 
@@ -44,9 +44,9 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
             p0, p1 ,p2 = points[idx-1:idx+2]
 
             corner0 = np.array([p0[0], p2[1]])
-            amin, amax = ranking.rect(corner0, p1)
-            bmin, bmax = ranking.rect(p0, p2)
-            p = ranking.rect_overlap(amin, amax, bmin, bmax)
+            amin, amax = kr.rect(corner0, p1)
+            bmin, bmax = kr.rect(p0, p2)
+            p = kr.rect_overlap(amin, amax, bmin, bmax)
             
             if p < t:
                 filtered_knees.append(idx)
@@ -90,7 +90,7 @@ def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
 
 def filter_clustring(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
-method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
+method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
     """
     Filter the knee points based on clustering.
 
@@ -107,7 +107,7 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
     Returns:
         np.ndarray: the filtered knees
     """
-    if method is ranking.ClusterRanking.hull:
+    if method is kr.ClusterRanking.hull:
         hull = ch.graham_scan_lower(points)
         logger.info(f'hull {len(hull)}')
 
@@ -125,43 +125,64 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
             current_cluster = knees[clusters == i]
             logger.info(f'Cluster {i} with {len(current_cluster)} elements')
 
-            previous_source = 0
 
             if len(current_cluster) > 1:
-                if method is ranking.ClusterRanking.hull:
+                if method is kr.ClusterRanking.hull:
                     # select the hull points that exist within the cluster
                     a, b = current_cluster[[0, -1]]
                     logger.info(f'Bounds [{a}, {b}]')
                     idx = (hull>=a)*(hull<=b)
                     hull_within_cluster = hull[idx]
                     logger.info(f'Hull (W\C) {hull_within_cluster} ({len(hull_within_cluster)})')
-                    if len(hull_within_cluster) > 0:
-                        #sp = ev.get_neighbourhood(x, y, hull_within_cluster[0], previous_source, 0.9)
-                        rankings = ranking.convex_hull_ranking(points, current_cluster, hull_within_cluster)
+                    # only consider clusters with at least a single hull point
+                    rankings = np.zeros(len(current_cluster))
+                    logger.info(f'CHR {rankings}')
+                    if len(hull_within_cluster) > 1:
+                        for cluster_idx in range(len(current_cluster)):
+                            j = current_cluster[cluster_idx]
+                            if j in hull_within_cluster:
+                                coef_left = lf.linear_fit(x[a-1:j+1], y[a-1:j+1])
+                                coef_right = lf.linear_fit(x[j:b+2], y[j:b+2])
+                                r_left = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_left)
+                                r_rigth = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_right)
+                                current_error = r_left + r_rigth
+                                rankings[cluster_idx] = current_error
+                            else:
+                                rankings[cluster_idx] = -1.0
+                        # replace all -1 with maximum distance
+                        rankings[rankings<0] = np.amax(rankings)
+                        rankings = kr.distance_to_similarity(rankings)
+                        logger.info(f'CHRF {rankings}')
+                    elif len(hull_within_cluster) == 1:
+                        for cluster_idx in range(len(current_cluster)):
+                            j = current_cluster[cluster_idx]
+                            if j in hull_within_cluster:
+                                rankings[cluster_idx] = 1.0 
                 else:
-                    rankings = ranking.smooth_ranking(points, current_cluster, method)
-
-                logger.info(f'Rankings {rankings}')
+                    rankings = kr.smooth_ranking(points, current_cluster, method)
 
                 # Compute relative ranking
-                rankings = ranking.rank(rankings)
+                rankings = kr.rank(rankings)
+                logger.info(f'Rankings {rankings}')
                 # Min Max normalization
-                rankings = (rankings - np.min(rankings))/np.ptp(rankings)
-                
+                #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
                 idx = np.argmax(rankings)
                 best_knee = knees[clusters == i][idx]
             else:
-                best_knee = knees[clusters == i][0]
+                if method is kr.ClusterRanking.hull:
+                    best_knee = None
+                else:
+                    best_knee = knees[clusters == i][0]
             
-            # plot clusters within the points
-            plt.plot(x, y)
-            plt.plot(x[current_cluster], y[current_cluster], 'ro')
-            if method is ranking.ClusterRanking.hull:
-                plt.plot(x[hull], y[hull], 'g+')
-            plt.plot(x[best_knee], y[best_knee], 'yx')
-            plt.show()
-
-            filtered_knees.append(best_knee)
+            if best_knee is not None:
+                filtered_knees.append(best_knee)
+                # plot clusters within the points
+                plt.plot(x, y)
+                plt.plot(x[current_cluster], y[current_cluster], 'ro')
+                if method is kr.ClusterRanking.hull:
+                    plt.plot(x[hull], y[hull], 'g+')
+                plt.plot(x[best_knee], y[best_knee], 'yx')
+                plt.show()
 
         return np.array(filtered_knees)
 

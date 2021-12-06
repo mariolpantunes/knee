@@ -30,6 +30,12 @@ class ClusterRanking(enum.Enum):
         return self.value
 
 
+def distances(point:np.ndarray, points:np.ndarray) -> np.ndarray:
+    """
+    """
+    return np.sqrt(np.sum((points - point)**2, axis=1))
+
+
 def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -> float:
     """
     Computes the percentage of the overlap for two rectangles.
@@ -210,48 +216,3 @@ def smooth_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> 
     #logger.info(f'Smooth Ranking {rankings}')
 
     return rankings
-
-
-def distances(point:np.ndarray, points:np.ndarray) -> np.ndarray:
-    """
-    """
-    return np.sqrt(np.sum((points - point)**2, axis=1))
-
-
-def convex_hull_ranking(points: np.ndarray, knees: np.ndarray, hull: np.ndarray) -> np.ndarray:
-    slopes = []
-    heights_gain = []
-    
-    # compute a source data point
-    
-
-    y = points[:, 1]
-    peak = np.max(y[knees])
-
-    #hull_points = points[hull]
-
-    for i in range(len(hull)):
-        idx = hull[i]
-        # compute the slope of the this hull point
-        p0, p1 = points[idx-1:idx+1]
-        slope = math.fabs((p0[1] - p1[1])/(p0[0] - p1[0]))
-        heights_gain.append(peak-p1[1])
-        slopes.append(slope)
-    
-    slopes = np.array(slopes)
-    slopes = slopes/slopes.sum()
-    
-    heights_gain = np.array(heights_gain)
-    heights_gain = heights_gain/heights_gain.sum()
-
-    rank = slopes * heights_gain
-
-    logger.info(f'Slopes {slopes}')
-    logger.info(f'Height {heights_gain}')
-    logger.info(f'Rank {rank}')
-    idx = np.argmax(rank)
-
-    bp = points[hull[idx]]
-    logger.info(f'BP {bp} ({idx})')
-    dist = distances(bp, points[knees])
-    return distance_to_similarity(dist)
