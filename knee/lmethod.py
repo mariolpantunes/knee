@@ -95,7 +95,7 @@ def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -> int:
 
 def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -> int:
     """
-    Returns the index of the knee point based on menger curvature.
+    Returns the index of the knee point based on the L-method.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)

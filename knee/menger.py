@@ -44,7 +44,7 @@ def menger_curvature(f:np.ndarray, g:np.ndarray, h:np.ndarray) -> float:
 
 def knee(points: np.ndarray) -> int:
     """
-    Returns the index of the knee point based on menger curvature.
+    Returns the index of the knee point based on the menger curvature.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
