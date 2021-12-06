@@ -24,7 +24,6 @@ class ClusterRanking(enum.Enum):
     left = 'left'
     linear = 'linear'
     right = 'right'
-    corner = 'corner'
     hull = 'hull'
 
     def __str__(self):
@@ -209,61 +208,6 @@ def smooth_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> 
     rankings = fit * weights
 
     #logger.info(f'Smooth Ranking {rankings}')
-
-    return rankings
-
-
-def corner_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
-    """
-    Args:
-        points (np.ndarray): numpy array with the points (x, y)
-        knees (np.ndarray): knees indexes
-
-    Returns:
-        np.ndarray: an array with the ranks of each value
-    """
-    corner_similarity = []
-    heights_gain = []
-    
-    # compute a source point
-    y = points[:, 1]
-    peak = np.max(y[knees])
-
-
-    logger.info(f'Peak {peak}')
-    
-    for i in range(len(knees)):
-        idx = knees[i]
-        if idx-1 >=0 and idx+1 < len(points):
-            p0, p1 ,p2 = points[idx-1:idx+2]
-
-            logger.info(f'Points [{p0}, {p1}, {p2}]')
-
-            corner0 = np.array([p2[0], p0[1]])
-            amin, amax = rect(corner0, p1)
-            bmin, bmax = rect(p0, p2)
-
-            overlap = rect_overlap(amin, amax, bmin, bmax)
-
-            logger.info(f'Rect A {amin} {amax}')
-            logger.info(f'Rect B {bmin} {bmax} = {overlap}')
-        
-            corner_similarity.append(overlap)
-            heights_gain.append(peak-p1[1])
-        else:
-            corner_similarity.append(0)
-            heights_gain.append(peak-points[idx][1])
-    
-    corner_similarity = np.array(corner_similarity)
-    corner_similarity = corner_similarity/corner_similarity.sum()
-    heights_gain = np.array(heights_gain)
-    heights_gain = heights_gain/heights_gain.sum()
-
-    rankings = corner_similarity*heights_gain
-
-    logger.info(f'Corner {corner_similarity}')
-    logger.info(f'Height {heights_gain}')
-    logger.info(f'Ranking {rankings}')
 
     return rankings
 

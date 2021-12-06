@@ -128,9 +128,7 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
             previous_source = 0
 
             if len(current_cluster) > 1:
-                if method is ranking.ClusterRanking.corner:
-                    rankings = ranking.corner_ranking(points, current_cluster)
-                elif method is ranking.ClusterRanking.hull:
+                if method is ranking.ClusterRanking.hull:
                     # select the hull points that exist within the cluster
                     a, b = current_cluster[[0, -1]]
                     logger.info(f'Bounds [{a}, {b}]')
@@ -140,8 +138,6 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -> np.ndarray:
                     if len(hull_within_cluster) > 0:
                         #sp = ev.get_neighbourhood(x, y, hull_within_cluster[0], previous_source, 0.9)
                         rankings = ranking.convex_hull_ranking(points, current_cluster, hull_within_cluster)
-                    else:
-                        rankings = ranking.corner_ranking(points, current_cluster)
                 else:
                     rankings = ranking.smooth_ranking(points, current_cluster, method)
 
