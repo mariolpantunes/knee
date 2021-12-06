@@ -222,21 +222,48 @@ def corner_ranking(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
     Returns:
         np.ndarray: an array with the ranks of each value
     """
-    rankings = []
+    corner_similarity = []
+    heights_gain = []
+    
+    # compute a source point
+    y = points[:, 1]
+    peak = np.max(y[knees])
+
+
+    logger.info(f'Peak {peak}')
+    
     for i in range(len(knees)):
         idx = knees[i]
         if idx-1 >=0 and idx+1 < len(points):
             p0, p1 ,p2 = points[idx-1:idx+2]
-        
+
+            logger.info(f'Points [{p0}, {p1}, {p2}]')
+
             corner0 = np.array([p2[0], p0[1]])
             amin, amax = rect(corner0, p1)
             bmin, bmax = rect(p0, p2)
-        
-            rankings.append(rect_overlap(amin, amax, bmin, bmax))
-        else:
-            rankings.append(0)
 
-    rankings = np.array(rankings)
+            overlap = rect_overlap(amin, amax, bmin, bmax)
+
+            logger.info(f'Rect A {amin} {amax}')
+            logger.info(f'Rect B {bmin} {bmax} = {overlap}')
+        
+            corner_similarity.append(overlap)
+            heights_gain.append(peak-p1[1])
+        else:
+            corner_similarity.append(0)
+            heights_gain.append(peak-points[idx][1])
+    
+    corner_similarity = np.array(corner_similarity)
+    corner_similarity = corner_similarity/corner_similarity.sum()
+    heights_gain = np.array(heights_gain)
+    heights_gain = heights_gain/heights_gain.sum()
+
+    rankings = corner_similarity*heights_gain
+
+    logger.info(f'Corner {corner_similarity}')
+    logger.info(f'Height {heights_gain}')
+    logger.info(f'Ranking {rankings}')
 
     return rankings
 
@@ -249,17 +276,36 @@ def distances(point:np.ndarray, points:np.ndarray) -> np.ndarray:
 
 def convex_hull_ranking(points: np.ndarray, knees: np.ndarray, hull: np.ndarray) -> np.ndarray:
     slopes = []
+    heights_gain = []
+    
+    # compute a source data point
+    
+
+    y = points[:, 1]
+    peak = np.max(y[knees])
+
+    #hull_points = points[hull]
 
     for i in range(len(hull)):
         idx = hull[i]
         # compute the slope of the this hull point
         p0, p1 = points[idx-1:idx+1]
         slope = math.fabs((p0[1] - p1[1])/(p0[0] - p1[0]))
+        heights_gain.append(peak-p1[1])
         slopes.append(slope)
     
     slopes = np.array(slopes)
+    slopes = slopes/slopes.sum()
+    
+    heights_gain = np.array(heights_gain)
+    heights_gain = heights_gain/heights_gain.sum()
+
+    rank = slopes * heights_gain
+
     logger.info(f'Slopes {slopes}')
-    idx = np.argmax(slopes)
+    logger.info(f'Height {heights_gain}')
+    logger.info(f'Rank {rank}')
+    idx = np.argmax(rank)
 
     bp = points[hull[idx]]
     logger.info(f'BP {bp} ({idx})')
