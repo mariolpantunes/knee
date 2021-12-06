@@ -39,58 +39,14 @@ import math
 import typing
 import logging
 import numpy as np
-import uts.gradient as grad
-import knee.knee_ranking as ranking
-import knee.linear_fit as lf
 import knee.rdp as rdp
+import knee.linear_fit as lf
+import knee.convex_hull as ch
+import knee.knee_ranking as kr
 
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
-
-
-def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -&gt; float:
-    &#34;&#34;&#34;
-    Computes the percentage of the overlap for two rectangles.
-
-    Args:
-        amin (np.ndarray): the low point in rectangle A
-        amax (np.ndarray): the high point in rectangle A
-        bmin (np.ndarray): the low point in rectangle B
-        bmax (np.ndarray): the high point in rectangle B
-
-    Returns:
-        float: percentage of the overlap of two rectangles
-    &#34;&#34;&#34;
-    #logger.info(&#39;%s %s %s %s&#39;, amin, amax, bmin, bmax)
-    dx = max(0.0, min(amax[0], bmax[0]) - max(amin[0], bmin[0]))
-    dy = max(0.0, min(amax[1], bmax[1]) - max(amin[1], bmin[1]))
-    #logger.info(&#39;dx %s dy %s&#39;, dx, dy)
-    overlap = dx * dy
-    #logger.info(&#39;overlap = %s&#39;, overlap)
-    if overlap &gt; 0.0:
-        a = np.abs(amax-amin)
-        b = np.abs(bmax-bmin)
-        total_area = a[0]*a[1] + b[0]*b[1] - overlap
-        #print(f&#39;overlap area = {overlap} total area =  {total_area}&#39;)
-        return overlap / total_area
-    else:
-        return 0.0
-
-
-def rect(p1: np.ndarray, p2: np.ndarray) -&gt; tuple:
-    &#34;&#34;&#34;
-    Creates the low and high rectangle coordinates from 2 points.
-
-    Args:
-        p1 (np.ndarray): one of the points in the rectangle
-        p2 (np.ndarray): one of the points in the rectangle
-
-    Returns:
-        tuple: tuple with two points (low and high)
-    &#34;&#34;&#34;
-    p1x, p1y = p1
-    p2x, p2y = p2
-    return np.array([min(p1x, p2x), min(p1y, p2y)]), np.array([max(p1x, p2x), max(p1y, p2y)])
 
 
 def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -&gt; np.ndarray:
@@ -111,37 +67,16 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -&
 
     filtered_knees = []
 
-    for i in range(len(knees)-1):
-        try:
-            idx = knees[i]
+    for i in range(len(knees)):
+        idx = knees[i]
+        if idx-1 &gt;=0 and idx+1 &lt; len(points):
             p0, p1 ,p2 = points[idx-1:idx+2]
 
-            corner0 = np.array([p0[0], p1[1]])
-            corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-            amin, amax = rect(corner0, corner1)
-            bmin, bmax = rect(p0, p2)
-            p = rect_overlap(amin, amax, bmin, bmax)
+            corner0 = np.array([p0[0], p2[1]])
+            amin, amax = kr.rect(corner0, p1)
+            bmin, bmax = kr.rect(p0, p2)
+            p = kr.rect_overlap(amin, amax, bmin, bmax)
             
-            if p &lt; t:
-                filtered_knees.append(idx)
-        except Exception as e:
-            logger.debug(f&#39;Exception: {e}&#39;)
-            logger.debug(f&#39;Corner detection issue: {idx}&#39;)
-            logger.debug(f&#39;Points: {points}&#39;)
-            logger.debug(f&#39;Knees : {knees}&#39;)
-            # in this case consider the candidate point valid
-            filtered_knees.append(idx)
-    
-    # deal with the last knee
-    if len(knees) &gt; 0:
-        idx = knees[-1]
-        if len(points) - idx &gt; 1:
-            p0, p1 ,p2 = points[idx-1:idx+2]
-            corner0 = np.array([p0[0], p1[1]])
-            corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-            amin, amax = rect(corner0, corner1)
-            bmin, bmax = rect(p0, p2)
-            p = rect_overlap(amin, amax, bmin, bmax)
             if p &lt; t:
                 filtered_knees.append(idx)
         else:
@@ -184,7 +119,7 @@ def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
 
 def filter_clustring(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
-method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray:
+method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Filter the knee points based on clustering.
 
@@ -201,6 +136,12 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
     Returns:
         np.ndarray: the filtered knees
     &#34;&#34;&#34;
+    if method is kr.ClusterRanking.hull:
+        hull = ch.graham_scan_lower(points)
+        logger.info(f&#39;hull {len(hull)}&#39;)
+
+    x = points[:, 0]
+    y = points[:, 1]
 
     if len(knees) &lt;= 1:
         return knees
@@ -211,14 +152,66 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
         filtered_knees = []
         for i in range(0, max_cluster+1):
             current_cluster = knees[clusters == i]
+            logger.info(f&#39;Cluster {i} with {len(current_cluster)} elements&#39;)
+
 
             if len(current_cluster) &gt; 1:
-                rankings = ranking.cluster_ranking(points, current_cluster, method)
+                if method is kr.ClusterRanking.hull:
+                    # select the hull points that exist within the cluster
+                    a, b = current_cluster[[0, -1]]
+                    logger.info(f&#39;Bounds [{a}, {b}]&#39;)
+                    idx = (hull&gt;=a)*(hull&lt;=b)
+                    hull_within_cluster = hull[idx]
+                    logger.info(f&#39;Hull (W\C) {hull_within_cluster} ({len(hull_within_cluster)})&#39;)
+                    # only consider clusters with at least a single hull point
+                    rankings = np.zeros(len(current_cluster))
+                    logger.info(f&#39;CHR {rankings}&#39;)
+                    if len(hull_within_cluster) &gt; 1:
+                        for cluster_idx in range(len(current_cluster)):
+                            j = current_cluster[cluster_idx]
+                            if j in hull_within_cluster:
+                                coef_left = lf.linear_fit(x[a-1:j+1], y[a-1:j+1])
+                                coef_right = lf.linear_fit(x[j:b+2], y[j:b+2])
+                                r_left = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_left)
+                                r_rigth = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_right)
+                                current_error = r_left + r_rigth
+                                rankings[cluster_idx] = current_error
+                            else:
+                                rankings[cluster_idx] = -1.0
+                        # replace all -1 with maximum distance
+                        rankings[rankings&lt;0] = np.amax(rankings)
+                        rankings = kr.distance_to_similarity(rankings)
+                        logger.info(f&#39;CHRF {rankings}&#39;)
+                    elif len(hull_within_cluster) == 1:
+                        for cluster_idx in range(len(current_cluster)):
+                            j = current_cluster[cluster_idx]
+                            if j in hull_within_cluster:
+                                rankings[cluster_idx] = 1.0 
+                else:
+                    rankings = kr.smooth_ranking(points, current_cluster, method)
+
+                # Compute relative ranking
+                rankings = kr.rank(rankings)
+                logger.info(f&#39;Rankings {rankings}&#39;)
+                # Min Max normalization
+                #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
                 idx = np.argmax(rankings)
                 best_knee = knees[clusters == i][idx]
             else:
-                best_knee = knees[clusters == i][0]
-            filtered_knees.append(best_knee)
+                if method is kr.ClusterRanking.hull:
+                    best_knee = None
+                else:
+                    best_knee = knees[clusters == i][0]
+            
+            if best_knee is not None:
+                filtered_knees.append(best_knee)
+                # plot clusters within the points
+                plt.plot(x, y)
+                plt.plot(x[current_cluster], y[current_cluster], &#39;ro&#39;)
+                if method is kr.ClusterRanking.hull:
+                    plt.plot(x[hull], y[hull], &#39;g+&#39;)
+                plt.plot(x[best_knee], y[best_knee], &#39;yx&#39;)
+                plt.show()
 
         return np.array(filtered_knees)
 
@@ -661,7 +654,7 @@ The ranking is computed based on the slope and the improvement (on the y axis).<
 </summary>
 <pre><code class="python">def filter_clustring(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
-method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray:
+method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Filter the knee points based on clustering.
 
@@ -678,6 +671,12 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
     Returns:
         np.ndarray: the filtered knees
     &#34;&#34;&#34;
+    if method is kr.ClusterRanking.hull:
+        hull = ch.graham_scan_lower(points)
+        logger.info(f&#39;hull {len(hull)}&#39;)
+
+    x = points[:, 0]
+    y = points[:, 1]
 
     if len(knees) &lt;= 1:
         return knees
@@ -688,14 +687,66 @@ method: ranking.ClusterRanking = ranking.ClusterRanking.linear) -&gt; np.ndarray
         filtered_knees = []
         for i in range(0, max_cluster+1):
             current_cluster = knees[clusters == i]
+            logger.info(f&#39;Cluster {i} with {len(current_cluster)} elements&#39;)
+
 
             if len(current_cluster) &gt; 1:
-                rankings = ranking.cluster_ranking(points, current_cluster, method)
+                if method is kr.ClusterRanking.hull:
+                    # select the hull points that exist within the cluster
+                    a, b = current_cluster[[0, -1]]
+                    logger.info(f&#39;Bounds [{a}, {b}]&#39;)
+                    idx = (hull&gt;=a)*(hull&lt;=b)
+                    hull_within_cluster = hull[idx]
+                    logger.info(f&#39;Hull (W\C) {hull_within_cluster} ({len(hull_within_cluster)})&#39;)
+                    # only consider clusters with at least a single hull point
+                    rankings = np.zeros(len(current_cluster))
+                    logger.info(f&#39;CHR {rankings}&#39;)
+                    if len(hull_within_cluster) &gt; 1:
+                        for cluster_idx in range(len(current_cluster)):
+                            j = current_cluster[cluster_idx]
+                            if j in hull_within_cluster:
+                                coef_left = lf.linear_fit(x[a-1:j+1], y[a-1:j+1])
+                                coef_right = lf.linear_fit(x[j:b+2], y[j:b+2])
+                                r_left = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_left)
+                                r_rigth = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_right)
+                                current_error = r_left + r_rigth
+                                rankings[cluster_idx] = current_error
+                            else:
+                                rankings[cluster_idx] = -1.0
+                        # replace all -1 with maximum distance
+                        rankings[rankings&lt;0] = np.amax(rankings)
+                        rankings = kr.distance_to_similarity(rankings)
+                        logger.info(f&#39;CHRF {rankings}&#39;)
+                    elif len(hull_within_cluster) == 1:
+                        for cluster_idx in range(len(current_cluster)):
+                            j = current_cluster[cluster_idx]
+                            if j in hull_within_cluster:
+                                rankings[cluster_idx] = 1.0 
+                else:
+                    rankings = kr.smooth_ranking(points, current_cluster, method)
+
+                # Compute relative ranking
+                rankings = kr.rank(rankings)
+                logger.info(f&#39;Rankings {rankings}&#39;)
+                # Min Max normalization
+                #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
                 idx = np.argmax(rankings)
                 best_knee = knees[clusters == i][idx]
             else:
-                best_knee = knees[clusters == i][0]
-            filtered_knees.append(best_knee)
+                if method is kr.ClusterRanking.hull:
+                    best_knee = None
+                else:
+                    best_knee = knees[clusters == i][0]
+            
+            if best_knee is not None:
+                filtered_knees.append(best_knee)
+                # plot clusters within the points
+                plt.plot(x, y)
+                plt.plot(x[current_cluster], y[current_cluster], &#39;ro&#39;)
+                if method is kr.ClusterRanking.hull:
+                    plt.plot(x[hull], y[hull], &#39;g+&#39;)
+                plt.plot(x[best_knee], y[best_knee], &#39;yx&#39;)
+                plt.show()
 
         return np.array(filtered_knees)</code></pre>
 </details>
@@ -743,37 +794,16 @@ The detection method relies on a three point rectangle fitting and overlap.</p>
 
     filtered_knees = []
 
-    for i in range(len(knees)-1):
-        try:
-            idx = knees[i]
+    for i in range(len(knees)):
+        idx = knees[i]
+        if idx-1 &gt;=0 and idx+1 &lt; len(points):
             p0, p1 ,p2 = points[idx-1:idx+2]
 
-            corner0 = np.array([p0[0], p1[1]])
-            corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-            amin, amax = rect(corner0, corner1)
-            bmin, bmax = rect(p0, p2)
-            p = rect_overlap(amin, amax, bmin, bmax)
+            corner0 = np.array([p0[0], p2[1]])
+            amin, amax = kr.rect(corner0, p1)
+            bmin, bmax = kr.rect(p0, p2)
+            p = kr.rect_overlap(amin, amax, bmin, bmax)
             
-            if p &lt; t:
-                filtered_knees.append(idx)
-        except Exception as e:
-            logger.debug(f&#39;Exception: {e}&#39;)
-            logger.debug(f&#39;Corner detection issue: {idx}&#39;)
-            logger.debug(f&#39;Points: {points}&#39;)
-            logger.debug(f&#39;Knees : {knees}&#39;)
-            # in this case consider the candidate point valid
-            filtered_knees.append(idx)
-    
-    # deal with the last knee
-    if len(knees) &gt; 0:
-        idx = knees[-1]
-        if len(points) - idx &gt; 1:
-            p0, p1 ,p2 = points[idx-1:idx+2]
-            corner0 = np.array([p0[0], p1[1]])
-            corner1 = np.array([p1[0], p2[1]]) if p2[1] &lt; p1[1] else np.array([p1[0], 2.0*p1[1]-p2[1]])
-            amin, amax = rect(corner0, corner1)
-            bmin, bmax = rect(p0, p2)
-            p = rect_overlap(amin, amax, bmin, bmax)
             if p &lt; t:
                 filtered_knees.append(idx)
         else:
@@ -836,97 +866,6 @@ The detection method relies on a three point rectangle fitting and overlap.</p>
         return np.array(filtered_knees)</code></pre>
 </details>
 </dd>
-<dt id="knee.postprocessing.rect"><code class="name flex">
-<span>def <span class="ident">rect</span></span>(<span>p1: numpy.ndarray, p2: numpy.ndarray) ‑> tuple</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Creates the low and high rectangle coordinates from 2 points.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>p1</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>one of the points in the rectangle</dd>
-<dt><strong><code>p2</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>one of the points in the rectangle</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>tuple</code></dt>
-<dd>tuple with two points (low and high)</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def rect(p1: np.ndarray, p2: np.ndarray) -&gt; tuple:
-    &#34;&#34;&#34;
-    Creates the low and high rectangle coordinates from 2 points.
-
-    Args:
-        p1 (np.ndarray): one of the points in the rectangle
-        p2 (np.ndarray): one of the points in the rectangle
-
-    Returns:
-        tuple: tuple with two points (low and high)
-    &#34;&#34;&#34;
-    p1x, p1y = p1
-    p2x, p2y = p2
-    return np.array([min(p1x, p2x), min(p1y, p2y)]), np.array([max(p1x, p2x), max(p1y, p2y)])</code></pre>
-</details>
-</dd>
-<dt id="knee.postprocessing.rect_overlap"><code class="name flex">
-<span>def <span class="ident">rect_overlap</span></span>(<span>amin: numpy.ndarray, amax: numpy.ndarray, bmin: numpy.ndarray, bmax: numpy.ndarray) ‑> float</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Computes the percentage of the overlap for two rectangles.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>amin</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>the low point in rectangle A</dd>
-<dt><strong><code>amax</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>the high point in rectangle A</dd>
-<dt><strong><code>bmin</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>the low point in rectangle B</dd>
-<dt><strong><code>bmax</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>the high point in rectangle B</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>float</code></dt>
-<dd>percentage of the overlap of two rectangles</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -&gt; float:
-    &#34;&#34;&#34;
-    Computes the percentage of the overlap for two rectangles.
-
-    Args:
-        amin (np.ndarray): the low point in rectangle A
-        amax (np.ndarray): the high point in rectangle A
-        bmin (np.ndarray): the low point in rectangle B
-        bmax (np.ndarray): the high point in rectangle B
-
-    Returns:
-        float: percentage of the overlap of two rectangles
-    &#34;&#34;&#34;
-    #logger.info(&#39;%s %s %s %s&#39;, amin, amax, bmin, bmax)
-    dx = max(0.0, min(amax[0], bmax[0]) - max(amin[0], bmin[0]))
-    dy = max(0.0, min(amax[1], bmax[1]) - max(amin[1], bmin[1]))
-    #logger.info(&#39;dx %s dy %s&#39;, dx, dy)
-    overlap = dx * dy
-    #logger.info(&#39;overlap = %s&#39;, overlap)
-    if overlap &gt; 0.0:
-        a = np.abs(amax-amin)
-        b = np.abs(bmax-bmin)
-        total_area = a[0]*a[1] + b[0]*b[1] - overlap
-        #print(f&#39;overlap area = {overlap} total area =  {total_area}&#39;)
-        return overlap / total_area
-    else:
-        return 0.0</code></pre>
-</details>
-</dd>
 </dl>
 </section>
 <section>
@@ -950,8 +889,6 @@ The detection method relies on a three point rectangle fitting and overlap.</p>
 <li><code><a title="knee.postprocessing.filter_clustring" href="#knee.postprocessing.filter_clustring">filter_clustring</a></code></li>
 <li><code><a title="knee.postprocessing.filter_corner_knees" href="#knee.postprocessing.filter_corner_knees">filter_corner_knees</a></code></li>
 <li><code><a title="knee.postprocessing.filter_worst_knees" href="#knee.postprocessing.filter_worst_knees">filter_worst_knees</a></code></li>
-<li><code><a title="knee.postprocessing.rect" href="#knee.postprocessing.rect">rect</a></code></li>
-<li><code><a title="knee.postprocessing.rect_overlap" href="#knee.postprocessing.rect_overlap">rect_overlap</a></code></li>
 </ul>
 </li>
 </ul>
