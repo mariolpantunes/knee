@@ -67,7 +67,7 @@ def main(args):
 
     logger.info(f'RMSE(knees)  RMSE(exp)  MCC')
     logger.info(f'-------------------------------------------')
-    logger.info(f'{rmspe_k:10.2E} {rmspe_e:10.2E} {mcc:10.2E}')
+    logger.info(f'{rmspe_k:10.2E} {rmspe_e:10.2E}  {mcc:10.2E}')
 
     # store outpout
     if args.o:
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', type=float, help='corner threshold', default=0.33)
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     parser.add_argument('-g', help='display output (debug)', action='store_true')
-    parser.add_argument('-k', help='Knee ranking method', type=knee_ranking.ClusterRanking, choices=list(knee_ranking.ClusterRanking), default='corner')
+    parser.add_argument('-k', help='Knee ranking method', type=knee_ranking.ClusterRanking, choices=list(knee_ranking.ClusterRanking), default='left')
     args = parser.parse_args()
     
     main(args)

@@ -138,14 +138,19 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                     rankings = np.zeros(len(current_cluster))
                     logger.info(f'CHR {rankings}')
                     if len(hull_within_cluster) > 1:
+                        #length = x[b+1] - x[a-1]
                         for cluster_idx in range(len(current_cluster)):
                             j = current_cluster[cluster_idx]
                             if j in hull_within_cluster:
+                                #left_length = x[j] - x[a-1]
+                                #right_length = x[b+1] - x[j]
+                                
                                 coef_left = lf.linear_fit(x[a-1:j+1], y[a-1:j+1])
                                 coef_right = lf.linear_fit(x[j:b+2], y[j:b+2])
                                 r_left = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_left)
                                 r_rigth = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_right)
                                 current_error = r_left + r_rigth
+                                #current_error = (r_left * left_length + r_rigth * right_length)/length
                                 rankings[cluster_idx] = current_error
                             else:
                                 rankings[cluster_idx] = -1.0
@@ -157,17 +162,22 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                         for cluster_idx in range(len(current_cluster)):
                             j = current_cluster[cluster_idx]
                             if j in hull_within_cluster:
-                                rankings[cluster_idx] = 1.0 
+                                rankings[cluster_idx] = 1.0
+                    else:
+                        rankings = None
                 else:
                     rankings = kr.smooth_ranking(points, current_cluster, method)
 
                 # Compute relative ranking
-                rankings = kr.rank(rankings)
-                logger.info(f'Rankings {rankings}')
-                # Min Max normalization
-                #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
-                idx = np.argmax(rankings)
-                best_knee = knees[clusters == i][idx]
+                if rankings is None:
+                    best_knee = None
+                else:
+                    rankings = kr.rank(rankings)
+                    logger.info(f'Rankings {rankings}')
+                    # Min Max normalization
+                    #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
+                    idx = np.argmax(rankings)
+                    best_knee = knees[clusters == i][idx]
             else:
                 if method is kr.ClusterRanking.hull:
                     best_knee = None
