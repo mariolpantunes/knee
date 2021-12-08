@@ -180,7 +180,11 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                     best_knee = knees[clusters == i][idx]
             else:
                 if method is kr.ClusterRanking.hull:
-                    best_knee = None
+                    knee = knees[clusters == i][0]
+                    if knee in hull:
+                        best_knee = knee
+                    else:
+                        best_knee = None
                 else:
                     best_knee = knees[clusters == i][0]
             

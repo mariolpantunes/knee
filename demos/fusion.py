@@ -48,9 +48,13 @@ def main(args):
 
     points_reduced, points_removed = rdp.rdp(points, args.r)
     knees = np.arange(1, len(points_reduced))
+    logger.info(f'Knees = {knees}')
     t_k = pp.filter_worst_knees(points_reduced, knees)
+    logger.info(f'Knees(W) = {t_k}')
     t_k = pp.filter_corner_knees(points_reduced, t_k, t=args.c)
+    logger.info(f'Knees(C) = {t_k}')
     filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, args.k)
+    logger.info(f'Knees(F) = {filtered_knees}')
     
     ##########################################################################################
     

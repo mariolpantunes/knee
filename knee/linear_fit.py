@@ -66,14 +66,14 @@ def linear_fit(x: np.ndarray, y: np.ndarray) -> tuple:
 
 
 def linear_transform(x: np.ndarray, coef: tuple) -> np.ndarray:
-    """Computes the (x,y) points for an x array and the given coefficients.
+    """Computes the y values for an x array and the given coefficients.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        tuple: (b, m)
+        np.ndarray: the corresponding y values
     """
     b, m = coef
     y_hat = x * m + b
@@ -125,12 +125,11 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) ->
     return rv
 
 
-def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps:float=1e-16)->float:
+def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple)->float:
     """
     """
     y_hat = linear_transform(x, coef)
-    #EPSILON =  1e-10 # Yes, Python is awesome and supports scientific notation!
-    rv = (np.sqrt(np.mean(np.square((y - y_hat) / (y + eps))))) * 100.0
+    rv = np.sqrt(np.mean(np.square((y - y_hat) / y))) 
     return rv
 
 

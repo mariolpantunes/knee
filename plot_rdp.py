@@ -11,10 +11,9 @@ import logging
 import argparse
 import numpy as np
 
-
-import matplotlib.pyplot as plt
 import knee.rdp as rdp
 import knee.convex_hull as ch
+import matplotlib.pyplot as plt
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -80,8 +79,8 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-s', type=ConvexHullSource, choices=list(ConvexHullSource), default='raw')
-    parser.add_argument('-c', type=ConvexHull, choices=list(ConvexHull), default='hull')
+    parser.add_argument('-s', type=ConvexHullSource, choices=list(ConvexHullSource), default='rdp')
+    parser.add_argument('-c', type=ConvexHull, choices=list(ConvexHull), default='lower')
     parser.add_argument('-r', type=float, help='RDP R2', default=0.99)
     args = parser.parse_args()
     

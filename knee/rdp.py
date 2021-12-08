@@ -7,8 +7,12 @@ __status__ = 'Development'
 
 
 import logging
+import math
 import numpy as np
 import knee.linear_fit as lf
+
+
+import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger(__name__)
@@ -94,6 +98,35 @@ def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray
     return np.array(rv)
 
 
+def point_distance(start: np.ndarray, end: np.ndarray):
+    """
+    """
+    return math.sqrt(start[0]-end[0] + start[1] - end[1])
+
+"""
+def distance_point_line(pt: np.ndarray, start: np.ndarray, end: np.ndarray):
+    #First, we need the length of the line segment.
+    lineLength = point_distance(start, end)
+
+    # if it's 0, the line is actually just a point.
+    #if lineLength == 0:
+    #    return point_distance(pt, start)
+	
+	t = ((p.x-i.x)*(j.x-i.x)+(p.y-i.y)*(j.y-i.y))/lineLength; 
+
+	//t is very important. t is a number that essentially compares the individual coordinates
+	//distances between the point and each point on the line.
+
+	if(t<0){	//if t is less than 0, the point is behind i, and closest to i.
+		return pointDistance(p,i);
+	}	//if greater than 1, it's closest to j.
+	if(t>1){
+		return pointDistance(p,j);
+	}
+	return pointDistance(p, { x: i.x+t*(j.x-i.x),y: i.y+t*(j.y-i.y)});
+	//this figure represents the point on the line that p is closest to.
+"""
+
 def rdp(points: np.ndarray, r: float = 0.9) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
@@ -115,9 +148,25 @@ def rdp(points: np.ndarray, r: float = 0.9) -> tuple:
         determination = 1.0
     else:
         coef = lf.linear_fit_points(points)
-        determination = lf.linear_r2_points(points, coef)
+        #determination = lf.rmspe(x, y, coef)
+        
+        x = points[:, 0]
+        y = points[:, 1]
+        coef = np.polyfit(x,y,deg=1)
+        f = np.poly1d(coef)
+        y_hat = f(x)
+        determination = np.sqrt(np.mean(np.square((y - y_hat) / y)))
 
-    if determination < r:
+        #determination = lf.linear_r2_points(points, coef)
+    
+       
+        #plt.plot(x, y)
+        #plt.plot(x, y_hat)
+        logger.info(f'Determination = {determination}')
+        #plt.show()
+
+    #if determination < r:
+    if determination >= r:
         d = perpendicular_distance_points(points, points[0], points[-1])
         index = np.argmax(d)
 
