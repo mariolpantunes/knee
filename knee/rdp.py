@@ -127,7 +127,49 @@ def distance_point_line(pt: np.ndarray, start: np.ndarray, end: np.ndarray):
 	//this figure represents the point on the line that p is closest to.
 """
 
-def rdp(points: np.ndarray, r: float = 0.9) -> tuple:
+def rdp(points: np.ndarray, t: float = 0.01) -> tuple:
+
+    stack = [(0, len(points))]
+
+    points_removed = []
+    reduced = []
+
+    while stack:
+        left, right = stack.pop()
+        pt = points[left:right]
+
+        if len(pt) <= 2:
+            r = 0.0
+        else:
+            coef = lf.linear_fit_points(pt)
+            x = pt[:, 0]
+            y = pt[:, 1]
+            r = lf.rmspe(x, y, coef)
+        
+        if r >= t:
+            d = perpendicular_distance_points(pt, pt[0], pt[-1])
+            index = np.argmax(d)
+            stack.append((index, len(pt)))
+            stack.append((0, index+1))
+            
+
+            #left, left_points = rdp(points[0:index+1], r)
+            #right, right_points = rdp(points[index:len(points)], r)
+            #points_removed = np.concatenate((left_points, right_points), axis=0)
+            #reduced.extend
+            #return np.concatenate((left[0:len(left)-1], right)), points_removed
+        else:
+            #rv = np.empty([2, 2])
+            #rv[0] = points[0]
+            #rv[1] = points[-1]
+            reduced.append(left)
+            #reduced.append(right-1)
+            points_removed.append([left, len(pt) - 2.0])
+    reduced.append(len(points)-1)
+    return np.array(reduced), np.array(points_removed)
+
+
+def rdp2(points: np.ndarray, r: float = 0.01) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -145,7 +187,7 @@ def rdp(points: np.ndarray, r: float = 0.9) -> tuple:
     """
 
     if len(points) <= 2:
-        determination = 1.0
+        determination = 0.0
     else:
         coef = lf.linear_fit_points(points)
         #determination = lf.rmspe(x, y, coef)
@@ -162,7 +204,7 @@ def rdp(points: np.ndarray, r: float = 0.9) -> tuple:
        
         #plt.plot(x, y)
         #plt.plot(x, y_hat)
-        logger.info(f'Determination = {determination}')
+        #logger.info(f'Determination = {determination}')
         #plt.show()
 
     #if determination < r:
@@ -170,8 +212,8 @@ def rdp(points: np.ndarray, r: float = 0.9) -> tuple:
         d = perpendicular_distance_points(points, points[0], points[-1])
         index = np.argmax(d)
 
-        left, left_points = rdp(points[0:index+1], r)
-        right, right_points = rdp(points[index:len(points)], r)
+        left, left_points = rdp2(points[0:index+1], r)
+        right, right_points = rdp2(points[index:len(points)], r)
         points_removed = np.concatenate((left_points, right_points), axis=0)
         return np.concatenate((left[0:len(left)-1], right)), points_removed
     else:

@@ -13,13 +13,15 @@ class TestPostProcessing(unittest.TestCase):
         desired = np.array([1,3])
         np.testing.assert_array_equal(result, desired)
     
-    def test_add_even_points_0(self):
+    """def test_add_even_points_0(self):
         points = np.array([[0, 6], [1, 5], [2, 4], [3, 1], [4, 2], [5, 2], [6, 2], [7, 3], [8, 3], [9, 2], [10, 1], [11, 1/4], [12, 0]])
         knees = np.array([1,2])
 
-        points_reduced, removed = rdp.rdp(points)
+        reduced, removed = rdp.rdp(points)
 
-        result = pp.add_points_even(points, points_reduced, knees, removed,  extremes=False)
+        print(f"{reduced} {removed}")
+
+        result = pp.add_points_even(points, reduced, knees, removed,  extremes=False)
         desired = np.array([1,2,3,10,11,12])
         np.testing.assert_array_equal(result, desired)
     
@@ -31,4 +33,4 @@ class TestPostProcessing(unittest.TestCase):
 
         result = pp.add_points_even(points, points_reduced, knees, removed,  extremes=True)
         desired = np.array([0,1,2,3,10,11,12])
-        np.testing.assert_array_equal(result, desired)
+        np.testing.assert_array_equal(result, desired)"""

@@ -125,11 +125,11 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) ->
     return rv
 
 
-def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple)->float:
+def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps=1e-16)->float:
     """
     """
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((y - y_hat) / y))) 
+    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps)))) 
     return rv
 
 
