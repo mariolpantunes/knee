@@ -65,7 +65,7 @@ def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.nda
     return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))
 
 
-def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray) -> np.ndarray:
+def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorted:bool=True) -> np.ndarray:
     """
     Computes the reverse of the RDP method.
 
@@ -75,22 +75,27 @@ def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray
 
     Args:
         indexes (np.ndarray): the indexes in the reduced space
-        points_reduced (np.ndarray): the points that form the reduced space
+        reduced (np.ndarray): the points that form the reduced space
         removed (np.ndarray): the points that were removed
+        sorted (bool): True if the removed array is already sorted
 
     Returns:
         np.ndarray: the indexes in the original space
     """
+
+    if not sorted:
+        sorted_removed = removed[np.argsort(removed[:, 0])]
+    else:
+        sorted_removed = removed
+
     rv = []
     j = 0
     count = 0
 
     for i in indexes:
-        value = points_reduced[i][0]
-        #j = 0
-        #idx = i
-        while j < len(removed) and removed[j][0] < value:
-            count += removed[j][1]
+        value = reduced[i]
+        while j < len(sorted_removed) and sorted_removed[j][0] < value:
+            count += sorted_removed[j][1]
             j += 1
         idx = i + count
         rv.append(int(idx))
@@ -128,11 +133,11 @@ def distance_point_line(pt: np.ndarray, start: np.ndarray, end: np.ndarray):
 """
 
 def rdp(points: np.ndarray, t: float = 0.01) -> tuple:
-
+    # Stack strucuture for the recursion
     stack = [(0, len(points))]
 
-    points_removed = []
     reduced = []
+    removed = []
 
     while stack:
         left, right = stack.pop()
@@ -149,27 +154,17 @@ def rdp(points: np.ndarray, t: float = 0.01) -> tuple:
         if r >= t:
             d = perpendicular_distance_points(pt, pt[0], pt[-1])
             index = np.argmax(d)
-            stack.append((index, len(pt)))
-            stack.append((0, index+1))
-            
-
-            #left, left_points = rdp(points[0:index+1], r)
-            #right, right_points = rdp(points[index:len(points)], r)
-            #points_removed = np.concatenate((left_points, right_points), axis=0)
-            #reduced.extend
-            #return np.concatenate((left[0:len(left)-1], right)), points_removed
+            stack.append((left+index, left+len(pt)))
+            stack.append((left, left+index+1))
         else:
-            #rv = np.empty([2, 2])
-            #rv[0] = points[0]
-            #rv[1] = points[-1]
             reduced.append(left)
-            #reduced.append(right-1)
-            points_removed.append([left, len(pt) - 2.0])
+            removed.append([left, len(pt) - 2.0])
+    
     reduced.append(len(points)-1)
-    return np.array(reduced), np.array(points_removed)
+    return np.array(reduced), np.array(removed)
 
 
-def rdp2(points: np.ndarray, r: float = 0.01) -> tuple:
+def rdp2(points: np.ndarray, r: float = 0.05) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
