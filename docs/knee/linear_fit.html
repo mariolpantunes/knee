@@ -95,14 +95,14 @@ def linear_fit(x: np.ndarray, y: np.ndarray) -&gt; tuple:
 
 
 def linear_transform(x: np.ndarray, coef: tuple) -&gt; np.ndarray:
-    &#34;&#34;&#34;Computes the (x,y) points for an x array and the given coefficients.
+    &#34;&#34;&#34;Computes the y values for an x array and the given coefficients.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        tuple: (b, m)
+        np.ndarray: the corresponding y values
     &#34;&#34;&#34;
     b, m = coef
     y_hat = x * m + b
@@ -154,12 +154,19 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&
     return rv
 
 
-def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps:float=1e-16)-&gt;float:
+def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps=1e-16)-&gt;float:
     &#34;&#34;&#34;
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    #EPSILON =  1e-10 # Yes, Python is awesome and supports scientific notation!
-    rv = (np.sqrt(np.mean(np.square((y - y_hat) / (y + eps))))) * 100.0
+    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps)))) 
+    return rv
+
+
+def rmse(x: np.ndarray, y: np.ndarray, coef: tuple)-&gt;float:
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+    y_hat = linear_transform(x, coef)
+    rv = np.sqrt(np.mean(np.square(y - y_hat))) 
     return rv
 
 
@@ -449,7 +456,7 @@ first and last points in a curve.</p>
 <span>def <span class="ident">linear_transform</span></span>(<span>x: numpy.ndarray, coef: tuple) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Computes the (x,y) points for an x array and the given coefficients.</p>
+<div class="desc"><p>Computes the y values for an x array and the given coefficients.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>x</code></strong> :&ensp;<code>np.ndarray</code></dt>
@@ -459,22 +466,22 @@ first and last points in a curve.</p>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>tuple</code></dt>
-<dd>(b, m)</dd>
+<dt><code>np.ndarray</code></dt>
+<dd>the corresponding y values</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def linear_transform(x: np.ndarray, coef: tuple) -&gt; np.ndarray:
-    &#34;&#34;&#34;Computes the (x,y) points for an x array and the given coefficients.
+    &#34;&#34;&#34;Computes the y values for an x array and the given coefficients.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        tuple: (b, m)
+        np.ndarray: the corresponding y values
     &#34;&#34;&#34;
     b, m = coef
     y_hat = x * m + b
@@ -571,8 +578,8 @@ and computes the corresponding R2.</p>
         return r2(x, y, r2)</code></pre>
 </details>
 </dd>
-<dt id="knee.linear_fit.rmspe"><code class="name flex">
-<span>def <span class="ident">rmspe</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple, eps: float = 1e-16) ‑> float</span>
+<dt id="knee.linear_fit.rmse"><code class="name flex">
+<span>def <span class="ident">rmse</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -580,12 +587,28 @@ and computes the corresponding R2.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps:float=1e-16)-&gt;float:
+<pre><code class="python">def rmse(x: np.ndarray, y: np.ndarray, coef: tuple)-&gt;float:
     &#34;&#34;&#34;
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    #EPSILON =  1e-10 # Yes, Python is awesome and supports scientific notation!
-    rv = (np.sqrt(np.mean(np.square((y - y_hat) / (y + eps))))) * 100.0
+    rv = np.sqrt(np.mean(np.square(y - y_hat))) 
+    return rv</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.rmspe"><code class="name flex">
+<span>def <span class="ident">rmspe</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple, eps=1e-16) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps=1e-16)-&gt;float:
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+    y_hat = linear_transform(x, coef)
+    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps)))) 
     return rv</code></pre>
 </details>
 </dd>
@@ -654,6 +677,7 @@ and computes the corresponding R2.</p>
 <li><code><a title="knee.linear_fit.linear_transform" href="#knee.linear_fit.linear_transform">linear_transform</a></code></li>
 <li><code><a title="knee.linear_fit.r2" href="#knee.linear_fit.r2">r2</a></code></li>
 <li><code><a title="knee.linear_fit.r2_points" href="#knee.linear_fit.r2_points">r2_points</a></code></li>
+<li><code><a title="knee.linear_fit.rmse" href="#knee.linear_fit.rmse">rmse</a></code></li>
 <li><code><a title="knee.linear_fit.rmspe" href="#knee.linear_fit.rmspe">rmspe</a></code></li>
 </ul>
 </li>

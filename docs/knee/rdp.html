@@ -36,8 +36,12 @@ __status__ = &#39;Development&#39;
 
 
 import logging
+import math
 import numpy as np
 import knee.linear_fit as lf
+
+
+import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger(__name__)
@@ -90,7 +94,7 @@ def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.nda
     return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))
 
 
-def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray) -&gt; np.ndarray:
+def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorted:bool=True) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Computes the reverse of the RDP method.
 
@@ -100,22 +104,27 @@ def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray
 
     Args:
         indexes (np.ndarray): the indexes in the reduced space
-        points_reduced (np.ndarray): the points that form the reduced space
+        reduced (np.ndarray): the points that form the reduced space
         removed (np.ndarray): the points that were removed
+        sorted (bool): True if the removed array is already sorted
 
     Returns:
         np.ndarray: the indexes in the original space
     &#34;&#34;&#34;
+
+    if not sorted:
+        sorted_removed = removed[np.argsort(removed[:, 0])]
+    else:
+        sorted_removed = removed
+
     rv = []
     j = 0
     count = 0
 
     for i in indexes:
-        value = points_reduced[i][0]
-        #j = 0
-        #idx = i
-        while j &lt; len(removed) and removed[j][0] &lt; value:
-            count += removed[j][1]
+        value = reduced[i]
+        while j &lt; len(sorted_removed) and sorted_removed[j][0] &lt; value:
+            count += sorted_removed[j][1]
             j += 1
         idx = i + count
         rv.append(int(idx))
@@ -123,7 +132,68 @@ def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray
     return np.array(rv)
 
 
-def rdp(points: np.ndarray, r: float = 0.9) -&gt; tuple:
+def point_distance(start: np.ndarray, end: np.ndarray):
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+    return math.sqrt(start[0]-end[0] + start[1] - end[1])
+
+&#34;&#34;&#34;
+def distance_point_line(pt: np.ndarray, start: np.ndarray, end: np.ndarray):
+    #First, we need the length of the line segment.
+    lineLength = point_distance(start, end)
+
+    # if it&#39;s 0, the line is actually just a point.
+    #if lineLength == 0:
+    #    return point_distance(pt, start)
+        
+        t = ((p.x-i.x)*(j.x-i.x)+(p.y-i.y)*(j.y-i.y))/lineLength; 
+
+        //t is very important. t is a number that essentially compares the individual coordinates
+        //distances between the point and each point on the line.
+
+        if(t&lt;0){        //if t is less than 0, the point is behind i, and closest to i.
+                return pointDistance(p,i);
+        }       //if greater than 1, it&#39;s closest to j.
+        if(t&gt;1){
+                return pointDistance(p,j);
+        }
+        return pointDistance(p, { x: i.x+t*(j.x-i.x),y: i.y+t*(j.y-i.y)});
+        //this figure represents the point on the line that p is closest to.
+&#34;&#34;&#34;
+
+def rdp(points: np.ndarray, t: float = 0.01) -&gt; tuple:
+    # Stack strucuture for the recursion
+    stack = [(0, len(points))]
+
+    reduced = []
+    removed = []
+
+    while stack:
+        left, right = stack.pop()
+        pt = points[left:right]
+
+        if len(pt) &lt;= 2:
+            r = 0.0
+        else:
+            coef = lf.linear_fit_points(pt)
+            x = pt[:, 0]
+            y = pt[:, 1]
+            r = lf.rmspe(x, y, coef)
+        
+        if r &gt;= t:
+            d = perpendicular_distance_points(pt, pt[0], pt[-1])
+            index = np.argmax(d)
+            stack.append((left+index, left+len(pt)))
+            stack.append((left, left+index+1))
+        else:
+            reduced.append(left)
+            removed.append([left, len(pt) - 2.0])
+    
+    reduced.append(len(points)-1)
+    return np.array(reduced), np.array(removed)
+
+
+def rdp2(points: np.ndarray, r: float = 0.05) -&gt; tuple:
     &#34;&#34;&#34;
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -141,17 +211,33 @@ def rdp(points: np.ndarray, r: float = 0.9) -&gt; tuple:
     &#34;&#34;&#34;
 
     if len(points) &lt;= 2:
-        determination = 1.0
+        determination = 0.0
     else:
         coef = lf.linear_fit_points(points)
-        determination = lf.linear_r2_points(points, coef)
+        #determination = lf.rmspe(x, y, coef)
+        
+        x = points[:, 0]
+        y = points[:, 1]
+        coef = np.polyfit(x,y,deg=1)
+        f = np.poly1d(coef)
+        y_hat = f(x)
+        determination = np.sqrt(np.mean(np.square((y - y_hat) / y)))
 
-    if determination &lt; r:
+        #determination = lf.linear_r2_points(points, coef)
+    
+       
+        #plt.plot(x, y)
+        #plt.plot(x, y_hat)
+        #logger.info(f&#39;Determination = {determination}&#39;)
+        #plt.show()
+
+    #if determination &lt; r:
+    if determination &gt;= r:
         d = perpendicular_distance_points(points, points[0], points[-1])
         index = np.argmax(d)
 
-        left, left_points = rdp(points[0:index+1], r)
-        right, right_points = rdp(points[index:len(points)], r)
+        left, left_points = rdp2(points[0:index+1], r)
+        right, right_points = rdp2(points[index:len(points)], r)
         points_removed = np.concatenate((left_points, right_points), axis=0)
         return np.concatenate((left[0:len(left)-1], right)), points_removed
     else:
@@ -170,7 +256,7 @@ def rdp(points: np.ndarray, r: float = 0.9) -&gt; tuple:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.rdp.mapping"><code class="name flex">
-<span>def <span class="ident">mapping</span></span>(<span>indexes: numpy.ndarray, points_reduced: numpy.ndarray, removed: numpy.ndarray) ‑> numpy.ndarray</span>
+<span>def <span class="ident">mapping</span></span>(<span>indexes: numpy.ndarray, reduced: numpy.ndarray, removed: numpy.ndarray, sorted: bool = True) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the reverse of the RDP method.</p>
@@ -181,10 +267,12 @@ This method assumes the indexes are sorted in ascending order.</p>
 <dl>
 <dt><strong><code>indexes</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>the indexes in the reduced space</dd>
-<dt><strong><code>points_reduced</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dt><strong><code>reduced</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>the points that form the reduced space</dd>
 <dt><strong><code>removed</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>the points that were removed</dd>
+<dt><strong><code>sorted</code></strong> :&ensp;<code>bool</code></dt>
+<dd>True if the removed array is already sorted</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -195,7 +283,7 @@ This method assumes the indexes are sorted in ascending order.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mapping(indexes: np.ndarray, points_reduced: np.ndarray, removed: np.ndarray) -&gt; np.ndarray:
+<pre><code class="python">def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorted:bool=True) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Computes the reverse of the RDP method.
 
@@ -205,22 +293,27 @@ This method assumes the indexes are sorted in ascending order.</p>
 
     Args:
         indexes (np.ndarray): the indexes in the reduced space
-        points_reduced (np.ndarray): the points that form the reduced space
+        reduced (np.ndarray): the points that form the reduced space
         removed (np.ndarray): the points that were removed
+        sorted (bool): True if the removed array is already sorted
 
     Returns:
         np.ndarray: the indexes in the original space
     &#34;&#34;&#34;
+
+    if not sorted:
+        sorted_removed = removed[np.argsort(removed[:, 0])]
+    else:
+        sorted_removed = removed
+
     rv = []
     j = 0
     count = 0
 
     for i in indexes:
-        value = points_reduced[i][0]
-        #j = 0
-        #idx = i
-        while j &lt; len(removed) and removed[j][0] &lt; value:
-            count += removed[j][1]
+        value = reduced[i]
+        while j &lt; len(sorted_removed) and sorted_removed[j][0] &lt; value:
+            count += sorted_removed[j][1]
             j += 1
         idx = i + count
         rv.append(int(idx))
@@ -343,8 +436,64 @@ straight line defined by the left and right point.</p>
     return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))</code></pre>
 </details>
 </dd>
+<dt id="knee.rdp.point_distance"><code class="name flex">
+<span>def <span class="ident">point_distance</span></span>(<span>start: numpy.ndarray, end: numpy.ndarray)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def point_distance(start: np.ndarray, end: np.ndarray):
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+    return math.sqrt(start[0]-end[0] + start[1] - end[1])</code></pre>
+</details>
+</dd>
 <dt id="knee.rdp.rdp"><code class="name flex">
-<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, r: float = 0.9) ‑> tuple</span>
+<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, t: float = 0.01) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rdp(points: np.ndarray, t: float = 0.01) -&gt; tuple:
+    # Stack strucuture for the recursion
+    stack = [(0, len(points))]
+
+    reduced = []
+    removed = []
+
+    while stack:
+        left, right = stack.pop()
+        pt = points[left:right]
+
+        if len(pt) &lt;= 2:
+            r = 0.0
+        else:
+            coef = lf.linear_fit_points(pt)
+            x = pt[:, 0]
+            y = pt[:, 1]
+            r = lf.rmspe(x, y, coef)
+        
+        if r &gt;= t:
+            d = perpendicular_distance_points(pt, pt[0], pt[-1])
+            index = np.argmax(d)
+            stack.append((left+index, left+len(pt)))
+            stack.append((left, left+index+1))
+        else:
+            reduced.append(left)
+            removed.append([left, len(pt) - 2.0])
+    
+    reduced.append(len(points)-1)
+    return np.array(reduced), np.array(removed)</code></pre>
+</details>
+</dd>
+<dt id="knee.rdp.rdp2"><code class="name flex">
+<span>def <span class="ident">rdp2</span></span>(<span>points: numpy.ndarray, r: float = 0.05) ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Ramer–Douglas–Peucker (RDP) algorithm.</p>
@@ -367,7 +516,7 @@ a line segment.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rdp(points: np.ndarray, r: float = 0.9) -&gt; tuple:
+<pre><code class="python">def rdp2(points: np.ndarray, r: float = 0.05) -&gt; tuple:
     &#34;&#34;&#34;
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -385,17 +534,33 @@ a line segment.</p>
     &#34;&#34;&#34;
 
     if len(points) &lt;= 2:
-        determination = 1.0
+        determination = 0.0
     else:
         coef = lf.linear_fit_points(points)
-        determination = lf.linear_r2_points(points, coef)
+        #determination = lf.rmspe(x, y, coef)
+        
+        x = points[:, 0]
+        y = points[:, 1]
+        coef = np.polyfit(x,y,deg=1)
+        f = np.poly1d(coef)
+        y_hat = f(x)
+        determination = np.sqrt(np.mean(np.square((y - y_hat) / y)))
 
-    if determination &lt; r:
+        #determination = lf.linear_r2_points(points, coef)
+    
+       
+        #plt.plot(x, y)
+        #plt.plot(x, y_hat)
+        #logger.info(f&#39;Determination = {determination}&#39;)
+        #plt.show()
+
+    #if determination &lt; r:
+    if determination &gt;= r:
         d = perpendicular_distance_points(points, points[0], points[-1])
         index = np.argmax(d)
 
-        left, left_points = rdp(points[0:index+1], r)
-        right, right_points = rdp(points[index:len(points)], r)
+        left, left_points = rdp2(points[0:index+1], r)
+        right, right_points = rdp2(points[index:len(points)], r)
         points_removed = np.concatenate((left_points, right_points), axis=0)
         return np.concatenate((left[0:len(left)-1], right)), points_removed
     else:
@@ -428,7 +593,9 @@ a line segment.</p>
 <li><code><a title="knee.rdp.perpendicular_distance" href="#knee.rdp.perpendicular_distance">perpendicular_distance</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance_index" href="#knee.rdp.perpendicular_distance_index">perpendicular_distance_index</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance_points" href="#knee.rdp.perpendicular_distance_points">perpendicular_distance_points</a></code></li>
+<li><code><a title="knee.rdp.point_distance" href="#knee.rdp.point_distance">point_distance</a></code></li>
 <li><code><a title="knee.rdp.rdp" href="#knee.rdp.rdp">rdp</a></code></li>
+<li><code><a title="knee.rdp.rdp2" href="#knee.rdp.rdp2">rdp2</a></code></li>
 </ul>
 </li>
 </ul>
