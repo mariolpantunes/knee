@@ -133,6 +133,14 @@ def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps=1e-16)->float:
     return rv
 
 
+def rmse(x: np.ndarray, y: np.ndarray, coef: tuple)->float:
+    """
+    """
+    y_hat = linear_transform(x, coef)
+    rv = np.sqrt(np.mean(np.square(y - y_hat))) 
+    return rv
+
+
 def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
     """Computes the residual error of the linear fit.
 

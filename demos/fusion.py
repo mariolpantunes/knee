@@ -46,8 +46,9 @@ def main(args):
 
     ## Knee detection code ##
 
-    points_reduced, points_removed = rdp.rdp(points, args.r)
-    knees = np.arange(1, len(points_reduced))
+    reduced, removed = rdp.rdp(points, args.r)
+    points_reduced = points[reduced]
+    knees = np.arange(1, len(reduced))
     logger.info(f'Knees = {knees}')
     t_k = pp.filter_worst_knees(points_reduced, knees)
     logger.info(f'Knees(W) = {t_k}')
@@ -60,9 +61,9 @@ def main(args):
     
     # add even points
     if args.a:
-        knees = pp.add_points_even(points, points_reduced, filtered_knees, points_removed)
+        knees = pp.add_points_even(points, reduced, filtered_knees, removed)
     else:
-        knees = rdp.mapping(filtered_knees, points_reduced, points_removed)
+        knees = rdp.mapping(filtered_knees, reduced, removed)
 
     rmspe_k = evaluation.rmspe(points, knees, expected, evaluation.Strategy.knees)
     rmspe_e = evaluation.rmspe(points, knees, expected, evaluation.Strategy.expected)

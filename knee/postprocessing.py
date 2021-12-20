@@ -136,7 +136,7 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                     logger.info(f'Hull (W\C) {hull_within_cluster} ({len(hull_within_cluster)})')
                     # only consider clusters with at least a single hull point
                     rankings = np.zeros(len(current_cluster))
-                    logger.info(f'CHR {rankings}')
+                    
                     if len(hull_within_cluster) > 1:
                         #length = x[b+1] - x[a-1]
                         for cluster_idx in range(len(current_cluster)):
@@ -147,14 +147,17 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                                 
                                 coef_left = lf.linear_fit(x[a-1:j+1], y[a-1:j+1])
                                 coef_right = lf.linear_fit(x[j:b+2], y[j:b+2])
-                                r_left = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_left)
-                                r_rigth = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_right)
+                                #r_left = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_left)
+                                #r_rigth = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_right)
+                                r_left = lf.rmse(x[a-1:j+1], y[a-1:j+1], coef_left)
+                                r_rigth = lf.rmse(x[j:b+2], y[j:b+2], coef_right)
                                 current_error = r_left + r_rigth
                                 #current_error = (r_left * left_length + r_rigth * right_length)/length
                                 rankings[cluster_idx] = current_error
                             else:
                                 rankings[cluster_idx] = -1.0
                         # replace all -1 with maximum distance
+                        logger.info(f'CHR {rankings}')
                         rankings[rankings<0] = np.amax(rankings)
                         rankings = kr.distance_to_similarity(rankings)
                         logger.info(f'CHRF {rankings}')
