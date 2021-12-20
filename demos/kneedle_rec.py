@@ -9,10 +9,9 @@ __status__ = 'Development'
 
 import os
 import csv
+import logging
 import argparse
 import numpy as np
-import logging
-
 
 import knee.rdp as rdp
 import knee.kneedle as kneedle

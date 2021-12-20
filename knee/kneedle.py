@@ -207,8 +207,8 @@ def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p:
     else:
         cd = Direction.Decreasing
 
-    knees_1 = knees(points, sensitivity, t, cd, Concavity.Counterclockwise, p)
-    knees_2 = knees(points, sensitivity, t, cd, Concavity.Clockwise, p)
+    knees_1 = knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
+    knees_2 = knees(points, t, cd, Concavity.Clockwise, sensitivity, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))
     # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
