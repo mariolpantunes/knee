@@ -114,7 +114,7 @@ def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> i
         return idx
 
 
-def knees(points: np.ndarray, t: float, sensitivity: float, cd: Direction, cc: Concavity, p: PeakDetection) -> np.ndarray:
+def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle) -> np.ndarray:
     """Returns the index of the knees point based on the Kneedle method.
 
     This implementation uses an heuristic to automatically define
@@ -128,11 +128,11 @@ def knees(points: np.ndarray, t: float, sensitivity: float, cd: Direction, cc: C
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t (float): tau of the side window used to smooth the curve
-        sensitivity (float): controls the sensitivity of the peak detection
+        t (float): tau of the sliding window used to smooth the curve
         cd (Direction): direction of the concavity
         cc (Concavity): rotation of the concavity
-        p (PeakDetection): selects the peak detection method
+        sensitivity (float): controls the sensitivity of the peak detection (default 1.0)
+        p (PeakDetection): selects the peak detection method (default PeakDetection.Kneedle)
 
     Returns:
         np.ndarray: the indexes of the knee points
