@@ -47,7 +47,10 @@ def main(args):
     right = 0
     knees = []
     while right < len(points):
-        right = min(left+args.sw, len(points))
+        if args.sw == -1:
+            right = len(points)
+        else:
+            right = min(left+args.sw, len(points))
         logger.info(f'[{left}, {right}]')
         window_points = points[left:right+1]
         window_knees = kneedle.knees(window_points, args.t, args.cd, args.cc, args.s)
@@ -55,6 +58,7 @@ def main(args):
         left = left + args.so
         knees.extend(window_knees.tolist())
     knees = np.unique(np.array(knees))
+    #knees = np.array(knees)
         
     #t_k = pp.filter_worst_knees(points_reduced, knees)
     #t_k = pp.filter_corner_knees(points_reduced, t_k, t=args.c)
@@ -113,12 +117,10 @@ if __name__ == '__main__':
     parser.add_argument('-t', type=float, help='ema tau', default=1.0)
     parser.add_argument('-cc', help='Rotation of a concavity', type=kneedle.Concavity, choices=list(kneedle.Concavity), default='counter-clockwise')
     parser.add_argument('-cd', help='Direction of a concavity', type=kneedle.Direction, choices=list(kneedle.Concavity), default='decreasing')
-    parser.add_argument('-sw', help='Sliding window width', type=int, default=100)
-    parser.add_argument('-so', help='Sliding window overlap', type=int, default=25)
+    parser.add_argument('-sw', help='Sliding window width', type=int, default=1000)
+    parser.add_argument('-so', help='Sliding window overlap', type=int, default=250)
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     parser.add_argument('-g', help='display output (debug)', action='store_true')
     args = parser.parse_args()
-    
-    print(args)
 
     main(args)

@@ -49,13 +49,9 @@ def main(args):
     reduced, removed = rdp.rdp(points, args.r)
     points_reduced = points[reduced]
     knees = np.arange(1, len(reduced))
-    logger.info(f'Knees = {knees}')
     t_k = pp.filter_worst_knees(points_reduced, knees)
-    logger.info(f'Knees(W) = {t_k}')
     t_k = pp.filter_corner_knees(points_reduced, t_k, t=args.c)
-    logger.info(f'Knees(C) = {t_k}')
     filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, args.k)
-    logger.info(f'Knees(F) = {filtered_knees}')
     
     ##########################################################################################
     
@@ -99,12 +95,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-a', help='add even spaced points', action='store_true')
-    parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
+    parser.add_argument('-r', type=float, help='RDP reconstruction threshold', default=0.01)
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
     parser.add_argument('-c', type=float, help='corner threshold', default=0.33)
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     parser.add_argument('-g', help='display output (debug)', action='store_true')
-    parser.add_argument('-k', help='Knee ranking method', type=knee_ranking.ClusterRanking, choices=list(knee_ranking.ClusterRanking), default='left')
+    parser.add_argument('-k', help='Knee ranking method', type=knee_ranking.ClusterRanking, choices=list(knee_ranking.ClusterRanking), default='hull')
     args = parser.parse_args()
     
     main(args)
