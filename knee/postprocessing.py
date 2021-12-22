@@ -125,7 +125,6 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
             current_cluster = knees[clusters == i]
             logger.info(f'Cluster {i} with {len(current_cluster)} elements')
 
-
             if len(current_cluster) > 1:
                 if method is kr.ClusterRanking.hull:
                     # select the hull points that exist within the cluster
@@ -194,17 +193,17 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
             if best_knee is not None:
                 filtered_knees.append(best_knee)
                 # plot clusters within the points
-                plt.plot(x, y)
+                """plt.plot(x, y)
                 plt.plot(x[current_cluster], y[current_cluster], 'ro')
                 if method is kr.ClusterRanking.hull:
                     plt.plot(x[hull], y[hull], 'g+')
                 plt.plot(x[best_knee], y[best_knee], 'yx')
-                plt.show()
+                plt.show()"""
 
         return np.array(filtered_knees)
 
 
-def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05, extremes:bool=False) -> np.ndarray:
+def add_points_even(points: np.ndarray, reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05, extremes:bool=False) -> np.ndarray:
     """
     Add evenly spaced points between knees points.
 
@@ -216,7 +215,7 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        points_reduced (np.ndarray): numpy array with the points (x, y) (simplified by RDP)
+        reduced (np.ndarray): numpy array with the index of the reduced points (x, y) (simplified by RDP)
         knees (np.ndarray): knees indexes
         removed (np.ndarray): the points that were removed
         tx (float): the threshold (X-axis) for adding points (in percentage, default 0.05)
@@ -227,6 +226,8 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
         np.ndarray: the resulting knees (mapped into the complete set of points)
     """
     
+    points_reduced = points[reduced]
+
     # compute the delta x and y for the complete trace
     max_x, max_y = points.max(axis=0)
     min_x, min_y = points.min(axis=0)
@@ -249,7 +250,7 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
     
     # Map candidates into the complete set of points
     candidates = np.array(candidates)
-    candidates = rdp.mapping(candidates, points_reduced, removed)
+    candidates = rdp.mapping(candidates, reduced, removed)
 
     # new knees
     new_knees = []
@@ -271,7 +272,7 @@ def add_points_even(points: np.ndarray, points_reduced: np.ndarray, knees: np.nd
     #new_knees = filter_worst_knees(points, new_knees)
 
     # Map knees into the complete set of points
-    knees = rdp.mapping(knees, points_reduced, removed)
+    knees = rdp.mapping(knees, reduced, removed)
 
     # Add extremes points to the output
     if extremes:

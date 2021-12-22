@@ -57,7 +57,7 @@ def main(args):
     
     # add even points
     if args.a:
-        knees = pp.add_points_even(points, reduced, filtered_knees, points_removed, 0.009, 0.009)
+        knees = pp.add_points_even(points, reduced, filtered_knees, points_removed, 0.05, 0.05)
     else:
         knees = rdp.mapping(filtered_knees, reduced, points_removed)
 

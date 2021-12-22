@@ -504,6 +504,7 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01
     for px, _ in expected:
         distances = np.fabs(knees_points_x - px)/dx
         idx = np.argmin(distances)
+        #logger.info(f"{px} / {idx} / {distances[idx]} = {distances[idx] <= t}")
         if distances[idx] <= t and idx not in used_knees:
             tp += 1
             used_knees.append(idx)
@@ -511,7 +512,7 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01
             fn += 1 
     fp = max(len(knees) - tp,0)
     tn = len(points) - (tp+fp+fn)
-
+    
     return np.array([[tp, fp], [fn, tn]])
 
 
