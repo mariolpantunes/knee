@@ -114,7 +114,7 @@ def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> i
         return idx
 
 
-def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle) -> np.ndarray:
+def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle, debug:bool=False) -> np.ndarray:
     """Returns the index of the knees point based on the Kneedle method.
 
     This implementation uses an heuristic to automatically define
@@ -133,6 +133,7 @@ def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivit
         cc (Concavity): rotation of the concavity
         sensitivity (float): controls the sensitivity of the peak detection (default 1.0)
         p (PeakDetection): selects the peak detection method (default PeakDetection.Kneedle)
+        debug (bool): debug flag; when True the algorithm returns more information
 
     Returns:
         np.ndarray: the indexes of the knee points
@@ -156,6 +157,8 @@ def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivit
             y = Dd[i][1]
             y1 = Dd[i+1][1]
 
+            #logger.info(f'[{y0}, {y}, {y1}] = {y0 < y and y > y1}')
+
             if y0 < y and y > y1:
                 idx.append(i)
                 tlmx = y - sensitivity / (len(Dd) - 1)
@@ -176,7 +179,10 @@ def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivit
         peaks_idx = pd.all_peaks(Dd)
         knees = pd.significant_zscore_peaks(Dd, peaks_idx, sensitivity)
 
-    return knees
+    if debug is True:
+        return {'knees': knees, 'dd': Dd, 'peaks': pd.all_peaks(Dd)}
+    else:
+        return knees
 
 
 def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p: PeakDetection = PeakDetection.Kneedle) -> np.ndarray:

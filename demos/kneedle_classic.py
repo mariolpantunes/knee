@@ -53,7 +53,19 @@ def main(args):
             right = min(left+args.sw, len(points))
         logger.info(f'[{left}, {right}]')
         window_points = points[left:right+1]
-        window_knees = kneedle.knees(window_points, args.t, args.cd, args.cc, args.s)
+        if args.d:
+            window_knees = kneedle.knees(window_points, args.t, args.cd, args.cc, args.s, debug=True)
+            dd = window_knees['dd']
+            x = dd[:, 0]
+            y = dd[:, 1]
+            peaks = window_knees['peaks']
+            window_knees = window_knees['knees']
+            plt.plot(x, y)
+            plt.plot(x[peaks], y[peaks], 'ro')
+            plt.plot(x[window_knees], y[window_knees], 'yx')
+            plt.show()
+        else:
+            window_knees = kneedle.knees(window_points, args.t, args.cd, args.cc, args.s, debug=False)
         window_knees += left
         left = left + args.so
         knees.extend(window_knees.tolist())
@@ -121,6 +133,7 @@ if __name__ == '__main__':
     parser.add_argument('-so', help='Sliding window overlap', type=int, default=250)
     parser.add_argument('-o', help='store output (debug)', action='store_true')
     parser.add_argument('-g', help='display output (debug)', action='store_true')
+    parser.add_argument('-d', help='kneedle internal debug', action='store_true')
     args = parser.parse_args()
 
     main(args)
