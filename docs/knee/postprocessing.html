@@ -44,7 +44,6 @@ import knee.linear_fit as lf
 import knee.convex_hull as ch
 import knee.knee_ranking as kr
 
-import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
@@ -225,13 +224,13 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
             
             if best_knee is not None:
                 filtered_knees.append(best_knee)
-                # plot clusters within the points
+                &#34;&#34;&#34;# plot clusters within the points
                 plt.plot(x, y)
                 plt.plot(x[current_cluster], y[current_cluster], &#39;ro&#39;)
                 if method is kr.ClusterRanking.hull:
                     plt.plot(x[hull], y[hull], &#39;g+&#39;)
                 plt.plot(x[best_knee], y[best_knee], &#39;yx&#39;)
-                plt.show()
+                plt.show()&#34;&#34;&#34;
 
         return np.array(filtered_knees)
 
@@ -784,13 +783,13 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
             
             if best_knee is not None:
                 filtered_knees.append(best_knee)
-                # plot clusters within the points
+                &#34;&#34;&#34;# plot clusters within the points
                 plt.plot(x, y)
                 plt.plot(x[current_cluster], y[current_cluster], &#39;ro&#39;)
                 if method is kr.ClusterRanking.hull:
                     plt.plot(x[hull], y[hull], &#39;g+&#39;)
                 plt.plot(x[best_knee], y[best_knee], &#39;yx&#39;)
-                plt.show()
+                plt.show()&#34;&#34;&#34;
 
         return np.array(filtered_knees)</code></pre>
 </details>

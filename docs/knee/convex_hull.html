@@ -38,18 +38,44 @@ __status__ = &#39;Development&#39;
 import numpy as np
 
 
-def ccw(a, b, c) -&gt; float:
+def ccw(a:np.ndarray, b:np.ndarray, c:np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Check if three points make a counter-clockwise turn.
+
+    Args:
+        a (np.ndarray): numpy array with a single point (x, y)
+        b (np.ndarray): numpy array with a single point (x, y)
+        c (np.ndarray): numpy array with a single point (x, y)
+
+    Returns:
+        float: \\( \\gt 0\\) if counter-clockwise; \\( \\lt 0\\) if clockwise; \\( = 0\\) if collinear
+    &#34;&#34;&#34;
     return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])
 
 
 def sort_points(points:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Sort and array of points on their distance to the first point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the sorted points
+    &#34;&#34;&#34;
     p0 = points[0]
     return [p0] + sorted(points[1:], key=lambda p: (p0[1]-p[1])/(p0[0]-p[0]))
 
 
 def graham_scan(points:np.ndarray) -&gt; np.ndarray:
-    &#34;&#34;&#34;Takes an array of points to be scanned.
-    Returns an array of points that make up the convex hull surrounding the points passed in in point_array.
+    &#34;&#34;&#34;
+    Returns an array of indexes that make up the convex hull surrounding the points.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the indexes of the hull points
     &#34;&#34;&#34;
     # convex_hull is a stack of points beginning with the leftmost point.
     stack = []
@@ -67,6 +93,15 @@ def graham_scan(points:np.ndarray) -&gt; np.ndarray:
 
 
 def graham_scan_lower(points:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Returns an array of indexes that make up the lower convex hull.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the indexes of the hull points
+    &#34;&#34;&#34;
     #sorted_points = sort_points(points)
     # Add p0 and p1 to the stack
     stack = [0, 1]
@@ -84,6 +119,15 @@ def graham_scan_lower(points:np.ndarray) -&gt; np.ndarray:
 
 
 def graham_scan_upper(points:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Returns an array of indexes that make up the upper convex hull.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the indexes of the hull points
+    &#34;&#34;&#34;
     #sorted_points = sort_points(points)
     # Add p0 and p1 to the stack
     stack = [0, 1]
@@ -108,15 +152,40 @@ def graham_scan_upper(points:np.ndarray) -&gt; np.ndarray:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.convex_hull.ccw"><code class="name flex">
-<span>def <span class="ident">ccw</span></span>(<span>a, b, c) ‑> float</span>
+<span>def <span class="ident">ccw</span></span>(<span>a: numpy.ndarray, b: numpy.ndarray, c: numpy.ndarray) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Check if three points make a counter-clockwise turn.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>a</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with a single point (x, y)</dd>
+<dt><strong><code>b</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with a single point (x, y)</dd>
+<dt><strong><code>c</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with a single point (x, y)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd><span><span class="MathJax_Preview"> \gt 0</span><script type="math/tex"> \gt 0</script></span> if counter-clockwise; <span><span class="MathJax_Preview"> \lt 0</span><script type="math/tex"> \lt 0</script></span> if clockwise; <span><span class="MathJax_Preview"> = 0</span><script type="math/tex"> = 0</script></span> if collinear</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def ccw(a, b, c) -&gt; float:
+<pre><code class="python">def ccw(a:np.ndarray, b:np.ndarray, c:np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Check if three points make a counter-clockwise turn.
+
+    Args:
+        a (np.ndarray): numpy array with a single point (x, y)
+        b (np.ndarray): numpy array with a single point (x, y)
+        c (np.ndarray): numpy array with a single point (x, y)
+
+    Returns:
+        float: \\( \\gt 0\\) if counter-clockwise; \\( \\lt 0\\) if clockwise; \\( = 0\\) if collinear
+    &#34;&#34;&#34;
     return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])</code></pre>
 </details>
 </dd>
@@ -124,15 +193,30 @@ def graham_scan_upper(points:np.ndarray) -&gt; np.ndarray:
 <span>def <span class="ident">graham_scan</span></span>(<span>points: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Takes an array of points to be scanned.
-Returns an array of points that make up the convex hull surrounding the points passed in in point_array.</p></div>
+<div class="desc"><p>Returns an array of indexes that make up the convex hull surrounding the points.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the indexes of the hull points</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def graham_scan(points:np.ndarray) -&gt; np.ndarray:
-    &#34;&#34;&#34;Takes an array of points to be scanned.
-    Returns an array of points that make up the convex hull surrounding the points passed in in point_array.
+    &#34;&#34;&#34;
+    Returns an array of indexes that make up the convex hull surrounding the points.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the indexes of the hull points
     &#34;&#34;&#34;
     # convex_hull is a stack of points beginning with the leftmost point.
     stack = []
@@ -153,12 +237,31 @@ Returns an array of points that make up the convex hull surrounding the points p
 <span>def <span class="ident">graham_scan_lower</span></span>(<span>points: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Returns an array of indexes that make up the lower convex hull.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the indexes of the hull points</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def graham_scan_lower(points:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Returns an array of indexes that make up the lower convex hull.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the indexes of the hull points
+    &#34;&#34;&#34;
     #sorted_points = sort_points(points)
     # Add p0 and p1 to the stack
     stack = [0, 1]
@@ -179,12 +282,31 @@ Returns an array of points that make up the convex hull surrounding the points p
 <span>def <span class="ident">graham_scan_upper</span></span>(<span>points: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Returns an array of indexes that make up the upper convex hull.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the indexes of the hull points</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def graham_scan_upper(points:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Returns an array of indexes that make up the upper convex hull.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the indexes of the hull points
+    &#34;&#34;&#34;
     #sorted_points = sort_points(points)
     # Add p0 and p1 to the stack
     stack = [0, 1]
@@ -205,12 +327,31 @@ Returns an array of points that make up the convex hull surrounding the points p
 <span>def <span class="ident">sort_points</span></span>(<span>points: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Sort and array of points on their distance to the first point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the sorted points</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sort_points(points:np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Sort and array of points on their distance to the first point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the sorted points
+    &#34;&#34;&#34;
     p0 = points[0]
     return [p0] + sorted(points[1:], key=lambda p: (p0[1]-p[1])/(p0[0]-p[0]))</code></pre>
 </details>
