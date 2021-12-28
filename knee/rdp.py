@@ -174,14 +174,14 @@ def rdp(points: np.ndarray, t: float = 0.01) -> tuple:
         if len(pt) <= 2:
             r = 0.0
         else:
-            coef = lf.linear_fit(pt)
-            r = lf.rmspe(points, coef)
+            coef = lf.linear_fit_points(pt)
+            r = lf.rmspe_points(pt, coef)
 
         if r >= t:
-            d = perpendicular_distance_points(pt, pt[0], pt[-1])
-            logger.info(f'PDP = {np.argmax(d)}')
+            #d = perpendicular_distance_points(pt, pt[0], pt[-1])
+            #logger.info(f'PDP = {np.argmax(d)}')
             d = distance_point_line(pt, pt[0], pt[-1])
-            logger.info(f'SDP = {np.argmax(d)}')
+            #logger.info(f'SDP = {np.argmax(d)}')
             index = np.argmax(d)
             stack.append((left+index, left+len(pt)))
             stack.append((left, left+index+1))
