@@ -22,6 +22,11 @@ pdoc -c latex_math=True --html -o docs knee --force
 
 ## Instalation
 
+The library can be used by adding this line to the requirement.txt file:
+```txt
+git+git://github.com/mariolpantunes/knee@main#egg=knee
+```
+
 ## Runing the demos
 
 The demos can be execute as python modules using the following code:
@@ -29,33 +34,32 @@ The demos can be execute as python modules using the following code:
 ```bash
 python -m demos.curvature -i [trace]
 python -m demos.dfdt -i [trace]
-python -m demos.kneedle -i [trace]
+python -m demos.fusion -i [trace]
+python -m demos.kneedle_classic -i [trace]
 python -m demos.kneedle_rec -i [trace]
+python -m demos.kneedle -i [trace]
 python -m demos.lmethod -i [trace]
 python -m demos.menger -i [trace]
-python -m demos.rdp -i [trace]
-python -m demos.zscore -i [trace]
+python -m demos.zmethod -i [trace]
 ```
-Most demos have the same parameters (with the exception of zscore):
+Most demos have the same parameters (with the exception of zmethod and kneedle_classic):
 
 ```bash
-python -m demos.curvature -h
-usage: curvature.py [-h] -i I [-r R] [-c {single,complete,average}] [-t T] [-m {left,linear,right}] [-o] [-a | -b]
+python -m demos.curvature -husage: curvature.py [-h] -i I [-a] [-r R] [-t T] [-c C] [-o] [-g] [-k {left,linear,right,hull}]
 
 Multi Knee evaluation app
 
 optional arguments:
   -h, --help            show this help message and exit
   -i I                  input file
-  -r R                  RDP R2
-  -c {single,complete,average}
-                        clustering metric
+  -a                    add even spaced points
+  -r R                  RDP reconstruction threshold
   -t T                  clustering threshold
-  -m {left,linear,right}
-                        direction of the cluster ranking
+  -c C                  corner threshold
   -o                    store output (debug)
-  -a                    add even spaced points (rdp based)
-  -b                    add even spaced points (knee based)
+  -g                    display output (debug)
+  -k {left,linear,right,hull}
+                        Knee ranking method
 ```
 
 ![Python CI](https://github.com/mariolpantunes/knee/workflows/Python%20CI/badge.svg)

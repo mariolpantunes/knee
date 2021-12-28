@@ -90,8 +90,8 @@ class TestEvaluation(unittest.TestCase):
         knees = np.array([0,1,2])
         expected = np.array([[1,1], [2,2]])
         result = evaluation.rmspe(points, knees, expected, evaluation.Strategy.worst)
-        desired = 5773502691.896257
-        self.assertAlmostEqual(result, desired)
+        desired = 5773502691896258.0
+        self.assertAlmostEqual(result, desired, 3)
     
     def test_rmspe_2(self):
         points = np.array([[0,0], [1,1], [2,2]])
@@ -99,7 +99,7 @@ class TestEvaluation(unittest.TestCase):
         expected = np.array([[1,1], [2,2]])
         result = evaluation.rmspe(points, knees, expected)
         desired = 0.3535533905755961
-        self.assertAlmostEqual(result, desired)
+        self.assertAlmostEqual(result, desired, 3)
     
     def test_cm_0(self):
         points = np.array([[0,0], [1,1], [2,2]])
@@ -132,7 +132,7 @@ class TestEvaluation(unittest.TestCase):
         cm = evaluation.cm(points, knees, expected)
         result = evaluation.mcc(cm)
         desired = 0.5
-        self.assertAlmostEqual(result, desired)
+        self.assertAlmostEqual(result, desired, 3)
     
     def test_mcc_1(self):
         points = np.array([[0,0], [1,1], [2,2]])

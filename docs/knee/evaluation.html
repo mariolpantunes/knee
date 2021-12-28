@@ -472,8 +472,23 @@ def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strateg
     return math.sqrt(mse(points, knees, expected, s))
 
 
-def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps: float = 1e-10) -&gt; float:
+def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps: float = 1e-16) -&gt; float:
+    &#34;&#34;&#34;
+    Estimates the worst case Root Mean Squared Percentage Error (RMSPE) for the given knee and expected points.
 
+    Suppports different size arrays, and estimates the RMSPE based on the worst case.
+    It uses the euclidean distance to find the closer points, and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        s (Strategy): enum that controls the point matching (default Strategy.expected)
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: the worst case RMSPE
+    &#34;&#34;&#34;
     # get the knee points
     knee_points = points[knees]
 
@@ -1470,16 +1485,51 @@ and computes the error based on the closest point.</p>
 </details>
 </dd>
 <dt id="knee.evaluation.rmspe"><code class="name flex">
-<span>def <span class="ident">rmspe</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, s: <a title="knee.evaluation.Strategy" href="#knee.evaluation.Strategy">Strategy</a> = expected, eps: float = 1e-10) ‑> float</span>
+<span>def <span class="ident">rmspe</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, s: <a title="knee.evaluation.Strategy" href="#knee.evaluation.Strategy">Strategy</a> = expected, eps: float = 1e-16) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Estimates the worst case Root Mean Squared Percentage Error (RMSPE) for the given knee and expected points.</p>
+<p>Suppports different size arrays, and estimates the RMSPE based on the worst case.
+It uses the euclidean distance to find the closer points, and computes the error based on the closest point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>expected</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the expected knee points (x, y)</dd>
+<dt><strong><code>s</code></strong> :&ensp;<code><a title="knee.evaluation.Strategy" href="#knee.evaluation.Strategy">Strategy</a></code></dt>
+<dd>enum that controls the point matching (default Strategy.expected)</dd>
+<dt><strong><code>eps</code></strong> :&ensp;<code>float</code></dt>
+<dd>eps value to prevent division by zero (default: 1E-16)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the worst case RMSPE</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps: float = 1e-10) -&gt; float:
+<pre><code class="python">def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps: float = 1e-16) -&gt; float:
+    &#34;&#34;&#34;
+    Estimates the worst case Root Mean Squared Percentage Error (RMSPE) for the given knee and expected points.
 
+    Suppports different size arrays, and estimates the RMSPE based on the worst case.
+    It uses the euclidean distance to find the closer points, and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        s (Strategy): enum that controls the point matching (default Strategy.expected)
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: the worst case RMSPE
+    &#34;&#34;&#34;
     # get the knee points
     knee_points = points[knees]
 

@@ -272,7 +272,7 @@ def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
         float: residual error of the linear fit
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rss = np.sum((y-y_hat)**2)
+    rss = np.sum(np.square((y-y_hat)))
     return rss
 
 
@@ -337,7 +337,90 @@ def angle(coef1: tuple, coef2: tuple) -&gt; float:
     &#34;&#34;&#34;
     _, m1 = coef1
     _, m2 = coef2
-    return math.atan((m1-m2)/(1.0+m1*m2))</code></pre>
+    return math.atan((m1-m2)/(1.0+m1*m2))
+
+
+def shortest_distance_points(p: np.ndarray, a: np.ndarray, b: np.ndarray):
+    &#34;&#34;&#34;
+    Computes the shortest distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+
+    # TODO for you: consider implementing @Eskapp&#39;s suggestions
+    if np.all(a == b):
+        return np.linalg.norm(p - a, axis=1)
+
+    # normalized tangent vector
+    d = np.divide(b - a, np.linalg.norm(b - a))
+
+    # signed parallel distance components
+    s = np.dot(a - p, d)
+    t = np.dot(p - b, d)
+
+    # clamped parallel distance
+    h = np.maximum.reduce([s, t, np.zeros(len(p))])
+
+    # perpendicular distance component, as before
+    # note that for the 3D case these will be vectors
+    c = np.cross(p - a, d)
+
+    # use hypot for Pythagoras to improve accuracy
+    return np.hypot(h, c)
+
+
+def perpendicular_distance(points: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the first and last point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the perpendicular distances
+
+    &#34;&#34;&#34;
+    return perpendicular_distance_index(points, 0, len(points) - 1)
+
+
+def perpendicular_distance_index(points: np.ndarray, left: int, right: int) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        left (int): the index of the left point
+        right (int): the index of the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+    return left + perpendicular_distance_points(points[left:right+1], points[left], points[right])
+
+
+def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+    return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))</code></pre>
 </details>
 </section>
 <section>
@@ -601,7 +684,7 @@ first and last points in a curve.</p>
         float: residual error of the linear fit
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rss = np.sum((y-y_hat)**2)
+    rss = np.sum(np.square((y-y_hat)))
     return rss</code></pre>
 </details>
 </dd>
@@ -713,6 +796,121 @@ first and last points in a curve.</p>
     &#34;&#34;&#34;
     x = points[:, 0]
     return linear_transform(x, coef)</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.perpendicular_distance"><code class="name flex">
+<span>def <span class="ident">perpendicular_distance</span></span>(<span>points: numpy.ndarray) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the perpendicular distance from the points to the
+straight line defined by the first and last point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the perpendicular distances</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def perpendicular_distance(points: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the first and last point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the perpendicular distances
+
+    &#34;&#34;&#34;
+    return perpendicular_distance_index(points, 0, len(points) - 1)</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.perpendicular_distance_index"><code class="name flex">
+<span>def <span class="ident">perpendicular_distance_index</span></span>(<span>points: numpy.ndarray, left: int, right: int) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the perpendicular distance from the points to the
+straight line defined by the left and right point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>left</code></strong> :&ensp;<code>int</code></dt>
+<dd>the index of the left point</dd>
+<dt><strong><code>right</code></strong> :&ensp;<code>int</code></dt>
+<dd>the index of the right point</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the perpendicular distances</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def perpendicular_distance_index(points: np.ndarray, left: int, right: int) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        left (int): the index of the left point
+        right (int): the index of the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+    return left + perpendicular_distance_points(points[left:right+1], points[left], points[right])</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.perpendicular_distance_points"><code class="name flex">
+<span>def <span class="ident">perpendicular_distance_points</span></span>(<span>pt: numpy.ndarray, start: numpy.ndarray, end: numpy.ndarray) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the perpendicular distance from the points to the
+straight line defined by the left and right point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pt</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>start</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the left point</dd>
+<dt><strong><code>end</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the right point</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the perpendicular distances</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.ndarray) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+    return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.r2"><code class="name flex">
@@ -971,6 +1169,66 @@ and computes the corresponding R2.</p>
     return rmspe(x, y, coef, eps)</code></pre>
 </details>
 </dd>
+<dt id="knee.linear_fit.shortest_distance_points"><code class="name flex">
+<span>def <span class="ident">shortest_distance_points</span></span>(<span>p: numpy.ndarray, a: numpy.ndarray, b: numpy.ndarray)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the shortest distance from the points to the
+straight line defined by the left and right point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pt</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>start</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the left point</dd>
+<dt><strong><code>end</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the right point</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the perpendicular distances</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def shortest_distance_points(p: np.ndarray, a: np.ndarray, b: np.ndarray):
+    &#34;&#34;&#34;
+    Computes the shortest distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+
+    # TODO for you: consider implementing @Eskapp&#39;s suggestions
+    if np.all(a == b):
+        return np.linalg.norm(p - a, axis=1)
+
+    # normalized tangent vector
+    d = np.divide(b - a, np.linalg.norm(b - a))
+
+    # signed parallel distance components
+    s = np.dot(a - p, d)
+    t = np.dot(p - b, d)
+
+    # clamped parallel distance
+    h = np.maximum.reduce([s, t, np.zeros(len(p))])
+
+    # perpendicular distance component, as before
+    # note that for the 3D case these will be vectors
+    c = np.cross(p - a, d)
+
+    # use hypot for Pythagoras to improve accuracy
+    return np.hypot(h, c)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -1037,12 +1295,16 @@ and computes the corresponding R2.</p>
 <li><code><a title="knee.linear_fit.linear_residuals_points" href="#knee.linear_fit.linear_residuals_points">linear_residuals_points</a></code></li>
 <li><code><a title="knee.linear_fit.linear_transform" href="#knee.linear_fit.linear_transform">linear_transform</a></code></li>
 <li><code><a title="knee.linear_fit.linear_transform_points" href="#knee.linear_fit.linear_transform_points">linear_transform_points</a></code></li>
+<li><code><a title="knee.linear_fit.perpendicular_distance" href="#knee.linear_fit.perpendicular_distance">perpendicular_distance</a></code></li>
+<li><code><a title="knee.linear_fit.perpendicular_distance_index" href="#knee.linear_fit.perpendicular_distance_index">perpendicular_distance_index</a></code></li>
+<li><code><a title="knee.linear_fit.perpendicular_distance_points" href="#knee.linear_fit.perpendicular_distance_points">perpendicular_distance_points</a></code></li>
 <li><code><a title="knee.linear_fit.r2" href="#knee.linear_fit.r2">r2</a></code></li>
 <li><code><a title="knee.linear_fit.r2_points" href="#knee.linear_fit.r2_points">r2_points</a></code></li>
 <li><code><a title="knee.linear_fit.rmse" href="#knee.linear_fit.rmse">rmse</a></code></li>
 <li><code><a title="knee.linear_fit.rmse_points" href="#knee.linear_fit.rmse_points">rmse_points</a></code></li>
 <li><code><a title="knee.linear_fit.rmspe" href="#knee.linear_fit.rmspe">rmspe</a></code></li>
 <li><code><a title="knee.linear_fit.rmspe_points" href="#knee.linear_fit.rmspe_points">rmspe_points</a></code></li>
+<li><code><a title="knee.linear_fit.shortest_distance_points" href="#knee.linear_fit.shortest_distance_points">shortest_distance_points</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

@@ -243,7 +243,7 @@ def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
         float: residual error of the linear fit
     """
     y_hat = linear_transform(x, coef)
-    rss = np.sum((y-y_hat)**2)
+    rss = np.sum(np.square((y-y_hat)))
     return rss
 
 
@@ -309,3 +309,86 @@ def angle(coef1: tuple, coef2: tuple) -> float:
     _, m1 = coef1
     _, m2 = coef2
     return math.atan((m1-m2)/(1.0+m1*m2))
+
+
+def shortest_distance_points(p: np.ndarray, a: np.ndarray, b: np.ndarray):
+    """
+    Computes the shortest distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    """
+
+    # TODO for you: consider implementing @Eskapp's suggestions
+    if np.all(a == b):
+        return np.linalg.norm(p - a, axis=1)
+
+    # normalized tangent vector
+    d = np.divide(b - a, np.linalg.norm(b - a))
+
+    # signed parallel distance components
+    s = np.dot(a - p, d)
+    t = np.dot(p - b, d)
+
+    # clamped parallel distance
+    h = np.maximum.reduce([s, t, np.zeros(len(p))])
+
+    # perpendicular distance component, as before
+    # note that for the 3D case these will be vectors
+    c = np.cross(p - a, d)
+
+    # use hypot for Pythagoras to improve accuracy
+    return np.hypot(h, c)
+
+
+def perpendicular_distance(points: np.ndarray) -> np.ndarray:
+    """
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the first and last point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the perpendicular distances
+
+    """
+    return perpendicular_distance_index(points, 0, len(points) - 1)
+
+
+def perpendicular_distance_index(points: np.ndarray, left: int, right: int) -> np.ndarray:
+    """
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        left (int): the index of the left point
+        right (int): the index of the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    """
+    return left + perpendicular_distance_points(points[left:right+1], points[left], points[right])
+
+
+def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.ndarray) -> np.ndarray:
+    """
+    Computes the perpendicular distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    """
+    return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))

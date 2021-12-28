@@ -15,7 +15,6 @@ import knee.linear_fit as lf
 import knee.convex_hull as ch
 import knee.knee_ranking as kr
 
-import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
@@ -137,21 +136,25 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                     rankings = np.zeros(len(current_cluster))
                     
                     if len(hull_within_cluster) > 1:
-                        #length = x[b+1] - x[a-1]
+                        length = x[b+1] - x[a-1]
                         for cluster_idx in range(len(current_cluster)):
                             j = current_cluster[cluster_idx]
                             if j in hull_within_cluster:
-                                #left_length = x[j] - x[a-1]
-                                #right_length = x[b+1] - x[j]
+                                length_l = (x[j] - x[a-1])/length
+                                length_r = (x[b+1] - x[j])/length
+                                left = points[a-1:j+1]
+                                right = points[j:b+2]
+                                coef_l = lf.linear_fit_points(left)
+                                coef_r = lf.linear_fit_points(right)
+                                #r_l = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_l)
+                                #r_r = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_r)
+                                #r_l = lf.rmse_points(left, coef_l)
+                                #r_r = lf.rmse_points(right, coef_r)
                                 
-                                coef_left = lf.linear_fit(x[a-1:j+1], y[a-1:j+1])
-                                coef_right = lf.linear_fit(x[j:b+2], y[j:b+2])
-                                #r_left = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_left)
-                                #r_rigth = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_right)
-                                r_left = lf.rmse(x[a-1:j+1], y[a-1:j+1], coef_left)
-                                r_rigth = lf.rmse(x[j:b+2], y[j:b+2], coef_right)
-                                current_error = r_left + r_rigth
-                                #current_error = (r_left * left_length + r_rigth * right_length)/length
+                                r_l = np.sum(lf.shortest_distance_points(left, left[0], left[-1]))
+                                r_r = np.sum(lf.shortest_distance_points(right, right[0], right[-1]))
+                                
+                                current_error = r_l * length_l  + r_r * length_r
                                 rankings[cluster_idx] = current_error
                             else:
                                 rankings[cluster_idx] = -1.0
@@ -192,13 +195,13 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
             
             if best_knee is not None:
                 filtered_knees.append(best_knee)
-                # plot clusters within the points
+                """# plot clusters within the points
                 plt.plot(x, y)
                 plt.plot(x[current_cluster], y[current_cluster], 'ro')
                 if method is kr.ClusterRanking.hull:
                     plt.plot(x[hull], y[hull], 'g+')
                 plt.plot(x[best_knee], y[best_knee], 'yx')
-                plt.show()
+                plt.show()"""
 
         return np.array(filtered_knees)
 

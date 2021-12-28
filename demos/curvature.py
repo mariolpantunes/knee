@@ -9,20 +9,22 @@ __status__ = 'Development'
 
 import os
 import csv
+import logging
 import argparse
 import numpy as np
-import logging
+import matplotlib.pyplot as plt
 
 
 import knee.rdp as rdp
-import knee.curvature as curvature 
 import knee.postprocessing as pp
+import knee.curvature as curvature
 import knee.clustering as clustering
 import knee.evaluation as evaluation
-from knee.knee_ranking import ClusterRanking
+import knee.knee_ranking as knee_ranking
 
 
-logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.getLogger('matplotlib').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
@@ -44,20 +46,20 @@ def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
 
     ## Knee detection code ##
-
-    points_reduced, points_removed = rdp.rdp(points, args.r)
+    reduced, removed = rdp.rdp(points, args.r)
+    points_reduced = points[reduced]
     knees = curvature.multi_knee(points_reduced)
     t_k = pp.filter_worst_knees(points_reduced, knees)
     t_k = pp.filter_corner_knees(points_reduced, t_k, t=args.c)
-    filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, ClusterRanking.left)
+    filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, args.k)
     
     ##########################################################################################
     
     # add even points
     if args.a:
-        knees = pp.add_points_even(points, points_reduced, filtered_knees, points_removed)
+        knees = pp.add_points_even(points, reduced, filtered_knees, removed)
     else:
-        knees = rdp.mapping(filtered_knees, points_reduced, points_removed)
+        knees = rdp.mapping(filtered_knees, reduced, removed)
 
     rmspe_k = evaluation.rmspe(points, knees, expected, evaluation.Strategy.knees)
     rmspe_e = evaluation.rmspe(points, knees, expected, evaluation.Strategy.expected)
@@ -79,16 +81,26 @@ def main(args):
         with open(output, 'w') as f:
             writer = csv.writer(f)
             writer.writerows(dataset)
+    
+    # display result
+    if args.g:
+        x = points[:, 0]
+        y = points[:, 1]
+        plt.plot(x, y)
+        plt.plot(x[knees], y[knees], 'r+')
+        plt.show()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-a', help='add even spaced points', action='store_true')
-    parser.add_argument('-r', type=float, help='RDP R2', default=0.95)
+    parser.add_argument('-r', type=float, help='RDP reconstruction threshold', default=0.01)
     parser.add_argument('-t', type=float, help='clustering threshold', default=0.05)
     parser.add_argument('-c', type=float, help='corner threshold', default=0.33)
     parser.add_argument('-o', help='store output (debug)', action='store_true')
+    parser.add_argument('-g', help='display output (debug)', action='store_true')
+    parser.add_argument('-k', help='Knee ranking method', type=knee_ranking.ClusterRanking, choices=list(knee_ranking.ClusterRanking), default='hull')
     args = parser.parse_args()
     
     main(args)

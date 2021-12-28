@@ -443,8 +443,23 @@ def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strateg
     return math.sqrt(mse(points, knees, expected, s))
 
 
-def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps: float = 1e-10) -> float:
+def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps: float = 1e-16) -> float:
+    """
+    Estimates the worst case Root Mean Squared Percentage Error (RMSPE) for the given knee and expected points.
 
+    Suppports different size arrays, and estimates the RMSPE based on the worst case.
+    It uses the euclidean distance to find the closer points, and computes the error based on the closest point.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        expected (np.ndarray): numpy array with the expected knee points (x, y)
+        s (Strategy): enum that controls the point matching (default Strategy.expected)
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: the worst case RMSPE
+    """
     # get the knee points
     knee_points = points[knees]
 

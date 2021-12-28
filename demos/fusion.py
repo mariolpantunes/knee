@@ -45,7 +45,6 @@ def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
 
     ## Knee detection code ##
-
     reduced, removed = rdp.rdp(points, args.r)
     points_reduced = points[reduced]
     knees = np.arange(1, len(reduced))
