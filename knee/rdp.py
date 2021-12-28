@@ -109,7 +109,7 @@ def point_distance(start: np.ndarray, end: np.ndarray):
     return math.sqrt(np.sum(np.square(start-end)))
 
 
-def distance_point_line(points: np.ndarray, start: np.ndarray, end: np.ndarray):
+"""def distance_point_line(points: np.ndarray, start: np.ndarray, end: np.ndarray):
     # First, we need the length of the line segment.
     lineLength = point_distance(start, end)
 
@@ -134,7 +134,30 @@ def distance_point_line(points: np.ndarray, start: np.ndarray, end: np.ndarray):
 
     logger.info(f'Distances ({t}) = {np.array(distances)}')
 
-    return np.array(distances)
+    return np.array(distances)"""
+
+def distance_point_line(p: np.ndarray, a: np.ndarray, b: np.ndarray):
+    
+    # TODO for you: consider implementing @Eskapp's suggestions
+    if np.all(a == b):
+        return np.linalg.norm(p - a, axis=1)
+
+    # normalized tangent vector
+    d = np.divide(b - a, np.linalg.norm(b - a))
+
+    # signed parallel distance components
+    s = np.dot(a - p, d)
+    t = np.dot(p - b, d)
+
+    # clamped parallel distance
+    h = np.maximum.reduce([s, t, np.zeros(len(p))])
+
+    # perpendicular distance component, as before
+    # note that for the 3D case these will be vectors
+    c = np.cross(p - a, d)
+
+    # use hypot for Pythagoras to improve accuracy
+    return np.hypot(h, c)
 
 
 def rdp(points: np.ndarray, t: float = 0.01) -> tuple:
@@ -156,9 +179,9 @@ def rdp(points: np.ndarray, t: float = 0.01) -> tuple:
 
         if r >= t:
             d = perpendicular_distance_points(pt, pt[0], pt[-1])
-            #logger.info(f'PDP = {np.argmax(d)}')
-            #d = distance_point_line(pt, pt[0], pt[-1])
-            #logger.info(f'SDP = {np.argmax(d)}')
+            logger.info(f'PDP = {np.argmax(d)}')
+            d = distance_point_line(pt, pt[0], pt[-1])
+            logger.info(f'SDP = {np.argmax(d)}')
             index = np.argmax(d)
             stack.append((left+index, left+len(pt)))
             stack.append((left, left+index+1))
