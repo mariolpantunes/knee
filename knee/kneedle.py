@@ -148,35 +148,13 @@ def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivit
 
     knees = []
 
+    peaks_idx = pd.all_peaks(Dd)
+
     if p is PeakDetection.Kneedle:
-        idx = []
-        lmxThresholds = []
-        detectKneeForLastLmx = False
-        for i in range(1, len(Dd)-1):
-            y0 = Dd[i-1][1]
-            y = Dd[i][1]
-            y1 = Dd[i+1][1]
-
-            #logger.info(f'[{y0}, {y}, {y1}] = {y0 < y and y > y1}')
-
-            if y0 < y and y > y1:
-                idx.append(i)
-                tlmx = y - sensitivity / (len(Dd) - 1)
-                lmxThresholds.append(tlmx)
-                detectKneeForLastLmx = True
-
-            if detectKneeForLastLmx:
-                if y1 < lmxThresholds[-1]:
-                    knees.append(idx[-1])
-                    detectKneeForLastLmx = False
-        knees = np.array(knees)
-
+        knees = pd.kneedle_peak_detection(Dd, peaks_idx, sensitivity)
     elif p is PeakDetection.Significant:
-        peaks_idx = pd.all_peaks(Dd)
         knees = pd.significant_peaks(Dd, peaks_idx, sensitivity)
-
     elif p is PeakDetection.ZScore:
-        peaks_idx = pd.all_peaks(Dd)
         knees = pd.significant_zscore_peaks(Dd, peaks_idx, sensitivity)
 
     if debug is True:

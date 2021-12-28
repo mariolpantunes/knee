@@ -151,10 +151,8 @@ def rdp(points: np.ndarray, t: float = 0.01) -> tuple:
         if len(pt) <= 2:
             r = 0.0
         else:
-            coef = lf.linear_fit_points(pt)
-            x = pt[:, 0]
-            y = pt[:, 1]
-            r = lf.rmspe(x, y, coef)
+            coef = lf.linear_fit(pt)
+            r = lf.rmspe(points, coef)
 
         if r >= t:
             d = perpendicular_distance_points(pt, pt[0], pt[-1])

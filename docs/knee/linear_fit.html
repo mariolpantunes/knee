@@ -36,6 +36,7 @@ __status__ = &#39;Development&#39;
 
 
 import enum
+import math
 import logging
 import numpy as np
 
@@ -55,7 +56,8 @@ class R2(enum.Enum):
 
 
 def linear_fit_points(points: np.ndarray) -&gt; tuple:
-    &#34;&#34;&#34;Computes the linear fit for the points.
+    &#34;&#34;&#34;
+    Computes the linear fit for the points.
 
     This methods approximates the linear fit using only the
     first and last points in a curve.
@@ -72,7 +74,8 @@ def linear_fit_points(points: np.ndarray) -&gt; tuple:
 
 
 def linear_fit(x: np.ndarray, y: np.ndarray) -&gt; tuple:
-    &#34;&#34;&#34;Computes the linear fit for the points.
+    &#34;&#34;&#34;
+    Computes the linear fit for the points.
 
     This methods approximates the linear fit using only the
     first and last points in a curve.
@@ -90,12 +93,12 @@ def linear_fit(x: np.ndarray, y: np.ndarray) -&gt; tuple:
         b = y[0] - (m*x[0])
         return (b, m)
     else:
-        return (0,0)
-    
+        return (0, 0)
 
 
 def linear_transform(x: np.ndarray, coef: tuple) -&gt; np.ndarray:
-    &#34;&#34;&#34;Computes the y values for an x array and the given coefficients.
+    &#34;&#34;&#34;
+    Computes the y values for an x array and the given coefficients.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
@@ -110,7 +113,8 @@ def linear_transform(x: np.ndarray, coef: tuple) -&gt; np.ndarray:
 
 
 def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
-    &#34;&#34;&#34;Computes the coefficient of determination (R2).
+    &#34;&#34;&#34;
+    Computes the coefficient of determination (R2).
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
@@ -125,18 +129,21 @@ def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt;
     return linear_r2(x, y, coef, r2)
 
 
-def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
-    &#34;&#34;&#34;Computes the coefficient of determination (R2).
+def linear_r2(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the coefficient of determination (R2).
 
     Args:
-        x (np.ndarray): the value of the points in the x axis coordinates
-        y (np.ndarray): the value of the points in the y axis coordinates
+        points (np.ndarray): numpy array with the points (x, y)
         coef (tuple): the coefficients from the linear fit
         r2 (R2): select the type of coefficient of determination
 
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
+    x = points[:,0]
+    y = points[:,1]
+
     y_hat = linear_transform(x, coef)
     y_mean = np.mean(y)
     rss = np.sum((y-y_hat)**2)
@@ -154,33 +161,76 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&
     return rv
 
 
-def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps=1e-16)-&gt;float:
+def rmspe(points: np.ndarray, coef: tuple, eps:float=1e-16) -&gt; float:
     &#34;&#34;&#34;
+    Computes the Root Mean Squared Percentage Error (RMSPE).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
     &#34;&#34;&#34;
+    x = points[:,0]
+    y = points[:,1]
+
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps)))) 
+    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
     return rv
 
 
-def rmse(x: np.ndarray, y: np.ndarray, coef: tuple)-&gt;float:
+def rmse(points: np.ndarray, coef: tuple) -&gt; float:
     &#34;&#34;&#34;
+    Computes the Root Mean Squared Error (RMSE).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        float: Root Mean Squared Error (RMSE)
     &#34;&#34;&#34;
+    x = points[:,0]
+    y = points[:,1]
+
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square(y - y_hat))) 
+    rv = np.sqrt(np.mean(np.square(y - y_hat)))
     return rv
 
 
-def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
-    &#34;&#34;&#34;Computes the residual error of the linear fit.
+def angle(coef1: tuple, coef2: tuple) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the angle between two lines.
+
+    Args:
+        coef1 (tuple): the coefficients from the first line
+        coef2 (tuple): the coefficients from the second line
+
+    Returns:
+        float: the angle between two lines \\( \\left[0,\\frac{\\pi}{2} \\right] \\)
+    &#34;&#34;&#34;
+    _, m1 = coef1
+    _, m2 = coef2
+    return math.atan((m1-m2)/(1.0+m1*m2))
+
+
+def linear_residuals(points: np.ndarray, coef: tuple) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the residual error of the linear fit.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
         y (np.ndarray): the value of the points in the y axis coordinates
         coef (tuple): the coefficients from the linear fit
-        
+
     Returns:
         float: residual error of the linear fit
     &#34;&#34;&#34;
+    x = points[:,0]
+    y = points[:,1]
+
     y_hat = linear_transform(x, coef)
     rss = np.sum((y-y_hat)**2)
     return rss
@@ -223,11 +273,11 @@ def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -&gt; float:
         rv = 1.0
     else:
         rv = (np.corrcoef(x, y)[0, 1])**2.0
-    
+
     if t is R2.adjusted:
         rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
 
-    return rv </code></pre>
+    return rv</code></pre>
 </details>
 </section>
 <section>
@@ -237,6 +287,43 @@ def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -&gt; float:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="knee.linear_fit.angle"><code class="name flex">
+<span>def <span class="ident">angle</span></span>(<span>coef1: tuple, coef2: tuple) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the angle between two lines.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>coef1</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>the coefficients from the first line</dd>
+<dt><strong><code>coef2</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>the coefficients from the second line</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the angle between two lines <span><span class="MathJax_Preview"> \left[0,\frac{\pi}{2} \right] </span><script type="math/tex"> \left[0,\frac{\pi}{2} \right] </script></span></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def angle(coef1: tuple, coef2: tuple) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the angle between two lines.
+
+    Args:
+        coef1 (tuple): the coefficients from the first line
+        coef2 (tuple): the coefficients from the second line
+
+    Returns:
+        float: the angle between two lines \\( \\left[0,\\frac{\\pi}{2} \\right] \\)
+    &#34;&#34;&#34;
+    _, m1 = coef1
+    _, m2 = coef2
+    return math.atan((m1-m2)/(1.0+m1*m2))</code></pre>
+</details>
+</dd>
 <dt id="knee.linear_fit.linear_fit"><code class="name flex">
 <span>def <span class="ident">linear_fit</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray) ‑> tuple</span>
 </code></dt>
@@ -261,7 +348,8 @@ first and last points in a curve.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def linear_fit(x: np.ndarray, y: np.ndarray) -&gt; tuple:
-    &#34;&#34;&#34;Computes the linear fit for the points.
+    &#34;&#34;&#34;
+    Computes the linear fit for the points.
 
     This methods approximates the linear fit using only the
     first and last points in a curve.
@@ -279,7 +367,7 @@ first and last points in a curve.</p>
         b = y[0] - (m*x[0])
         return (b, m)
     else:
-        return (0,0)</code></pre>
+        return (0, 0)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_fit_points"><code class="name flex">
@@ -304,7 +392,8 @@ first and last points in a curve.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def linear_fit_points(points: np.ndarray) -&gt; tuple:
-    &#34;&#34;&#34;Computes the linear fit for the points.
+    &#34;&#34;&#34;
+    Computes the linear fit for the points.
 
     This methods approximates the linear fit using only the
     first and last points in a curve.
@@ -321,16 +410,14 @@ first and last points in a curve.</p>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_r2"><code class="name flex">
-<span>def <span class="ident">linear_r2</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple, r2: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
+<span>def <span class="ident">linear_r2</span></span>(<span>points: numpy.ndarray, coef: tuple, r2: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the coefficient of determination (R2).</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>x</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>the value of the points in the x axis coordinates</dd>
-<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>the value of the points in the y axis coordinates</dd>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>coef</code></strong> :&ensp;<code>tuple</code></dt>
 <dd>the coefficients from the linear fit</dd>
 <dt><strong><code>r2</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
@@ -345,18 +432,21 @@ first and last points in a curve.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
-    &#34;&#34;&#34;Computes the coefficient of determination (R2).
+<pre><code class="python">def linear_r2(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the coefficient of determination (R2).
 
     Args:
-        x (np.ndarray): the value of the points in the x axis coordinates
-        y (np.ndarray): the value of the points in the y axis coordinates
+        points (np.ndarray): numpy array with the points (x, y)
         coef (tuple): the coefficients from the linear fit
         r2 (R2): select the type of coefficient of determination
 
     Returns:
         float: coefficient of determination (R2)
     &#34;&#34;&#34;
+    x = points[:,0]
+    y = points[:,1]
+
     y_hat = linear_transform(x, coef)
     y_mean = np.mean(y)
     rss = np.sum((y-y_hat)**2)
@@ -398,7 +488,8 @@ first and last points in a curve.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
-    &#34;&#34;&#34;Computes the coefficient of determination (R2).
+    &#34;&#34;&#34;
+    Computes the coefficient of determination (R2).
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
@@ -414,7 +505,7 @@ first and last points in a curve.</p>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_residuals"><code class="name flex">
-<span>def <span class="ident">linear_residuals</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple) ‑> float</span>
+<span>def <span class="ident">linear_residuals</span></span>(<span>points: numpy.ndarray, coef: tuple) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the residual error of the linear fit.</p>
@@ -436,17 +527,21 @@ first and last points in a curve.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
-    &#34;&#34;&#34;Computes the residual error of the linear fit.
+<pre><code class="python">def linear_residuals(points: np.ndarray, coef: tuple) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the residual error of the linear fit.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
         y (np.ndarray): the value of the points in the y axis coordinates
         coef (tuple): the coefficients from the linear fit
-        
+
     Returns:
         float: residual error of the linear fit
     &#34;&#34;&#34;
+    x = points[:,0]
+    y = points[:,1]
+
     y_hat = linear_transform(x, coef)
     rss = np.sum((y-y_hat)**2)
     return rss</code></pre>
@@ -474,7 +569,8 @@ first and last points in a curve.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def linear_transform(x: np.ndarray, coef: tuple) -&gt; np.ndarray:
-    &#34;&#34;&#34;Computes the y values for an x array and the given coefficients.
+    &#34;&#34;&#34;
+    Computes the y values for an x array and the given coefficients.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
@@ -532,11 +628,11 @@ and computes the corresponding R2.</p>
         rv = 1.0
     else:
         rv = (np.corrcoef(x, y)[0, 1])**2.0
-    
+
     if t is R2.adjusted:
         rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
 
-    return rv </code></pre>
+    return rv</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.r2_points"><code class="name flex">
@@ -579,36 +675,85 @@ and computes the corresponding R2.</p>
 </details>
 </dd>
 <dt id="knee.linear_fit.rmse"><code class="name flex">
-<span>def <span class="ident">rmse</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple) ‑> float</span>
+<span>def <span class="ident">rmse</span></span>(<span>points: numpy.ndarray, coef: tuple) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes the Root Mean Squared Error (RMSE).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>coef</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>the coefficients from the linear fit</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Root Mean Squared Error (RMSE)</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rmse(x: np.ndarray, y: np.ndarray, coef: tuple)-&gt;float:
+<pre><code class="python">def rmse(points: np.ndarray, coef: tuple) -&gt; float:
     &#34;&#34;&#34;
+    Computes the Root Mean Squared Error (RMSE).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        float: Root Mean Squared Error (RMSE)
     &#34;&#34;&#34;
+    x = points[:,0]
+    y = points[:,1]
+
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square(y - y_hat))) 
+    rv = np.sqrt(np.mean(np.square(y - y_hat)))
     return rv</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.rmspe"><code class="name flex">
-<span>def <span class="ident">rmspe</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple, eps=1e-16) ‑> float</span>
+<span>def <span class="ident">rmspe</span></span>(<span>points: numpy.ndarray, coef: tuple, eps: float = 1e-16) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Computes the Root Mean Squared Percentage Error (RMSPE).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>coef</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>the coefficients from the linear fit</dd>
+<dt><strong><code>eps</code></strong> :&ensp;<code>float</code></dt>
+<dd>eps value to prevent division by zero (default: 1E-16)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Root Mean Squared Percentage Error (RMSPE)</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps=1e-16)-&gt;float:
+<pre><code class="python">def rmspe(points: np.ndarray, coef: tuple, eps:float=1e-16) -&gt; float:
     &#34;&#34;&#34;
+    Computes the Root Mean Squared Percentage Error (RMSPE).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
     &#34;&#34;&#34;
+    x = points[:,0]
+    y = points[:,1]
+
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps)))) 
+    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
     return rv</code></pre>
 </details>
 </dd>
@@ -669,6 +814,7 @@ and computes the corresponding R2.</p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="two-column">
+<li><code><a title="knee.linear_fit.angle" href="#knee.linear_fit.angle">angle</a></code></li>
 <li><code><a title="knee.linear_fit.linear_fit" href="#knee.linear_fit.linear_fit">linear_fit</a></code></li>
 <li><code><a title="knee.linear_fit.linear_fit_points" href="#knee.linear_fit.linear_fit_points">linear_fit_points</a></code></li>
 <li><code><a title="knee.linear_fit.linear_r2" href="#knee.linear_fit.linear_r2">linear_r2</a></code></li>

@@ -94,7 +94,7 @@ def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.nda
     return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))
 
 
-def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorted:bool=True) -&gt; np.ndarray:
+def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorted: bool = True) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Computes the reverse of the RDP method.
 
@@ -135,31 +135,36 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
 def point_distance(start: np.ndarray, end: np.ndarray):
     &#34;&#34;&#34;
     &#34;&#34;&#34;
-    return math.sqrt(start[0]-end[0] + start[1] - end[1])
+    return math.sqrt(np.sum(np.square(start-end)))
 
-&#34;&#34;&#34;
-def distance_point_line(pt: np.ndarray, start: np.ndarray, end: np.ndarray):
-    #First, we need the length of the line segment.
+
+def distance_point_line(points: np.ndarray, start: np.ndarray, end: np.ndarray):
+    # First, we need the length of the line segment.
     lineLength = point_distance(start, end)
 
-    # if it&#39;s 0, the line is actually just a point.
-    #if lineLength == 0:
-    #    return point_distance(pt, start)
+    distances = []
+
+    for pt in points:
+        # if it&#39;s 0, the line is actually just a point.
+        # if lineLength == 0:
+        #    return point_distance(pt, start)
+        t = ((pt[0]-start[0]) * (end[0] - start[0]) + (pt[1] - start[1]) * (end[1] - start[1]))/lineLength
+
+        # t is very important. t is a number that essentially compares the
+        # individual coordinates distances between the point and each point on the line.
         
-        t = ((p.x-i.x)*(j.x-i.x)+(p.y-i.y)*(j.y-i.y))/lineLength; 
+        if t &lt; 0:  # if t is less than 0, the point is behind i, and closest to i.
+            dist = point_distance(pt, start)
+        elif t &gt; 1:  # if greater than 1, it&#39;s closest to j.
+            dist = point_distance(pt, end)
+        else:
+            dist = point_distance(pt, start+t*(end-start))
+        distances.append(dist)
 
-        //t is very important. t is a number that essentially compares the individual coordinates
-        //distances between the point and each point on the line.
+    logger.info(f&#39;Distances ({t}) = {np.array(distances)}&#39;)
 
-        if(t&lt;0){        //if t is less than 0, the point is behind i, and closest to i.
-                return pointDistance(p,i);
-        }       //if greater than 1, it&#39;s closest to j.
-        if(t&gt;1){
-                return pointDistance(p,j);
-        }
-        return pointDistance(p, { x: i.x+t*(j.x-i.x),y: i.y+t*(j.y-i.y)});
-        //this figure represents the point on the line that p is closest to.
-&#34;&#34;&#34;
+    return np.array(distances)
+
 
 def rdp(points: np.ndarray, t: float = 0.01) -&gt; tuple:
     # Stack strucuture for the recursion
@@ -179,73 +184,21 @@ def rdp(points: np.ndarray, t: float = 0.01) -&gt; tuple:
             x = pt[:, 0]
             y = pt[:, 1]
             r = lf.rmspe(x, y, coef)
-        
+
         if r &gt;= t:
             d = perpendicular_distance_points(pt, pt[0], pt[-1])
+            #logger.info(f&#39;PDP = {np.argmax(d)}&#39;)
+            #d = distance_point_line(pt, pt[0], pt[-1])
+            #logger.info(f&#39;SDP = {np.argmax(d)}&#39;)
             index = np.argmax(d)
             stack.append((left+index, left+len(pt)))
             stack.append((left, left+index+1))
         else:
             reduced.append(left)
             removed.append([left, len(pt) - 2.0])
-    
+
     reduced.append(len(points)-1)
-    return np.array(reduced), np.array(removed)
-
-
-def rdp2(points: np.ndarray, r: float = 0.05) -&gt; tuple:
-    &#34;&#34;&#34;
-    Ramer–Douglas–Peucker (RDP) algorithm.
-
-    Is an algorithm that decimates a curve composed of line segments 
-    to a similar curve with fewer points. This version uses the 
-    coefficient of determination to decided whenever to keep or remove 
-    a line segment.
-
-    Args:
-        points (np.ndarray): numpy array with the points (x, y)
-        r(float): the coefficient of determination threshold (default 0.9)
-
-    Returns:
-        tuple: the reduced space, the points that were removed
-    &#34;&#34;&#34;
-
-    if len(points) &lt;= 2:
-        determination = 0.0
-    else:
-        coef = lf.linear_fit_points(points)
-        #determination = lf.rmspe(x, y, coef)
-        
-        x = points[:, 0]
-        y = points[:, 1]
-        coef = np.polyfit(x,y,deg=1)
-        f = np.poly1d(coef)
-        y_hat = f(x)
-        determination = np.sqrt(np.mean(np.square((y - y_hat) / y)))
-
-        #determination = lf.linear_r2_points(points, coef)
-    
-       
-        #plt.plot(x, y)
-        #plt.plot(x, y_hat)
-        #logger.info(f&#39;Determination = {determination}&#39;)
-        #plt.show()
-
-    #if determination &lt; r:
-    if determination &gt;= r:
-        d = perpendicular_distance_points(points, points[0], points[-1])
-        index = np.argmax(d)
-
-        left, left_points = rdp2(points[0:index+1], r)
-        right, right_points = rdp2(points[index:len(points)], r)
-        points_removed = np.concatenate((left_points, right_points), axis=0)
-        return np.concatenate((left[0:len(left)-1], right)), points_removed
-    else:
-        rv = np.empty([2, 2])
-        rv[0] = points[0]
-        rv[1] = points[-1]
-        points_removed = np.array([[points[0][0], len(points) - 2.0]])
-        return rv, points_removed</code></pre>
+    return np.array(reduced), np.array(removed)</code></pre>
 </details>
 </section>
 <section>
@@ -255,6 +208,43 @@ def rdp2(points: np.ndarray, r: float = 0.05) -&gt; tuple:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="knee.rdp.distance_point_line"><code class="name flex">
+<span>def <span class="ident">distance_point_line</span></span>(<span>points: numpy.ndarray, start: numpy.ndarray, end: numpy.ndarray)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def distance_point_line(points: np.ndarray, start: np.ndarray, end: np.ndarray):
+    # First, we need the length of the line segment.
+    lineLength = point_distance(start, end)
+
+    distances = []
+
+    for pt in points:
+        # if it&#39;s 0, the line is actually just a point.
+        # if lineLength == 0:
+        #    return point_distance(pt, start)
+        t = ((pt[0]-start[0]) * (end[0] - start[0]) + (pt[1] - start[1]) * (end[1] - start[1]))/lineLength
+
+        # t is very important. t is a number that essentially compares the
+        # individual coordinates distances between the point and each point on the line.
+        
+        if t &lt; 0:  # if t is less than 0, the point is behind i, and closest to i.
+            dist = point_distance(pt, start)
+        elif t &gt; 1:  # if greater than 1, it&#39;s closest to j.
+            dist = point_distance(pt, end)
+        else:
+            dist = point_distance(pt, start+t*(end-start))
+        distances.append(dist)
+
+    logger.info(f&#39;Distances ({t}) = {np.array(distances)}&#39;)
+
+    return np.array(distances)</code></pre>
+</details>
+</dd>
 <dt id="knee.rdp.mapping"><code class="name flex">
 <span>def <span class="ident">mapping</span></span>(<span>indexes: numpy.ndarray, reduced: numpy.ndarray, removed: numpy.ndarray, sorted: bool = True) ‑> numpy.ndarray</span>
 </code></dt>
@@ -283,7 +273,7 @@ This method assumes the indexes are sorted in ascending order.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorted:bool=True) -&gt; np.ndarray:
+<pre><code class="python">def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorted: bool = True) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Computes the reverse of the RDP method.
 
@@ -448,7 +438,7 @@ straight line defined by the left and right point.</p>
 <pre><code class="python">def point_distance(start: np.ndarray, end: np.ndarray):
     &#34;&#34;&#34;
     &#34;&#34;&#34;
-    return math.sqrt(start[0]-end[0] + start[1] - end[1])</code></pre>
+    return math.sqrt(np.sum(np.square(start-end)))</code></pre>
 </details>
 </dd>
 <dt id="knee.rdp.rdp"><code class="name flex">
@@ -478,97 +468,21 @@ straight line defined by the left and right point.</p>
             x = pt[:, 0]
             y = pt[:, 1]
             r = lf.rmspe(x, y, coef)
-        
+
         if r &gt;= t:
             d = perpendicular_distance_points(pt, pt[0], pt[-1])
+            #logger.info(f&#39;PDP = {np.argmax(d)}&#39;)
+            #d = distance_point_line(pt, pt[0], pt[-1])
+            #logger.info(f&#39;SDP = {np.argmax(d)}&#39;)
             index = np.argmax(d)
             stack.append((left+index, left+len(pt)))
             stack.append((left, left+index+1))
         else:
             reduced.append(left)
             removed.append([left, len(pt) - 2.0])
-    
+
     reduced.append(len(points)-1)
     return np.array(reduced), np.array(removed)</code></pre>
-</details>
-</dd>
-<dt id="knee.rdp.rdp2"><code class="name flex">
-<span>def <span class="ident">rdp2</span></span>(<span>points: numpy.ndarray, r: float = 0.05) ‑> tuple</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Ramer–Douglas–Peucker (RDP) algorithm.</p>
-<p>Is an algorithm that decimates a curve composed of line segments
-to a similar curve with fewer points. This version uses the
-coefficient of determination to decided whenever to keep or remove
-a line segment.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>numpy array with the points (x, y)</dd>
-</dl>
-<p>r(float): the coefficient of determination threshold (default 0.9)</p>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>tuple</code></dt>
-<dd>the reduced space, the points that were removed</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def rdp2(points: np.ndarray, r: float = 0.05) -&gt; tuple:
-    &#34;&#34;&#34;
-    Ramer–Douglas–Peucker (RDP) algorithm.
-
-    Is an algorithm that decimates a curve composed of line segments 
-    to a similar curve with fewer points. This version uses the 
-    coefficient of determination to decided whenever to keep or remove 
-    a line segment.
-
-    Args:
-        points (np.ndarray): numpy array with the points (x, y)
-        r(float): the coefficient of determination threshold (default 0.9)
-
-    Returns:
-        tuple: the reduced space, the points that were removed
-    &#34;&#34;&#34;
-
-    if len(points) &lt;= 2:
-        determination = 0.0
-    else:
-        coef = lf.linear_fit_points(points)
-        #determination = lf.rmspe(x, y, coef)
-        
-        x = points[:, 0]
-        y = points[:, 1]
-        coef = np.polyfit(x,y,deg=1)
-        f = np.poly1d(coef)
-        y_hat = f(x)
-        determination = np.sqrt(np.mean(np.square((y - y_hat) / y)))
-
-        #determination = lf.linear_r2_points(points, coef)
-    
-       
-        #plt.plot(x, y)
-        #plt.plot(x, y_hat)
-        #logger.info(f&#39;Determination = {determination}&#39;)
-        #plt.show()
-
-    #if determination &lt; r:
-    if determination &gt;= r:
-        d = perpendicular_distance_points(points, points[0], points[-1])
-        index = np.argmax(d)
-
-        left, left_points = rdp2(points[0:index+1], r)
-        right, right_points = rdp2(points[index:len(points)], r)
-        points_removed = np.concatenate((left_points, right_points), axis=0)
-        return np.concatenate((left[0:len(left)-1], right)), points_removed
-    else:
-        rv = np.empty([2, 2])
-        rv[0] = points[0]
-        rv[1] = points[-1]
-        points_removed = np.array([[points[0][0], len(points) - 2.0]])
-        return rv, points_removed</code></pre>
 </details>
 </dd>
 </dl>
@@ -589,13 +503,13 @@ a line segment.</p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="knee.rdp.distance_point_line" href="#knee.rdp.distance_point_line">distance_point_line</a></code></li>
 <li><code><a title="knee.rdp.mapping" href="#knee.rdp.mapping">mapping</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance" href="#knee.rdp.perpendicular_distance">perpendicular_distance</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance_index" href="#knee.rdp.perpendicular_distance_index">perpendicular_distance_index</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance_points" href="#knee.rdp.perpendicular_distance_points">perpendicular_distance_points</a></code></li>
 <li><code><a title="knee.rdp.point_distance" href="#knee.rdp.point_distance">point_distance</a></code></li>
 <li><code><a title="knee.rdp.rdp" href="#knee.rdp.rdp">rdp</a></code></li>
-<li><code><a title="knee.rdp.rdp2" href="#knee.rdp.rdp2">rdp2</a></code></li>
 </ul>
 </li>
 </ul>

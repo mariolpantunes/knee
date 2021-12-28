@@ -99,7 +99,7 @@ def get_neighbourhood_fast_points(points: np.ndarray, a: int, b: int, t: float) 
     return get_neighbourhood_fast(x, y, a, b, t)
 
 
-def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a:int, b:int, t=0.9) -&gt; int:
+def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a: int, b: int, t=0.9) -&gt; int:
     &#34;&#34;&#34;
     Get the index of the point within the range [b, a] where the R2 is close to the threshold.
 
@@ -115,22 +115,22 @@ def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a:int, b:int, t=0.9) 
     Returns:
         int: index of the point
     &#34;&#34;&#34;
-    
+
     i = b
     right = a
 
     while abs(i-right) &gt; 1:
         coef = lf.linear_fit(x[i:a+1], y[i:a+1])
         r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
-        
+
         if r2 &lt; t:
             i = int((i+right)/2.0)
         else:
             right = i
             i = int((b+right)/2.0)
-            
-        
+
     return i
+
 
 def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0.9) -&gt; tuple:
     &#34;&#34;&#34;
@@ -154,7 +154,7 @@ def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: floa
     b, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
     r2 = lf.linear_r2(x[i:a+1], y[i:a+1], (b, slope))
     previous_res = (i, r2, slope)
-    
+
     # Linear search to improve accuracy
     while r2 &lt; t and i &lt; a:
         i += 1
@@ -162,7 +162,7 @@ def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: floa
         r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
         _, slope = coef
         previous_res = (i, r2, slope)
-    
+
     return previous_res
 
 
@@ -188,7 +188,7 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
     _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
 
     while r2 &gt; t and i &gt; b:
-        #print(&#39;.&#39;)
+        # print(&#39;.&#39;)
         previous_res = (i, r2, slope)
         i -= 1
         coef = lf.linear_fit(x[i:a+1], y[i:a+1])
@@ -200,6 +200,7 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
         return i, r2, slope
     else:
         return previous_res
+
 
 def accuracy_knee(points: np.ndarray, knees: np.ndarray, t: float = 0.9) -&gt; tuple:
     &#34;&#34;&#34;Compute the accuracy heuristic for a set of knees.
@@ -366,7 +367,7 @@ def mae(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy
     knee_points = points[knees]
 
     error = 0.0
-    
+
     if s is Strategy.knees:
         a = knee_points
         b = expected
@@ -440,7 +441,7 @@ def mse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy
         else:
             a = knee_points
             b = expected
-    
+
     for p in a:
         distances = np.linalg.norm(b-p, axis=1)
         idx = np.argmin(distances)
@@ -471,7 +472,7 @@ def rmse(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strateg
     return math.sqrt(mse(points, knees, expected, s))
 
 
-def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps:float = 1e-10) -&gt; float:
+def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps: float = 1e-10) -&gt; float:
 
     # get the knee points
     knee_points = points[knees]
@@ -496,7 +497,7 @@ def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strate
         else:
             a = knee_points
             b = expected
-    
+
     errors = []
 
     for p in a:
@@ -507,9 +508,9 @@ def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strate
     errors = np.array(errors)
 
     return np.sqrt(np.mean(np.square(errors)))
-    
 
-def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01) -&gt; np.ndarray:
+
+def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Computes the Confusion Matrix based on the knees and expected points.
 
@@ -518,7 +519,7 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01
         knees (np.ndarray): knees indexes
         expected (np.ndarray): numpy array with the expected knee points (x, y)
         t (float): the maximum allowed distance in percentage (default 0.01)
-    
+
     Returns:
         np.ndarray: the confusion matrix
     &#34;&#34;&#34;
@@ -533,24 +534,25 @@ def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01
     for px, _ in expected:
         distances = np.fabs(knees_points_x - px)/dx
         idx = np.argmin(distances)
+        #logger.info(f&#34;{px} / {idx} / {distances[idx]} = {distances[idx] &lt;= t}&#34;)
         if distances[idx] &lt;= t and idx not in used_knees:
             tp += 1
             used_knees.append(idx)
         else:
-            fn += 1 
-    fp = max(len(knees) - tp,0)
+            fn += 1
+    fp = max(len(knees) - tp, 0)
     tn = len(points) - (tp+fp+fn)
 
     return np.array([[tp, fp], [fn, tn]])
 
 
-def accuracy(cm:np.ndarray) -&gt; float:
+def accuracy(cm: np.ndarray) -&gt; float:
     &#34;&#34;&#34;
     Computes accuracy based on a Confusion Matrix.
 
     Args:
         cm (np.ndarray): the confusion matrix
-    
+
     Returns:
         float: the accuracy
     &#34;&#34;&#34;
@@ -561,13 +563,13 @@ def accuracy(cm:np.ndarray) -&gt; float:
     return (tp+tn)/(tp+tn+fp+fn)
 
 
-def f1score(cm:np.ndarray) -&gt; float:
+def f1score(cm: np.ndarray) -&gt; float:
     &#34;&#34;&#34;
     Computes F1-Score based on a Confusion Matrix.
 
     Args:
         cm (np.ndarray): the confusion matrix
-    
+
     Returns:
         float: the F1-Score
     &#34;&#34;&#34;
@@ -578,17 +580,17 @@ def f1score(cm:np.ndarray) -&gt; float:
     return (2.0*tp)/(2*tp+fp+fn)
 
 
-def mcc(cm:np.ndarray) -&gt; float:
+def mcc(cm: np.ndarray) -&gt; float:
     &#34;&#34;&#34;
     Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.
 
     Args:
         cm (np.ndarray): the confusion matrix
-    
+
     Returns:
         float: the mcc
     &#34;&#34;&#34;
-    
+
     tp, fp = cm[0]
     fn, tn = cm[1]
 
@@ -624,13 +626,13 @@ def mcc(cm:np.ndarray) -&gt; float:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def accuracy(cm:np.ndarray) -&gt; float:
+<pre><code class="python">def accuracy(cm: np.ndarray) -&gt; float:
     &#34;&#34;&#34;
     Computes accuracy based on a Confusion Matrix.
 
     Args:
         cm (np.ndarray): the confusion matrix
-    
+
     Returns:
         float: the accuracy
     &#34;&#34;&#34;
@@ -856,7 +858,7 @@ In this version it is used the points from the current knee to the previous.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t:float=0.01) -&gt; np.ndarray:
+<pre><code class="python">def cm(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, t: float = 0.01) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Computes the Confusion Matrix based on the knees and expected points.
 
@@ -865,7 +867,7 @@ In this version it is used the points from the current knee to the previous.</p>
         knees (np.ndarray): knees indexes
         expected (np.ndarray): numpy array with the expected knee points (x, y)
         t (float): the maximum allowed distance in percentage (default 0.01)
-    
+
     Returns:
         np.ndarray: the confusion matrix
     &#34;&#34;&#34;
@@ -880,12 +882,13 @@ In this version it is used the points from the current knee to the previous.</p>
     for px, _ in expected:
         distances = np.fabs(knees_points_x - px)/dx
         idx = np.argmin(distances)
+        #logger.info(f&#34;{px} / {idx} / {distances[idx]} = {distances[idx] &lt;= t}&#34;)
         if distances[idx] &lt;= t and idx not in used_knees:
             tp += 1
             used_knees.append(idx)
         else:
-            fn += 1 
-    fp = max(len(knees) - tp,0)
+            fn += 1
+    fp = max(len(knees) - tp, 0)
     tn = len(points) - (tp+fp+fn)
 
     return np.array([[tp, fp], [fn, tn]])</code></pre>
@@ -910,13 +913,13 @@ In this version it is used the points from the current knee to the previous.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def f1score(cm:np.ndarray) -&gt; float:
+<pre><code class="python">def f1score(cm: np.ndarray) -&gt; float:
     &#34;&#34;&#34;
     Computes F1-Score based on a Confusion Matrix.
 
     Args:
         cm (np.ndarray): the confusion matrix
-    
+
     Returns:
         float: the F1-Score
     &#34;&#34;&#34;
@@ -977,7 +980,7 @@ In this version it is used the points from the current knee to the previous.</p>
     _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
 
     while r2 &gt; t and i &gt; b:
-        #print(&#39;.&#39;)
+        # print(&#39;.&#39;)
         previous_res = (i, r2, slope)
         i -= 1
         coef = lf.linear_fit(x[i:a+1], y[i:a+1])
@@ -1019,7 +1022,7 @@ In this version it is used the points from the current knee to the previous.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a:int, b:int, t=0.9) -&gt; int:
+<pre><code class="python">def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a: int, b: int, t=0.9) -&gt; int:
     &#34;&#34;&#34;
     Get the index of the point within the range [b, a] where the R2 is close to the threshold.
 
@@ -1035,21 +1038,20 @@ In this version it is used the points from the current knee to the previous.</p>
     Returns:
         int: index of the point
     &#34;&#34;&#34;
-    
+
     i = b
     right = a
 
     while abs(i-right) &gt; 1:
         coef = lf.linear_fit(x[i:a+1], y[i:a+1])
         r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
-        
+
         if r2 &lt; t:
             i = int((i+right)/2.0)
         else:
             right = i
             i = int((b+right)/2.0)
-            
-        
+
     return i</code></pre>
 </details>
 </dd>
@@ -1104,7 +1106,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
     b, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
     r2 = lf.linear_r2(x[i:a+1], y[i:a+1], (b, slope))
     previous_res = (i, r2, slope)
-    
+
     # Linear search to improve accuracy
     while r2 &lt; t and i &lt; a:
         i += 1
@@ -1112,7 +1114,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
         r2 = lf.linear_r2(x[i:a+1], y[i:a+1], coef)
         _, slope = coef
         previous_res = (i, r2, slope)
-    
+
     return previous_res</code></pre>
 </details>
 </dd>
@@ -1263,7 +1265,7 @@ and computes the error based on the closest point.</p>
     knee_points = points[knees]
 
     error = 0.0
-    
+
     if s is Strategy.knees:
         a = knee_points
         b = expected
@@ -1312,17 +1314,17 @@ and computes the error based on the closest point.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mcc(cm:np.ndarray) -&gt; float:
+<pre><code class="python">def mcc(cm: np.ndarray) -&gt; float:
     &#34;&#34;&#34;
     Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.
 
     Args:
         cm (np.ndarray): the confusion matrix
-    
+
     Returns:
         float: the mcc
     &#34;&#34;&#34;
-    
+
     tp, fp = cm[0]
     fn, tn = cm[1]
 
@@ -1406,7 +1408,7 @@ and computes the error based on the closest point.</p>
         else:
             a = knee_points
             b = expected
-    
+
     for p in a:
         distances = np.linalg.norm(b-p, axis=1)
         idx = np.argmin(distances)
@@ -1476,7 +1478,7 @@ and computes the error based on the closest point.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps:float = 1e-10) -&gt; float:
+<pre><code class="python">def rmspe(points: np.ndarray, knees: np.ndarray, expected: np.ndarray, s: Strategy = Strategy.expected, eps: float = 1e-10) -&gt; float:
 
     # get the knee points
     knee_points = points[knees]
@@ -1501,7 +1503,7 @@ and computes the error based on the closest point.</p>
         else:
             a = knee_points
             b = expected
-    
+
     errors = []
 
     for p in a:

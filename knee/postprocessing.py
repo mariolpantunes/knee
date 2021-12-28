@@ -193,12 +193,12 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
             if best_knee is not None:
                 filtered_knees.append(best_knee)
                 # plot clusters within the points
-                """plt.plot(x, y)
+                plt.plot(x, y)
                 plt.plot(x[current_cluster], y[current_cluster], 'ro')
                 if method is kr.ClusterRanking.hull:
                     plt.plot(x[hull], y[hull], 'g+')
                 plt.plot(x[best_knee], y[best_knee], 'yx')
-                plt.show()"""
+                plt.show()
 
         return np.array(filtered_knees)
 
