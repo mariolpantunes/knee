@@ -38,7 +38,7 @@ __status__ = &#39;Development&#39;
 import typing
 import logging
 import numpy as np
-from knee.linear_fit import linear_fit_points, linear_r2_points
+import knee.linear_fit as lf
 
 
 logger = logging.getLogger(__name__)
@@ -68,8 +68,8 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
         
         pt = points[left:right]
         if len(pt) &gt; t2:
-            coef = linear_fit_points(pt)
-            if linear_r2_points(pt, coef) &lt; t1:
+            coef = lf.linear_fit_points(pt)
+            if lf.linear_r2_points(pt, coef) &lt; t1:
                 rv = get_knee(pt)
                 if rv is not None:
                     idx = rv + left
@@ -137,8 +137,8 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
         
         pt = points[left:right]
         if len(pt) &gt; t2:
-            coef = linear_fit_points(pt)
-            if linear_r2_points(pt, coef) &lt; t1:
+            coef = lf.linear_fit_points(pt)
+            if lf.linear_r2_points(pt, coef) &lt; t1:
                 rv = get_knee(pt)
                 if rv is not None:
                     idx = rv + left

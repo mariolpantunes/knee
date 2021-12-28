@@ -6,16 +6,36 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import logging
+import enum
 import math
+import logging
 import numpy as np
 import knee.linear_fit as lf
 
 
-import matplotlib.pyplot as plt
-
-
 logger = logging.getLogger(__name__)
+
+
+class RDP_Cost(enum.Enum):
+    """
+    Enum that defines the cost for the RDP 
+    """
+    r2 = 'r2'
+    rmspe = 'rmspe'
+
+    def __str__(self):
+        return self.value
+
+
+class RDP_Distance(enum.Enum):
+    """
+    Enum that defines the distance method for the RDP 
+    """
+    perpendicular = 'perpendicular'
+    shortest = 'shortest'
+
+    def __str__(self):
+        return self.value
 
 
 def perpendicular_distance(points: np.ndarray) -> np.ndarray:
@@ -103,41 +123,20 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
-def point_distance(start: np.ndarray, end: np.ndarray):
+def shortest_distance_points(p: np.ndarray, a: np.ndarray, b: np.ndarray):
     """
+    Computes the shortest distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
     """
-    return math.sqrt(np.sum(np.square(start-end)))
 
-
-"""def distance_point_line(points: np.ndarray, start: np.ndarray, end: np.ndarray):
-    # First, we need the length of the line segment.
-    lineLength = point_distance(start, end)
-
-    distances = []
-
-    for pt in points:
-        # if it's 0, the line is actually just a point.
-        # if lineLength == 0:
-        #    return point_distance(pt, start)
-        t = ((pt[0]-start[0]) * (end[0] - start[0]) + (pt[1] - start[1]) * (end[1] - start[1]))/lineLength
-
-        # t is very important. t is a number that essentially compares the
-        # individual coordinates distances between the point and each point on the line.
-        
-        if t < 0:  # if t is less than 0, the point is behind i, and closest to i.
-            dist = point_distance(pt, start)
-        elif t > 1:  # if greater than 1, it's closest to j.
-            dist = point_distance(pt, end)
-        else:
-            dist = point_distance(pt, start+t*(end-start))
-        distances.append(dist)
-
-    logger.info(f'Distances ({t}) = {np.array(distances)}')
-
-    return np.array(distances)"""
-
-def distance_point_line(p: np.ndarray, a: np.ndarray, b: np.ndarray):
-    
     # TODO for you: consider implementing @Eskapp's suggestions
     if np.all(a == b):
         return np.linalg.norm(p - a, axis=1)
@@ -160,28 +159,56 @@ def distance_point_line(p: np.ndarray, a: np.ndarray, b: np.ndarray):
     return np.hypot(h, c)
 
 
-def rdp(points: np.ndarray, t: float = 0.01) -> tuple:
-    # Stack strucuture for the recursion
+def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
+    """
+    Ramer–Douglas–Peucker (RDP) algorithm.
+
+    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.
+    This version uses different cost functions to decided whenever to keep or remove a line segment.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the coefficient of determination threshold (default 0.01)
+        cost (RDP_Cost): the cost method used to evaluate a point set (default: RDP_Cost.rmspe)
+        distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+
+    Returns:
+        tuple: the index of the reduced space, the points that were removed
+    """
     stack = [(0, len(points))]
 
     reduced = []
     removed = []
+
+    # select the distance metric to be used
+    distance_points = None
+    if distance is RDP_Distance.shortest:
+        distance_points = shortest_distance_points
+    elif distance is RDP_Distance.perpendicular:
+        distance_points = perpendicular_distance_points
+    else:
+        distance_points = shortest_distance_points
 
     while stack:
         left, right = stack.pop()
         pt = points[left:right]
 
         if len(pt) <= 2:
-            r = 0.0
+            if cost is RDP_Cost.rmspe:
+                r = 0.0
+            else:
+                r = 1.0
         else:
             coef = lf.linear_fit_points(pt)
-            r = lf.rmspe_points(pt, coef)
+            if cost is RDP_Cost.rmspe:
+                r = lf.rmspe_points(pt, coef)
+            else:
+                r = lf.linear_r2(pt, coef)
 
-        if r >= t:
-            #d = perpendicular_distance_points(pt, pt[0], pt[-1])
-            #logger.info(f'PDP = {np.argmax(d)}')
-            d = distance_point_line(pt, pt[0], pt[-1])
-            #logger.info(f'SDP = {np.argmax(d)}')
+        curved = r >= t if cost is RDP_Cost.rmspe else r < t
+
+        if curved:
+            d = distance_points(pt, pt[0], pt[-1])
             index = np.argmax(d)
             stack.append((left+index, left+len(pt)))
             stack.append((left, left+index+1))

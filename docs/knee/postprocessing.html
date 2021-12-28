@@ -161,7 +161,7 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
                     logger.info(f&#39;Bounds [{a}, {b}]&#39;)
                     idx = (hull&gt;=a)*(hull&lt;=b)
                     hull_within_cluster = hull[idx]
-                    logger.info(f&#39;Hull (W\C) {hull_within_cluster} ({len(hull_within_cluster)})&#39;)
+                    logger.info(f&#39;Hull (W\\C) {hull_within_cluster} ({len(hull_within_cluster)})&#39;)
                     # only consider clusters with at least a single hull point
                     rankings = np.zeros(len(current_cluster))
                     
@@ -716,7 +716,7 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
                     logger.info(f&#39;Bounds [{a}, {b}]&#39;)
                     idx = (hull&gt;=a)*(hull&lt;=b)
                     hull_within_cluster = hull[idx]
-                    logger.info(f&#39;Hull (W\C) {hull_within_cluster} ({len(hull_within_cluster)})&#39;)
+                    logger.info(f&#39;Hull (W\\C) {hull_within_cluster} ({len(hull_within_cluster)})&#39;)
                     # only consider clusters with at least a single hull point
                     rankings = np.zeros(len(current_cluster))
                     

@@ -35,16 +35,36 @@ __email__ = &#39;mariolpantunes@gmail.com&#39;
 __status__ = &#39;Development&#39;
 
 
-import logging
+import enum
 import math
+import logging
 import numpy as np
 import knee.linear_fit as lf
 
 
-import matplotlib.pyplot as plt
-
-
 logger = logging.getLogger(__name__)
+
+
+class RDP_Cost(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the cost for the RDP 
+    &#34;&#34;&#34;
+    r2 = &#39;r2&#39;
+    rmspe = &#39;rmspe&#39;
+
+    def __str__(self):
+        return self.value
+
+
+class RDP_Distance(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the distance method for the RDP 
+    &#34;&#34;&#34;
+    perpendicular = &#39;perpendicular&#39;
+    shortest = &#39;shortest&#39;
+
+    def __str__(self):
+        return self.value
 
 
 def perpendicular_distance(points: np.ndarray) -&gt; np.ndarray:
@@ -132,64 +152,92 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
-def point_distance(start: np.ndarray, end: np.ndarray):
+def shortest_distance_points(p: np.ndarray, a: np.ndarray, b: np.ndarray):
     &#34;&#34;&#34;
+    Computes the shortest distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
     &#34;&#34;&#34;
-    return math.sqrt(np.sum(np.square(start-end)))
+
+    # TODO for you: consider implementing @Eskapp&#39;s suggestions
+    if np.all(a == b):
+        return np.linalg.norm(p - a, axis=1)
+
+    # normalized tangent vector
+    d = np.divide(b - a, np.linalg.norm(b - a))
+
+    # signed parallel distance components
+    s = np.dot(a - p, d)
+    t = np.dot(p - b, d)
+
+    # clamped parallel distance
+    h = np.maximum.reduce([s, t, np.zeros(len(p))])
+
+    # perpendicular distance component, as before
+    # note that for the 3D case these will be vectors
+    c = np.cross(p - a, d)
+
+    # use hypot for Pythagoras to improve accuracy
+    return np.hypot(h, c)
 
 
-def distance_point_line(points: np.ndarray, start: np.ndarray, end: np.ndarray):
-    # First, we need the length of the line segment.
-    lineLength = point_distance(start, end)
+def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+    &#34;&#34;&#34;
+    Ramer–Douglas–Peucker (RDP) algorithm.
 
-    distances = []
+    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.
+    This version uses different cost functions to decided whenever to keep or remove a line segment.
 
-    for pt in points:
-        # if it&#39;s 0, the line is actually just a point.
-        # if lineLength == 0:
-        #    return point_distance(pt, start)
-        t = ((pt[0]-start[0]) * (end[0] - start[0]) + (pt[1] - start[1]) * (end[1] - start[1]))/lineLength
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the coefficient of determination threshold (default 0.01)
+        cost (RDP_Cost): the cost method used to evaluate a point set (default: RDP_Cost.rmspe)
+        distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
 
-        # t is very important. t is a number that essentially compares the
-        # individual coordinates distances between the point and each point on the line.
-        
-        if t &lt; 0:  # if t is less than 0, the point is behind i, and closest to i.
-            dist = point_distance(pt, start)
-        elif t &gt; 1:  # if greater than 1, it&#39;s closest to j.
-            dist = point_distance(pt, end)
-        else:
-            dist = point_distance(pt, start+t*(end-start))
-        distances.append(dist)
-
-    logger.info(f&#39;Distances ({t}) = {np.array(distances)}&#39;)
-
-    return np.array(distances)
-
-
-def rdp(points: np.ndarray, t: float = 0.01) -&gt; tuple:
-    # Stack strucuture for the recursion
+    Returns:
+        tuple: the index of the reduced space, the points that were removed
+    &#34;&#34;&#34;
     stack = [(0, len(points))]
 
     reduced = []
     removed = []
+
+    # select the distance metric to be used
+    distance_points = None
+    if distance is RDP_Distance.shortest:
+        distance_points = shortest_distance_points
+    elif distance is RDP_Distance.perpendicular:
+        distance_points = perpendicular_distance_points
+    else:
+        distance_points = shortest_distance_points
 
     while stack:
         left, right = stack.pop()
         pt = points[left:right]
 
         if len(pt) &lt;= 2:
-            r = 0.0
+            if cost is RDP_Cost.rmspe:
+                r = 0.0
+            else:
+                r = 1.0
         else:
             coef = lf.linear_fit_points(pt)
-            x = pt[:, 0]
-            y = pt[:, 1]
-            r = lf.rmspe(x, y, coef)
+            if cost is RDP_Cost.rmspe:
+                r = lf.rmspe_points(pt, coef)
+            else:
+                r = lf.linear_r2(pt, coef)
 
-        if r &gt;= t:
-            d = perpendicular_distance_points(pt, pt[0], pt[-1])
-            #logger.info(f&#39;PDP = {np.argmax(d)}&#39;)
-            #d = distance_point_line(pt, pt[0], pt[-1])
-            #logger.info(f&#39;SDP = {np.argmax(d)}&#39;)
+        curved = r &gt;= t if cost is RDP_Cost.rmspe else r &lt; t
+
+        if curved:
+            d = distance_points(pt, pt[0], pt[-1])
             index = np.argmax(d)
             stack.append((left+index, left+len(pt)))
             stack.append((left, left+index+1))
@@ -208,43 +256,6 @@ def rdp(points: np.ndarray, t: float = 0.01) -&gt; tuple:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="knee.rdp.distance_point_line"><code class="name flex">
-<span>def <span class="ident">distance_point_line</span></span>(<span>points: numpy.ndarray, start: numpy.ndarray, end: numpy.ndarray)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def distance_point_line(points: np.ndarray, start: np.ndarray, end: np.ndarray):
-    # First, we need the length of the line segment.
-    lineLength = point_distance(start, end)
-
-    distances = []
-
-    for pt in points:
-        # if it&#39;s 0, the line is actually just a point.
-        # if lineLength == 0:
-        #    return point_distance(pt, start)
-        t = ((pt[0]-start[0]) * (end[0] - start[0]) + (pt[1] - start[1]) * (end[1] - start[1]))/lineLength
-
-        # t is very important. t is a number that essentially compares the
-        # individual coordinates distances between the point and each point on the line.
-        
-        if t &lt; 0:  # if t is less than 0, the point is behind i, and closest to i.
-            dist = point_distance(pt, start)
-        elif t &gt; 1:  # if greater than 1, it&#39;s closest to j.
-            dist = point_distance(pt, end)
-        else:
-            dist = point_distance(pt, start+t*(end-start))
-        distances.append(dist)
-
-    logger.info(f&#39;Distances ({t}) = {np.array(distances)}&#39;)
-
-    return np.array(distances)</code></pre>
-</details>
-</dd>
 <dt id="knee.rdp.mapping"><code class="name flex">
 <span>def <span class="ident">mapping</span></span>(<span>indexes: numpy.ndarray, reduced: numpy.ndarray, removed: numpy.ndarray, sorted: bool = True) ‑> numpy.ndarray</span>
 </code></dt>
@@ -426,54 +437,83 @@ straight line defined by the left and right point.</p>
     return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))</code></pre>
 </details>
 </dd>
-<dt id="knee.rdp.point_distance"><code class="name flex">
-<span>def <span class="ident">point_distance</span></span>(<span>start: numpy.ndarray, end: numpy.ndarray)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def point_distance(start: np.ndarray, end: np.ndarray):
-    &#34;&#34;&#34;
-    &#34;&#34;&#34;
-    return math.sqrt(np.sum(np.square(start-end)))</code></pre>
-</details>
-</dd>
 <dt id="knee.rdp.rdp"><code class="name flex">
-<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, t: float = 0.01) ‑> tuple</span>
+<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, t: float = 0.01, cost: <a title="knee.rdp.RDP_Cost" href="#knee.rdp.RDP_Cost">RDP_Cost</a> = rmspe, distance: <a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a> = shortest) ‑> tuple</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Ramer–Douglas–Peucker (RDP) algorithm.</p>
+<p>Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.
+This version uses different cost functions to decided whenever to keep or remove a line segment.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>the coefficient of determination threshold (default 0.01)</dd>
+<dt><strong><code>cost</code></strong> :&ensp;<code><a title="knee.rdp.RDP_Cost" href="#knee.rdp.RDP_Cost">RDP_Cost</a></code></dt>
+<dd>the cost method used to evaluate a point set (default: RDP_Cost.rmspe)</dd>
+<dt><strong><code>distance</code></strong> :&ensp;<code><a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a></code></dt>
+<dd>the distance metric used to decide the split point (default: RDP_Distance.shortest)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>the index of the reduced space, the points that were removed</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rdp(points: np.ndarray, t: float = 0.01) -&gt; tuple:
-    # Stack strucuture for the recursion
+<pre><code class="python">def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+    &#34;&#34;&#34;
+    Ramer–Douglas–Peucker (RDP) algorithm.
+
+    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.
+    This version uses different cost functions to decided whenever to keep or remove a line segment.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the coefficient of determination threshold (default 0.01)
+        cost (RDP_Cost): the cost method used to evaluate a point set (default: RDP_Cost.rmspe)
+        distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+
+    Returns:
+        tuple: the index of the reduced space, the points that were removed
+    &#34;&#34;&#34;
     stack = [(0, len(points))]
 
     reduced = []
     removed = []
+
+    # select the distance metric to be used
+    distance_points = None
+    if distance is RDP_Distance.shortest:
+        distance_points = shortest_distance_points
+    elif distance is RDP_Distance.perpendicular:
+        distance_points = perpendicular_distance_points
+    else:
+        distance_points = shortest_distance_points
 
     while stack:
         left, right = stack.pop()
         pt = points[left:right]
 
         if len(pt) &lt;= 2:
-            r = 0.0
+            if cost is RDP_Cost.rmspe:
+                r = 0.0
+            else:
+                r = 1.0
         else:
             coef = lf.linear_fit_points(pt)
-            x = pt[:, 0]
-            y = pt[:, 1]
-            r = lf.rmspe(x, y, coef)
+            if cost is RDP_Cost.rmspe:
+                r = lf.rmspe_points(pt, coef)
+            else:
+                r = lf.linear_r2(pt, coef)
 
-        if r &gt;= t:
-            d = perpendicular_distance_points(pt, pt[0], pt[-1])
-            #logger.info(f&#39;PDP = {np.argmax(d)}&#39;)
-            #d = distance_point_line(pt, pt[0], pt[-1])
-            #logger.info(f&#39;SDP = {np.argmax(d)}&#39;)
+        curved = r &gt;= t if cost is RDP_Cost.rmspe else r &lt; t
+
+        if curved:
+            d = distance_points(pt, pt[0], pt[-1])
             index = np.argmax(d)
             stack.append((left+index, left+len(pt)))
             stack.append((left, left+index+1))
@@ -485,9 +525,144 @@ straight line defined by the left and right point.</p>
     return np.array(reduced), np.array(removed)</code></pre>
 </details>
 </dd>
+<dt id="knee.rdp.shortest_distance_points"><code class="name flex">
+<span>def <span class="ident">shortest_distance_points</span></span>(<span>p: numpy.ndarray, a: numpy.ndarray, b: numpy.ndarray)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the shortest distance from the points to the
+straight line defined by the left and right point.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pt</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>start</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the left point</dd>
+<dt><strong><code>end</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the right point</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the perpendicular distances</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def shortest_distance_points(p: np.ndarray, a: np.ndarray, b: np.ndarray):
+    &#34;&#34;&#34;
+    Computes the shortest distance from the points to the 
+    straight line defined by the left and right point.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        start (np.ndarray): the left point
+        end (np.ndarray): the right point
+
+    Returns:
+        np.ndarray: the perpendicular distances
+    &#34;&#34;&#34;
+
+    # TODO for you: consider implementing @Eskapp&#39;s suggestions
+    if np.all(a == b):
+        return np.linalg.norm(p - a, axis=1)
+
+    # normalized tangent vector
+    d = np.divide(b - a, np.linalg.norm(b - a))
+
+    # signed parallel distance components
+    s = np.dot(a - p, d)
+    t = np.dot(p - b, d)
+
+    # clamped parallel distance
+    h = np.maximum.reduce([s, t, np.zeros(len(p))])
+
+    # perpendicular distance component, as before
+    # note that for the 3D case these will be vectors
+    c = np.cross(p - a, d)
+
+    # use hypot for Pythagoras to improve accuracy
+    return np.hypot(h, c)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="knee.rdp.RDP_Cost"><code class="flex name class">
+<span>class <span class="ident">RDP_Cost</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enum that defines the cost for the RDP</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RDP_Cost(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the cost for the RDP 
+    &#34;&#34;&#34;
+    r2 = &#39;r2&#39;
+    rmspe = &#39;rmspe&#39;
+
+    def __str__(self):
+        return self.value</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="knee.rdp.RDP_Cost.r2"><code class="name">var <span class="ident">r2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.rdp.RDP_Cost.rmspe"><code class="name">var <span class="ident">rmspe</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="knee.rdp.RDP_Distance"><code class="flex name class">
+<span>class <span class="ident">RDP_Distance</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enum that defines the distance method for the RDP</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RDP_Distance(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the distance method for the RDP 
+    &#34;&#34;&#34;
+    perpendicular = &#39;perpendicular&#39;
+    shortest = &#39;shortest&#39;
+
+    def __str__(self):
+        return self.value</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="knee.rdp.RDP_Distance.perpendicular"><code class="name">var <span class="ident">perpendicular</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.rdp.RDP_Distance.shortest"><code class="name">var <span class="ident">shortest</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -503,13 +678,30 @@ straight line defined by the left and right point.</p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="knee.rdp.distance_point_line" href="#knee.rdp.distance_point_line">distance_point_line</a></code></li>
 <li><code><a title="knee.rdp.mapping" href="#knee.rdp.mapping">mapping</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance" href="#knee.rdp.perpendicular_distance">perpendicular_distance</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance_index" href="#knee.rdp.perpendicular_distance_index">perpendicular_distance_index</a></code></li>
 <li><code><a title="knee.rdp.perpendicular_distance_points" href="#knee.rdp.perpendicular_distance_points">perpendicular_distance_points</a></code></li>
-<li><code><a title="knee.rdp.point_distance" href="#knee.rdp.point_distance">point_distance</a></code></li>
 <li><code><a title="knee.rdp.rdp" href="#knee.rdp.rdp">rdp</a></code></li>
+<li><code><a title="knee.rdp.shortest_distance_points" href="#knee.rdp.shortest_distance_points">shortest_distance_points</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="knee.rdp.RDP_Cost" href="#knee.rdp.RDP_Cost">RDP_Cost</a></code></h4>
+<ul class="">
+<li><code><a title="knee.rdp.RDP_Cost.r2" href="#knee.rdp.RDP_Cost.r2">r2</a></code></li>
+<li><code><a title="knee.rdp.RDP_Cost.rmspe" href="#knee.rdp.RDP_Cost.rmspe">rmspe</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a></code></h4>
+<ul class="">
+<li><code><a title="knee.rdp.RDP_Distance.perpendicular" href="#knee.rdp.RDP_Distance.perpendicular">perpendicular</a></code></li>
+<li><code><a title="knee.rdp.RDP_Distance.shortest" href="#knee.rdp.RDP_Distance.shortest">shortest</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
