@@ -137,13 +137,27 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, di
     return np.array(reduced), np.array(removed)
 
 
-def rdp_fixed(points: np.ndarray, lenght:int, distance: RDP_Distance = RDP_Distance.shortest):
+def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Distance.shortest):
+    """
+    Ramer–Douglas–Peucker (RDP) algorithm.
+
+    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.
+    This version reduces the number of points to a fixed length.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        lenght (int): the fixed length of reduced points
+        distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+
+    Returns:
+        tuple: the index of the reduced space, the points that were removed
+    """
     stack = [(1, 0, len(points))]
 
     reduced = []
 
     #TODO: trivial cases
-    lenght -= 2
+    length -= 2
 
     # select the distance metric to be used
     distance_points = None
@@ -154,7 +168,7 @@ def rdp_fixed(points: np.ndarray, lenght:int, distance: RDP_Distance = RDP_Dista
     else:
         distance_points = lf.shortest_distance_points
 
-    while lenght > 0:
+    while length > 0:
         _, left, right = stack.pop()
         pt = points[left:right]
 
@@ -170,7 +184,7 @@ def rdp_fixed(points: np.ndarray, lenght:int, distance: RDP_Distance = RDP_Dista
         stack.append((left_cost, left, left+index+1))
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
-        lenght -= 1
+        length -= 1
 
     # add first and last points
     reduced.append(0)
