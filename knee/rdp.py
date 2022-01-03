@@ -135,3 +135,48 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, di
 
     reduced.append(len(points)-1)
     return np.array(reduced), np.array(removed)
+
+
+def rdp_fixed(points: np.ndarray, lenght:int, distance: RDP_Distance = RDP_Distance.shortest):
+    stack = [(1, 0, len(points))]
+
+    reduced = []
+
+    #TODO: trivial cases
+    lenght -= 2
+
+    # select the distance metric to be used
+    distance_points = None
+    if distance is RDP_Distance.shortest:
+        distance_points = lf.shortest_distance_points
+    elif distance is RDP_Distance.perpendicular:
+        distance_points = lf.perpendicular_distance_points
+    else:
+        distance_points = lf.shortest_distance_points
+
+    while lenght > 0:
+        _, left, right = stack.pop()
+        pt = points[left:right]
+
+        d = distance_points(pt, pt[0], pt[-1])
+        index = np.argmax(d)
+        # add the relevant point to the reduced set
+        reduced.append(left+index)
+        # compute the cost of the left and right parts
+        left_cost = np.max(distance_points(pt[0:index+1], pt[0], pt[index]))
+        right_cost = np.max(distance_points(pt[index:len(pt)], pt[0], pt[-1]))
+        # Add the points to the stack
+        stack.append((right_cost, left+index, left+len(pt)))
+        stack.append((left_cost, left, left+index+1))
+        # Sort the stack based on the cost
+        stack.sort(key=lambda t: t[0])
+        lenght -= 1
+
+    # add first and last points
+    reduced.append(0)
+    reduced.append(len(points)-1)
+
+    # sort indexes
+    reduced.sort()
+
+    return np.array(reduced)

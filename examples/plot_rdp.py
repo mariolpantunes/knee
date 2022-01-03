@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.getLogger('matplotlib').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
