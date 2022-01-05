@@ -9,13 +9,11 @@ __status__ = 'Development'
 
 import os
 import csv
-import math
 import argparse
 import numpy as np
 import logging
 
 
-from enum import Enum
 import knee.rdp as rdp
 import knee.postprocessing as pp
 import knee.clustering as clustering
