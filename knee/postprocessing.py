@@ -41,7 +41,6 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
         idx = knees[i]
         if idx-1 >=0 and idx+1 < len(points):
             p0, p1 ,p2 = points[idx-1:idx+2]
-
             corner0 = np.array([p0[0], p2[1]])
             amin, amax = kr.rect(corner0, p1)
             bmin, bmax = kr.rect(p0, p2)
@@ -118,20 +117,21 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
     else:
         knee_points = points[knees]
         clusters = clustering(knee_points, t)
+
         max_cluster = clusters.max()
         filtered_knees = []
         for i in range(0, max_cluster+1):
             current_cluster = knees[clusters == i]
-            logger.info(f'Cluster {i} with {len(current_cluster)} elements')
+            #logger.info(f'Cluster {i} with {len(current_cluster)} elements')
 
             if len(current_cluster) > 1:
                 if method is kr.ClusterRanking.hull:
                     # select the hull points that exist within the cluster
                     a, b = current_cluster[[0, -1]]
-                    logger.info(f'Bounds [{a}, {b}]')
+                    #logger.info(f'Bounds [{a}, {b}]')
                     idx = (hull>=a)*(hull<=b)
                     hull_within_cluster = hull[idx]
-                    logger.info(f'Hull (W\\C) {hull_within_cluster} ({len(hull_within_cluster)})')
+                    #logger.info(f'Hull (W\\C) {hull_within_cluster} ({len(hull_within_cluster)})')
                     # only consider clusters with at least a single hull point
                     rankings = np.zeros(len(current_cluster))
                     
@@ -159,10 +159,10 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                             else:
                                 rankings[cluster_idx] = -1.0
                         # replace all -1 with maximum distance
-                        logger.info(f'CHR {rankings}')
+                        #logger.info(f'CHR {rankings}')
                         rankings[rankings<0] = np.amax(rankings)
                         rankings = kr.distance_to_similarity(rankings)
-                        logger.info(f'CHRF {rankings}')
+                        #logger.info(f'CHRF {rankings}')
                     elif len(hull_within_cluster) == 1:
                         for cluster_idx in range(len(current_cluster)):
                             j = current_cluster[cluster_idx]
@@ -178,7 +178,7 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                     best_knee = None
                 else:
                     rankings = kr.rank(rankings)
-                    logger.info(f'Rankings {rankings}')
+                    #logger.info(f'Rankings {rankings}')
                     # Min Max normalization
                     #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
                     idx = np.argmax(rankings)

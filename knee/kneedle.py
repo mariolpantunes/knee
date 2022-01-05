@@ -48,6 +48,7 @@ class PeakDetection(enum.Enum):
     Kneedle = 'Kneedle'
     ZScore = 'ZScore'
     Significant = 'Significant'
+    All = 'All'
 
     def __str__(self):
         return self.value
@@ -156,6 +157,8 @@ def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivit
         knees = pd.significant_peaks(Dd, peaks_idx, sensitivity)
     elif p is PeakDetection.ZScore:
         knees = pd.significant_zscore_peaks(Dd, peaks_idx, sensitivity)
+    else:
+        knees = peaks_idx
 
     if debug is True:
         return {'knees': knees, 'dd': Dd, 'peaks': pd.all_peaks(Dd)}
@@ -191,7 +194,7 @@ def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p:
     else:
         cd = Direction.Decreasing
 
-    knees_1 = knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
+    knees_1= knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
     knees_2 = knees(points, t, cd, Concavity.Clockwise, sensitivity, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))

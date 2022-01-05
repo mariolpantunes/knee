@@ -5,3 +5,5 @@ w45-arc
 w47-arc
 w18-arc
 w19-arc
+w64-arc
+w85-arc

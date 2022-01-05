@@ -6,11 +6,18 @@ import knee.postprocessing as pp
 
 class TestPostProcessing(unittest.TestCase):
     
-    def test_filter_corner_knees(self):
+    def test_filter_corner_knees_00(self):
         points = np.array([[1,3], [2,3], [3,3], [4,2.5], [5,2], [6,1.5], [7, 1]])
         knees = np.array([1,2,3])
         result = pp.filter_corner_knees(points, knees, .5)
         desired = np.array([1,3])
+        np.testing.assert_array_equal(result, desired)
+    
+    def test_filter_corner_knees_01(self):
+        points = np.array([[33.0, 0.25715391], [4.29000000e+02, 2.49621243e-01], [4.62000000e+02, 1.72661497e-01]])
+        knees = np.array([1])
+        result = pp.filter_corner_knees(points, knees, .5)
+        desired = np.array([])
         np.testing.assert_array_equal(result, desired)
     
     """def test_add_even_points_0(self):
