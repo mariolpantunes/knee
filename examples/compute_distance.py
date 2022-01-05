@@ -28,12 +28,15 @@ logger = logging.getLogger(__name__)
 
 
 def main(args):
+
+    path = os.path.expanduser(args.p)
+
     if args.t is Trace.all:
-        files = [f for f in os.listdir(args.p) if re.match(r'w[0-9]*-(lru|arc)_reduced\.csv', f)]
+        files = [f for f in os.listdir(path) if re.match(r'w[0-9]*-(lru|arc)_reduced\.csv', f)]
     elif args.t is Trace.arc:
-        files = [f for f in os.listdir(args.p) if re.match(r'w[0-9]*-arc_reduced\.csv', f)]
+        files = [f for f in os.listdir(path) if re.match(r'w[0-9]*-arc_reduced\.csv', f)]
     else:
-        files = [f for f in os.listdir(args.p) if re.match(r'w[0-9]*-lru_reduced\.csv', f)]
+        files = [f for f in os.listdir(path) if re.match(r'w[0-9]*-lru_reduced\.csv', f)]
     
     logger.info(f'{files}')
 
@@ -42,12 +45,13 @@ def main(args):
 
     # Fill the matrix with the values
     for i in range (len(files)-1):
-        points_i = np.genfromtxt(f'{args.p}/{files[i]}', delimiter=',')
+        
+        points_i = np.genfromtxt(f'{path}{files[i]}', delimiter=',')
         y_i = points_i[:, 1]
         norm = np.linalg.norm(y_i)
         y_i /= norm 
         for j in range (i+1,len(files)):
-            points_j = np.genfromtxt(f'{args.p}/{files[j]}', delimiter=',')
+            points_j = np.genfromtxt(f'{path}{files[j]}', delimiter=',')
             y_j = points_j[:, 1]
             norm = np.linalg.norm(y_j)
             y_j /= norm 
@@ -58,13 +62,21 @@ def main(args):
 
     logger.info(f'{distances}')
 
+    rv = []
+
     # Process the distance matrix
     for i in range(len(distances)):
-        pass
+        row = distances[i]
+        rv.append((np.sum(row), files[i]))
+    
+    # Sort the results
+    rv.sort(reverse=True, key=lambda t: t[0])
+    logger.info(f'{rv}')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='MRC compute distance')
-    parser.add_argument('-p', type=str, help='input path', default='~/mrcs')
+    parser.add_argument('-p', type=str, help='input path', default='~/mrcs/')
     parser.add_argument('-t', type=Trace, choices=list(Trace), default='lru')
     args = parser.parse_args()
     
