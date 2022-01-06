@@ -45,7 +45,6 @@ def main(args):
 
     # Fill the matrix with the values
     for i in range (len(files)-1):
-        
         points_i = np.genfromtxt(f'{path}{files[i]}', delimiter=',')
         y_i = points_i[:, 1]
         norm = np.linalg.norm(y_i)

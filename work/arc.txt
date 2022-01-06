@@ -7,3 +7,5 @@ w18-arc
 w19-arc
 w64-arc
 w85-arc
+w88-arc
+w97-arc
