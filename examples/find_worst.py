@@ -78,8 +78,7 @@ def main(args):
     else:
         files = [f for f in os.listdir(path) if re.match(r'w[0-9]*-lru\.csv', f)]
     
-    solution = 0
-    idx = -1
+    rv = []
 
     for i in range (len(files)):
         points = np.genfromtxt(f'{path}{files[i]}', delimiter=',')
@@ -108,10 +107,12 @@ def main(args):
         #    mcc02 = 0.0
         
         #logger.info(f'{mcc01:10.2E} {mcc02:10.2E}')
-        if len(knees_01) > len(knees_02) and math.fabs(len(knees_01)-len(knees_02)) > solution:
+        if len(knees_01) > len(knees_02):
             solution = math.fabs(len(knees_01)-len(knees_02))
-            idx = i
-    logger.info(f'Worst trace {files[idx]}({idx}): {solution}')
+            rv.append((solution, i))
+    rv.sort(reverse=True, key=lambda t: t[0])
+    for solution, idx in rv: 
+        logger.info(f'{files[idx]}({idx}): {solution}')
 
 
 if __name__ == '__main__':

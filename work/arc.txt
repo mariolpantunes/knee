@@ -9,3 +9,51 @@ w64-arc
 w85-arc
 w88-arc
 w97-arc
+
+****
+
+w97-arc.csv(103): 8.0
+w15-arc.csv(21): 6.0
+w44-arc.csv(50): 6.0
+w08-arc.csv(7): 5.0
+w100-arc.csv(10): 5.0
+w53-arc.csv(59): 5.0
+w98-arc.csv(104): 5.0
+w05-arc.csv(4): 4.0
+w10-arc.csv(9): 4.0
+w21-arc.csv(27): 4.0
+w103-arc.csv(13): 3.0
+w38-arc.csv(44): 3.0
+w41-arc.csv(47): 3.0
+w54-arc.csv(60): 3.0
+w62-arc.csv(68): 3.0
+w86-arc.csv(92): 3.0
+w93-arc.csv(99): 3.0
+w04-arc.csv(3): 2.0
+w101-arc.csv(11): 2.0
+w105-arc.csv(15): 2.0
+w22-arc.csv(28): 2.0
+w31-arc.csv(37): 2.0
+w43-arc.csv(49): 2.0
+w49-arc.csv(55): 2.0
+w60-arc.csv(66): 2.0
+w61-arc.csv(67): 2.0
+w74-arc.csv(80): 2.0
+w80-arc.csv(86): 2.0
+w94-arc.csv(100): 2.0
+w03-arc.csv(2): 1.0
+w104-arc.csv(14): 1.0
+w16-arc.csv(22): 1.0
+w18-arc.csv(24): 1.0
+w24-arc.csv(30): 1.0
+w34-arc.csv(40): 1.0
+w42-arc.csv(48): 1.0
+w48-arc.csv(54): 1.0
+w50-arc.csv(56): 1.0
+w58-arc.csv(64): 1.0
+w65-arc.csv(71): 1.0
+w78-arc.csv(84): 1.0
+w81-arc.csv(87): 1.0
+w82-arc.csv(88): 1.0
+w85-arc.csv(91): 1.0
+w90-arc.csv(96): 1.0
