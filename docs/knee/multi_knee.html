@@ -44,7 +44,7 @@ import knee.linear_fit as lf
 logger = logging.getLogger(__name__)
 
 
-def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, t2: int = 3) -&gt; np.ndarray:
+def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -53,8 +53,9 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
     Args:
         get_knee (typing.Callable): method that returns a single knee point
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): the coefficient of determination used as a threshold (default 0.99)
+        t1 (float): the coefficient of determination used as a threshold (default 0.01)
         t2 (int): the mininum number of points used as a threshold (default 3)
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)
 
     Returns:
         np.ndarray: knee points on the curve
@@ -65,11 +66,26 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
 
     while stack:
         left, right = stack.pop()
-        
         pt = points[left:right]
+        
         if len(pt) &gt; t2:
-            coef = lf.linear_fit_points(pt)
-            if lf.linear_r2_points(pt, coef) &lt; t1:
+            if len(pt) &lt;= 2:
+                if cost is lf.Linear_Metrics.rmspe:
+                    r = 0.0
+                else:
+                    r = 1.0
+            else:
+                coef = lf.linear_fit_points(pt)
+                if cost is lf.Linear_Metrics.rmspe:
+                    r = lf.rmspe_points(pt, coef)
+                else:
+                    r = lf.linear_r2_points(pt, coef)
+
+            curved = r &gt;= t1 if cost is lf.Linear_Metrics.rmspe else r &lt; t1
+
+            #coef = lf.linear_fit_points(pt)
+            # if lf.linear_r2_points(pt, coef) &lt; t1:
+            if curved:
                 rv = get_knee(pt)
                 if rv is not None:
                     idx = rv + left
@@ -88,7 +104,7 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.multi_knee.multi_knee"><code class="name flex">
-<span>def <span class="ident">multi_knee</span></span>(<span>get_knee: Callable, points: numpy.ndarray, t1: float = 0.99, t2: int = 3) ‑> numpy.ndarray</span>
+<span>def <span class="ident">multi_knee</span></span>(<span>get_knee: Callable, points: numpy.ndarray, t1: float = 0.01, t2: int = 3, cost: <a title="knee.linear_fit.Linear_Metrics" href="linear_fit.html#knee.linear_fit.Linear_Metrics">Linear_Metrics</a> = rmspe) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Wrapper that convert a single knee point detection into a multi knee point detector.</p>
@@ -100,9 +116,11 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t1</code></strong> :&ensp;<code>float</code></dt>
-<dd>the coefficient of determination used as a threshold (default 0.99)</dd>
+<dd>the coefficient of determination used as a threshold (default 0.01)</dd>
 <dt><strong><code>t2</code></strong> :&ensp;<code>int</code></dt>
 <dd>the mininum number of points used as a threshold (default 3)</dd>
+<dt><strong><code>cost</code></strong> :&ensp;<code>lf.Linear_Metrics</code></dt>
+<dd>the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -113,7 +131,7 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, t2: int = 3) -&gt; np.ndarray:
+<pre><code class="python">def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -122,8 +140,9 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
     Args:
         get_knee (typing.Callable): method that returns a single knee point
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): the coefficient of determination used as a threshold (default 0.99)
+        t1 (float): the coefficient of determination used as a threshold (default 0.01)
         t2 (int): the mininum number of points used as a threshold (default 3)
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)
 
     Returns:
         np.ndarray: knee points on the curve
@@ -134,11 +153,26 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
 
     while stack:
         left, right = stack.pop()
-        
         pt = points[left:right]
+        
         if len(pt) &gt; t2:
-            coef = lf.linear_fit_points(pt)
-            if lf.linear_r2_points(pt, coef) &lt; t1:
+            if len(pt) &lt;= 2:
+                if cost is lf.Linear_Metrics.rmspe:
+                    r = 0.0
+                else:
+                    r = 1.0
+            else:
+                coef = lf.linear_fit_points(pt)
+                if cost is lf.Linear_Metrics.rmspe:
+                    r = lf.rmspe_points(pt, coef)
+                else:
+                    r = lf.linear_r2_points(pt, coef)
+
+            curved = r &gt;= t1 if cost is lf.Linear_Metrics.rmspe else r &lt; t1
+
+            #coef = lf.linear_fit_points(pt)
+            # if lf.linear_r2_points(pt, coef) &lt; t1:
+            if curved:
                 rv = get_knee(pt)
                 if rv is not None:
                     idx = rv + left

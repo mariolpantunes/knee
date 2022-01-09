@@ -103,7 +103,7 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t (float): the coefficient of determination threshold (default 0.01)
-        cost (RDP_Cost): the cost method used to evaluate a point set (default: RDP_Cost.rmspe)
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
 
     Returns:
@@ -299,8 +299,8 @@ This version uses different cost functions to decided whenever to keep or remove
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
 <dd>the coefficient of determination threshold (default 0.01)</dd>
-<dt><strong><code>cost</code></strong> :&ensp;<code>RDP_Cost</code></dt>
-<dd>the cost method used to evaluate a point set (default: RDP_Cost.rmspe)</dd>
+<dt><strong><code>cost</code></strong> :&ensp;<code>lf.Linear_Metrics</code></dt>
+<dd>the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)</dd>
 <dt><strong><code>distance</code></strong> :&ensp;<code><a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a></code></dt>
 <dd>the distance metric used to decide the split point (default: RDP_Distance.shortest)</dd>
 </dl>
@@ -323,7 +323,7 @@ This version uses different cost functions to decided whenever to keep or remove
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t (float): the coefficient of determination threshold (default 0.01)
-        cost (RDP_Cost): the cost method used to evaluate a point set (default: RDP_Cost.rmspe)
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
 
     Returns:

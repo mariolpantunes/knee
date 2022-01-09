@@ -96,15 +96,15 @@ def knee(points: np.ndarray) -&gt; int:
     return np.argmax(curvature)
 
 
-def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 4) -&gt; np.ndarray:
+def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 4) -&gt; np.ndarray:
     &#34;&#34;&#34;Recursive knee point detection based on the menger curvature.
 
     It returns the knee points on the curve.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): coefficient of determination threshold (default 0.99)
-        t2 (int): number of points threshold (default 3)
+        t1 (float): coefficient of determination threshold (default 0.01)
+        t2 (int): number of points threshold (default 4)
 
     Returns:
         np.ndarray: knee points on the curve
@@ -214,7 +214,7 @@ def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 4) -&gt; np.ndarr
 </details>
 </dd>
 <dt id="knee.menger.multi_knee"><code class="name flex">
-<span>def <span class="ident">multi_knee</span></span>(<span>points: numpy.ndarray, t1: float = 0.99, t2: int = 4) ‑> numpy.ndarray</span>
+<span>def <span class="ident">multi_knee</span></span>(<span>points: numpy.ndarray, t1: float = 0.01, t2: int = 4) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Recursive knee point detection based on the menger curvature.</p>
@@ -224,9 +224,9 @@ def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 4) -&gt; np.ndarr
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t1</code></strong> :&ensp;<code>float</code></dt>
-<dd>coefficient of determination threshold (default 0.99)</dd>
+<dd>coefficient of determination threshold (default 0.01)</dd>
 <dt><strong><code>t2</code></strong> :&ensp;<code>int</code></dt>
-<dd>number of points threshold (default 3)</dd>
+<dd>number of points threshold (default 4)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -237,15 +237,15 @@ def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 4) -&gt; np.ndarr
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 4) -&gt; np.ndarray:
+<pre><code class="python">def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 4) -&gt; np.ndarray:
     &#34;&#34;&#34;Recursive knee point detection based on the menger curvature.
 
     It returns the knee points on the curve.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): coefficient of determination threshold (default 0.99)
-        t2 (int): number of points threshold (default 3)
+        t1 (float): coefficient of determination threshold (default 0.01)
+        t2 (int): number of points threshold (default 4)
 
     Returns:
         np.ndarray: knee points on the curve

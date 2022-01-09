@@ -71,7 +71,7 @@ def knee(points: np.ndarray) -&gt; int:
     return idx
 
 
-def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 3) -&gt; np.ndarray:
+def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 3) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Recursive knee point detection based on the curvature equations.
 
@@ -79,7 +79,7 @@ def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 3) -&gt; np.ndarr
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): coefficient of determination threshold (default 0.99)
+        t1 (float): coefficient of determination threshold (default 0.01)
         t2 (int): number of points threshold (default 3)
 
     Returns:
@@ -147,7 +147,7 @@ k = \frac{|f''(x)|}{(1+[f'(2)]^2)^{\frac{3}{2}}}
 </details>
 </dd>
 <dt id="knee.curvature.multi_knee"><code class="name flex">
-<span>def <span class="ident">multi_knee</span></span>(<span>points: numpy.ndarray, t1: float = 0.99, t2: int = 3) ‑> numpy.ndarray</span>
+<span>def <span class="ident">multi_knee</span></span>(<span>points: numpy.ndarray, t1: float = 0.01, t2: int = 3) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Recursive knee point detection based on the curvature equations.</p>
@@ -157,7 +157,7 @@ k = \frac{|f''(x)|}{(1+[f'(2)]^2)^{\frac{3}{2}}}
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t1</code></strong> :&ensp;<code>float</code></dt>
-<dd>coefficient of determination threshold (default 0.99)</dd>
+<dd>coefficient of determination threshold (default 0.01)</dd>
 <dt><strong><code>t2</code></strong> :&ensp;<code>int</code></dt>
 <dd>number of points threshold (default 3)</dd>
 </dl>
@@ -170,7 +170,7 @@ k = \frac{|f''(x)|}{(1+[f'(2)]^2)^{\frac{3}{2}}}
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee(points: np.ndarray, t1: float = 0.99, t2: int = 3) -&gt; np.ndarray:
+<pre><code class="python">def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 3) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Recursive knee point detection based on the curvature equations.
 
@@ -178,7 +178,7 @@ k = \frac{|f''(x)|}{(1+[f'(2)]^2)^{\frac{3}{2}}}
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): coefficient of determination threshold (default 0.99)
+        t1 (float): coefficient of determination threshold (default 0.01)
         t2 (int): number of points threshold (default 3)
 
     Returns:
