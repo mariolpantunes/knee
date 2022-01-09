@@ -7,24 +7,12 @@ __status__ = 'Development'
 
 
 import enum
-import math
 import logging
 import numpy as np
 import knee.linear_fit as lf
 
 
 logger = logging.getLogger(__name__)
-
-
-class RDP_Cost(enum.Enum):
-    """
-    Enum that defines the cost for the RDP 
-    """
-    r2 = 'r2'
-    rmspe = 'rmspe'
-
-    def __str__(self):
-        return self.value
 
 
 class RDP_Distance(enum.Enum):
@@ -76,7 +64,7 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
-def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
+def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -86,7 +74,7 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, di
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t (float): the coefficient of determination threshold (default 0.01)
-        cost (RDP_Cost): the cost method used to evaluate a point set (default: RDP_Cost.rmspe)
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
 
     Returns:
@@ -111,18 +99,18 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, di
         pt = points[left:right]
 
         if len(pt) <= 2:
-            if cost is RDP_Cost.rmspe:
+            if cost is lf.Linear_Metrics.rmspe:
                 r = 0.0
             else:
                 r = 1.0
         else:
             coef = lf.linear_fit_points(pt)
-            if cost is RDP_Cost.rmspe:
+            if cost is lf.Linear_Metrics.rmspe:
                 r = lf.rmspe_points(pt, coef)
             else:
                 r = lf.linear_r2_points(pt, coef)
 
-        curved = r >= t if cost is RDP_Cost.rmspe else r < t
+        curved = r >= t if cost is lf.Linear_Metrics.rmspe else r < t
 
         if curved:
             d = distance_points(pt, pt[0], pt[-1])

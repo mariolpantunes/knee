@@ -15,6 +15,18 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
+class Linear_Metrics(enum.Enum):
+    """
+    Enum that defines the different metrics linear functions.
+    These metrics are used on the `knee.rdp` and `knee.multi_knee`. 
+    """
+    r2 = 'r2'
+    rmspe = 'rmspe'
+
+    def __str__(self):
+        return self.value
+
+
 class R2(enum.Enum):
     """
     Enum that defines the types of coefficient of determination

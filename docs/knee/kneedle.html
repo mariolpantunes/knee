@@ -77,6 +77,7 @@ class PeakDetection(enum.Enum):
     Kneedle = &#39;Kneedle&#39;
     ZScore = &#39;ZScore&#39;
     Significant = &#39;Significant&#39;
+    All = &#39;All&#39;
 
     def __str__(self):
         return self.value
@@ -185,6 +186,8 @@ def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivit
         knees = pd.significant_peaks(Dd, peaks_idx, sensitivity)
     elif p is PeakDetection.ZScore:
         knees = pd.significant_zscore_peaks(Dd, peaks_idx, sensitivity)
+    else:
+        knees = peaks_idx
 
     if debug is True:
         return {&#39;knees&#39;: knees, &#39;dd&#39;: Dd, &#39;peaks&#39;: pd.all_peaks(Dd)}
@@ -220,7 +223,7 @@ def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p:
     else:
         cd = Direction.Decreasing
 
-    knees_1 = knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
+    knees_1= knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
     knees_2 = knees(points, t, cd, Concavity.Clockwise, sensitivity, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))
@@ -421,7 +424,7 @@ relevant knees:
     else:
         cd = Direction.Decreasing
 
-    knees_1 = knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
+    knees_1= knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
     knees_2 = knees(points, t, cd, Concavity.Clockwise, sensitivity, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))
@@ -575,6 +578,8 @@ relevant knees:
         knees = pd.significant_peaks(Dd, peaks_idx, sensitivity)
     elif p is PeakDetection.ZScore:
         knees = pd.significant_zscore_peaks(Dd, peaks_idx, sensitivity)
+    else:
+        knees = peaks_idx
 
     if debug is True:
         return {&#39;knees&#39;: knees, &#39;dd&#39;: Dd, &#39;peaks&#39;: pd.all_peaks(Dd)}
@@ -769,6 +774,7 @@ relevant knees:
     Kneedle = &#39;Kneedle&#39;
     ZScore = &#39;ZScore&#39;
     Significant = &#39;Significant&#39;
+    All = &#39;All&#39;
 
     def __str__(self):
         return self.value</code></pre>
@@ -779,6 +785,10 @@ relevant knees:
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="knee.kneedle.PeakDetection.All"><code class="name">var <span class="ident">All</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="knee.kneedle.PeakDetection.Kneedle"><code class="name">var <span class="ident">Kneedle</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -836,6 +846,7 @@ relevant knees:
 <li>
 <h4><code><a title="knee.kneedle.PeakDetection" href="#knee.kneedle.PeakDetection">PeakDetection</a></code></h4>
 <ul class="">
+<li><code><a title="knee.kneedle.PeakDetection.All" href="#knee.kneedle.PeakDetection.All">All</a></code></li>
 <li><code><a title="knee.kneedle.PeakDetection.Kneedle" href="#knee.kneedle.PeakDetection.Kneedle">Kneedle</a></code></li>
 <li><code><a title="knee.kneedle.PeakDetection.Significant" href="#knee.kneedle.PeakDetection.Significant">Significant</a></code></li>
 <li><code><a title="knee.kneedle.PeakDetection.ZScore" href="#knee.kneedle.PeakDetection.ZScore">ZScore</a></code></li>

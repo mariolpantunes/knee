@@ -44,6 +44,18 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
+class Linear_Metrics(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the different metrics linear functions.
+    These metrics are used on the `knee.rdp` and `knee.multi_knee`. 
+    &#34;&#34;&#34;
+    r2 = &#39;r2&#39;
+    rmspe = &#39;rmspe&#39;
+
+    def __str__(self):
+        return self.value
+
+
 class R2(enum.Enum):
     &#34;&#34;&#34;
     Enum that defines the types of coefficient of determination
@@ -1234,6 +1246,44 @@ straight line defined by the left and right point.</p>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="knee.linear_fit.Linear_Metrics"><code class="flex name class">
+<span>class <span class="ident">Linear_Metrics</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enum that defines the different metrics linear functions.
+These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp</a></code> and <code><a title="knee.multi_knee" href="multi_knee.html">knee.multi_knee</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Linear_Metrics(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the different metrics linear functions.
+    These metrics are used on the `knee.rdp` and `knee.multi_knee`. 
+    &#34;&#34;&#34;
+    r2 = &#39;r2&#39;
+    rmspe = &#39;rmspe&#39;
+
+    def __str__(self):
+        return self.value</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="knee.linear_fit.Linear_Metrics.r2"><code class="name">var <span class="ident">r2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.linear_fit.Linear_Metrics.rmspe"><code class="name">var <span class="ident">rmspe</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="knee.linear_fit.R2"><code class="flex name class">
 <span>class <span class="ident">R2</span></span>
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
@@ -1309,6 +1359,13 @@ straight line defined by the left and right point.</p>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="knee.linear_fit.Linear_Metrics" href="#knee.linear_fit.Linear_Metrics">Linear_Metrics</a></code></h4>
+<ul class="">
+<li><code><a title="knee.linear_fit.Linear_Metrics.r2" href="#knee.linear_fit.Linear_Metrics.r2">r2</a></code></li>
+<li><code><a title="knee.linear_fit.Linear_Metrics.rmspe" href="#knee.linear_fit.Linear_Metrics.rmspe">rmspe</a></code></li>
+</ul>
+</li>
 <li>
 <h4><code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></h4>
 <ul class="">

@@ -36,24 +36,12 @@ __status__ = &#39;Development&#39;
 
 
 import enum
-import math
 import logging
 import numpy as np
 import knee.linear_fit as lf
 
 
 logger = logging.getLogger(__name__)
-
-
-class RDP_Cost(enum.Enum):
-    &#34;&#34;&#34;
-    Enum that defines the cost for the RDP 
-    &#34;&#34;&#34;
-    r2 = &#39;r2&#39;
-    rmspe = &#39;rmspe&#39;
-
-    def __str__(self):
-        return self.value
 
 
 class RDP_Distance(enum.Enum):
@@ -105,7 +93,7 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
-def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
     &#34;&#34;&#34;
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -140,18 +128,18 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, di
         pt = points[left:right]
 
         if len(pt) &lt;= 2:
-            if cost is RDP_Cost.rmspe:
+            if cost is lf.Linear_Metrics.rmspe:
                 r = 0.0
             else:
                 r = 1.0
         else:
             coef = lf.linear_fit_points(pt)
-            if cost is RDP_Cost.rmspe:
+            if cost is lf.Linear_Metrics.rmspe:
                 r = lf.rmspe_points(pt, coef)
             else:
                 r = lf.linear_r2_points(pt, coef)
 
-        curved = r &gt;= t if cost is RDP_Cost.rmspe else r &lt; t
+        curved = r &gt;= t if cost is lf.Linear_Metrics.rmspe else r &lt; t
 
         if curved:
             d = distance_points(pt, pt[0], pt[-1])
@@ -299,7 +287,7 @@ This method assumes the indexes are sorted in ascending order.</p>
 </details>
 </dd>
 <dt id="knee.rdp.rdp"><code class="name flex">
-<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, t: float = 0.01, cost: <a title="knee.rdp.RDP_Cost" href="#knee.rdp.RDP_Cost">RDP_Cost</a> = rmspe, distance: <a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a> = shortest) ‑> tuple</span>
+<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, t: float = 0.01, cost: <a title="knee.linear_fit.Linear_Metrics" href="linear_fit.html#knee.linear_fit.Linear_Metrics">Linear_Metrics</a> = rmspe, distance: <a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a> = shortest) ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Ramer–Douglas–Peucker (RDP) algorithm.</p>
@@ -311,7 +299,7 @@ This version uses different cost functions to decided whenever to keep or remove
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
 <dd>the coefficient of determination threshold (default 0.01)</dd>
-<dt><strong><code>cost</code></strong> :&ensp;<code><a title="knee.rdp.RDP_Cost" href="#knee.rdp.RDP_Cost">RDP_Cost</a></code></dt>
+<dt><strong><code>cost</code></strong> :&ensp;<code>RDP_Cost</code></dt>
 <dd>the cost method used to evaluate a point set (default: RDP_Cost.rmspe)</dd>
 <dt><strong><code>distance</code></strong> :&ensp;<code><a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a></code></dt>
 <dd>the distance metric used to decide the split point (default: RDP_Distance.shortest)</dd>
@@ -325,7 +313,7 @@ This version uses different cost functions to decided whenever to keep or remove
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rdp(points: np.ndarray, t: float = 0.01, cost: RDP_Cost = RDP_Cost.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+<pre><code class="python">def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
     &#34;&#34;&#34;
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -360,18 +348,18 @@ This version uses different cost functions to decided whenever to keep or remove
         pt = points[left:right]
 
         if len(pt) &lt;= 2:
-            if cost is RDP_Cost.rmspe:
+            if cost is lf.Linear_Metrics.rmspe:
                 r = 0.0
             else:
                 r = 1.0
         else:
             coef = lf.linear_fit_points(pt)
-            if cost is RDP_Cost.rmspe:
+            if cost is lf.Linear_Metrics.rmspe:
                 r = lf.rmspe_points(pt, coef)
             else:
                 r = lf.linear_r2_points(pt, coef)
 
-        curved = r &gt;= t if cost is RDP_Cost.rmspe else r &lt; t
+        curved = r &gt;= t if cost is lf.Linear_Metrics.rmspe else r &lt; t
 
         if curved:
             d = distance_points(pt, pt[0], pt[-1])
@@ -475,42 +463,6 @@ This version reduces the number of points to a fixed length.</p>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="knee.rdp.RDP_Cost"><code class="flex name class">
-<span>class <span class="ident">RDP_Cost</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Enum that defines the cost for the RDP</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class RDP_Cost(enum.Enum):
-    &#34;&#34;&#34;
-    Enum that defines the cost for the RDP 
-    &#34;&#34;&#34;
-    r2 = &#39;r2&#39;
-    rmspe = &#39;rmspe&#39;
-
-    def __str__(self):
-        return self.value</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>enum.Enum</li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="knee.rdp.RDP_Cost.r2"><code class="name">var <span class="ident">r2</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="knee.rdp.RDP_Cost.rmspe"><code class="name">var <span class="ident">rmspe</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-</dd>
 <dt id="knee.rdp.RDP_Distance"><code class="flex name class">
 <span>class <span class="ident">RDP_Distance</span></span>
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
@@ -570,13 +522,6 @@ This version reduces the number of points to a fixed length.</p>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
-<li>
-<h4><code><a title="knee.rdp.RDP_Cost" href="#knee.rdp.RDP_Cost">RDP_Cost</a></code></h4>
-<ul class="">
-<li><code><a title="knee.rdp.RDP_Cost.r2" href="#knee.rdp.RDP_Cost.r2">r2</a></code></li>
-<li><code><a title="knee.rdp.RDP_Cost.rmspe" href="#knee.rdp.RDP_Cost.rmspe">rmspe</a></code></li>
-</ul>
-</li>
 <li>
 <h4><code><a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a></code></h4>
 <ul class="">

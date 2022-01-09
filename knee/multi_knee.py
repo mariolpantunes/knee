@@ -15,7 +15,7 @@ import knee.linear_fit as lf
 logger = logging.getLogger(__name__)
 
 
-def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, t2: int = 3) -> np.ndarray:
+def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe) -> np.ndarray:
     """
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -24,8 +24,9 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
     Args:
         get_knee (typing.Callable): method that returns a single knee point
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): the coefficient of determination used as a threshold (default 0.99)
+        t1 (float): the coefficient of determination used as a threshold (default 0.01)
         t2 (int): the mininum number of points used as a threshold (default 3)
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)
 
     Returns:
         np.ndarray: knee points on the curve
@@ -36,11 +37,26 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.99, 
 
     while stack:
         left, right = stack.pop()
-        
         pt = points[left:right]
+        
         if len(pt) > t2:
-            coef = lf.linear_fit_points(pt)
-            if lf.linear_r2_points(pt, coef) < t1:
+            if len(pt) <= 2:
+                if cost is lf.Linear_Metrics.rmspe:
+                    r = 0.0
+                else:
+                    r = 1.0
+            else:
+                coef = lf.linear_fit_points(pt)
+                if cost is lf.Linear_Metrics.rmspe:
+                    r = lf.rmspe_points(pt, coef)
+                else:
+                    r = lf.linear_r2_points(pt, coef)
+
+            curved = r >= t1 if cost is lf.Linear_Metrics.rmspe else r < t1
+
+            #coef = lf.linear_fit_points(pt)
+            # if lf.linear_r2_points(pt, coef) < t1:
+            if curved:
                 rv = get_knee(pt)
                 if rv is not None:
                     idx = rv + left

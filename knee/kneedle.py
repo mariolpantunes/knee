@@ -105,7 +105,9 @@ def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> i
     Ds = ema.linear(points, t)
     pmin = Ds.min(axis=0)
     pmax = Ds.max(axis=0)
-    Dn = (Ds - pmin)/(pmax - pmin)
+    diff = pmax - pmin
+    diff[diff == 0] = 1.0
+    Dn = (Ds - pmin)/diff 
     Dd = differences(Dn, cd, cc)
     peaks = pd.all_peaks(Dd)
     idx = pd.highest_peak(points, peaks)
@@ -245,7 +247,7 @@ def auto_knee(points: np.ndarray, t: float = 1.0) -> int:
     return single_knee(points, t, cd, cc)
 
 
-def multi_knee(points, t1=0.99, t2=3):
+def multi_knee(points, t1=0.01, t2=3):
     """
     Recursive knee point detection based on Kneedle.
 
@@ -253,7 +255,7 @@ def multi_knee(points, t1=0.99, t2=3):
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): coefficient of determination threshold (default 0.99)
+        t1 (float): coefficient of determination threshold (default 0.01)
         t2 (int): number of points threshold (default 3)
 
     Returns:
