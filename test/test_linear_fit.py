@@ -33,4 +33,24 @@ class TestLinearFir(unittest.TestCase):
         result = math.degrees(math.fabs(lf.angle(coef1, coef2)))
         desired = 89.99999999427042
         self.assertAlmostEqual(result, desired, 2)
-        
+    
+    def test_rpd(self):
+        coef = (0, 1)
+        points = np.array([[0.0, 0.0], [1.0, 0.9], [2.0, 1.5], [3,2.25], [4,3.6], [5.0,5.0]])
+        result = lf.rpd_points(points, coef)
+        desired = 0.116
+        self.assertAlmostEqual(result, desired, 2)
+    
+    def test_r2(self):
+        coef = (0, 1)
+        points = np.array([[0.0, 0.0], [1.0, 0.9], [2.0, 1.5], [3,2.25], [4,3.6], [5.0,5.0]])
+        result = lf.r2_points(points, coef)
+        desired = 0.973
+        self.assertAlmostEqual(result, desired, 2)
+    
+    def test_rmspe(self):
+        coef = (0, 1)
+        points = np.array([[0.0, 0.0], [1.0, 0.9], [2.0, 1.5], [3,2.25], [4,3.6], [5.0,5.0]])
+        result = lf.rmspe_points(points, coef)
+        desired = 0.202
+        self.assertAlmostEqual(result, desired, 2)

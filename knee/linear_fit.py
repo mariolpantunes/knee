@@ -22,6 +22,7 @@ class Linear_Metrics(enum.Enum):
     """
     r2 = 'r2'
     rmspe = 'rmspe'
+    rdp = 'rdp'
 
     def __str__(self):
         return self.value
@@ -190,6 +191,41 @@ def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -> floa
     """
     y_hat = linear_transform(x, coef)
     rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
+    return rv
+
+
+def rpd_points(points: np.ndarray, coef: tuple, eps: float = 1e-16) -> float:
+    """
+    Computes the Relative Percentage Difference (RPD).
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Relative Percentage Difference (RPD)
+    """
+    x = points[:, 0]
+    y = points[:, 1]
+    return rpd(x, y, coef, eps)
+
+
+def rpd(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -> float:
+    """
+    Computes the Relative Percentage Difference (RPD).
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        coef (tuple): the coefficients from the linear fit
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Relative Percentage Difference (RPD)
+    """
+    y_hat = linear_transform(x, coef)
+    rv = np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
     return rv
 
 
