@@ -17,5 +17,5 @@ setup(
       author_email='mariolpantunes@gmail.com',
       url='https://github.com/mariolpantunes/knee',
       packages=find_packages(),
-      install_requires=['numpy>=1.22.1', 'uts @ git+ssh://git@github.com/mariolpantunes/uts.git#egg=uts']
+      install_requires=['numpy>=1.22.1', 'uts @ git+git://github.com/mariolpantunes/uts#egg=uts']
 )
