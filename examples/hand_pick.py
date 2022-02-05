@@ -106,8 +106,12 @@ def main(args):
     global points
     points = np.genfromtxt(args.i, delimiter=',')
 
-    x = points[:,0]
-    y = points[:,1]
+    if points.ndim == 1:
+        y = points
+        x = np.arange(0, len(y))
+    else:
+        x = points[:,0]
+        y = points[:,1]
     ax.plot(x, y)
 
     for x,y in dataset:

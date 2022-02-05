@@ -39,6 +39,11 @@ class ConvexHull(enum.Enum):
 
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
+
+    if points.ndim == 1:
+        y = points
+        x = np.arange(0, len(y))
+        points = np.array([x,y]).T
     
     points_reduced, removed = rdp.rdp(points, args.r)
     
