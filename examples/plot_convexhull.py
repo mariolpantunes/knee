@@ -12,6 +12,7 @@ import argparse
 import numpy as np
 
 import knee.rdp as rdp
+import knee.linear_fit as lf
 import knee.convex_hull as ch
 import matplotlib.pyplot as plt
 
@@ -39,23 +40,27 @@ class ConvexHull(enum.Enum):
 
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
-    
-    points_reduced, removed = rdp.rdp(points, args.r)
-    
-    space_saving = round((1.0-(len(points_reduced)/len(points)))*100.0, 2)
-    logger.info('Number of data points after RDP: %s(%s %%)', len(points_reduced), space_saving)
-    
-    indexes = np.arange(0, len(points_reduced))
-    indexes = rdp.mapping(indexes, points_reduced, removed)
 
+    if points.ndim == 1:
+        y = points
+        x = np.arange(0, len(y))
+        points = np.array([x,y]).T
+    
+    reduced, removed = rdp.rdp(points, args.r, cost=args.c, distance=args.d)
+    
+    space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
+    logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
+    
     hull_imp = {ConvexHull.hull: ch.graham_scan, ConvexHull.upper: ch.graham_scan_upper, ConvexHull.lower: ch.graham_scan_lower}
 
+    selected = points[reduced]
+
     if args.s is ConvexHullSource.raw:
-        hull = hull_imp[args.c](points)
+        hull = hull_imp[args.ch](points)
         hull_points = points[hull]
     else:
-        hull = hull_imp[args.c](points_reduced)
-        hull_points = points_reduced[hull]
+        hull = hull_imp[args.ch](selected)
+        hull_points = selected[hull]
 
     logger.info(hull)
     
@@ -63,10 +68,9 @@ def main(args):
     y = points[:, 1]
     plt.plot(x, y)
 
-    selected = points[indexes]
+    
     x = selected[:, 0]
     y = selected[:, 1]
-
     plt.plot(x, y, marker='o', markersize=3)
     
     x = hull_points[:, 0]
@@ -81,8 +85,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-s', type=ConvexHullSource, choices=list(ConvexHullSource), default='rdp')
-    parser.add_argument('-c', type=ConvexHull, choices=list(ConvexHull), default='lower')
-    parser.add_argument('-r', type=float, help='RDP R2', default=0.99)
+    parser.add_argument('-ch', type=ConvexHull, choices=list(ConvexHull), default='upper')
+    parser.add_argument('-c', type=lf.Linear_Metrics, choices=list(lf.Linear_Metrics), default='rpd')
+    parser.add_argument('-d', type=rdp.RDP_Distance, choices=list(rdp.RDP_Distance), default='shortest')
+    parser.add_argument('-r', type=float, help='RDP R', default=0.01)
     args = parser.parse_args()
     
     main(args)
