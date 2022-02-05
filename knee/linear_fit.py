@@ -22,7 +22,7 @@ class Linear_Metrics(enum.Enum):
     """
     r2 = 'r2'
     rmspe = 'rmspe'
-    rdp = 'rdp'
+    rpd = 'rpd'
 
     def __str__(self):
         return self.value

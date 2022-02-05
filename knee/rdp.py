@@ -99,18 +99,20 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
         pt = points[left:right]
 
         if len(pt) <= 2:
-            if cost is lf.Linear_Metrics.rmspe:
-                r = 0.0
-            else:
+            if cost is lf.Linear_Metrics.r2:
                 r = 1.0
+            else:
+                r = 0.0
         else:
             coef = lf.linear_fit_points(pt)
-            if cost is lf.Linear_Metrics.rmspe:
+            if cost is lf.Linear_Metrics.r2:
+                r = lf.linear_r2_points(pt, coef)
+            elif lf.Linear_Metrics.rmspe:
                 r = lf.rmspe_points(pt, coef)
             else:
-                r = lf.linear_r2_points(pt, coef)
+                r = lf.rpd_points(pt, coef)
 
-        curved = r >= t if cost is lf.Linear_Metrics.rmspe else r < t
+        curved = r < t if cost is lf.Linear_Metrics.r2 else r >= t
 
         if curved:
             d = distance_points(pt, pt[0], pt[-1])
