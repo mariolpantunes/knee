@@ -54,6 +54,38 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) ->
     return np.array(filtered_knees)
 
 
+def select_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -> np.ndarray:
+    """
+    Detect and keep the left upper corner knees points.
+
+    The detection method relies on a three point rectangle fitting and overlap.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): overlap treshold (default 0.33)
+
+    Returns:
+        np.ndarray: the filtered knees
+    """
+
+    filtered_knees = []
+
+    for i in range(len(knees)):
+        idx = knees[i]
+        if idx-1 >=0 and idx+1 < len(points):
+            p0, p1 ,p2 = points[idx-1:idx+2]
+            corner0 = np.array([p0[0], p2[1]])
+            amin, amax = kr.rect(corner0, p1)
+            bmin, bmax = kr.rect(p0, p2)
+            p = kr.rect_overlap(amin, amax, bmin, bmax)
+            
+            if p >= t:
+                filtered_knees.append(idx)
+
+    return np.array(filtered_knees)
+
+
 def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
     """
     Filter the worst knees points.
