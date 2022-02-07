@@ -14,6 +14,7 @@ import numpy as np
 import knee.rdp as rdp
 import knee.linear_fit as lf
 import knee.postprocessing as pp
+import knee.clustering as clustering
 import matplotlib.pyplot as plt
 
 
@@ -42,9 +43,13 @@ def main(args):
     logger.info(f'Knees {len(knees)}')
 
     # filter out all non-corner points
-    knees = pp.select_corner_knees(points_reduced, knees)
+    knees = pp.select_corner_knees(points_reduced, knees, t=args.t1)
     logger.info(f'Knees {len(knees)}')
 
+    # cluster points together
+    knees = pp.filter_clusters_corners(points_reduced, knees, clustering.average_linkage, t=args.t2)
+    logger.info(f'Knees {len(knees)}')
+    
     x = points[:, 0]
     y = points[:, 1]
     plt.plot(x, y)
@@ -52,18 +57,25 @@ def main(args):
     # map the points to the original space
     knees = rdp.mapping(knees, reduced, removed)
     
+    rdp_points = points[reduced]
+    x = rdp_points[:, 0]
+    y = rdp_points[:, 1]
+    plt.plot(x, y, marker='o', markersize=3, linestyle = 'None')
+
     knee_points = points[knees]
     x = knee_points[:, 0]
     y = knee_points[:, 1]
-    plt.plot(x, y, marker='o', markersize=3)
+    plt.plot(x, y, marker='o', markersize=3, linestyle = 'None')
     plt.show()
     
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-c', type=lf.Linear_Metrics, choices=list(lf.Linear_Metrics), default='rmspe')
+    parser.add_argument('-c', type=lf.Linear_Metrics, choices=list(lf.Linear_Metrics), default='rpd')
     parser.add_argument('-d', type=rdp.RDP_Distance, choices=list(rdp.RDP_Distance), default='shortest')
+    parser.add_argument('-t1', type=float, help='Corner Threshold', default=0.33)
+    parser.add_argument('-t2', type=float, help='Clustering Threshold', default=0.05)
     parser.add_argument('-r', type=float, help='RDP R', default=0.01)
     args = parser.parse_args()
     

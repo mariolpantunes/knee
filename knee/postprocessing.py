@@ -118,7 +118,7 @@ def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
         return np.array(filtered_knees)
 
 
-def filter_clustring(points: np.ndarray, knees: np.ndarray,
+def filter_clusters(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
 method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
     """
@@ -236,6 +236,24 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                 plt.show()"""
 
         return np.array(filtered_knees)
+
+
+def filter_clusters_corners(points: np.ndarray, knees: np.ndarray,
+clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01) -> np.ndarray:
+    knee_points = points[knees]
+    clusters = clustering(knee_points, t)
+
+    max_cluster = clusters.max()
+    filtered_knees = []
+    for i in range(0, max_cluster+1):
+        current_cluster = knees[clusters == i]
+        # Compute the rank for each corner point
+        ranks = rank_corners_triangle(points, current_cluster)
+        idx = np.argmax(ranks)
+        best_knee = knees[clusters == i][idx]
+        filtered_knees.append(best_knee)
+    return np.array(filtered_knees)
+
 
 
 def add_points_even(points: np.ndarray, reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05, extremes:bool=False) -> np.ndarray:
@@ -404,3 +422,35 @@ def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, 
     knees_idx.sort()
     # filter worst knees that may be added due in this function
     return filter_worst_knees(points, knees_idx)
+
+
+def triangle_area(p: np.ndarray) -> float:
+    area = 0.5 * (p[0][0]*(p[1][1]-p[2][1]) + p[1][0]*(p[2][1]-p[0][1]) + p[2][0]*(p[0][1]-p[1][1]))
+    return area
+
+
+def rank_corners_triangle(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
+    ranks = []
+
+    for i in range(0, len(knees)):
+        idx = [knees[i]-1, knees[i], knees[i]+1]
+        pt = points[idx]
+        area = 0.5*((pt[1][0]-pt[0][0])*(pt[1][1]-pt[2][1]))
+        ranks.append(area)
+
+    return np.array(ranks)
+
+
+def rank_corners(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
+    ranks = []
+
+    # compute the first rank
+    d = points[knees[0]][0] - points[0][0]
+    ranks.append(d)
+
+    for i in range(1, len(knees)):
+        d = points[knees[i]][0] - points[knees[i-1]][0]
+        ranks.append(d)
+
+    # return the ranks
+    return np.array(ranks)

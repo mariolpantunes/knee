@@ -51,7 +51,7 @@ def main(args):
     knees = curvature.multi_knee(points_reduced)
     t_k = pp.filter_worst_knees(points_reduced, knees)
     t_k = pp.filter_corner_knees(points_reduced, t_k, t=args.c)
-    filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, args.t, args.k)
+    filtered_knees = pp.filter_clusters(points_reduced, t_k, clustering.average_linkage, args.t, args.k)
     
     ##########################################################################################
     
