@@ -22,6 +22,7 @@ class Linear_Metrics(enum.Enum):
     """
     r2 = 'r2'
     rmspe = 'rmspe'
+    rmsle = 'rmsle'
     rpd = 'rpd'
 
     def __str__(self):
@@ -191,6 +192,45 @@ def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -> floa
     """
     y_hat = linear_transform(x, coef)
     rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
+    return rv
+
+
+def rmsle_points(points: np.ndarray, coef: tuple) -> float:
+    """
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    """
+    x = points[:, 0]
+    y = points[:, 1]
+    return rmsle(x, y, coef)
+
+
+def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
+    """
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    """
+    y_hat = linear_transform(x, coef)
+    rv = np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
     return rv
 
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.10.0" />
 <title>knee.linear_fit API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -51,7 +51,8 @@ class Linear_Metrics(enum.Enum):
     &#34;&#34;&#34;
     r2 = &#39;r2&#39;
     rmspe = &#39;rmspe&#39;
-    rdp = &#39;rdp&#39;
+    rmsle = &#39;rmsle&#39;
+    rpd = &#39;rpd&#39;
 
     def __str__(self):
         return self.value
@@ -220,6 +221,45 @@ def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -&gt; f
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
     rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
+    return rv
+
+
+def rmsle_points(points: np.ndarray, coef: tuple) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    &#34;&#34;&#34;
+    x = points[:, 0]
+    y = points[:, 1]
+    return rmsle(x, y, coef, eps)
+
+
+def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    &#34;&#34;&#34;
+    y_hat = linear_transform(x, coef)
+    rv = np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
     return rv
 
 
@@ -1134,6 +1174,99 @@ and computes the corresponding R2.</p>
     return rmse(x, y, coef)</code></pre>
 </details>
 </dd>
+<dt id="knee.linear_fit.rmsle"><code class="name flex">
+<span>def <span class="ident">rmsle</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the Root Mean Squared Log Error (RMSLE):
+<span><span class="MathJax_Preview">
+RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1))^2}{n}}
+</span><script type="math/tex; mode=display">
+RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1))^2}{n}}
+</script></span></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the value of the points in the x axis coordinates</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the value of the points in the y axis coordinates</dd>
+<dt><strong><code>coef</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>the coefficients from the linear fit</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Root Mean Squared Percentage Error (RMSPE)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    &#34;&#34;&#34;
+    y_hat = linear_transform(x, coef)
+    rv = np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
+    return rv</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.rmsle_points"><code class="name flex">
+<span>def <span class="ident">rmsle_points</span></span>(<span>points: numpy.ndarray, coef: tuple) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the Root Mean Squared Log Error (RMSLE):
+<span><span class="MathJax_Preview">
+RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1))^2}{n}}
+</span><script type="math/tex; mode=display">
+RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1))^2}{n}}
+</script></span></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>coef</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>the coefficients from the linear fit</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Root Mean Squared Percentage Error (RMSPE)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmsle_points(points: np.ndarray, coef: tuple) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    &#34;&#34;&#34;
+    x = points[:, 0]
+    y = points[:, 1]
+    return rmsle(x, y, coef, eps)</code></pre>
+</details>
+</dd>
 <dt id="knee.linear_fit.rmspe"><code class="name flex">
 <span>def <span class="ident">rmspe</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple, eps: float = 1e-16) ‑> float</span>
 </code></dt>
@@ -1383,7 +1516,8 @@ These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp
     &#34;&#34;&#34;
     r2 = &#39;r2&#39;
     rmspe = &#39;rmspe&#39;
-    rdp = &#39;rdp&#39;
+    rmsle = &#39;rmsle&#39;
+    rpd = &#39;rpd&#39;
 
     def __str__(self):
         return self.value</code></pre>
@@ -1398,11 +1532,15 @@ These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="knee.linear_fit.Linear_Metrics.rdp"><code class="name">var <span class="ident">rdp</span></code></dt>
+<dt id="knee.linear_fit.Linear_Metrics.rmsle"><code class="name">var <span class="ident">rmsle</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 <dt id="knee.linear_fit.Linear_Metrics.rmspe"><code class="name">var <span class="ident">rmspe</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.linear_fit.Linear_Metrics.rpd"><code class="name">var <span class="ident">rpd</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1476,6 +1614,8 @@ These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp
 <li><code><a title="knee.linear_fit.r2_points" href="#knee.linear_fit.r2_points">r2_points</a></code></li>
 <li><code><a title="knee.linear_fit.rmse" href="#knee.linear_fit.rmse">rmse</a></code></li>
 <li><code><a title="knee.linear_fit.rmse_points" href="#knee.linear_fit.rmse_points">rmse_points</a></code></li>
+<li><code><a title="knee.linear_fit.rmsle" href="#knee.linear_fit.rmsle">rmsle</a></code></li>
+<li><code><a title="knee.linear_fit.rmsle_points" href="#knee.linear_fit.rmsle_points">rmsle_points</a></code></li>
 <li><code><a title="knee.linear_fit.rmspe" href="#knee.linear_fit.rmspe">rmspe</a></code></li>
 <li><code><a title="knee.linear_fit.rmspe_points" href="#knee.linear_fit.rmspe_points">rmspe_points</a></code></li>
 <li><code><a title="knee.linear_fit.rpd" href="#knee.linear_fit.rpd">rpd</a></code></li>
@@ -1489,8 +1629,9 @@ These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp
 <h4><code><a title="knee.linear_fit.Linear_Metrics" href="#knee.linear_fit.Linear_Metrics">Linear_Metrics</a></code></h4>
 <ul class="">
 <li><code><a title="knee.linear_fit.Linear_Metrics.r2" href="#knee.linear_fit.Linear_Metrics.r2">r2</a></code></li>
-<li><code><a title="knee.linear_fit.Linear_Metrics.rdp" href="#knee.linear_fit.Linear_Metrics.rdp">rdp</a></code></li>
+<li><code><a title="knee.linear_fit.Linear_Metrics.rmsle" href="#knee.linear_fit.Linear_Metrics.rmsle">rmsle</a></code></li>
 <li><code><a title="knee.linear_fit.Linear_Metrics.rmspe" href="#knee.linear_fit.Linear_Metrics.rmspe">rmspe</a></code></li>
+<li><code><a title="knee.linear_fit.Linear_Metrics.rpd" href="#knee.linear_fit.Linear_Metrics.rpd">rpd</a></code></li>
 </ul>
 </li>
 <li>
@@ -1506,7 +1647,7 @@ These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
 </footer>
 </body>
 </html>

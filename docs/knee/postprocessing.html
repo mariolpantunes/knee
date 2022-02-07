@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.10.0" />
 <title>knee.postprocessing API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -83,6 +83,38 @@ def filter_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -&
     return np.array(filtered_knees)
 
 
+def select_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Detect and keep the left upper corner knees points.
+
+    The detection method relies on a three point rectangle fitting and overlap.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): overlap treshold (default 0.33)
+
+    Returns:
+        np.ndarray: the filtered knees
+    &#34;&#34;&#34;
+
+    filtered_knees = []
+
+    for i in range(len(knees)):
+        idx = knees[i]
+        if idx-1 &gt;=0 and idx+1 &lt; len(points):
+            p0, p1 ,p2 = points[idx-1:idx+2]
+            corner0 = np.array([p0[0], p2[1]])
+            amin, amax = kr.rect(corner0, p1)
+            bmin, bmax = kr.rect(p0, p2)
+            p = kr.rect_overlap(amin, amax, bmin, bmax)
+            
+            if p &gt;= t:
+                filtered_knees.append(idx)
+
+    return np.array(filtered_knees)
+
+
 def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Filter the worst knees points.
@@ -115,7 +147,7 @@ def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
         return np.array(filtered_knees)
 
 
-def filter_clustring(points: np.ndarray, knees: np.ndarray,
+def filter_clusters(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
 method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
     &#34;&#34;&#34;
@@ -233,6 +265,24 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
                 plt.show()&#34;&#34;&#34;
 
         return np.array(filtered_knees)
+
+
+def filter_clusters_corners(points: np.ndarray, knees: np.ndarray,
+clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01) -&gt; np.ndarray:
+    knee_points = points[knees]
+    clusters = clustering(knee_points, t)
+
+    max_cluster = clusters.max()
+    filtered_knees = []
+    for i in range(0, max_cluster+1):
+        current_cluster = knees[clusters == i]
+        # Compute the rank for each corner point
+        ranks = rank_corners_triangle(points, current_cluster)
+        idx = np.argmax(ranks)
+        best_knee = knees[clusters == i][idx]
+        filtered_knees.append(best_knee)
+    return np.array(filtered_knees)
+
 
 
 def add_points_even(points: np.ndarray, reduced: np.ndarray, knees: np.ndarray, removed:np.ndarray, tx:float=0.05, ty:float=0.05, extremes:bool=False) -&gt; np.ndarray:
@@ -400,7 +450,39 @@ def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, 
     knees_idx = np.unique(knees_idx)
     knees_idx.sort()
     # filter worst knees that may be added due in this function
-    return filter_worst_knees(points, knees_idx)</code></pre>
+    return filter_worst_knees(points, knees_idx)
+
+
+def triangle_area(p: np.ndarray) -&gt; float:
+    area = 0.5 * (p[0][0]*(p[1][1]-p[2][1]) + p[1][0]*(p[2][1]-p[0][1]) + p[2][0]*(p[0][1]-p[1][1]))
+    return area
+
+
+def rank_corners_triangle(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
+    ranks = []
+
+    for i in range(0, len(knees)):
+        idx = [knees[i]-1, knees[i], knees[i]+1]
+        pt = points[idx]
+        area = 0.5*((pt[1][0]-pt[0][0])*(pt[1][1]-pt[2][1]))
+        ranks.append(area)
+
+    return np.array(ranks)
+
+
+def rank_corners(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
+    ranks = []
+
+    # compute the first rank
+    d = points[knees[0]][0] - points[0][0]
+    ranks.append(d)
+
+    for i in range(1, len(knees)):
+        d = points[knees[i]][0] - points[knees[i-1]][0]
+        ranks.append(d)
+
+    # return the ranks
+    return np.array(ranks)</code></pre>
 </details>
 </section>
 <section>
@@ -646,8 +728,8 @@ The knees have to be mapped in the complete set of points.</p>
     return filter_worst_knees(points, knees_idx)</code></pre>
 </details>
 </dd>
-<dt id="knee.postprocessing.filter_clustring"><code class="name flex">
-<span>def <span class="ident">filter_clustring</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, clustering: Callable[[numpy.ndarray, float], numpy.ndarray], t: float = 0.01, method: <a title="knee.knee_ranking.ClusterRanking" href="knee_ranking.html#knee.knee_ranking.ClusterRanking">ClusterRanking</a> = linear) ‑> numpy.ndarray</span>
+<dt id="knee.postprocessing.filter_clusters"><code class="name flex">
+<span>def <span class="ident">filter_clusters</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, clustering: Callable[[numpy.ndarray, float], numpy.ndarray], t: float = 0.01, method: <a title="knee.knee_ranking.ClusterRanking" href="knee_ranking.html#knee.knee_ranking.ClusterRanking">ClusterRanking</a> = linear) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Filter the knee points based on clustering.</p>
@@ -675,7 +757,7 @@ The ranking is computed based on the slope and the improvement (on the y axis).<
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def filter_clustring(points: np.ndarray, knees: np.ndarray,
+<pre><code class="python">def filter_clusters(points: np.ndarray, knees: np.ndarray,
 clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
 method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
     &#34;&#34;&#34;
@@ -795,6 +877,32 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -&gt; np.ndarray:
         return np.array(filtered_knees)</code></pre>
 </details>
 </dd>
+<dt id="knee.postprocessing.filter_clusters_corners"><code class="name flex">
+<span>def <span class="ident">filter_clusters_corners</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, clustering: Callable[[numpy.ndarray, float], numpy.ndarray], t: float = 0.01) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def filter_clusters_corners(points: np.ndarray, knees: np.ndarray,
+clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01) -&gt; np.ndarray:
+    knee_points = points[knees]
+    clusters = clustering(knee_points, t)
+
+    max_cluster = clusters.max()
+    filtered_knees = []
+    for i in range(0, max_cluster+1):
+        current_cluster = knees[clusters == i]
+        # Compute the rank for each corner point
+        ranks = rank_corners_triangle(points, current_cluster)
+        idx = np.argmax(ranks)
+        best_knee = knees[clusters == i][idx]
+        filtered_knees.append(best_knee)
+    return np.array(filtered_knees)</code></pre>
+</details>
+</dd>
 <dt id="knee.postprocessing.filter_corner_knees"><code class="name flex">
 <span>def <span class="ident">filter_corner_knees</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, t: float = 0.33) ‑> numpy.ndarray</span>
 </code></dt>
@@ -909,6 +1017,121 @@ The detection method relies on a three point rectangle fitting and overlap.</p>
         return np.array(filtered_knees)</code></pre>
 </details>
 </dd>
+<dt id="knee.postprocessing.rank_corners"><code class="name flex">
+<span>def <span class="ident">rank_corners</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rank_corners(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
+    ranks = []
+
+    # compute the first rank
+    d = points[knees[0]][0] - points[0][0]
+    ranks.append(d)
+
+    for i in range(1, len(knees)):
+        d = points[knees[i]][0] - points[knees[i-1]][0]
+        ranks.append(d)
+
+    # return the ranks
+    return np.array(ranks)</code></pre>
+</details>
+</dd>
+<dt id="knee.postprocessing.rank_corners_triangle"><code class="name flex">
+<span>def <span class="ident">rank_corners_triangle</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rank_corners_triangle(points: np.ndarray, knees: np.ndarray) -&gt; np.ndarray:
+    ranks = []
+
+    for i in range(0, len(knees)):
+        idx = [knees[i]-1, knees[i], knees[i]+1]
+        pt = points[idx]
+        area = 0.5*((pt[1][0]-pt[0][0])*(pt[1][1]-pt[2][1]))
+        ranks.append(area)
+
+    return np.array(ranks)</code></pre>
+</details>
+</dd>
+<dt id="knee.postprocessing.select_corner_knees"><code class="name flex">
+<span>def <span class="ident">select_corner_knees</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, t: float = 0.33) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Detect and keep the left upper corner knees points.</p>
+<p>The detection method relies on a three point rectangle fitting and overlap.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>knees</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>knees indexes</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>overlap treshold (default 0.33)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.ndarray</code></dt>
+<dd>the filtered knees</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select_corner_knees(points: np.ndarray, knees: np.ndarray, t:float = .33) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+    Detect and keep the left upper corner knees points.
+
+    The detection method relies on a three point rectangle fitting and overlap.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        t (float): overlap treshold (default 0.33)
+
+    Returns:
+        np.ndarray: the filtered knees
+    &#34;&#34;&#34;
+
+    filtered_knees = []
+
+    for i in range(len(knees)):
+        idx = knees[i]
+        if idx-1 &gt;=0 and idx+1 &lt; len(points):
+            p0, p1 ,p2 = points[idx-1:idx+2]
+            corner0 = np.array([p0[0], p2[1]])
+            amin, amax = kr.rect(corner0, p1)
+            bmin, bmax = kr.rect(p0, p2)
+            p = kr.rect_overlap(amin, amax, bmin, bmax)
+            
+            if p &gt;= t:
+                filtered_knees.append(idx)
+
+    return np.array(filtered_knees)</code></pre>
+</details>
+</dd>
+<dt id="knee.postprocessing.triangle_area"><code class="name flex">
+<span>def <span class="ident">triangle_area</span></span>(<span>p: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def triangle_area(p: np.ndarray) -&gt; float:
+    area = 0.5 * (p[0][0]*(p[1][1]-p[2][1]) + p[1][0]*(p[2][1]-p[0][1]) + p[2][0]*(p[0][1]-p[1][1]))
+    return area</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -929,16 +1152,21 @@ The detection method relies on a three point rectangle fitting and overlap.</p>
 <ul class="">
 <li><code><a title="knee.postprocessing.add_points_even" href="#knee.postprocessing.add_points_even">add_points_even</a></code></li>
 <li><code><a title="knee.postprocessing.add_points_even_knees" href="#knee.postprocessing.add_points_even_knees">add_points_even_knees</a></code></li>
-<li><code><a title="knee.postprocessing.filter_clustring" href="#knee.postprocessing.filter_clustring">filter_clustring</a></code></li>
+<li><code><a title="knee.postprocessing.filter_clusters" href="#knee.postprocessing.filter_clusters">filter_clusters</a></code></li>
+<li><code><a title="knee.postprocessing.filter_clusters_corners" href="#knee.postprocessing.filter_clusters_corners">filter_clusters_corners</a></code></li>
 <li><code><a title="knee.postprocessing.filter_corner_knees" href="#knee.postprocessing.filter_corner_knees">filter_corner_knees</a></code></li>
 <li><code><a title="knee.postprocessing.filter_worst_knees" href="#knee.postprocessing.filter_worst_knees">filter_worst_knees</a></code></li>
+<li><code><a title="knee.postprocessing.rank_corners" href="#knee.postprocessing.rank_corners">rank_corners</a></code></li>
+<li><code><a title="knee.postprocessing.rank_corners_triangle" href="#knee.postprocessing.rank_corners_triangle">rank_corners_triangle</a></code></li>
+<li><code><a title="knee.postprocessing.select_corner_knees" href="#knee.postprocessing.select_corner_knees">select_corner_knees</a></code></li>
+<li><code><a title="knee.postprocessing.triangle_area" href="#knee.postprocessing.triangle_area">triangle_area</a></code></li>
 </ul>
 </li>
 </ul>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
 </footer>
 </body>
 </html>

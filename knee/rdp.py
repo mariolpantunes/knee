@@ -64,7 +64,7 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
-def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
+def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -107,8 +107,10 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
             coef = lf.linear_fit_points(pt)
             if cost is lf.Linear_Metrics.r2:
                 r = lf.linear_r2_points(pt, coef)
-            elif lf.Linear_Metrics.rmspe:
+            elif cost is lf.Linear_Metrics.rmspe:
                 r = lf.rmspe_points(pt, coef)
+            elif cost is lf.Linear_Metrics.rmsle:
+                r = lf.rmsle_points(pt, coef)
             else:
                 r = lf.rpd_points(pt, coef)
 
