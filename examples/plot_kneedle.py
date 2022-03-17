@@ -60,7 +60,7 @@ def kneedle_novel(points, args):
 
     knees = pp.filter_worst_knees(points_reduced, knees)
     knees = pp.filter_corner_knees(points_reduced, knees, t=args.c)
-    knees = pp.filter_clustring(points_reduced, knees, clustering.average_linkage, args.t, args.k)
+    knees = pp.filter_clusters(points_reduced, knees, clustering.average_linkage, args.t, args.k)
     knees = rdp.mapping(knees, reduced, removed)
     return knees
 

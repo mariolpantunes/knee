@@ -57,10 +57,10 @@ def main(args):
     # map the points to the original space
     knees = rdp.mapping(knees, reduced, removed)
     
-    rdp_points = points[reduced]
-    x = rdp_points[:, 0]
-    y = rdp_points[:, 1]
-    plt.plot(x, y, marker='o', markersize=3, linestyle = 'None')
+    #rdp_points = points[reduced]
+    #x = rdp_points[:, 0]
+    #y = rdp_points[:, 1]
+    #plt.plot(x, y, marker='o', markersize=3, linestyle = 'None')
 
     knee_points = points[knees]
     x = knee_points[:, 0]
