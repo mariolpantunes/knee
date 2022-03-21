@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 
 
 import knee.rdp as rdp
+import knee.linear_fit as lf
 import knee.zmethod as zmethod
 import knee.postprocessing as pp
 import knee.evaluation as evaluation
@@ -97,6 +98,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Multi Knee evaluation app')
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-a', help='add even spaced points', action='store_true')
+    parser.add_argument('-c', type=lf.Linear_Metrics, choices=list(lf.Linear_Metrics), default='rpd')
+    parser.add_argument('-d', type=rdp.RDP_Distance, choices=list(rdp.RDP_Distance), default='shortest')
     parser.add_argument('-r', type=float, help='RDP reconstruction threshold', default=0.01)
     parser.add_argument('-x', type=float, help='Parameter dx', default=0.01)
     parser.add_argument('-y', type=float, help='Parameter dy', default=0.01)

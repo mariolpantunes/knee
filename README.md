@@ -24,7 +24,7 @@ pdoc -c latex_math=True --html -o docs knee --force
 
 The library can be used by adding this line to the requirement.txt file:
 ```txt
-git+git://github.com/mariolpantunes/knee@main#egg=knee
+git+https://github.com/mariolpantunes/knee@main#egg=knee
 ```
 
 ## Runing the demos
