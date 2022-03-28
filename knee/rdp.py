@@ -6,6 +6,7 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
+import math
 import enum
 import logging
 import numpy as np
@@ -129,7 +130,8 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
     return np.array(reduced), np.array(removed)
 
 
-def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Distance.shortest):
+#TODO: fix the return statement
+def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -169,11 +171,27 @@ def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Dista
         # add the relevant point to the reduced set
         reduced.append(left+index)
         # compute the cost of the left and right parts
-        left_cost = np.max(distance_points(pt[0:index+1], pt[0], pt[index]))
-        right_cost = np.max(distance_points(pt[index:len(pt)], pt[0], pt[-1]))
+        #left_cost = np.max(distance_points(pt[0:index+1], pt[0], pt[index]))
+        #right_cost = np.max(distance_points(pt[index:len(pt)], pt[0], pt[-1]))
+
+        h = d[index]
+        
+        hip_left = np.linalg.norm(pt[0]-pt[index])
+        b_left = math.sqrt(hip_left**2 - h**2)
+        left_tri_area = 0.5*b_left*h
+
+        hip_right = np.linalg.norm(pt[-1]-pt[index])
+        b_right = math.sqrt(hip_right**2 - h**2)
+        right_tri_area = 0.5*b_right*h
+
+        #print(f'LTA {left_tri_area} RTA {right_tri_area} LC {left_cost} RC {right_cost}')
+
         # Add the points to the stack
-        stack.append((right_cost, left+index, left+len(pt)))
-        stack.append((left_cost, left, left+index+1))
+        #stack.append((right_cost, left+index, left+len(pt)))
+        #stack.append((left_cost, left, left+index+1))
+
+        stack.append((right_tri_area, left+index, left+len(pt)))
+        stack.append((left_tri_area, left, left+index+1))
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
         length -= 1
