@@ -6,6 +6,7 @@ import math
 import knee.linear_fit as lf
 
 class TestLinearFir(unittest.TestCase):
+    
     def test_r2_two(self):
         points = np.array([[0.0, 1.0], [1.0, 5.0]])
         coef = lf.linear_fit_points(points)

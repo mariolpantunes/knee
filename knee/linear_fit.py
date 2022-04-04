@@ -10,6 +10,7 @@ import enum
 import math
 import logging
 import numpy as np
+import knee.metrics as metrics
 
 
 logger = logging.getLogger(__name__)
@@ -265,8 +266,7 @@ def rpd(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -> float:
         float: Relative Percentage Difference (RPD)
     """
     y_hat = linear_transform(x, coef)
-    rv = np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
-    return rv
+    return metrics.rpd(y, y_hat, eps)
 
 
 def rmse_points(points: np.ndarray, coef: tuple) -> float:

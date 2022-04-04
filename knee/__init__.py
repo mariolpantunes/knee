@@ -8,6 +8,7 @@ import knee.kneedle
 import knee.linear_fit
 import knee.lmethod
 import knee.menger
+import knee.metrics
 import knee.multi_knee
 import knee.zmethod
 import knee.postprocessing

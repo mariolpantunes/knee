@@ -11,6 +11,7 @@ import enum
 import logging
 import numpy as np
 import knee.linear_fit as lf
+import knee.metrics as metrics
 
 
 logger = logging.getLogger(__name__)
@@ -206,10 +207,31 @@ def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Dista
     return np.array(reduced)
 
 
-def compute_cost_sequence(points: np.ndarray, reduced, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest):
-    # sort indexes
-    reduced.sort()
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray): #, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest):
+    #print(f'GCG')
+    y, y_hat = [], []
 
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        coef = lf.linear_fit_points(pt)
+        
+        y_hat_temp = lf.linear_transform_points(pt, coef)
+        y_hat.extend(y_hat_temp)
+        y.extend(pt[:, 1])
+        
+        #print(f'[{left}: {right}] coef {coef} = {y_hat_temp}')
+        #print(f'Pt {pt}')
+        left = right
+    
+    #print(f'{y} / {y_hat}')
+
+    # compute the cost function
+    return metrics.rpd(np.array(y), np.array(y_hat))
+
+
+def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
     # select the distance metric to be used
     distance_points = None
     if distance is RDP_Distance.shortest:
@@ -219,22 +241,13 @@ def compute_cost_sequence(points: np.ndarray, reduced, cost: lf.Linear_Metrics =
     else:
         distance_points = lf.shortest_distance_points
 
-    left=0
-    for right in reduced:
-        pt=points[left:right]
-        coef = lf.linear_fit_points(pt)
+    stack = [(0, 0, len(points))]
+    reduced = [0, len(points)-1]
 
+    global_cost = compute_global_cost(points, reduced)
+    curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
 
-
-def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
-    stack = [(0, len(points))]
-
-    reduced = []
-    removed = []
-
-    
-
-    curved = True
+    #print(f'{reduced} ({global_cost})')
 
     while curved:
         _, left, right = stack.pop()
@@ -242,34 +255,40 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
 
         d = distance_points(pt, pt[0], pt[-1])
         index = np.argmax(d)
-        # add the relevant point to the reduced set
+        
+        # add the relevant point to the reduced set and sort
         reduced.append(left+index)
-        # compute the cost of the left and right parts
-        left_cost = np.max(distance_points(pt[0:index+1], pt[0], pt[index]))
-        right_cost = np.max(distance_points(pt[index:len(pt)], pt[0], pt[-1]))
-        # Add the points to the stack
-        stack.append((right_cost, left+index, left+len(pt)))
-        stack.append((left_cost, left, left+index+1))
+        reduced.sort()
+        
+        h = d[index]
+        
+        hip_left = np.linalg.norm(pt[0]-pt[index])
+        b_left = math.sqrt(hip_left**2 - h**2)
+        left_tri_area = 0.5*b_left*h
+
+        hip_right = np.linalg.norm(pt[-1]-pt[index])
+        b_right = math.sqrt(hip_right**2 - h**2)
+        right_tri_area = 0.5*b_right*h
+
+        stack.append((right_tri_area, left+index, left+len(pt)))
+        stack.append((left_tri_area, left, left+index+1))
+        
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
-        length -= 1
 
         # compute the cost of the current solution
-        
-        curved = r < t if cost is lf.Linear_Metrics.r2 else r >= t
+        global_cost = compute_global_cost(points, reduced)
+        curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
+        #print(f'{reduced} ({global_cost})')
+        #input('step')
 
-    # add first and last points
-    reduced.append(0)
-    reduced.append(len(points)-1)
-
-    # sort indexes
-    reduced.sort()
+    
 
     return np.array(reduced)
     
     
     
-    
+"""
     while stack:
         left, right = stack.pop()
         pt = points[left:right]
@@ -303,3 +322,4 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
 
     reduced.append(len(points)-1)
     return np.array(reduced), np.array(removed)
+"""
