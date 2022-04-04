@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
     
-    reduced, removed = rdp.rdp(points, args.r, cost=args.c, distance=args.d)
+    reduced, removed = rdp.grdp(points, args.r, cost=args.c, distance=args.d)
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
     logger.info(f'Global cost {rdp.compute_global_cost(points, reduced, cost=args.c)}')
