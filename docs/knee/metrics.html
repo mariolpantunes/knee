@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>knee.metrics API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML" integrity="sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>knee.metrics</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># coding: utf-8
+
+__author__ = &#39;Mário Antunes&#39;
+__version__ = &#39;0.1&#39;
+__email__ = &#39;mariolpantunes@gmail.com&#39;
+__status__ = &#39;Development&#39;
+
+
+import enum
+import numpy as np
+
+
+class R2(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the types of coefficient of determination
+    &#34;&#34;&#34;
+    adjusted = &#39;adjusted&#39;
+    classic = &#39;classic&#39;
+
+    def __str__(self):
+        return self.value
+
+
+def r2(y: np.ndarray, y_hat: np.ndarray, r2: R2 = R2.classic) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the coefficient of determination (R2).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+        r2 (R2): select the type of coefficient of determination (default: R2.classic)
+
+    Returns:
+        float: coefficient of determination (R2)
+    &#34;&#34;&#34;
+    y_mean = np.mean(y)
+    rss = np.sum((y-y_hat)**2)
+    tss = np.sum((y-y_mean)**2)
+    rv = 0.0
+
+    if tss == 0:
+        rv = 1.0 - rss
+    else:
+        rv = 1.0 - (rss/tss)
+
+    if r2 is R2.adjusted:
+        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
+
+    return rv
+
+
+def rmse(y: np.ndarray, y_hat: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Error (RMSE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: Root Mean Squared Error (RMSE)
+    &#34;&#34;&#34;
+    return np.sqrt(np.mean(np.square(y - y_hat)))
+
+
+def rmsle(y: np.ndarray, y_hat: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: Root Mean Squared Log Error (RMSLE)
+    &#34;&#34;&#34;
+    return np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
+
+
+def rmspe(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Percentage Error (RMSPE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    &#34;&#34;&#34;
+    return np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
+
+
+def rpd(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Relative Percentage Difference (RPD).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Relative Percentage Difference (RPD)
+    &#34;&#34;&#34;
+    return np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+
+
+def residuals(y: np.ndarray, y_hat: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the residual error of the fit.
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: residual error of the fit
+    &#34;&#34;&#34;
+    return np.sum(np.square((y-y_hat)))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="knee.metrics.r2"><code class="name flex">
+<span>def <span class="ident">r2</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray, r2: <a title="knee.metrics.R2" href="#knee.metrics.R2">R2</a> = classic) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the coefficient of determination (R2).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the real value of the points in the y axis coordinates</dd>
+<dt><strong><code>y_hat</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the predicted value of the points in the y axis coordinates</dd>
+<dt><strong><code>r2</code></strong> :&ensp;<code><a title="knee.metrics.R2" href="#knee.metrics.R2">R2</a></code></dt>
+<dd>select the type of coefficient of determination (default: R2.classic)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>coefficient of determination (R2)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def r2(y: np.ndarray, y_hat: np.ndarray, r2: R2 = R2.classic) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the coefficient of determination (R2).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+        r2 (R2): select the type of coefficient of determination (default: R2.classic)
+
+    Returns:
+        float: coefficient of determination (R2)
+    &#34;&#34;&#34;
+    y_mean = np.mean(y)
+    rss = np.sum((y-y_hat)**2)
+    tss = np.sum((y-y_mean)**2)
+    rv = 0.0
+
+    if tss == 0:
+        rv = 1.0 - rss
+    else:
+        rv = 1.0 - (rss/tss)
+
+    if r2 is R2.adjusted:
+        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
+
+    return rv</code></pre>
+</details>
+</dd>
+<dt id="knee.metrics.residuals"><code class="name flex">
+<span>def <span class="ident">residuals</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the residual error of the fit.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the real value of the points in the y axis coordinates</dd>
+<dt><strong><code>y_hat</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the predicted value of the points in the y axis coordinates</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>residual error of the fit</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def residuals(y: np.ndarray, y_hat: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the residual error of the fit.
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: residual error of the fit
+    &#34;&#34;&#34;
+    return np.sum(np.square((y-y_hat)))</code></pre>
+</details>
+</dd>
+<dt id="knee.metrics.rmse"><code class="name flex">
+<span>def <span class="ident">rmse</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the Root Mean Squared Error (RMSE).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the real value of the points in the y axis coordinates</dd>
+<dt><strong><code>y_hat</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the predicted value of the points in the y axis coordinates</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Root Mean Squared Error (RMSE)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmse(y: np.ndarray, y_hat: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Error (RMSE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: Root Mean Squared Error (RMSE)
+    &#34;&#34;&#34;
+    return np.sqrt(np.mean(np.square(y - y_hat)))</code></pre>
+</details>
+</dd>
+<dt id="knee.metrics.rmsle"><code class="name flex">
+<span>def <span class="ident">rmsle</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the Root Mean Squared Log Error (RMSLE):
+<span><span class="MathJax_Preview">
+RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1))^2}{n}}
+</span><script type="math/tex; mode=display">
+RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1))^2}{n}}
+</script></span></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the real value of the points in the y axis coordinates</dd>
+<dt><strong><code>y_hat</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the predicted value of the points in the y axis coordinates</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Root Mean Squared Log Error (RMSLE)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmsle(y: np.ndarray, y_hat: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: Root Mean Squared Log Error (RMSLE)
+    &#34;&#34;&#34;
+    return np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))</code></pre>
+</details>
+</dd>
+<dt id="knee.metrics.rmspe"><code class="name flex">
+<span>def <span class="ident">rmspe</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray, eps: float = 1e-16) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the Root Mean Squared Percentage Error (RMSPE).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the real value of the points in the y axis coordinates</dd>
+<dt><strong><code>y_hat</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the predicted value of the points in the y axis coordinates</dd>
+<dt><strong><code>eps</code></strong> :&ensp;<code>float</code></dt>
+<dd>eps value to prevent division by zero (default: 1E-16)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Root Mean Squared Percentage Error (RMSPE)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rmspe(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Root Mean Squared Percentage Error (RMSPE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    &#34;&#34;&#34;
+    return np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))</code></pre>
+</details>
+</dd>
+<dt id="knee.metrics.rpd"><code class="name flex">
+<span>def <span class="ident">rpd</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray, eps: float = 1e-16) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the Relative Percentage Difference (RPD).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the real value of the points in the y axis coordinates</dd>
+<dt><strong><code>y_hat</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the predicted value of the points in the y axis coordinates</dd>
+<dt><strong><code>eps</code></strong> :&ensp;<code>float</code></dt>
+<dd>eps value to prevent division by zero (default: 1E-16)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Relative Percentage Difference (RPD)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rpd(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the Relative Percentage Difference (RPD).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Relative Percentage Difference (RPD)
+    &#34;&#34;&#34;
+    return np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="knee.metrics.R2"><code class="flex name class">
+<span>class <span class="ident">R2</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enum that defines the types of coefficient of determination</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class R2(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the types of coefficient of determination
+    &#34;&#34;&#34;
+    adjusted = &#39;adjusted&#39;
+    classic = &#39;classic&#39;
+
+    def __str__(self):
+        return self.value</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="knee.metrics.R2.adjusted"><code class="name">var <span class="ident">adjusted</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.metrics.R2.classic"><code class="name">var <span class="ident">classic</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="knee" href="index.html">knee</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="knee.metrics.r2" href="#knee.metrics.r2">r2</a></code></li>
+<li><code><a title="knee.metrics.residuals" href="#knee.metrics.residuals">residuals</a></code></li>
+<li><code><a title="knee.metrics.rmse" href="#knee.metrics.rmse">rmse</a></code></li>
+<li><code><a title="knee.metrics.rmsle" href="#knee.metrics.rmsle">rmsle</a></code></li>
+<li><code><a title="knee.metrics.rmspe" href="#knee.metrics.rmspe">rmspe</a></code></li>
+<li><code><a title="knee.metrics.rpd" href="#knee.metrics.rpd">rpd</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="knee.metrics.R2" href="#knee.metrics.R2">R2</a></code></h4>
+<ul class="">
+<li><code><a title="knee.metrics.R2.adjusted" href="#knee.metrics.R2.adjusted">adjusted</a></code></li>
+<li><code><a title="knee.metrics.R2.classic" href="#knee.metrics.R2.classic">classic</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

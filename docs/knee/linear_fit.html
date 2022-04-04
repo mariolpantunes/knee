@@ -39,6 +39,7 @@ import enum
 import math
 import logging
 import numpy as np
+import knee.metrics as metrics
 
 
 logger = logging.getLogger(__name__)
@@ -53,17 +54,6 @@ class Linear_Metrics(enum.Enum):
     rmspe = &#39;rmspe&#39;
     rmsle = &#39;rmsle&#39;
     rpd = &#39;rpd&#39;
-
-    def __str__(self):
-        return self.value
-
-
-class R2(enum.Enum):
-    &#34;&#34;&#34;
-    Enum that defines the types of coefficient of determination
-    &#34;&#34;&#34;
-    adjusted = &#39;adjusted&#39;
-    classic = &#39;classic&#39;
 
     def __str__(self):
         return self.value
@@ -142,7 +132,7 @@ def linear_transform(x: np.ndarray, coef: tuple) -&gt; np.ndarray:
     return y_hat
 
 
-def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
+def linear_r2_points(points: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -&gt; float:
     &#34;&#34;&#34;
     Computes the coefficient of determination (R2).
 
@@ -159,7 +149,7 @@ def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt;
     return linear_r2(x, y, coef, r2)
 
 
-def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
+def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -&gt; float:
     &#34;&#34;&#34;
     Computes the coefficient of determination (R2).
 
@@ -183,7 +173,7 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&
     else:
         rv = 1.0 - (rss/tss)
 
-    if r2 is R2.adjusted:
+    if r2 is metrics.R2.adjusted:
         rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
 
     return rv
@@ -220,8 +210,7 @@ def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -&gt; f
         float: Root Mean Squared Percentage Error (RMSPE)
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
-    return rv
+    return metrics.rmspe(y, y_hat)
 
 
 def rmsle_points(points: np.ndarray, coef: tuple) -&gt; float:
@@ -236,11 +225,11 @@ def rmsle_points(points: np.ndarray, coef: tuple) -&gt; float:
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        float: Root Mean Squared Percentage Error (RMSPE)
+        float: Root Mean Squared Log Error (RMSLE)
     &#34;&#34;&#34;
     x = points[:, 0]
     y = points[:, 1]
-    return rmsle(x, y, coef, eps)
+    return rmsle(x, y, coef)
 
 
 def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
@@ -256,11 +245,10 @@ def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        float: Root Mean Squared Percentage Error (RMSPE)
+        float: Root Mean Squared Log Error (RMSLE)
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
-    return rv
+    return metrics.rmsle(y, y_hat)
 
 
 def rpd_points(points: np.ndarray, coef: tuple, eps: float = 1e-16) -&gt; float:
@@ -294,8 +282,7 @@ def rpd(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -&gt; flo
         float: Relative Percentage Difference (RPD)
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rv = np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
-    return rv
+    return metrics.rpd(y, y_hat, eps)
 
 
 def rmse_points(points: np.ndarray, coef: tuple) -&gt; float:
@@ -327,8 +314,7 @@ def rmse(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
         float: Root Mean Squared Error (RMSE)
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square(y - y_hat)))
-    return rv
+    return metrics.rmse(y, y_hat)
 
 
 def linear_residuals_points(points: np.ndarray, coef: tuple) -&gt; float:
@@ -360,11 +346,10 @@ def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
         float: residual error of the linear fit
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rss = np.sum(np.square((y-y_hat)))
-    return rss
+    return metrics.residuals(y, y_hat)
 
 
-def r2_points(points: np.ndarray, t: R2 = R2.classic) -&gt; float:
+def r2_points(points: np.ndarray, t: metrics.R2 = metrics.R2.classic) -&gt; float:
     &#34;&#34;&#34;
     Computes the coefficient of determination (R2).
 
@@ -386,7 +371,7 @@ def r2_points(points: np.ndarray, t: R2 = R2.classic) -&gt; float:
         return r2(x, y, t)
 
 
-def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -&gt; float:
+def r2(x: np.ndarray, y: np.ndarray, t: metrics.R2 = metrics.R2.classic) -&gt; float:
     &#34;&#34;&#34;Computes the coefficient of determination (R2).
 
     Computes the best fit (and not the fast point fit)
@@ -406,7 +391,7 @@ def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -&gt; float:
     else:
         rv = (np.corrcoef(x, y)[0, 1])**2.0
 
-    if t is R2.adjusted:
+    if t is metrics.R2.adjusted:
         rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
 
     return rv
@@ -642,7 +627,7 @@ first and last points in a curve.</p>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_r2"><code class="name flex">
-<span>def <span class="ident">linear_r2</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple, r2: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
+<span>def <span class="ident">linear_r2</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple, r2: <a title="knee.metrics.R2" href="metrics.html#knee.metrics.R2">R2</a> = classic) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the coefficient of determination (R2).</p>
@@ -654,7 +639,7 @@ first and last points in a curve.</p>
 <dd>the value of the points in the y axis coordinates</dd>
 <dt><strong><code>coef</code></strong> :&ensp;<code>tuple</code></dt>
 <dd>the coefficients from the linear fit</dd>
-<dt><strong><code>r2</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
+<dt><strong><code>r2</code></strong> :&ensp;<code>R2</code></dt>
 <dd>select the type of coefficient of determination (default: R2.classic)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -666,7 +651,7 @@ first and last points in a curve.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
+<pre><code class="python">def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -&gt; float:
     &#34;&#34;&#34;
     Computes the coefficient of determination (R2).
 
@@ -690,14 +675,14 @@ first and last points in a curve.</p>
     else:
         rv = 1.0 - (rss/tss)
 
-    if r2 is R2.adjusted:
+    if r2 is metrics.R2.adjusted:
         rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
 
     return rv</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_r2_points"><code class="name flex">
-<span>def <span class="ident">linear_r2_points</span></span>(<span>points: numpy.ndarray, coef: tuple, r2: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
+<span>def <span class="ident">linear_r2_points</span></span>(<span>points: numpy.ndarray, coef: tuple, r2: <a title="knee.metrics.R2" href="metrics.html#knee.metrics.R2">R2</a> = classic) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the coefficient of determination (R2).</p>
@@ -707,7 +692,7 @@ first and last points in a curve.</p>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>coef</code></strong> :&ensp;<code>tuple</code></dt>
 <dd>the coefficients from the linear fit</dd>
-<dt><strong><code>r2</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
+<dt><strong><code>r2</code></strong> :&ensp;<code>R2</code></dt>
 <dd>select the type of coefficient of determination (default: R2.classic)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -719,7 +704,7 @@ first and last points in a curve.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -&gt; float:
+<pre><code class="python">def linear_r2_points(points: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -&gt; float:
     &#34;&#34;&#34;
     Computes the coefficient of determination (R2).
 
@@ -772,8 +757,7 @@ first and last points in a curve.</p>
         float: residual error of the linear fit
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rss = np.sum(np.square((y-y_hat)))
-    return rss</code></pre>
+    return metrics.residuals(y, y_hat)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_residuals_points"><code class="name flex">
@@ -1002,7 +986,7 @@ straight line defined by the left and right point.</p>
 </details>
 </dd>
 <dt id="knee.linear_fit.r2"><code class="name flex">
-<span>def <span class="ident">r2</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, t: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
+<span>def <span class="ident">r2</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, t: <a title="knee.metrics.R2" href="metrics.html#knee.metrics.R2">R2</a> = classic) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the coefficient of determination (R2).</p>
@@ -1014,7 +998,7 @@ and computes the corresponding R2.</p>
 <dd>the value of the points in the x axis coordinates</dd>
 <dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>the value of the points in the y axis coordinates</dd>
-<dt><strong><code>t</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
+<dt><strong><code>t</code></strong> :&ensp;<code>R2</code></dt>
 <dd>select the type of coefficient of determination</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -1026,7 +1010,7 @@ and computes the corresponding R2.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -&gt; float:
+<pre><code class="python">def r2(x: np.ndarray, y: np.ndarray, t: metrics.R2 = metrics.R2.classic) -&gt; float:
     &#34;&#34;&#34;Computes the coefficient of determination (R2).
 
     Computes the best fit (and not the fast point fit)
@@ -1046,14 +1030,14 @@ and computes the corresponding R2.</p>
     else:
         rv = (np.corrcoef(x, y)[0, 1])**2.0
 
-    if t is R2.adjusted:
+    if t is metrics.R2.adjusted:
         rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
 
     return rv</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.r2_points"><code class="name flex">
-<span>def <span class="ident">r2_points</span></span>(<span>points: numpy.ndarray, t: <a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a> = classic) ‑> float</span>
+<span>def <span class="ident">r2_points</span></span>(<span>points: numpy.ndarray, t: <a title="knee.metrics.R2" href="metrics.html#knee.metrics.R2">R2</a> = classic) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the coefficient of determination (R2).</p>
@@ -1063,7 +1047,7 @@ and computes the corresponding R2.</p>
 <dl>
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
-<dt><strong><code>t</code></strong> :&ensp;<code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></dt>
+<dt><strong><code>t</code></strong> :&ensp;<code>R2</code></dt>
 <dd>select the type of coefficient of determination</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -1075,7 +1059,7 @@ and computes the corresponding R2.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def r2_points(points: np.ndarray, t: R2 = R2.classic) -&gt; float:
+<pre><code class="python">def r2_points(points: np.ndarray, t: metrics.R2 = metrics.R2.classic) -&gt; float:
     &#34;&#34;&#34;
     Computes the coefficient of determination (R2).
 
@@ -1133,8 +1117,7 @@ and computes the corresponding R2.</p>
         float: Root Mean Squared Error (RMSE)
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square(y - y_hat)))
-    return rv</code></pre>
+    return metrics.rmse(y, y_hat)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.rmse_points"><code class="name flex">
@@ -1196,7 +1179,7 @@ RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1)
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>float</code></dt>
-<dd>Root Mean Squared Percentage Error (RMSPE)</dd>
+<dd>Root Mean Squared Log Error (RMSLE)</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -1215,11 +1198,10 @@ RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1)
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        float: Root Mean Squared Percentage Error (RMSPE)
+        float: Root Mean Squared Log Error (RMSLE)
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
-    return rv</code></pre>
+    return metrics.rmsle(y, y_hat)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.rmsle_points"><code class="name flex">
@@ -1242,7 +1224,7 @@ RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1)
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>float</code></dt>
-<dd>Root Mean Squared Percentage Error (RMSPE)</dd>
+<dd>Root Mean Squared Log Error (RMSLE)</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -1260,11 +1242,11 @@ RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1)
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        float: Root Mean Squared Percentage Error (RMSPE)
+        float: Root Mean Squared Log Error (RMSLE)
     &#34;&#34;&#34;
     x = points[:, 0]
     y = points[:, 1]
-    return rmsle(x, y, coef, eps)</code></pre>
+    return rmsle(x, y, coef)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.rmspe"><code class="name flex">
@@ -1306,8 +1288,7 @@ RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1)
         float: Root Mean Squared Percentage Error (RMSPE)
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
-    return rv</code></pre>
+    return metrics.rmspe(y, y_hat)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.rmspe_points"><code class="name flex">
@@ -1389,8 +1370,7 @@ RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1)
         float: Relative Percentage Difference (RPD)
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
-    rv = np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
-    return rv</code></pre>
+    return metrics.rpd(y, y_hat, eps)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.rpd_points"><code class="name flex">
@@ -1546,42 +1526,6 @@ These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp
 </dd>
 </dl>
 </dd>
-<dt id="knee.linear_fit.R2"><code class="flex name class">
-<span>class <span class="ident">R2</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Enum that defines the types of coefficient of determination</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class R2(enum.Enum):
-    &#34;&#34;&#34;
-    Enum that defines the types of coefficient of determination
-    &#34;&#34;&#34;
-    adjusted = &#39;adjusted&#39;
-    classic = &#39;classic&#39;
-
-    def __str__(self):
-        return self.value</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>enum.Enum</li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="knee.linear_fit.R2.adjusted"><code class="name">var <span class="ident">adjusted</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="knee.linear_fit.R2.classic"><code class="name">var <span class="ident">classic</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-</dd>
 </dl>
 </section>
 </article>
@@ -1632,13 +1576,6 @@ These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp
 <li><code><a title="knee.linear_fit.Linear_Metrics.rmsle" href="#knee.linear_fit.Linear_Metrics.rmsle">rmsle</a></code></li>
 <li><code><a title="knee.linear_fit.Linear_Metrics.rmspe" href="#knee.linear_fit.Linear_Metrics.rmspe">rmspe</a></code></li>
 <li><code><a title="knee.linear_fit.Linear_Metrics.rpd" href="#knee.linear_fit.Linear_Metrics.rpd">rpd</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="knee.linear_fit.R2" href="#knee.linear_fit.R2">R2</a></code></h4>
-<ul class="">
-<li><code><a title="knee.linear_fit.R2.adjusted" href="#knee.linear_fit.R2.adjusted">adjusted</a></code></li>
-<li><code><a title="knee.linear_fit.R2.classic" href="#knee.linear_fit.R2.classic">classic</a></code></li>
 </ul>
 </li>
 </ul>

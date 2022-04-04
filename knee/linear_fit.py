@@ -181,8 +181,7 @@ def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -> floa
         float: Root Mean Squared Percentage Error (RMSPE)
     """
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
-    return rv
+    return metrics.rmspe(y, y_hat)
 
 
 def rmsle_points(points: np.ndarray, coef: tuple) -> float:
@@ -197,7 +196,7 @@ def rmsle_points(points: np.ndarray, coef: tuple) -> float:
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        float: Root Mean Squared Percentage Error (RMSPE)
+        float: Root Mean Squared Log Error (RMSLE)
     """
     x = points[:, 0]
     y = points[:, 1]
@@ -217,11 +216,10 @@ def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
         coef (tuple): the coefficients from the linear fit
 
     Returns:
-        float: Root Mean Squared Percentage Error (RMSPE)
+        float: Root Mean Squared Log Error (RMSLE)
     """
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
-    return rv
+    return metrics.rmsle(y, y_hat)
 
 
 def rpd_points(points: np.ndarray, coef: tuple, eps: float = 1e-16) -> float:
@@ -319,8 +317,7 @@ def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
         float: residual error of the linear fit
     """
     y_hat = linear_transform(x, coef)
-    rss = np.sum(np.square((y-y_hat)))
-    return rss
+    return metrics.residuals(y, y_hat)
 
 
 def r2_points(points: np.ndarray, t: metrics.R2 = metrics.R2.classic) -> float:

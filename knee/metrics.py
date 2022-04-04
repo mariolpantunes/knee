@@ -63,6 +63,38 @@ def rmse(y: np.ndarray, y_hat: np.ndarray) -> float:
     return np.sqrt(np.mean(np.square(y - y_hat)))
 
 
+def rmsle(y: np.ndarray, y_hat: np.ndarray) -> float:
+    """
+    Computes the Root Mean Squared Log Error (RMSLE):
+    $$
+    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}
+    $$
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: Root Mean Squared Log Error (RMSLE)
+    """
+    return np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
+
+
+def rmspe(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
+    """
+    Computes the Root Mean Squared Percentage Error (RMSPE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+        eps (float): eps value to prevent division by zero (default: 1E-16)
+
+    Returns:
+        float: Root Mean Squared Percentage Error (RMSPE)
+    """
+    return np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
+
+
 def rpd(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     """
     Computes the Relative Percentage Difference (RPD).
@@ -76,3 +108,17 @@ def rpd(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
         float: Relative Percentage Difference (RPD)
     """
     return np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+
+
+def residuals(y: np.ndarray, y_hat: np.ndarray) -> float:
+    """
+    Computes the residual error of the fit.
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: residual error of the fit
+    """
+    return np.sum(np.square((y-y_hat)))
