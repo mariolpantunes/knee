@@ -10,7 +10,7 @@ class TestRDP(unittest.TestCase):
         reduced, removed = rdp.rdp(points)
         desired = np.array([0, 4])
         np.testing.assert_array_equal(reduced, desired)
-        desired = np.array([[0,3]])
+        desired = np.array([[0, 3]])
         np.testing.assert_array_equal(removed, desired)
     
     def test_rdp_01(self):
@@ -18,7 +18,7 @@ class TestRDP(unittest.TestCase):
         reduced, removed = rdp.rdp(points)
         desired = np.array([0, 1, 2, 4])
         np.testing.assert_array_equal(reduced, desired)
-        desired = np.array([[0,0],[1, 0],[2,1]])
+        desired = np.array([[0, 0],[1, 0],[2, 1]])
         np.testing.assert_array_equal(removed, desired)
 
     def test_rdp_mapping_line(self):
@@ -53,6 +53,20 @@ class TestRDP(unittest.TestCase):
         desired = 0.0
         self.assertEqual(result, desired)
     
+    def test_compute_removed_points_00(self):
+        points = np.array([[1, 5], [2, 5], [3, 5], [4, 5], [5, 5]])
+        reduced = np.array([0, 4])
+        result = rdp.compute_removed_points(points, reduced)
+        desired = np.array([[0,3]])
+        np.testing.assert_array_equal(result, desired)
+    
+    def test_compute_removed_points_01(self):
+        points = np.array([[1, 5], [2, 5], [3, 6], [4, 6], [5, 6]])
+        reduced = np.array([0, 1, 2, 4])
+        result = rdp.compute_removed_points(points, reduced)
+        desired = np.array([[0, 0],[1, 0],[2, 1]])
+        np.testing.assert_array_equal(result, desired)
+
     def test_grdp_00(self):
         points = np.array([[1, 5], [2, 5], [3, 5], [4, 5], [5, 5]])
         reduced = rdp.grdp(points)

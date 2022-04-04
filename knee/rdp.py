@@ -231,7 +231,20 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray): #, cost: lf.Li
     return metrics.rpd(np.array(y), np.array(y_hat))
 
 
-def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
+def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
+    removed = []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        removed.append([left,len(pt)-2])
+        left = right
+
+    return np.array(removed)
+
+
+def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -> tuple:
     # select the distance metric to be used
     distance_points = None
     if distance is RDP_Distance.shortest:
@@ -277,47 +290,7 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
         # compute the cost of the current solution
         global_cost = compute_global_cost(points, reduced)
         curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
-        #print(f'{reduced} ({global_cost})')
-        #input('step')
-
+        
     
 
     return np.array(reduced)
-    
-    
-    
-"""
-    while stack:
-        left, right = stack.pop()
-        pt = points[left:right]
-
-        if len(pt) <= 2:
-            if cost is lf.Linear_Metrics.r2:
-                r = 1.0
-            else:
-                r = 0.0
-        else:
-            coef = lf.linear_fit_points(pt)
-            if cost is lf.Linear_Metrics.r2:
-                r = lf.linear_r2_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmspe:
-                r = lf.rmspe_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmsle:
-                r = lf.rmsle_points(pt, coef)
-            else:
-                r = lf.rpd_points(pt, coef)
-
-        curved = r < t if cost is lf.Linear_Metrics.r2 else r >= t
-
-        if curved:
-            d = distance_points(pt, pt[0], pt[-1])
-            index = np.argmax(d)
-            stack.append((left+index, left+len(pt)))
-            stack.append((left, left+index+1))
-        else:
-            reduced.append(left)
-            removed.append([left, len(pt) - 2.0])
-
-    reduced.append(len(points)-1)
-    return np.array(reduced), np.array(removed)
-"""
