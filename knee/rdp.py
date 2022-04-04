@@ -203,12 +203,12 @@ def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Dista
 
     # sort indexes
     reduced.sort()
+    reduced = np.array(reduced)
 
-    return np.array(reduced)
+    return reduced, compute_removed_points(points, reduced)
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray): #, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest):
-    #print(f'GCG')
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd) -> float:
     y, y_hat = [], []
 
     left = reduced[0]
@@ -221,14 +221,19 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray): #, cost: lf.Li
         y_hat.extend(y_hat_temp)
         y.extend(pt[:, 1])
         
-        #print(f'[{left}: {right}] coef {coef} = {y_hat_temp}')
-        #print(f'Pt {pt}')
         left = right
-    
-    #print(f'{y} / {y_hat}')
 
     # compute the cost function
-    return metrics.rpd(np.array(y), np.array(y_hat))
+    if cost is lf.Linear_Metrics.r2:
+        cost = metrics.r2(np.array(y), np.array(y_hat))
+    elif cost is lf.Linear_Metrics.rmsle:
+        cost = metrics.rmsle(np.array(y), np.array(y_hat))
+    elif cost is lf.Linear_Metrics.rmspe:
+        cost = metrics.rmspe(np.array(y), np.array(y_hat))
+    else:
+        cost = metrics.rpd(np.array(y), np.array(y_hat))
+
+    return cost
 
 
 def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
@@ -257,7 +262,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
 
-    global_cost = compute_global_cost(points, reduced)
+    global_cost = compute_global_cost(points, reduced, cost)
     curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
 
     while curved:
@@ -290,7 +295,6 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
         # compute the cost of the current solution
         global_cost = compute_global_cost(points, reduced)
         curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
-        
-    
 
-    return np.array(reduced)
+    reduced = np.array(reduced)
+    return reduced, compute_removed_points(points, reduced)

@@ -69,23 +69,24 @@ class TestRDP(unittest.TestCase):
 
     def test_grdp_00(self):
         points = np.array([[1, 5], [2, 5], [3, 5], [4, 5], [5, 5]])
-        reduced = rdp.grdp(points)
+        reduced, removed = rdp.grdp(points)
         desired = np.array([0, 4])
         np.testing.assert_array_equal(reduced, desired)
-        #desired = np.array([[0,3]])
-        #np.testing.assert_array_equal(removed, desired)
+        desired = np.array([[0,3]])
+        np.testing.assert_array_equal(removed, desired)
     
     def test_grdp_01(self):
         points = np.array([[1, 5], [2, 5], [3, 6], [4, 6], [5, 6]])
-        reduced = rdp.grdp(points)
+        reduced, removed = rdp.grdp(points)
         desired = np.array([0, 1, 2, 4])
         np.testing.assert_array_equal(reduced, desired)
-        #desired = np.array([[0,0],[1, 0],[2,1]])
-        #np.testing.assert_array_equal(removed, desired)
+        desired = np.array([[0,0],[1, 0],[2,1]])
+        np.testing.assert_array_equal(removed, desired)
 
     def test_grdp_02(self):
         points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
-        result = rdp.grdp(points)
-        #print(f'Result = {result}')
+        reduced, removed = rdp.grdp(points)
         desired = np.array([0, 2, 3, 5])
-        np.testing.assert_array_equal(result, desired)
+        np.testing.assert_array_equal(reduced, desired)
+        desired = np.array([[0, 1], [2, 0], [3, 1]])
+        np.testing.assert_array_equal(removed, desired)
