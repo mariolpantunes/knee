@@ -247,8 +247,6 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
     global_cost = compute_global_cost(points, reduced)
     curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
 
-    #print(f'{reduced} ({global_cost})')
-
     while curved:
         _, left, right = stack.pop()
         pt = points[left:right]
@@ -260,8 +258,8 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
         reduced.append(left+index)
         reduced.sort()
         
+        # compute the area of the triangles made from the farthest point
         h = d[index]
-        
         hip_left = np.linalg.norm(pt[0]-pt[index])
         b_left = math.sqrt(hip_left**2 - h**2)
         left_tri_area = 0.5*b_left*h

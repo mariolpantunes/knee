@@ -30,17 +30,6 @@ class Linear_Metrics(enum.Enum):
         return self.value
 
 
-class R2(enum.Enum):
-    """
-    Enum that defines the types of coefficient of determination
-    """
-    adjusted = 'adjusted'
-    classic = 'classic'
-
-    def __str__(self):
-        return self.value
-
-
 def linear_fit_points(points: np.ndarray) -> tuple:
     """
     Computes the linear fit for the points.
@@ -114,7 +103,7 @@ def linear_transform(x: np.ndarray, coef: tuple) -> np.ndarray:
     return y_hat
 
 
-def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -> float:
+def linear_r2_points(points: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -> float:
     """
     Computes the coefficient of determination (R2).
 
@@ -131,7 +120,7 @@ def linear_r2_points(points: np.ndarray, coef: tuple, r2: R2 = R2.classic) -> fl
     return linear_r2(x, y, coef, r2)
 
 
-def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) -> float:
+def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -> float:
     """
     Computes the coefficient of determination (R2).
 
@@ -155,7 +144,7 @@ def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: R2 = R2.classic) ->
     else:
         rv = 1.0 - (rss/tss)
 
-    if r2 is R2.adjusted:
+    if r2 is metrics.R2.adjusted:
         rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
 
     return rv
@@ -298,8 +287,7 @@ def rmse(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
         float: Root Mean Squared Error (RMSE)
     """
     y_hat = linear_transform(x, coef)
-    rv = np.sqrt(np.mean(np.square(y - y_hat)))
-    return rv
+    return metrics.rmse(y, y_hat)
 
 
 def linear_residuals_points(points: np.ndarray, coef: tuple) -> float:
@@ -335,7 +323,7 @@ def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
     return rss
 
 
-def r2_points(points: np.ndarray, t: R2 = R2.classic) -> float:
+def r2_points(points: np.ndarray, t: metrics.R2 = metrics.R2.classic) -> float:
     """
     Computes the coefficient of determination (R2).
 
@@ -357,7 +345,7 @@ def r2_points(points: np.ndarray, t: R2 = R2.classic) -> float:
         return r2(x, y, t)
 
 
-def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -> float:
+def r2(x: np.ndarray, y: np.ndarray, t: metrics.R2 = metrics.R2.classic) -> float:
     """Computes the coefficient of determination (R2).
 
     Computes the best fit (and not the fast point fit)
@@ -377,7 +365,7 @@ def r2(x: np.ndarray, y: np.ndarray, t: R2 = R2.classic) -> float:
     else:
         rv = (np.corrcoef(x, y)[0, 1])**2.0
 
-    if t is R2.adjusted:
+    if t is metrics.R2.adjusted:
         rv = 1.0 - (1-rv)*((len(x)-1)/(len(x)-2))
 
     return rv

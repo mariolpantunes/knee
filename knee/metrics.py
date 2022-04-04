@@ -6,7 +6,61 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
+import enum
 import numpy as np
+
+
+class R2(enum.Enum):
+    """
+    Enum that defines the types of coefficient of determination
+    """
+    adjusted = 'adjusted'
+    classic = 'classic'
+
+    def __str__(self):
+        return self.value
+
+
+def r2(y: np.ndarray, y_hat: np.ndarray, r2: R2 = R2.classic) -> float:
+    """
+    Computes the coefficient of determination (R2).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+        r2 (R2): select the type of coefficient of determination (default: R2.classic)
+
+    Returns:
+        float: coefficient of determination (R2)
+    """
+    y_mean = np.mean(y)
+    rss = np.sum((y-y_hat)**2)
+    tss = np.sum((y-y_mean)**2)
+    rv = 0.0
+
+    if tss == 0:
+        rv = 1.0 - rss
+    else:
+        rv = 1.0 - (rss/tss)
+
+    if r2 is R2.adjusted:
+        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
+
+    return rv
+
+
+def rmse(y: np.ndarray, y_hat: np.ndarray) -> float:
+    """
+    Computes the Root Mean Squared Error (RMSE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: Root Mean Squared Error (RMSE)
+    """
+    return np.sqrt(np.mean(np.square(y - y_hat)))
 
 
 def rpd(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
