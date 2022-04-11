@@ -100,9 +100,9 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
 
     # select the distance metric to be used
     distance_points = None
-    if distance is RDP_Distance.shortest:
+    if distance is Distance.shortest:
         distance_points = lf.shortest_distance_points
-    elif distance is RDP_Distance.perpendicular:
+    elif distance is Distance.perpendicular:
         distance_points = lf.perpendicular_distance_points
     else:
         distance_points = lf.shortest_distance_points
