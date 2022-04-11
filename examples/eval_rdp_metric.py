@@ -32,9 +32,16 @@ class Trace(enum.Enum):
         return self.value
 
 
+class RDP(enum.Enum):
+    g = 'global'
+    l = 'local'
+
+    def __str__(self):
+        return self.value
+
+
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
-
 
 
 def main(args):
@@ -70,7 +77,10 @@ def main(args):
         y_range = [[max(y),min(y)] for y in zip(*points)][1]
 
         # run rdp
-        reduced, removed = rdp.rdp(points, t=args.r, cost=args.c, distance=args.d)
+        if args.rdp is RDP.g:
+            reduced, removed = rdp.grdp(points, t=args.r, cost=args.c, distance=args.d, order=args.o)
+        else:
+            reduced, removed = rdp.rdp(points, t=args.r, cost=args.c, distance=args.d)
         points_reduced = points[reduced]
 
         ## Knee detection code ##
@@ -98,8 +108,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Find worst MRC trace')
     parser.add_argument('-p', type=str, help='input path', default='~/mrcs/')
     parser.add_argument('-tr', type=Trace, choices=list(Trace), default='all')
+    parser.add_argument('-rdp', type=RDP, choices=list(RDP), default='local')
     parser.add_argument('-c', type=lf.Linear_Metrics, choices=list(lf.Linear_Metrics), default='rpd')
-    parser.add_argument('-d', type=rdp.RDP_Distance, choices=list(rdp.RDP_Distance), default='shortest')
+    parser.add_argument('-d', type=rdp.Distance, choices=list(rdp.Distance), default='shortest')
+    parser.add_argument('-o', type=rdp.Order, choices=list(rdp.Order), default='area')
     parser.add_argument('-r', type=float, help='RDP reconstruction threshold', default=0.01)
     parser.add_argument('-x', type=float, help='Parameter dx', default=0.01)
     parser.add_argument('-y', type=float, help='Parameter dy', default=0.01)
