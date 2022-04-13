@@ -225,7 +225,7 @@ def rdp_fixed(points: np.ndarray, length:int, cost: lf.Linear_Metrics = lf.Linea
             # the cost is based on the segment error
             cost_index = reduced.index(left+index) - 1
 
-            print(f'Reduced {reduced} Cost_index = {cost_index} Cost segment: {cost_segment}')
+            #print(f'Reduced {reduced} Cost_index = {cost_index} Cost segment: {cost_segment}')
 
             left_cost = cost_segment[cost_index]
             right_cost = cost_segment[cost_index+1]
@@ -254,7 +254,7 @@ def rdp_fixed(points: np.ndarray, length:int, cost: lf.Linear_Metrics = lf.Linea
         #stack.append((left_tri_area, left, left+index+1))
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
-        print(f'STACK: {stack}')
+        #print(f'STACK: {stack}')
         length -= 1
 
     # add first and last points
@@ -404,9 +404,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
         
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
-        print(f'STACK: {stack}')
-
-        
+        #print(f'STACK: {stack}')
 
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)

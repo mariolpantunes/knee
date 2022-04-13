@@ -48,7 +48,7 @@ class TestRDP(unittest.TestCase):
     def test_compute_global_cost(self):
         points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
         reduced = np.array([0, 2, 3, 5])
-        result = rdp.compute_global_cost(points, reduced)
+        result, _ = rdp.compute_global_cost(points, reduced)
         desired = 0.0
         self.assertEqual(result, desired)
     
