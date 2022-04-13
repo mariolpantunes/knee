@@ -33,7 +33,8 @@ def main(args):
     
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
-    logger.info(f'Global cost {rdp.compute_global_cost(points, reduced, cost=args.c)}')
+    cost, _ = rdp.compute_global_cost(points, reduced, cost=args.c)
+    logger.info(f'Global cost = {cost}')
     
     x = points[:, 0]
     y = points[:, 1]

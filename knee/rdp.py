@@ -34,6 +34,7 @@ class Order(enum.Enum):
     """
     triangle = 'triangle'
     area = 'area'
+    segment = 'segment'
 
     def __str__(self):
         return self.value
@@ -143,7 +144,7 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
 
 
 #TODO: fix the return statement
-def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
+def rdp_fixed(points: np.ndarray, length:int, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -160,7 +161,10 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
     """
     stack = [(1, 0, len(points))]
 
-    reduced = []
+    reduced = [0, len(points)-1]
+
+    # cache for the global cost
+    cache = {}
 
     #TODO: trivial cases
     length -= 2
@@ -199,7 +203,7 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
 
             stack.append((right_tri_area, left+index, left+len(pt)))
             stack.append((left_tri_area, left, left+index+1))
-        else:
+        elif order is Order.area:
             # compute the area using the distance function
             pt_left = points[left:left+index+1]
             left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
@@ -212,6 +216,22 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
 
             stack.append((left_area, left, left+index+1))
             stack.append((right_area, left+index, left+len(pt)))
+        else:
+            reduced.sort()
+
+            # compute the cost of the current solution
+            _, cost_segment = compute_global_cost(points, reduced, cost, cache)
+
+            # the cost is based on the segment error
+            cost_index = reduced.index(left+index) - 1
+
+            print(f'Reduced {reduced} Cost_index = {cost_index} Cost segment: {cost_segment}')
+
+            left_cost = cost_segment[cost_index]
+            right_cost = cost_segment[cost_index+1]
+
+            stack.append((left_cost, left, left+index+1))
+            stack.append((right_cost, left+index, left+len(pt)))
             
         
         #h = d[index]
@@ -234,11 +254,12 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
         #stack.append((left_tri_area, left, left+index+1))
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
+        print(f'STACK: {stack}')
         length -= 1
 
     # add first and last points
-    reduced.append(0)
-    reduced.append(len(points)-1)
+    #reduced.append(0)
+    #reduced.append(len(points)-1)
 
     # sort indexes
     reduced.sort()
@@ -247,8 +268,10 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
     return reduced, compute_removed_points(points, reduced)
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, cache:{}={}) -> float:
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, cache:{}={}) -> tuple:
     y, y_hat = [], []
+
+    cost_segment = []
 
     left = reduced[0]
     for i in range(1, len(reduced)):
@@ -266,7 +289,20 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear
             #logger.debug(f'Cache miss: {(left, right)}')
         
         y_hat.extend(y_hat_temp)
-        y.extend(pt[:, 1])
+        y_temp = pt[:, 1]
+        y.extend(y_temp)
+
+        # compute the cost function
+        if cost is lf.Linear_Metrics.r2:
+            cost = metrics.r2(np.array(y_temp), np.array(y_hat_temp))
+        elif cost is lf.Linear_Metrics.rmsle:
+            cost = metrics.rmsle(np.array(y_temp), np.array(y_hat_temp))
+        elif cost is lf.Linear_Metrics.rmspe:
+            cost = metrics.rmspe(np.array(y_temp), np.array(y_hat_temp))
+        else:
+            cost = metrics.rpd(np.array(y_temp), np.array(y_hat_temp))
+
+        cost_segment.append(cost)
         
         left = right
 
@@ -280,7 +316,7 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear
     else:
         cost = metrics.rpd(np.array(y), np.array(y_hat))
 
-    return cost
+    return cost, cost_segment
 
 
 def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
@@ -296,6 +332,7 @@ def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarra
     return np.array(removed)
 
 
+#TODO: Check code with trace w99-arc
 def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
     # cache for the global cost
     cache = {}
@@ -312,7 +349,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
 
-    global_cost = compute_global_cost(points, reduced, cost, cache)
+    global_cost, _ = compute_global_cost(points, reduced, cost, cache)
     curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
 
     while curved:
@@ -325,6 +362,10 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
         # add the relevant point to the reduced set and sort
         reduced.append(left+index)
         reduced.sort()
+
+        # compute the cost of the current solution
+        global_cost, cost_segment = compute_global_cost(points, reduced, cost, cache)
+        curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
         
         if order is Order.triangle:
             # compute the area of the triangles made from the farthest point
@@ -339,7 +380,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
 
             stack.append((right_tri_area, left+index, left+len(pt)))
             stack.append((left_tri_area, left, left+index+1))
-        else:
+        elif order is Order.area:
             # compute the area using the distance function
             pt_left = points[left:left+index+1]
             left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
@@ -352,13 +393,20 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
 
             stack.append((left_area, left, left+index+1))
             stack.append((right_area, left+index, left+len(pt)))
+        else:
+            # the cost is based on the segment error
+            cost_index = reduced.index(left+index) - 1
+            left_cost = cost_segment[cost_index]
+            right_cost = cost_segment[cost_index+1]
+
+            stack.append((left_cost, left, left+index+1))
+            stack.append((right_cost, left+index, left+len(pt)))
         
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
+        print(f'STACK: {stack}')
 
-        # compute the cost of the current solution
-        global_cost = compute_global_cost(points, reduced, cost, cache)
-        curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
+        
 
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)
