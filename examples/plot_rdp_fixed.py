@@ -47,7 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('-l', type=int, help='RDP fixed lenght', default=10)
     parser.add_argument('-c', type=lf.Linear_Metrics, choices=list(lf.Linear_Metrics), default='rpd')
     parser.add_argument('-d', type=rdp.Distance, choices=list(rdp.Distance), default='shortest')
-    parser.add_argument('-o', type=rdp.Order, choices=list(rdp.Order), default='triangle')
+    parser.add_argument('-o', type=rdp.Order, choices=list(rdp.Order), default='area')
     args = parser.parse_args()
     
     main(args)
