@@ -268,7 +268,7 @@ def rdp_fixed(points: np.ndarray, length:int, cost: lf.Linear_Metrics = lf.Linea
     return reduced, compute_removed_points(points, reduced)
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, cache:{}={}) -> tuple:
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, cache:dict[tuple]={}) -> tuple:
     y, y_hat = [], []
 
     cost_segment = []
@@ -299,6 +299,8 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear
             cost = metrics.rmsle(np.array(y_temp), np.array(y_hat_temp))
         elif cost is lf.Linear_Metrics.rmspe:
             cost = metrics.rmspe(np.array(y_temp), np.array(y_hat_temp))
+        elif cost is lf.Linear_Metrics.smape:
+            cost = metrics.rmspe(np.array(y_temp), np.array(y_hat_temp))
         else:
             cost = metrics.rpd(np.array(y_temp), np.array(y_hat_temp))
 
@@ -313,6 +315,8 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear
         cost = metrics.rmsle(np.array(y), np.array(y_hat))
     elif cost is lf.Linear_Metrics.rmspe:
         cost = metrics.rmspe(np.array(y), np.array(y_hat))
+    elif cost is lf.Linear_Metrics.smape:
+        cost = metrics.smape(np.array(y), np.array(y_hat))
     else:
         cost = metrics.rpd(np.array(y), np.array(y_hat))
 

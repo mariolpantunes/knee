@@ -25,6 +25,7 @@ class Linear_Metrics(enum.Enum):
     rmspe = 'rmspe'
     rmsle = 'rmsle'
     rpd = 'rpd'
+    smape = 'smape'
 
     def __str__(self):
         return self.value

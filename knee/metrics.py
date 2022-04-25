@@ -44,7 +44,7 @@ def r2(y: np.ndarray, y_hat: np.ndarray, r2: R2 = R2.classic) -> float:
         rv = 1.0 - (rss/tss)
 
     if r2 is R2.adjusted:
-        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
+        rv = 1.0 - (1.0 - rv)*((len(y)-1)/(len(y)-2))
 
     return rv
 
@@ -122,3 +122,17 @@ def residuals(y: np.ndarray, y_hat: np.ndarray) -> float:
         float: residual error of the fit
     """
     return np.sum(np.square((y-y_hat)))
+
+
+def smape(y: np.ndarray, y_hat: np.ndarray) -> float:
+    """
+    Computes Symmetric Mean Absolute Percentage Error (SMAPE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: residual error of the fit
+    """
+    return np.mean(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat)))
