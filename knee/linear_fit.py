@@ -16,21 +16,6 @@ import knee.metrics as metrics
 logger = logging.getLogger(__name__)
 
 
-class Linear_Metrics(enum.Enum):
-    """
-    Enum that defines the different metrics linear functions.
-    These metrics are used on the `knee.rdp` and `knee.multi_knee`. 
-    """
-    r2 = 'r2'
-    rmspe = 'rmspe'
-    rmsle = 'rmsle'
-    rpd = 'rpd'
-    smape = 'smape'
-
-    def __str__(self):
-        return self.value
-
-
 def linear_fit_points(points: np.ndarray) -> tuple:
     """
     Computes the linear fit for the points.

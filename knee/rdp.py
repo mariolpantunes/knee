@@ -78,7 +78,7 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
-def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: Distance = Distance.shortest) -> tuple:
+def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -113,22 +113,24 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
         pt = points[left:right]
 
         if len(pt) <= 2:
-            if cost is lf.Linear_Metrics.r2:
+            if cost is metrics.Metrics.r2:
                 r = 1.0
             else:
                 r = 0.0
         else:
             coef = lf.linear_fit_points(pt)
-            if cost is lf.Linear_Metrics.r2:
+            if cost is metrics.Metrics.r2:
                 r = lf.linear_r2_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmspe:
+            elif cost is metrics.Metrics.rmspe:
                 r = lf.rmspe_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmsle:
+            elif cost is metrics.Metrics.rmsle:
                 r = lf.rmsle_points(pt, coef)
+            elif cost is metrics.Metrics.smape:
+                r = lf.smape_points(pt, coef)
             else:
                 r = lf.rpd_points(pt, coef)
 
-        curved = r < t if cost is lf.Linear_Metrics.r2 else r >= t
+        curved = r < t if cost is metrics.Metrics.r2 else r >= t
 
         if curved:
             d = distance_points(pt, pt[0], pt[-1])
@@ -143,8 +145,7 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
     return np.array(reduced), np.array(removed)
 
 
-#TODO: fix the return statement
-def rdp_fixed(points: np.ndarray, length:int, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
+def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -268,7 +269,7 @@ def rdp_fixed(points: np.ndarray, length:int, cost: lf.Linear_Metrics = lf.Linea
     return reduced, compute_removed_points(points, reduced)
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, cache:dict[tuple]={}) -> tuple:
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict[tuple]={}) -> tuple:
     y, y_hat = [], []
 
     cost_segment = []
@@ -293,14 +294,14 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear
         y.extend(y_temp)
 
         # compute the cost function
-        if cost is lf.Linear_Metrics.r2:
+        if cost is metrics.Metrics.r2:
             cost = metrics.r2(np.array(y_temp), np.array(y_hat_temp))
-        elif cost is lf.Linear_Metrics.rmsle:
+        elif cost is metrics.Metrics.rmsle:
             cost = metrics.rmsle(np.array(y_temp), np.array(y_hat_temp))
-        elif cost is lf.Linear_Metrics.rmspe:
+        elif cost is metrics.Metrics.rmspe:
             cost = metrics.rmspe(np.array(y_temp), np.array(y_hat_temp))
-        elif cost is lf.Linear_Metrics.smape:
-            cost = metrics.rmspe(np.array(y_temp), np.array(y_hat_temp))
+        elif cost is metrics.Metrics.smape:
+            cost = metrics.smape(np.array(y_temp), np.array(y_hat_temp))
         else:
             cost = metrics.rpd(np.array(y_temp), np.array(y_hat_temp))
 
@@ -309,13 +310,13 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: lf.Linear
         left = right
 
     # compute the cost function
-    if cost is lf.Linear_Metrics.r2:
+    if cost is metrics.Metrics.r2:
         cost = metrics.r2(np.array(y), np.array(y_hat))
-    elif cost is lf.Linear_Metrics.rmsle:
+    elif cost is metrics.Metrics.rmsle:
         cost = metrics.rmsle(np.array(y), np.array(y_hat))
-    elif cost is lf.Linear_Metrics.rmspe:
+    elif cost is metrics.Metrics.rmspe:
         cost = metrics.rmspe(np.array(y), np.array(y_hat))
-    elif cost is lf.Linear_Metrics.smape:
+    elif cost is metrics.Metrics.smape:
         cost = metrics.smape(np.array(y), np.array(y_hat))
     else:
         cost = metrics.rpd(np.array(y), np.array(y_hat))
@@ -337,7 +338,7 @@ def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarra
 
 
 #TODO: Check code with trace w99-arc
-def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
+def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
     # cache for the global cost
     cache = {}
     
@@ -354,7 +355,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
     reduced = [0, len(points)-1]
 
     global_cost, _ = compute_global_cost(points, reduced, cost, cache)
-    curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
+    curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
 
     while curved:
         _, left, right = stack.pop()
@@ -369,7 +370,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linea
 
         # compute the cost of the current solution
         global_cost, cost_segment = compute_global_cost(points, reduced, cost, cache)
-        curved = global_cost < t if cost is lf.Linear_Metrics.r2 else global_cost >= t
+        curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
         
         if order is Order.triangle:
             # compute the area of the triangles made from the farthest point
