@@ -45,20 +45,6 @@ import knee.metrics as metrics
 logger = logging.getLogger(__name__)
 
 
-class Linear_Metrics(enum.Enum):
-    &#34;&#34;&#34;
-    Enum that defines the different metrics linear functions.
-    These metrics are used on the `knee.rdp` and `knee.multi_knee`. 
-    &#34;&#34;&#34;
-    r2 = &#39;r2&#39;
-    rmspe = &#39;rmspe&#39;
-    rmsle = &#39;rmsle&#39;
-    rpd = &#39;rpd&#39;
-
-    def __str__(self):
-        return self.value
-
-
 def linear_fit_points(points: np.ndarray) -&gt; tuple:
     &#34;&#34;&#34;
     Computes the linear fit for the points.
@@ -249,6 +235,17 @@ def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
     &#34;&#34;&#34;
     y_hat = linear_transform(x, coef)
     return metrics.rmsle(y, y_hat)
+
+
+def smape_points(points: np.ndarray, coef: tuple, eps: float = 1e-16)-&gt;float:
+    x = points[:, 0]
+    y = points[:, 1]
+    return smape(x, y, coef, eps)
+
+
+def smape(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -&gt; float:
+    y_hat = linear_transform(x, coef)
+    return metrics.smape(y, y_hat, eps)
 
 
 def rpd_points(points: np.ndarray, coef: tuple, eps: float = 1e-16) -&gt; float:
@@ -1473,60 +1470,38 @@ straight line defined by the left and right point.</p>
     return np.hypot(h, c)</code></pre>
 </details>
 </dd>
-</dl>
-</section>
-<section>
-<h2 class="section-title" id="header-classes">Classes</h2>
-<dl>
-<dt id="knee.linear_fit.Linear_Metrics"><code class="flex name class">
-<span>class <span class="ident">Linear_Metrics</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<dt id="knee.linear_fit.smape"><code class="name flex">
+<span>def <span class="ident">smape</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, coef: tuple, eps: float = 1e-16) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Enum that defines the different metrics linear functions.
-These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp</a></code> and <code><a title="knee.multi_knee" href="multi_knee.html">knee.multi_knee</a></code>.</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Linear_Metrics(enum.Enum):
-    &#34;&#34;&#34;
-    Enum that defines the different metrics linear functions.
-    These metrics are used on the `knee.rdp` and `knee.multi_knee`. 
-    &#34;&#34;&#34;
-    r2 = &#39;r2&#39;
-    rmspe = &#39;rmspe&#39;
-    rmsle = &#39;rmsle&#39;
-    rpd = &#39;rpd&#39;
-
-    def __str__(self):
-        return self.value</code></pre>
+<pre><code class="python">def smape(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -&gt; float:
+    y_hat = linear_transform(x, coef)
+    return metrics.smape(y, y_hat, eps)</code></pre>
 </details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>enum.Enum</li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="knee.linear_fit.Linear_Metrics.r2"><code class="name">var <span class="ident">r2</span></code></dt>
-<dd>
-<div class="desc"></div>
 </dd>
-<dt id="knee.linear_fit.Linear_Metrics.rmsle"><code class="name">var <span class="ident">rmsle</span></code></dt>
+<dt id="knee.linear_fit.smape_points"><code class="name flex">
+<span>def <span class="ident">smape_points</span></span>(<span>points: numpy.ndarray, coef: tuple, eps: float = 1e-16) ‑> float</span>
+</code></dt>
 <dd>
 <div class="desc"></div>
-</dd>
-<dt id="knee.linear_fit.Linear_Metrics.rmspe"><code class="name">var <span class="ident">rmspe</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="knee.linear_fit.Linear_Metrics.rpd"><code class="name">var <span class="ident">rpd</span></code></dt>
-<dd>
-<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def smape_points(points: np.ndarray, coef: tuple, eps: float = 1e-16)-&gt;float:
+    x = points[:, 0]
+    y = points[:, 1]
+    return smape(x, y, coef, eps)</code></pre>
+</details>
 </dd>
 </dl>
-</dd>
-</dl>
+</section>
+<section>
 </section>
 </article>
 <nav id="sidebar">
@@ -1565,19 +1540,8 @@ These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp
 <li><code><a title="knee.linear_fit.rpd" href="#knee.linear_fit.rpd">rpd</a></code></li>
 <li><code><a title="knee.linear_fit.rpd_points" href="#knee.linear_fit.rpd_points">rpd_points</a></code></li>
 <li><code><a title="knee.linear_fit.shortest_distance_points" href="#knee.linear_fit.shortest_distance_points">shortest_distance_points</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-classes">Classes</a></h3>
-<ul>
-<li>
-<h4><code><a title="knee.linear_fit.Linear_Metrics" href="#knee.linear_fit.Linear_Metrics">Linear_Metrics</a></code></h4>
-<ul class="">
-<li><code><a title="knee.linear_fit.Linear_Metrics.r2" href="#knee.linear_fit.Linear_Metrics.r2">r2</a></code></li>
-<li><code><a title="knee.linear_fit.Linear_Metrics.rmsle" href="#knee.linear_fit.Linear_Metrics.rmsle">rmsle</a></code></li>
-<li><code><a title="knee.linear_fit.Linear_Metrics.rmspe" href="#knee.linear_fit.Linear_Metrics.rmspe">rmspe</a></code></li>
-<li><code><a title="knee.linear_fit.Linear_Metrics.rpd" href="#knee.linear_fit.Linear_Metrics.rpd">rpd</a></code></li>
-</ul>
-</li>
+<li><code><a title="knee.linear_fit.smape" href="#knee.linear_fit.smape">smape</a></code></li>
+<li><code><a title="knee.linear_fit.smape_points" href="#knee.linear_fit.smape_points">smape_points</a></code></li>
 </ul>
 </li>
 </ul>

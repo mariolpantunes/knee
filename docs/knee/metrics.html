@@ -39,6 +39,21 @@ import enum
 import numpy as np
 
 
+class Metrics(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the different metrics linear functions.
+    These metrics are used on the `knee.rdp` and `knee.multi_knee`. 
+    &#34;&#34;&#34;
+    r2 = &#39;r2&#39;
+    rmspe = &#39;rmspe&#39;
+    rmsle = &#39;rmsle&#39;
+    rpd = &#39;rpd&#39;
+    smape = &#39;smape&#39;
+
+    def __str__(self):
+        return self.value
+
+
 class R2(enum.Enum):
     &#34;&#34;&#34;
     Enum that defines the types of coefficient of determination
@@ -73,7 +88,7 @@ def r2(y: np.ndarray, y_hat: np.ndarray, r2: R2 = R2.classic) -&gt; float:
         rv = 1.0 - (rss/tss)
 
     if r2 is R2.adjusted:
-        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
+        rv = 1.0 - (1.0 - rv)*((len(y)-1)/(len(y)-2))
 
     return rv
 
@@ -150,7 +165,21 @@ def residuals(y: np.ndarray, y_hat: np.ndarray) -&gt; float:
     Returns:
         float: residual error of the fit
     &#34;&#34;&#34;
-    return np.sum(np.square((y-y_hat)))</code></pre>
+    return np.sum(np.square((y-y_hat)))
+
+
+def smape(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -&gt; float:
+    &#34;&#34;&#34;
+    Computes Symmetric Mean Absolute Percentage Error (SMAPE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: residual error of the fit
+    &#34;&#34;&#34;
+    return np.mean(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))</code></pre>
 </details>
 </section>
 <section>
@@ -206,7 +235,7 @@ def residuals(y: np.ndarray, y_hat: np.ndarray) -&gt; float:
         rv = 1.0 - (rss/tss)
 
     if r2 is R2.adjusted:
-        rv = 1.0 - (1.0 - rv)*((len(x)-1)/(len(x)-2))
+        rv = 1.0 - (1.0 - rv)*((len(y)-1)/(len(y)-2))
 
     return rv</code></pre>
 </details>
@@ -400,11 +429,99 @@ RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1)
     return np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))</code></pre>
 </details>
 </dd>
+<dt id="knee.metrics.smape"><code class="name flex">
+<span>def <span class="ident">smape</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray, eps: float = 1e-16) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes Symmetric Mean Absolute Percentage Error (SMAPE).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>y</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the real value of the points in the y axis coordinates</dd>
+<dt><strong><code>y_hat</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the predicted value of the points in the y axis coordinates</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>residual error of the fit</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def smape(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -&gt; float:
+    &#34;&#34;&#34;
+    Computes Symmetric Mean Absolute Percentage Error (SMAPE).
+
+    Args:
+        y (np.ndarray): the real value of the points in the y axis coordinates
+        y_hat (np.ndarray): the predicted value of the points in the y axis coordinates
+
+    Returns:
+        float: residual error of the fit
+    &#34;&#34;&#34;
+    return np.mean(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="knee.metrics.Metrics"><code class="flex name class">
+<span>class <span class="ident">Metrics</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enum that defines the different metrics linear functions.
+These metrics are used on the <code><a title="knee.rdp" href="rdp.html">knee.rdp</a></code> and <code><a title="knee.multi_knee" href="multi_knee.html">knee.multi_knee</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Metrics(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the different metrics linear functions.
+    These metrics are used on the `knee.rdp` and `knee.multi_knee`. 
+    &#34;&#34;&#34;
+    r2 = &#39;r2&#39;
+    rmspe = &#39;rmspe&#39;
+    rmsle = &#39;rmsle&#39;
+    rpd = &#39;rpd&#39;
+    smape = &#39;smape&#39;
+
+    def __str__(self):
+        return self.value</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="knee.metrics.Metrics.r2"><code class="name">var <span class="ident">r2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.metrics.Metrics.rmsle"><code class="name">var <span class="ident">rmsle</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.metrics.Metrics.rmspe"><code class="name">var <span class="ident">rmspe</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.metrics.Metrics.rpd"><code class="name">var <span class="ident">rpd</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.metrics.Metrics.smape"><code class="name">var <span class="ident">smape</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="knee.metrics.R2"><code class="flex name class">
 <span>class <span class="ident">R2</span></span>
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
@@ -463,10 +580,21 @@ RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1)
 <li><code><a title="knee.metrics.rmsle" href="#knee.metrics.rmsle">rmsle</a></code></li>
 <li><code><a title="knee.metrics.rmspe" href="#knee.metrics.rmspe">rmspe</a></code></li>
 <li><code><a title="knee.metrics.rpd" href="#knee.metrics.rpd">rpd</a></code></li>
+<li><code><a title="knee.metrics.smape" href="#knee.metrics.smape">smape</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="knee.metrics.Metrics" href="#knee.metrics.Metrics">Metrics</a></code></h4>
+<ul class="">
+<li><code><a title="knee.metrics.Metrics.r2" href="#knee.metrics.Metrics.r2">r2</a></code></li>
+<li><code><a title="knee.metrics.Metrics.rmsle" href="#knee.metrics.Metrics.rmsle">rmsle</a></code></li>
+<li><code><a title="knee.metrics.Metrics.rmspe" href="#knee.metrics.Metrics.rmspe">rmspe</a></code></li>
+<li><code><a title="knee.metrics.Metrics.rpd" href="#knee.metrics.Metrics.rpd">rpd</a></code></li>
+<li><code><a title="knee.metrics.Metrics.smape" href="#knee.metrics.Metrics.smape">smape</a></code></li>
+</ul>
+</li>
 <li>
 <h4><code><a title="knee.metrics.R2" href="#knee.metrics.R2">R2</a></code></h4>
 <ul class="">

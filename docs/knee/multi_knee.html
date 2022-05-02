@@ -39,12 +39,14 @@ import typing
 import logging
 import numpy as np
 import knee.linear_fit as lf
+import knee.metrics as metrics
 
 
 logger = logging.getLogger(__name__)
 
 
-def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe) -&gt; np.ndarray:
+#TODO: support all the other metrics
+def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: metrics.Metrics = metrics.Metrics.rpd) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -70,18 +72,19 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, 
         
         if len(pt) &gt; t2:
             if len(pt) &lt;= 2:
-                if cost is lf.Linear_Metrics.rmspe:
+                if cost is metrics.Metrics.rmspe:
                     r = 0.0
                 else:
                     r = 1.0
             else:
                 coef = lf.linear_fit_points(pt)
-                if cost is lf.Linear_Metrics.rmspe:
-                    r = lf.rmspe_points(pt, coef)
-                else:
+                if cost is metrics.Metrics.r2:
                     r = lf.linear_r2_points(pt, coef)
+                else:
+                    r = lf.rmspe_points(pt, coef)
 
-            curved = r &gt;= t1 if cost is lf.Linear_Metrics.rmspe else r &lt; t1
+            #curved = r &gt;= t1 if cost is metrics.Metrics.r2 else r &lt; t1
+            curved = r &lt; t1 if cost is metrics.Metrics.r2 else r &gt;= t1
 
             #coef = lf.linear_fit_points(pt)
             # if lf.linear_r2_points(pt, coef) &lt; t1:
@@ -104,7 +107,7 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, 
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="knee.multi_knee.multi_knee"><code class="name flex">
-<span>def <span class="ident">multi_knee</span></span>(<span>get_knee: Callable, points: numpy.ndarray, t1: float = 0.01, t2: int = 3, cost: <a title="knee.linear_fit.Linear_Metrics" href="linear_fit.html#knee.linear_fit.Linear_Metrics">Linear_Metrics</a> = rmspe) ‑> numpy.ndarray</span>
+<span>def <span class="ident">multi_knee</span></span>(<span>get_knee: Callable, points: numpy.ndarray, t1: float = 0.01, t2: int = 3, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a> = rpd) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Wrapper that convert a single knee point detection into a multi knee point detector.</p>
@@ -131,7 +134,7 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, 
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: lf.Linear_Metrics = lf.Linear_Metrics.rmspe) -&gt; np.ndarray:
+<pre><code class="python">def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: metrics.Metrics = metrics.Metrics.rpd) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
@@ -157,18 +160,19 @@ def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, 
         
         if len(pt) &gt; t2:
             if len(pt) &lt;= 2:
-                if cost is lf.Linear_Metrics.rmspe:
+                if cost is metrics.Metrics.rmspe:
                     r = 0.0
                 else:
                     r = 1.0
             else:
                 coef = lf.linear_fit_points(pt)
-                if cost is lf.Linear_Metrics.rmspe:
-                    r = lf.rmspe_points(pt, coef)
-                else:
+                if cost is metrics.Metrics.r2:
                     r = lf.linear_r2_points(pt, coef)
+                else:
+                    r = lf.rmspe_points(pt, coef)
 
-            curved = r &gt;= t1 if cost is lf.Linear_Metrics.rmspe else r &lt; t1
+            #curved = r &gt;= t1 if cost is metrics.Metrics.r2 else r &lt; t1
+            curved = r &lt; t1 if cost is metrics.Metrics.r2 else r &gt;= t1
 
             #coef = lf.linear_fit_points(pt)
             # if lf.linear_r2_points(pt, coef) &lt; t1:

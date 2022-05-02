@@ -46,12 +46,24 @@ import knee.metrics as metrics
 logger = logging.getLogger(__name__)
 
 
-class RDP_Distance(enum.Enum):
+class Distance(enum.Enum):
     &#34;&#34;&#34;
     Enum that defines the distance method for the RDP 
     &#34;&#34;&#34;
     perpendicular = &#39;perpendicular&#39;
     shortest = &#39;shortest&#39;
+
+    def __str__(self):
+        return self.value
+
+
+class Order(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the distance method for the RDP 
+    &#34;&#34;&#34;
+    triangle = &#39;triangle&#39;
+    area = &#39;area&#39;
+    segment = &#39;segment&#39;
 
     def __str__(self):
         return self.value
@@ -95,7 +107,17 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
-def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+def compute_cost_coef(pt: np.ndarray, coef, cost: metrics.Metrics):
+    methods = {metrics.Metrics.r2: lf.linear_r2_points,
+    metrics.Metrics.rmspe: lf.rmspe_points,
+    metrics.Metrics.rmsle: lf.rmsle_points,
+    metrics.Metrics.smape: lf.smape_points,
+    metrics.Metrics.rpd: lf.rpd_points}
+
+    return methods[cost](pt, coef)
+
+
+def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest) -&gt; tuple:
     &#34;&#34;&#34;
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -118,9 +140,9 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
 
     # select the distance metric to be used
     distance_points = None
-    if distance is RDP_Distance.shortest:
+    if distance is Distance.shortest:
         distance_points = lf.shortest_distance_points
-    elif distance is RDP_Distance.perpendicular:
+    elif distance is Distance.perpendicular:
         distance_points = lf.perpendicular_distance_points
     else:
         distance_points = lf.shortest_distance_points
@@ -130,22 +152,15 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
         pt = points[left:right]
 
         if len(pt) &lt;= 2:
-            if cost is lf.Linear_Metrics.r2:
+            if cost is metrics.Metrics.r2:
                 r = 1.0
             else:
                 r = 0.0
         else:
             coef = lf.linear_fit_points(pt)
-            if cost is lf.Linear_Metrics.r2:
-                r = lf.linear_r2_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmspe:
-                r = lf.rmspe_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmsle:
-                r = lf.rmsle_points(pt, coef)
-            else:
-                r = lf.rpd_points(pt, coef)
+            r = compute_cost_coef(pt, coef, cost)
 
-        curved = r &lt; t if cost is lf.Linear_Metrics.r2 else r &gt;= t
+        curved = r &lt; t if cost is metrics.Metrics.r2 else r &gt;= t
 
         if curved:
             d = distance_points(pt, pt[0], pt[-1])
@@ -160,8 +175,7 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear
     return np.array(reduced), np.array(removed)
 
 
-#TODO: fix the return statement
-def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -&gt; tuple:
     &#34;&#34;&#34;
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -178,16 +192,19 @@ def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Dista
     &#34;&#34;&#34;
     stack = [(1, 0, len(points))]
 
-    reduced = []
+    reduced = [0, len(points)-1]
+
+    # cache for the global cost
+    cache = {}
 
     #TODO: trivial cases
     length -= 2
 
     # select the distance metric to be used
     distance_points = None
-    if distance is RDP_Distance.shortest:
+    if distance is Distance.shortest:
         distance_points = lf.shortest_distance_points
-    elif distance is RDP_Distance.perpendicular:
+    elif distance is Distance.perpendicular:
         distance_points = lf.perpendicular_distance_points
     else:
         distance_points = lf.shortest_distance_points
@@ -204,15 +221,59 @@ def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Dista
         #left_cost = np.max(distance_points(pt[0:index+1], pt[0], pt[index]))
         #right_cost = np.max(distance_points(pt[index:len(pt)], pt[0], pt[-1]))
 
-        h = d[index]
-        
-        hip_left = np.linalg.norm(pt[0]-pt[index])
-        b_left = math.sqrt(hip_left**2 - h**2)
-        left_tri_area = 0.5*b_left*h
+        if order is Order.triangle:
+            # compute the area of the triangles made from the farthest point
+            h = d[index]
+            hip_left = np.linalg.norm(pt[0]-pt[index])
+            b_left = math.sqrt(hip_left**2 - h**2)
+            left_tri_area = 0.5*b_left*h
 
-        hip_right = np.linalg.norm(pt[-1]-pt[index])
-        b_right = math.sqrt(hip_right**2 - h**2)
-        right_tri_area = 0.5*b_right*h
+            hip_right = np.linalg.norm(pt[-1]-pt[index])
+            b_right = math.sqrt(hip_right**2 - h**2)
+            right_tri_area = 0.5*b_right*h
+
+            stack.append((right_tri_area, left+index, left+len(pt)))
+            stack.append((left_tri_area, left, left+index+1))
+        elif order is Order.area:
+            # compute the area using the distance function
+            pt_left = points[left:left+index+1]
+            left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
+            
+            pt_right = points[left+index:left+len(pt)]
+            right_distance = distance_points(pt_right, pt_right[0], pt_right[-1])
+
+            left_area = np.sum(left_distance)
+            right_area = np.sum(right_distance)
+
+            stack.append((left_area, left, left+index+1))
+            stack.append((right_area, left+index, left+len(pt)))
+        else:
+            reduced.sort()
+
+            # compute the cost of the current solution
+            _, cost_segment = compute_global_cost(points, reduced, cost, cache)
+
+            # the cost is based on the segment error
+            cost_index = reduced.index(left+index) - 1
+
+            #print(f&#39;Reduced {reduced} Cost_index = {cost_index} Cost segment: {cost_segment}&#39;)
+
+            left_cost = cost_segment[cost_index]
+            right_cost = cost_segment[cost_index+1]
+
+            stack.append((left_cost, left, left+index+1))
+            stack.append((right_cost, left+index, left+len(pt)))
+            
+        
+        #h = d[index]
+        
+        #hip_left = np.linalg.norm(pt[0]-pt[index])
+        #b_left = math.sqrt(hip_left**2 - h**2)
+        #left_tri_area = 0.5*b_left*h
+
+        #hip_right = np.linalg.norm(pt[-1]-pt[index])
+        #b_right = math.sqrt(hip_right**2 - h**2)
+        #right_tri_area = 0.5*b_right*h
 
         #print(f&#39;LTA {left_tri_area} RTA {right_tri_area} LC {left_cost} RC {right_cost}&#39;)
 
@@ -220,52 +281,90 @@ def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Dista
         #stack.append((right_cost, left+index, left+len(pt)))
         #stack.append((left_cost, left, left+index+1))
 
-        stack.append((right_tri_area, left+index, left+len(pt)))
-        stack.append((left_tri_area, left, left+index+1))
+        #stack.append((right_tri_area, left+index, left+len(pt)))
+        #stack.append((left_tri_area, left, left+index+1))
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
+        #print(f&#39;STACK: {stack}&#39;)
         length -= 1
 
     # add first and last points
-    reduced.append(0)
-    reduced.append(len(points)-1)
+    #reduced.append(0)
+    #reduced.append(len(points)-1)
 
     # sort indexes
     reduced.sort()
+    reduced = np.array(reduced)
 
-    return np.array(reduced)
+    return reduced, compute_removed_points(points, reduced)
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray): #, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest):
-    #print(f&#39;GCG&#39;)
+def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
+    methods = {metrics.Metrics.r2: metrics.r2,
+    metrics.Metrics.rpd: metrics.rpd,
+    metrics.Metrics.rmsle: metrics.rmsle,
+    metrics.Metrics.rmspe: metrics.rmspe,
+    metrics.Metrics.smape: metrics.smape}
+
+    return methods[cost](np.array(y), np.array(y_hat))
+
+
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict[tuple]={}) -&gt; tuple:
     y, y_hat = [], []
+
+    cost_segment = []
 
     left = reduced[0]
     for i in range(1, len(reduced)):
         right = reduced[i]
         pt = points[left:right+1]
-        coef = lf.linear_fit_points(pt)
         
-        y_hat_temp = lf.linear_transform_points(pt, coef)
+        #use a cache to reduce the cost of this function
+        if (left, right) in cache:
+            y_hat_temp = cache[(left, right)]
+            #logger.debug(f&#39;Cache hit: {(left, right)}&#39;)
+        else:
+            coef = lf.linear_fit_points(pt)
+            y_hat_temp = lf.linear_transform_points(pt, coef)
+            cache[(left, right)] = y_hat_temp
+            #logger.debug(f&#39;Cache miss: {(left, right)}&#39;)
+        
         y_hat.extend(y_hat_temp)
-        y.extend(pt[:, 1])
+        y_temp = pt[:, 1]
+        y.extend(y_temp)
+
+        # compute the cost function
+        cost_segment.append(compute_cost(y_temp, y_hat_temp, cost))
         
-        #print(f&#39;[{left}: {right}] coef {coef} = {y_hat_temp}&#39;)
-        #print(f&#39;Pt {pt}&#39;)
         left = right
-    
-    #print(f&#39;{y} / {y_hat}&#39;)
 
     # compute the cost function
-    return metrics.rpd(np.array(y), np.array(y_hat))
+    return compute_cost(y, y_hat, cost), cost_segment
 
 
-def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -&gt; np.ndarray:
+    removed = []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        removed.append([left,len(pt)-2])
+        left = right
+
+    return np.array(removed)
+
+
+#TODO: Check code with trace w99-arc
+def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -&gt; tuple:
+    # cache for the global cost
+    cache = {}
+    
     # select the distance metric to be used
     distance_points = None
-    if distance is RDP_Distance.shortest:
+    if distance is Distance.shortest:
         distance_points = lf.shortest_distance_points
-    elif distance is RDP_Distance.perpendicular:
+    elif distance is Distance.perpendicular:
         distance_points = lf.perpendicular_distance_points
     else:
         distance_points = lf.shortest_distance_points
@@ -273,8 +372,8 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
 
-    global_cost = compute_global_cost(points, reduced)
-    curved = global_cost &lt; t if cost is lf.Linear_Metrics.r2 else global_cost &gt;= t
+    global_cost, _ = compute_global_cost(points, reduced, cost, cache)
+    curved = global_cost &lt; t if cost is metrics.Metrics.r2 else global_cost &gt;= t
 
     while curved:
         _, left, right = stack.pop()
@@ -286,70 +385,52 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
         # add the relevant point to the reduced set and sort
         reduced.append(left+index)
         reduced.sort()
+
+        # compute the cost of the current solution
+        global_cost, cost_segment = compute_global_cost(points, reduced, cost, cache)
+        curved = global_cost &lt; t if cost is metrics.Metrics.r2 else global_cost &gt;= t
         
-        # compute the area of the triangles made from the farthest point
-        h = d[index]
-        hip_left = np.linalg.norm(pt[0]-pt[index])
-        b_left = math.sqrt(hip_left**2 - h**2)
-        left_tri_area = 0.5*b_left*h
+        if order is Order.triangle:
+            # compute the area of the triangles made from the farthest point
+            h = d[index]
+            hip_left = np.linalg.norm(pt[0]-pt[index])
+            b_left = math.sqrt(hip_left**2 - h**2)
+            left_tri_area = 0.5*b_left*h
 
-        hip_right = np.linalg.norm(pt[-1]-pt[index])
-        b_right = math.sqrt(hip_right**2 - h**2)
-        right_tri_area = 0.5*b_right*h
+            hip_right = np.linalg.norm(pt[-1]-pt[index])
+            b_right = math.sqrt(hip_right**2 - h**2)
+            right_tri_area = 0.5*b_right*h
 
-        stack.append((right_tri_area, left+index, left+len(pt)))
-        stack.append((left_tri_area, left, left+index+1))
+            stack.append((right_tri_area, left+index, left+len(pt)))
+            stack.append((left_tri_area, left, left+index+1))
+        elif order is Order.area:
+            # compute the area using the distance function
+            pt_left = points[left:left+index+1]
+            left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
+            
+            pt_right = points[left+index:left+len(pt)]
+            right_distance = distance_points(pt_right, pt_right[0], pt_right[-1])
+
+            left_area = np.sum(left_distance)
+            right_area = np.sum(right_distance)
+
+            stack.append((left_area, left, left+index+1))
+            stack.append((right_area, left+index, left+len(pt)))
+        else:
+            # the cost is based on the segment error
+            cost_index = reduced.index(left+index) - 1
+            left_cost = cost_segment[cost_index]
+            right_cost = cost_segment[cost_index+1]
+
+            stack.append((left_cost, left, left+index+1))
+            stack.append((right_cost, left+index, left+len(pt)))
         
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
+        #print(f&#39;STACK: {stack}&#39;)
 
-        # compute the cost of the current solution
-        global_cost = compute_global_cost(points, reduced)
-        curved = global_cost &lt; t if cost is lf.Linear_Metrics.r2 else global_cost &gt;= t
-        #print(f&#39;{reduced} ({global_cost})&#39;)
-        #input(&#39;step&#39;)
-
-    
-
-    return np.array(reduced)
-    
-    
-    
-&#34;&#34;&#34;
-    while stack:
-        left, right = stack.pop()
-        pt = points[left:right]
-
-        if len(pt) &lt;= 2:
-            if cost is lf.Linear_Metrics.r2:
-                r = 1.0
-            else:
-                r = 0.0
-        else:
-            coef = lf.linear_fit_points(pt)
-            if cost is lf.Linear_Metrics.r2:
-                r = lf.linear_r2_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmspe:
-                r = lf.rmspe_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmsle:
-                r = lf.rmsle_points(pt, coef)
-            else:
-                r = lf.rpd_points(pt, coef)
-
-        curved = r &lt; t if cost is lf.Linear_Metrics.r2 else r &gt;= t
-
-        if curved:
-            d = distance_points(pt, pt[0], pt[-1])
-            index = np.argmax(d)
-            stack.append((left+index, left+len(pt)))
-            stack.append((left, left+index+1))
-        else:
-            reduced.append(left)
-            removed.append([left, len(pt) - 2.0])
-
-    reduced.append(len(points)-1)
-    return np.array(reduced), np.array(removed)
-&#34;&#34;&#34;</code></pre>
+    reduced = np.array(reduced)
+    return reduced, compute_removed_points(points, reduced)</code></pre>
 </details>
 </section>
 <section>
@@ -359,8 +440,8 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="knee.rdp.compute_global_cost"><code class="name flex">
-<span>def <span class="ident">compute_global_cost</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray)</span>
+<dt id="knee.rdp.compute_cost"><code class="name flex">
+<span>def <span class="ident">compute_cost</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -368,32 +449,79 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def compute_global_cost(points: np.ndarray, reduced: np.ndarray): #, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest):
-    #print(f&#39;GCG&#39;)
+<pre><code class="python">def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
+    methods = {metrics.Metrics.r2: metrics.r2,
+    metrics.Metrics.rpd: metrics.rpd,
+    metrics.Metrics.rmsle: metrics.rmsle,
+    metrics.Metrics.rmspe: metrics.rmspe,
+    metrics.Metrics.smape: metrics.smape}
+
+    return methods[cost](np.array(y), np.array(y_hat))</code></pre>
+</details>
+</dd>
+<dt id="knee.rdp.compute_cost_coef"><code class="name flex">
+<span>def <span class="ident">compute_cost_coef</span></span>(<span>pt: numpy.ndarray, coef, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_cost_coef(pt: np.ndarray, coef, cost: metrics.Metrics):
+    methods = {metrics.Metrics.r2: lf.linear_r2_points,
+    metrics.Metrics.rmspe: lf.rmspe_points,
+    metrics.Metrics.rmsle: lf.rmsle_points,
+    metrics.Metrics.smape: lf.smape_points,
+    metrics.Metrics.rpd: lf.rpd_points}
+
+    return methods[cost](pt, coef)</code></pre>
+</details>
+</dd>
+<dt id="knee.rdp.compute_global_cost"><code class="name flex">
+<span>def <span class="ident">compute_global_cost</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a> = rpd, cache: dict[tuple] = {}) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict[tuple]={}) -&gt; tuple:
     y, y_hat = [], []
+
+    cost_segment = []
 
     left = reduced[0]
     for i in range(1, len(reduced)):
         right = reduced[i]
         pt = points[left:right+1]
-        coef = lf.linear_fit_points(pt)
         
-        y_hat_temp = lf.linear_transform_points(pt, coef)
+        #use a cache to reduce the cost of this function
+        if (left, right) in cache:
+            y_hat_temp = cache[(left, right)]
+            #logger.debug(f&#39;Cache hit: {(left, right)}&#39;)
+        else:
+            coef = lf.linear_fit_points(pt)
+            y_hat_temp = lf.linear_transform_points(pt, coef)
+            cache[(left, right)] = y_hat_temp
+            #logger.debug(f&#39;Cache miss: {(left, right)}&#39;)
+        
         y_hat.extend(y_hat_temp)
-        y.extend(pt[:, 1])
+        y_temp = pt[:, 1]
+        y.extend(y_temp)
+
+        # compute the cost function
+        cost_segment.append(compute_cost(y_temp, y_hat_temp, cost))
         
-        #print(f&#39;[{left}: {right}] coef {coef} = {y_hat_temp}&#39;)
-        #print(f&#39;Pt {pt}&#39;)
         left = right
-    
-    #print(f&#39;{y} / {y_hat}&#39;)
 
     # compute the cost function
-    return metrics.rpd(np.array(y), np.array(y_hat))</code></pre>
+    return compute_cost(y, y_hat, cost), cost_segment</code></pre>
 </details>
 </dd>
-<dt id="knee.rdp.grdp"><code class="name flex">
-<span>def <span class="ident">grdp</span></span>(<span>points: numpy.ndarray, t: float = 0.001, cost: <a title="knee.linear_fit.Linear_Metrics" href="linear_fit.html#knee.linear_fit.Linear_Metrics">Linear_Metrics</a> = rpd, distance: <a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a> = shortest) ‑> tuple</span>
+<dt id="knee.rdp.compute_removed_points"><code class="name flex">
+<span>def <span class="ident">compute_removed_points</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -401,12 +529,37 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+<pre><code class="python">def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -&gt; np.ndarray:
+    removed = []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        removed.append([left,len(pt)-2])
+        left = right
+
+    return np.array(removed)</code></pre>
+</details>
+</dd>
+<dt id="knee.rdp.grdp"><code class="name flex">
+<span>def <span class="ident">grdp</span></span>(<span>points: numpy.ndarray, t: float = 0.01, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a> = rpd, distance: <a title="knee.rdp.Distance" href="#knee.rdp.Distance">Distance</a> = shortest, order: <a title="knee.rdp.Order" href="#knee.rdp.Order">Order</a> = triangle) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -&gt; tuple:
+    # cache for the global cost
+    cache = {}
+    
     # select the distance metric to be used
     distance_points = None
-    if distance is RDP_Distance.shortest:
+    if distance is Distance.shortest:
         distance_points = lf.shortest_distance_points
-    elif distance is RDP_Distance.perpendicular:
+    elif distance is Distance.perpendicular:
         distance_points = lf.perpendicular_distance_points
     else:
         distance_points = lf.shortest_distance_points
@@ -414,8 +567,8 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
 
-    global_cost = compute_global_cost(points, reduced)
-    curved = global_cost &lt; t if cost is lf.Linear_Metrics.r2 else global_cost &gt;= t
+    global_cost, _ = compute_global_cost(points, reduced, cost, cache)
+    curved = global_cost &lt; t if cost is metrics.Metrics.r2 else global_cost &gt;= t
 
     while curved:
         _, left, right = stack.pop()
@@ -427,32 +580,52 @@ def grdp(points: np.ndarray, t: float = 0.001, cost: lf.Linear_Metrics = lf.Line
         # add the relevant point to the reduced set and sort
         reduced.append(left+index)
         reduced.sort()
+
+        # compute the cost of the current solution
+        global_cost, cost_segment = compute_global_cost(points, reduced, cost, cache)
+        curved = global_cost &lt; t if cost is metrics.Metrics.r2 else global_cost &gt;= t
         
-        # compute the area of the triangles made from the farthest point
-        h = d[index]
-        hip_left = np.linalg.norm(pt[0]-pt[index])
-        b_left = math.sqrt(hip_left**2 - h**2)
-        left_tri_area = 0.5*b_left*h
+        if order is Order.triangle:
+            # compute the area of the triangles made from the farthest point
+            h = d[index]
+            hip_left = np.linalg.norm(pt[0]-pt[index])
+            b_left = math.sqrt(hip_left**2 - h**2)
+            left_tri_area = 0.5*b_left*h
 
-        hip_right = np.linalg.norm(pt[-1]-pt[index])
-        b_right = math.sqrt(hip_right**2 - h**2)
-        right_tri_area = 0.5*b_right*h
+            hip_right = np.linalg.norm(pt[-1]-pt[index])
+            b_right = math.sqrt(hip_right**2 - h**2)
+            right_tri_area = 0.5*b_right*h
 
-        stack.append((right_tri_area, left+index, left+len(pt)))
-        stack.append((left_tri_area, left, left+index+1))
+            stack.append((right_tri_area, left+index, left+len(pt)))
+            stack.append((left_tri_area, left, left+index+1))
+        elif order is Order.area:
+            # compute the area using the distance function
+            pt_left = points[left:left+index+1]
+            left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
+            
+            pt_right = points[left+index:left+len(pt)]
+            right_distance = distance_points(pt_right, pt_right[0], pt_right[-1])
+
+            left_area = np.sum(left_distance)
+            right_area = np.sum(right_distance)
+
+            stack.append((left_area, left, left+index+1))
+            stack.append((right_area, left+index, left+len(pt)))
+        else:
+            # the cost is based on the segment error
+            cost_index = reduced.index(left+index) - 1
+            left_cost = cost_segment[cost_index]
+            right_cost = cost_segment[cost_index+1]
+
+            stack.append((left_cost, left, left+index+1))
+            stack.append((right_cost, left+index, left+len(pt)))
         
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
+        #print(f&#39;STACK: {stack}&#39;)
 
-        # compute the cost of the current solution
-        global_cost = compute_global_cost(points, reduced)
-        curved = global_cost &lt; t if cost is lf.Linear_Metrics.r2 else global_cost &gt;= t
-        #print(f&#39;{reduced} ({global_cost})&#39;)
-        #input(&#39;step&#39;)
-
-    
-
-    return np.array(reduced)</code></pre>
+    reduced = np.array(reduced)
+    return reduced, compute_removed_points(points, reduced)</code></pre>
 </details>
 </dd>
 <dt id="knee.rdp.mapping"><code class="name flex">
@@ -522,7 +695,7 @@ This method assumes the indexes are sorted in ascending order.</p>
 </details>
 </dd>
 <dt id="knee.rdp.rdp"><code class="name flex">
-<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, t: float = 0.01, cost: <a title="knee.linear_fit.Linear_Metrics" href="linear_fit.html#knee.linear_fit.Linear_Metrics">Linear_Metrics</a> = rpd, distance: <a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a> = shortest) ‑> tuple</span>
+<span>def <span class="ident">rdp</span></span>(<span>points: numpy.ndarray, t: float = 0.01, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a> = rpd, distance: <a title="knee.rdp.Distance" href="#knee.rdp.Distance">Distance</a> = shortest) ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Ramer–Douglas–Peucker (RDP) algorithm.</p>
@@ -536,7 +709,7 @@ This version uses different cost functions to decided whenever to keep or remove
 <dd>the coefficient of determination threshold (default 0.01)</dd>
 <dt><strong><code>cost</code></strong> :&ensp;<code>lf.Linear_Metrics</code></dt>
 <dd>the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)</dd>
-<dt><strong><code>distance</code></strong> :&ensp;<code><a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a></code></dt>
+<dt><strong><code>distance</code></strong> :&ensp;<code>RDP_Distance</code></dt>
 <dd>the distance metric used to decide the split point (default: RDP_Distance.shortest)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -548,7 +721,7 @@ This version uses different cost functions to decided whenever to keep or remove
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rdp(points: np.ndarray, t: float = 0.01, cost: lf.Linear_Metrics = lf.Linear_Metrics.rpd, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+<pre><code class="python">def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest) -&gt; tuple:
     &#34;&#34;&#34;
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -571,9 +744,9 @@ This version uses different cost functions to decided whenever to keep or remove
 
     # select the distance metric to be used
     distance_points = None
-    if distance is RDP_Distance.shortest:
+    if distance is Distance.shortest:
         distance_points = lf.shortest_distance_points
-    elif distance is RDP_Distance.perpendicular:
+    elif distance is Distance.perpendicular:
         distance_points = lf.perpendicular_distance_points
     else:
         distance_points = lf.shortest_distance_points
@@ -583,22 +756,15 @@ This version uses different cost functions to decided whenever to keep or remove
         pt = points[left:right]
 
         if len(pt) &lt;= 2:
-            if cost is lf.Linear_Metrics.r2:
+            if cost is metrics.Metrics.r2:
                 r = 1.0
             else:
                 r = 0.0
         else:
             coef = lf.linear_fit_points(pt)
-            if cost is lf.Linear_Metrics.r2:
-                r = lf.linear_r2_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmspe:
-                r = lf.rmspe_points(pt, coef)
-            elif cost is lf.Linear_Metrics.rmsle:
-                r = lf.rmsle_points(pt, coef)
-            else:
-                r = lf.rpd_points(pt, coef)
+            r = compute_cost_coef(pt, coef, cost)
 
-        curved = r &lt; t if cost is lf.Linear_Metrics.r2 else r &gt;= t
+        curved = r &lt; t if cost is metrics.Metrics.r2 else r &gt;= t
 
         if curved:
             d = distance_points(pt, pt[0], pt[-1])
@@ -614,7 +780,7 @@ This version uses different cost functions to decided whenever to keep or remove
 </details>
 </dd>
 <dt id="knee.rdp.rdp_fixed"><code class="name flex">
-<span>def <span class="ident">rdp_fixed</span></span>(<span>points: numpy.ndarray, length: int, distance: <a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a> = shortest) ‑> tuple</span>
+<span>def <span class="ident">rdp_fixed</span></span>(<span>points: numpy.ndarray, length: int, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a> = rpd, distance: <a title="knee.rdp.Distance" href="#knee.rdp.Distance">Distance</a> = shortest, order: <a title="knee.rdp.Order" href="#knee.rdp.Order">Order</a> = triangle) ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Ramer–Douglas–Peucker (RDP) algorithm.</p>
@@ -626,7 +792,7 @@ This version reduces the number of points to a fixed length.</p>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>lenght</code></strong> :&ensp;<code>int</code></dt>
 <dd>the fixed length of reduced points</dd>
-<dt><strong><code>distance</code></strong> :&ensp;<code><a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a></code></dt>
+<dt><strong><code>distance</code></strong> :&ensp;<code>RDP_Distance</code></dt>
 <dd>the distance metric used to decide the split point (default: RDP_Distance.shortest)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
@@ -638,7 +804,7 @@ This version reduces the number of points to a fixed length.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def rdp_fixed(points: np.ndarray, length:int, distance: RDP_Distance = RDP_Distance.shortest) -&gt; tuple:
+<pre><code class="python">def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -&gt; tuple:
     &#34;&#34;&#34;
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -655,16 +821,19 @@ This version reduces the number of points to a fixed length.</p>
     &#34;&#34;&#34;
     stack = [(1, 0, len(points))]
 
-    reduced = []
+    reduced = [0, len(points)-1]
+
+    # cache for the global cost
+    cache = {}
 
     #TODO: trivial cases
     length -= 2
 
     # select the distance metric to be used
     distance_points = None
-    if distance is RDP_Distance.shortest:
+    if distance is Distance.shortest:
         distance_points = lf.shortest_distance_points
-    elif distance is RDP_Distance.perpendicular:
+    elif distance is Distance.perpendicular:
         distance_points = lf.perpendicular_distance_points
     else:
         distance_points = lf.shortest_distance_points
@@ -681,15 +850,59 @@ This version reduces the number of points to a fixed length.</p>
         #left_cost = np.max(distance_points(pt[0:index+1], pt[0], pt[index]))
         #right_cost = np.max(distance_points(pt[index:len(pt)], pt[0], pt[-1]))
 
-        h = d[index]
-        
-        hip_left = np.linalg.norm(pt[0]-pt[index])
-        b_left = math.sqrt(hip_left**2 - h**2)
-        left_tri_area = 0.5*b_left*h
+        if order is Order.triangle:
+            # compute the area of the triangles made from the farthest point
+            h = d[index]
+            hip_left = np.linalg.norm(pt[0]-pt[index])
+            b_left = math.sqrt(hip_left**2 - h**2)
+            left_tri_area = 0.5*b_left*h
 
-        hip_right = np.linalg.norm(pt[-1]-pt[index])
-        b_right = math.sqrt(hip_right**2 - h**2)
-        right_tri_area = 0.5*b_right*h
+            hip_right = np.linalg.norm(pt[-1]-pt[index])
+            b_right = math.sqrt(hip_right**2 - h**2)
+            right_tri_area = 0.5*b_right*h
+
+            stack.append((right_tri_area, left+index, left+len(pt)))
+            stack.append((left_tri_area, left, left+index+1))
+        elif order is Order.area:
+            # compute the area using the distance function
+            pt_left = points[left:left+index+1]
+            left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
+            
+            pt_right = points[left+index:left+len(pt)]
+            right_distance = distance_points(pt_right, pt_right[0], pt_right[-1])
+
+            left_area = np.sum(left_distance)
+            right_area = np.sum(right_distance)
+
+            stack.append((left_area, left, left+index+1))
+            stack.append((right_area, left+index, left+len(pt)))
+        else:
+            reduced.sort()
+
+            # compute the cost of the current solution
+            _, cost_segment = compute_global_cost(points, reduced, cost, cache)
+
+            # the cost is based on the segment error
+            cost_index = reduced.index(left+index) - 1
+
+            #print(f&#39;Reduced {reduced} Cost_index = {cost_index} Cost segment: {cost_segment}&#39;)
+
+            left_cost = cost_segment[cost_index]
+            right_cost = cost_segment[cost_index+1]
+
+            stack.append((left_cost, left, left+index+1))
+            stack.append((right_cost, left+index, left+len(pt)))
+            
+        
+        #h = d[index]
+        
+        #hip_left = np.linalg.norm(pt[0]-pt[index])
+        #b_left = math.sqrt(hip_left**2 - h**2)
+        #left_tri_area = 0.5*b_left*h
+
+        #hip_right = np.linalg.norm(pt[-1]-pt[index])
+        #b_right = math.sqrt(hip_right**2 - h**2)
+        #right_tri_area = 0.5*b_right*h
 
         #print(f&#39;LTA {left_tri_area} RTA {right_tri_area} LC {left_cost} RC {right_cost}&#39;)
 
@@ -697,20 +910,22 @@ This version reduces the number of points to a fixed length.</p>
         #stack.append((right_cost, left+index, left+len(pt)))
         #stack.append((left_cost, left, left+index+1))
 
-        stack.append((right_tri_area, left+index, left+len(pt)))
-        stack.append((left_tri_area, left, left+index+1))
+        #stack.append((right_tri_area, left+index, left+len(pt)))
+        #stack.append((left_tri_area, left, left+index+1))
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0])
+        #print(f&#39;STACK: {stack}&#39;)
         length -= 1
 
     # add first and last points
-    reduced.append(0)
-    reduced.append(len(points)-1)
+    #reduced.append(0)
+    #reduced.append(len(points)-1)
 
     # sort indexes
     reduced.sort()
+    reduced = np.array(reduced)
 
-    return np.array(reduced)</code></pre>
+    return reduced, compute_removed_points(points, reduced)</code></pre>
 </details>
 </dd>
 </dl>
@@ -718,8 +933,8 @@ This version reduces the number of points to a fixed length.</p>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="knee.rdp.RDP_Distance"><code class="flex name class">
-<span>class <span class="ident">RDP_Distance</span></span>
+<dt id="knee.rdp.Distance"><code class="flex name class">
+<span>class <span class="ident">Distance</span></span>
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
 </code></dt>
 <dd>
@@ -728,7 +943,7 @@ This version reduces the number of points to a fixed length.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class RDP_Distance(enum.Enum):
+<pre><code class="python">class Distance(enum.Enum):
     &#34;&#34;&#34;
     Enum that defines the distance method for the RDP 
     &#34;&#34;&#34;
@@ -744,11 +959,52 @@ This version reduces the number of points to a fixed length.</p>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="knee.rdp.RDP_Distance.perpendicular"><code class="name">var <span class="ident">perpendicular</span></code></dt>
+<dt id="knee.rdp.Distance.perpendicular"><code class="name">var <span class="ident">perpendicular</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="knee.rdp.RDP_Distance.shortest"><code class="name">var <span class="ident">shortest</span></code></dt>
+<dt id="knee.rdp.Distance.shortest"><code class="name">var <span class="ident">shortest</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="knee.rdp.Order"><code class="flex name class">
+<span>class <span class="ident">Order</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enum that defines the distance method for the RDP</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Order(enum.Enum):
+    &#34;&#34;&#34;
+    Enum that defines the distance method for the RDP 
+    &#34;&#34;&#34;
+    triangle = &#39;triangle&#39;
+    area = &#39;area&#39;
+    segment = &#39;segment&#39;
+
+    def __str__(self):
+        return self.value</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="knee.rdp.Order.area"><code class="name">var <span class="ident">area</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.rdp.Order.segment"><code class="name">var <span class="ident">segment</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="knee.rdp.Order.triangle"><code class="name">var <span class="ident">triangle</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -770,7 +1026,10 @@ This version reduces the number of points to a fixed length.</p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="knee.rdp.compute_cost" href="#knee.rdp.compute_cost">compute_cost</a></code></li>
+<li><code><a title="knee.rdp.compute_cost_coef" href="#knee.rdp.compute_cost_coef">compute_cost_coef</a></code></li>
 <li><code><a title="knee.rdp.compute_global_cost" href="#knee.rdp.compute_global_cost">compute_global_cost</a></code></li>
+<li><code><a title="knee.rdp.compute_removed_points" href="#knee.rdp.compute_removed_points">compute_removed_points</a></code></li>
 <li><code><a title="knee.rdp.grdp" href="#knee.rdp.grdp">grdp</a></code></li>
 <li><code><a title="knee.rdp.mapping" href="#knee.rdp.mapping">mapping</a></code></li>
 <li><code><a title="knee.rdp.rdp" href="#knee.rdp.rdp">rdp</a></code></li>
@@ -780,10 +1039,18 @@ This version reduces the number of points to a fixed length.</p>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="knee.rdp.RDP_Distance" href="#knee.rdp.RDP_Distance">RDP_Distance</a></code></h4>
+<h4><code><a title="knee.rdp.Distance" href="#knee.rdp.Distance">Distance</a></code></h4>
 <ul class="">
-<li><code><a title="knee.rdp.RDP_Distance.perpendicular" href="#knee.rdp.RDP_Distance.perpendicular">perpendicular</a></code></li>
-<li><code><a title="knee.rdp.RDP_Distance.shortest" href="#knee.rdp.RDP_Distance.shortest">shortest</a></code></li>
+<li><code><a title="knee.rdp.Distance.perpendicular" href="#knee.rdp.Distance.perpendicular">perpendicular</a></code></li>
+<li><code><a title="knee.rdp.Distance.shortest" href="#knee.rdp.Distance.shortest">shortest</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="knee.rdp.Order" href="#knee.rdp.Order">Order</a></code></h4>
+<ul class="">
+<li><code><a title="knee.rdp.Order.area" href="#knee.rdp.Order.area">area</a></code></li>
+<li><code><a title="knee.rdp.Order.segment" href="#knee.rdp.Order.segment">segment</a></code></li>
+<li><code><a title="knee.rdp.Order.triangle" href="#knee.rdp.Order.triangle">triangle</a></code></li>
 </ul>
 </li>
 </ul>
