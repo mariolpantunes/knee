@@ -269,6 +269,16 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
     return reduced, compute_removed_points(points, reduced)
 
 
+def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
+    methods = {metrics.Metrics.r2: metrics.r2,
+    metrics.Metrics.rpd: metrics.rpd,
+    metrics.Metrics.rmsle: metrics.rmsle,
+    metrics.Metrics.rmspe: metrics.rmspe,
+    metrics.Metrics.smape: metrics.smape}
+
+    return methods[cost](np.array(y), np.array(y_hat))
+
+
 def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict[tuple]={}) -> tuple:
     y, y_hat = [], []
 
@@ -294,34 +304,12 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.M
         y.extend(y_temp)
 
         # compute the cost function
-        if cost is metrics.Metrics.r2:
-            cost = metrics.r2(np.array(y_temp), np.array(y_hat_temp))
-        elif cost is metrics.Metrics.rmsle:
-            cost = metrics.rmsle(np.array(y_temp), np.array(y_hat_temp))
-        elif cost is metrics.Metrics.rmspe:
-            cost = metrics.rmspe(np.array(y_temp), np.array(y_hat_temp))
-        elif cost is metrics.Metrics.smape:
-            cost = metrics.smape(np.array(y_temp), np.array(y_hat_temp))
-        else:
-            cost = metrics.rpd(np.array(y_temp), np.array(y_hat_temp))
-
-        cost_segment.append(cost)
+        cost_segment.append(compute_cost(y_temp, y_hat_temp, cost))
         
         left = right
 
     # compute the cost function
-    if cost is metrics.Metrics.r2:
-        cost = metrics.r2(np.array(y), np.array(y_hat))
-    elif cost is metrics.Metrics.rmsle:
-        cost = metrics.rmsle(np.array(y), np.array(y_hat))
-    elif cost is metrics.Metrics.rmspe:
-        cost = metrics.rmspe(np.array(y), np.array(y_hat))
-    elif cost is metrics.Metrics.smape:
-        cost = metrics.smape(np.array(y), np.array(y_hat))
-    else:
-        cost = metrics.rpd(np.array(y), np.array(y_hat))
-
-    return cost, cost_segment
+    return compute_cost(y, y_hat, cost), cost_segment
 
 
 def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
