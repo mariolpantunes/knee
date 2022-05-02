@@ -12,6 +12,7 @@ import numpy as np
 
 import knee.rdp as rdp
 import knee.linear_fit as lf
+import knee.metrics as metrics
 import matplotlib.pyplot as plt
 
 
@@ -46,7 +47,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-c', type=lf.Linear_Metrics, choices=list(lf.Linear_Metrics), default='rpd')
+    parser.add_argument('-c', type=metrics.Metrics, choices=list(metrics.Metrics), default='rpd')
     parser.add_argument('-d', type=rdp.Distance, choices=list(rdp.Distance), default='shortest')
     parser.add_argument('-o', type=rdp.Order, choices=list(rdp.Order), default='area')
     parser.add_argument('-r', type=float, help='RDP R', default=0.01)
