@@ -78,6 +78,16 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
+def compute_cost_coef(pt: np.ndarray, coef, cost: metrics.Metrics):
+    methods = {metrics.Metrics.r2: lf.linear_r2_points,
+    metrics.Metrics.rmspe: lf.rmspe_points,
+    metrics.Metrics.rmsle: lf.rmsle_points,
+    metrics.Metrics.smape: lf.smape_points,
+    metrics.Metrics.rpd: lf.rpd_points}
+
+    return methods[cost](pt, coef)
+
+
 def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
@@ -119,16 +129,7 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Met
                 r = 0.0
         else:
             coef = lf.linear_fit_points(pt)
-            if cost is metrics.Metrics.r2:
-                r = lf.linear_r2_points(pt, coef)
-            elif cost is metrics.Metrics.rmspe:
-                r = lf.rmspe_points(pt, coef)
-            elif cost is metrics.Metrics.rmsle:
-                r = lf.rmsle_points(pt, coef)
-            elif cost is metrics.Metrics.smape:
-                r = lf.smape_points(pt, coef)
-            else:
-                r = lf.rpd_points(pt, coef)
+            r = compute_cost_coef(pt, coef, cost)
 
         curved = r < t if cost is metrics.Metrics.r2 else r >= t
 

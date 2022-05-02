@@ -208,6 +208,17 @@ def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
     return metrics.rmsle(y, y_hat)
 
 
+def smape_points(points: np.ndarray, coef: tuple, eps: float = 1e-16)->float:
+    x = points[:, 0]
+    y = points[:, 1]
+    return smape(x, y, coef, eps)
+
+
+def smape(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -> float:
+    y_hat = linear_transform(x, coef)
+    return metrics.smape(y, y_hat, eps)
+
+
 def rpd_points(points: np.ndarray, coef: tuple, eps: float = 1e-16) -> float:
     """
     Computes the Relative Percentage Difference (RPD).
