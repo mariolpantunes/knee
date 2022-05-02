@@ -139,7 +139,7 @@ def residuals(y: np.ndarray, y_hat: np.ndarray) -> float:
     return np.sum(np.square((y-y_hat)))
 
 
-def smape(y: np.ndarray, y_hat: np.ndarray) -> float:
+def smape(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     """
     Computes Symmetric Mean Absolute Percentage Error (SMAPE).
 
@@ -150,4 +150,4 @@ def smape(y: np.ndarray, y_hat: np.ndarray) -> float:
     Returns:
         float: residual error of the fit
     """
-    return np.mean(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat)))
+    return np.mean(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
