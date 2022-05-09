@@ -19,7 +19,6 @@ import knee.rdp as rdp
 import knee.kneedle as kneedle
 import knee.postprocessing as pp
 import knee.clustering as clustering
-import knee.evaluation as evaluation
 import knee.knee_ranking as knee_ranking
 
 

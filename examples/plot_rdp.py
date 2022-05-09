@@ -30,7 +30,7 @@ def main(args):
         x = np.arange(0, len(y))
         points = np.array([x,y]).T
     
-    reduced, removed = rdp.rdp(points, args.r, cost=args.c, distance=args.d)
+    reduced, _ = rdp.rdp(points, args.r, cost=args.c, distance=args.d)
     
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)

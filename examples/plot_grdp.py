@@ -11,7 +11,6 @@ import argparse
 import numpy as np
 
 import knee.rdp as rdp
-import knee.linear_fit as lf
 import knee.metrics as metrics
 import matplotlib.pyplot as plt
 

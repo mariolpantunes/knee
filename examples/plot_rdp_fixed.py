@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
     
-    reduced, removed = rdp.rdp_fixed(points, args.l, distance=args.d, order=args.o)
+    reduced, _ = rdp.rdp_fixed(points, args.l, distance=args.d, order=args.o)
     
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
