@@ -81,13 +81,13 @@ def main(args):
         ## RDP
         for t in tqdm.tqdm(rdp_threshold, position=1, desc='Thr', leave=False):
             for c in tqdm.tqdm(rdp_metrics, position=2, desc='Cst', leave=False):
-                for o in tqdm.tqdm(rdp_order, position=3, desc='Ordr', leave=False):
+                for o in tqdm.tqdm(rdp_order, position=3, desc='Ord', leave=False):
                     # convert the threhold from cost to similarity
                     if c is metrics.Metrics.r2:
                         r = 1.0 - t
                     else:
                         r = t
-                    logger.info(f'out/grdp_{t}_{c}_{o}.csv')
+                    logger.info(f'\nconfig {f} {t} {c} {o}.csv')
                     reduced, _ = rdp.grdp(points, r, c, order=o)
                     cost = compute_global_rmse(points, reduced)
 

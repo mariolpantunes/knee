@@ -184,6 +184,8 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
         _, left, right = stack.pop()
         pt = points[left:right]
 
+        
+
         d = distance_points(pt, pt[0], pt[-1])
         index = np.argmax(d)
         # add the relevant point to the reduced set
@@ -255,7 +257,7 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
         #stack.append((right_tri_area, left+index, left+len(pt)))
         #stack.append((left_tri_area, left, left+index+1))
         # Sort the stack based on the cost
-        reverse = True if cost is metrics.Metrics.r2 else False
+        reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
         stack.sort(key=lambda t: t[0], reverse=reverse)
         #print(f'STACK: {stack}')
         length -= 1
@@ -351,7 +353,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         _, left, right = stack.pop()
         pt = points[left:right]
 
-        logger.info(f'{left}:{right}')
+        print(f'{left}:{right}')
 
         d = distance_points(pt, pt[0], pt[-1])
         index = np.argmax(d)
@@ -400,9 +402,9 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
             stack.append((right_cost, left+index, left+len(pt)))
         
         # Sort the stack based on the cost
-        reverse = True if cost is metrics.Metrics.r2 else False
+        reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
+        print(f'SR = {reverse}')
         stack.sort(key=lambda t: t[0], reverse=reverse)
-        
         logger.info(f'STACK: {stack}')
 
     reduced = np.array(reduced)
