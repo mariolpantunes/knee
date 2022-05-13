@@ -103,12 +103,12 @@ def main(args):
                         r = t
                     logger.info(f'\nconfig {f} {t} {c} {o}.csv')
                     try:
-                        with timeout(seconds=60):
+                        with timeout(seconds=120):
                             reduced, _ = rdp.grdp(points, r, c, order=o)
                             cost = compute_global_rmse(points, reduced)
                     except:
                         reduced = []
-                        cost = None
+                        cost = 0
                     
                     # open the corret csv file and write the result
                     with open(f'out/grdp_{t}_{c}_{o}.csv', 'a', newline='') as csvfile:
