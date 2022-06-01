@@ -356,7 +356,6 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         # Sort the stack based on the cost
         reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
         stack.sort(key=lambda t: t[0], reverse=reverse)
-        length -= 1
         
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)
