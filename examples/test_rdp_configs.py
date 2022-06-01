@@ -11,6 +11,7 @@ import re
 import csv
 import enum
 import tqdm
+import signal
 import pathlib
 import logging
 import argparse
@@ -33,6 +34,19 @@ class Trace(enum.Enum):
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
+
+
+class timeout:
+    def __init__(self, seconds=1, error_message='Timeout'):
+        self.seconds = seconds
+        self.error_message = error_message
+    def handle_timeout(self, signum, frame):
+        raise TimeoutError(self.error_message)
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.handle_timeout)
+        signal.alarm(self.seconds)
+    def __exit__(self, type, value, traceback):
+        signal.alarm(0)
 
 
 def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
@@ -88,9 +102,14 @@ def main(args):
                     else:
                         r = t
                     logger.info(f'\nconfig {f} {t} {c} {o}.csv')
-                    reduced, _ = rdp.grdp(points, r, c, order=o)
-                    cost = compute_global_rmse(points, reduced)
-
+                    try:
+                        with timeout(seconds=120):
+                            reduced, _ = rdp.grdp(points, r, c, order=o)
+                            cost = compute_global_rmse(points, reduced)
+                    except:
+                        reduced = []
+                        cost = 0
+                    
                     # open the corret csv file and write the result
                     with open(f'out/grdp_{t}_{c}_{o}.csv', 'a', newline='') as csvfile:
                         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)

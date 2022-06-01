@@ -11,6 +11,7 @@ import math
 import logging
 import numpy as np
 import knee.linear_fit as lf
+import knee.metrics as metrics
 
 
 logger = logging.getLogger(__name__)
@@ -584,3 +585,38 @@ def mcc(cm: np.ndarray) -> float:
     d = math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
 
     return n/d
+
+
+def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
+    y, y_hat = [], []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        
+        coef = lf.linear_fit_points(pt)
+        y_hat_temp = lf.linear_transform_points(pt, coef)
+        
+        y_hat.extend(y_hat_temp)
+        y_temp = pt[:, 1]
+        y.extend(y_temp)
+
+        left = right
+
+    # compute the cost function
+    return metrics.rmse(np.array(y), np.array(y_hat))
+
+
+def aip(points: np.ndarray, reduced: np.ndarray):
+    ip = []
+
+    # Compute the final RSME
+    cost_fin = compute_global_rmse(points, reduced)
+
+    for i in range(len(reduced)):
+        # Compute the reference RMSE
+
+        ip = []
+
+    return np.average(ip)

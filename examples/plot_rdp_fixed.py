@@ -26,7 +26,7 @@ def main(args):
 
     logger.info(f'Cost {args.c} Distance {args.d} Order {args.o}')
     
-    reduced, _ = rdp.rdp_fixed(points, args.l, cost=args.c, distance=args.d, order=args.o, )
+    reduced, _ = rdp.rdp_fixed(points, args.l, cost=args.c, distance=args.d, order=args.o)
     
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
