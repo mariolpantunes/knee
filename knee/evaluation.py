@@ -614,9 +614,11 @@ def aip(points: np.ndarray, reduced: np.ndarray):
     # Compute the final RSME
     cost_fin = compute_global_rmse(points, reduced)
 
-    for i in range(len(reduced)):
+    for i in range(1, len(reduced)-1):
         # Compute the reference RMSE
+        cost_ref = compute_global_rmse(points, np.delete(reduced, i))
+        ip.append(cost_ref - cost_fin)
 
-        ip = []
+    #print(f'{ip}')
 
     return np.average(ip)
