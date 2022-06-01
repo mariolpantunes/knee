@@ -161,12 +161,8 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
     Returns:
         tuple: the index of the reduced space, the points that were removed
     """
-    stack = [(1, 0, len(points))]
-
+    stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
-
-    # cache for the global cost
-    cache = {}
 
     #TODO: trivial cases
     length -= 2
@@ -181,18 +177,15 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
         distance_points = lf.shortest_distance_points
 
     while length > 0:
-        _, left, right = stack.pop()
+        sg, left, right = stack.pop()
         pt = points[left:right]
-
-        
 
         d = distance_points(pt, pt[0], pt[-1])
         index = np.argmax(d)
+        
         # add the relevant point to the reduced set
         reduced.append(left+index)
-        # compute the cost of the left and right parts
-        #left_cost = np.max(distance_points(pt[0:index+1], pt[0], pt[index]))
-        #right_cost = np.max(distance_points(pt[index:len(pt)], pt[0], pt[-1]))
+        reduced.sort()
 
         if order is Order.triangle:
             # compute the area of the triangles made from the farthest point
@@ -221,55 +214,23 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
             stack.append((left_area, left, left+index+1))
             stack.append((right_area, left+index, left+len(pt)))
         else:
-            reduced.sort()
-
             # compute the cost of the current solution
-            _, cost_segment = compute_global_cost(points, reduced, cost, cache)
-
+            _, cost_segment = compute_global_cost(points, reduced, cost)
+            
             # the cost is based on the segment error
             cost_index = reduced.index(left+index) - 1
-
-            #print(f'Reduced {reduced} Cost_index = {cost_index} Cost segment: {cost_segment}')
-
             left_cost = cost_segment[cost_index]
             right_cost = cost_segment[cost_index+1]
 
             stack.append((left_cost, left, left+index+1))
             stack.append((right_cost, left+index, left+len(pt)))
-            
         
-        #h = d[index]
-        
-        #hip_left = np.linalg.norm(pt[0]-pt[index])
-        #b_left = math.sqrt(hip_left**2 - h**2)
-        #left_tri_area = 0.5*b_left*h
-
-        #hip_right = np.linalg.norm(pt[-1]-pt[index])
-        #b_right = math.sqrt(hip_right**2 - h**2)
-        #right_tri_area = 0.5*b_right*h
-
-        #print(f'LTA {left_tri_area} RTA {right_tri_area} LC {left_cost} RC {right_cost}')
-
-        # Add the points to the stack
-        #stack.append((right_cost, left+index, left+len(pt)))
-        #stack.append((left_cost, left, left+index+1))
-
-        #stack.append((right_tri_area, left+index, left+len(pt)))
-        #stack.append((left_tri_area, left, left+index+1))
         # Sort the stack based on the cost
         reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
         stack.sort(key=lambda t: t[0], reverse=reverse)
-        #print(f'STACK: {stack}')
         length -= 1
 
-    # add first and last points
-    #reduced.append(0)
-    #reduced.append(len(points)-1)
-
-    # sort indexes
-    reduced.sort()
     reduced = np.array(reduced)
-
     return reduced, compute_removed_points(points, reduced)
 
 
@@ -280,10 +241,14 @@ def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
     metrics.Metrics.rmspe: metrics.rmspe,
     metrics.Metrics.smape: metrics.smape}
 
-    return methods[cost](np.array(y), np.array(y_hat))
+    cost = methods[cost](np.array(y), np.array(y_hat))
+
+    cost = 0 if cost < 0 else cost
+
+    return cost
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict[tuple]={}) -> tuple:
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd) -> tuple:
     y, y_hat = [], []
 
     cost_segment = []
@@ -293,15 +258,8 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.M
         right = reduced[i]
         pt = points[left:right+1]
         
-        #use a cache to reduce the cost of this function
-        if (left, right) in cache:
-            y_hat_temp = cache[(left, right)]
-            #logger.debug(f'Cache hit: {(left, right)}')
-        else:
-            coef = lf.linear_fit_points(pt)
-            y_hat_temp = lf.linear_transform_points(pt, coef)
-            cache[(left, right)] = y_hat_temp
-            #logger.debug(f'Cache miss: {(left, right)}')
+        coef = lf.linear_fit_points(pt)
+        y_hat_temp = lf.linear_transform_points(pt, coef)
         
         y_hat.extend(y_hat_temp)
         y_temp = pt[:, 1]
@@ -329,10 +287,9 @@ def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarra
     return np.array(removed)
 
 
-#TODO: Check code with trace w99-arc
 def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
-    # cache for the global cost
-    cache = {}
+    stack = [(0, 0, len(points))]
+    reduced = [0, len(points)-1]
     
     # select the distance metric to be used
     distance_points = None
@@ -343,17 +300,12 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     else:
         distance_points = lf.shortest_distance_points
 
-    stack = [(0, 0, len(points))]
-    reduced = [0, len(points)-1]
-
-    global_cost, _ = compute_global_cost(points, reduced, cost, cache)
+    global_cost, _ = compute_global_cost(points, reduced, cost)
     curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
 
     while curved:
         _, left, right = stack.pop()
         pt = points[left:right]
-
-        print(f'{left}:{right}')
 
         d = distance_points(pt, pt[0], pt[-1])
         index = np.argmax(d)
@@ -363,7 +315,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         reduced.sort()
 
         # compute the cost of the current solution
-        global_cost, cost_segment = compute_global_cost(points, reduced, cost, cache)
+        global_cost, cost_segment = compute_global_cost(points, reduced, cost)
         curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
         
         if order is Order.triangle:
@@ -403,9 +355,8 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         
         # Sort the stack based on the cost
         reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
-        print(f'SR = {reverse}')
         stack.sort(key=lambda t: t[0], reverse=reverse)
-        logger.info(f'STACK: {stack}')
-
+        length -= 1
+        
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)

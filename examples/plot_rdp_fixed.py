@@ -23,14 +23,15 @@ logger = logging.getLogger(__name__)
 
 def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
+
+    logger.info(f'Cost {args.c} Distance {args.d} Order {args.o}')
     
-    reduced, _ = rdp.rdp_fixed(points, args.l, distance=args.d, order=args.o)
+    reduced, _ = rdp.rdp_fixed(points, args.l, cost=args.c, distance=args.d, order=args.o, )
     
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
     cost, _ = rdp.compute_global_cost(points, reduced, cost=args.c)
     logger.info(f'Global cost = {cost}')
-    
     
     x = points[:, 0]
     y = points[:, 1]
