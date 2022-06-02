@@ -36,25 +36,7 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 
-def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
-    y, y_hat = [], []
 
-    left = reduced[0]
-    for i in range(1, len(reduced)):
-        right = reduced[i]
-        pt = points[left:right+1]
-        
-        coef = lf.linear_fit_points(pt)
-        y_hat_temp = lf.linear_transform_points(pt, coef)
-        
-        y_hat.extend(y_hat_temp)
-        y_temp = pt[:, 1]
-        y.extend(y_temp)
-
-        left = right
-
-    # compute the cost function
-    return metrics.rmse(np.array(y), np.array(y_hat))
 
 
 def main(args):

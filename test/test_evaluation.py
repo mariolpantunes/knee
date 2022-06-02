@@ -152,5 +152,14 @@ class TestEvaluation(unittest.TestCase):
         desired = -1.0
         self.assertAlmostEqual(result, desired)
 
+    def test_aip(self):
+        points = np.array([[1,.5],[2,.33],[3,.25],[4,.2], [5,.16], [6, 0.14], [7, .125], [8,.11], [9,.1]])
+        reduced = np.array([0, 1, 4, 8])
+        result = evaluation.aip(points, reduced)
+        desired = 0.03145264095570805
+        self.assertAlmostEqual(result, desired)
+
+
+
 if __name__ == '__main__':
     unittest.main()
