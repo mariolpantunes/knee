@@ -21,6 +21,7 @@ import numpy as np
 import knee.rdp as rdp
 import knee.linear_fit as lf
 import knee.metrics as metrics
+import knee.evaluation as evaluation
 
 
 class Trace(enum.Enum):
@@ -107,14 +108,16 @@ def main(args):
                             #reduced, _ = rdp.grdp(points, r, c, order=o)
                             reduced, _ = rdp.rdp_fixed(points, t, cost=c, order=o)
                             cost = compute_global_rmse(points, reduced)
+                            aip = evaluation.aip(points, reduced)
                     except:
                         reduced = []
                         cost = 0
+                        aio = 0
                     
                     # open the corret csv file and write the result
                     with open(f'out/grdp2_{t}_{c}_{o}.csv', 'a', newline='') as csvfile:
                         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
-                        writer.writerow([pathlib.Path(f).stem, cost, len(reduced)])
+                        writer.writerow([pathlib.Path(f).stem, cost, len(reduced), aip])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Evaluate all the RDPs configurations')
