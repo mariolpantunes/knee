@@ -81,7 +81,7 @@ def main(args):
         files = [f for f in os.listdir(path) if re.match(r'w[0-9]*-lru\.csv', f)]
     
     ## RDP threshold
-    rdp_threshold = [0.05, 0.01, 0.001]
+    rdp_number_points = [10, 20, 30]
     
     ## RDP Metric
     rdp_metrics = list(metrics.Metrics)
@@ -93,7 +93,7 @@ def main(args):
         points = np.genfromtxt(f'{path}{f}', delimiter=',')
         
         ## RDP
-        for t in tqdm.tqdm(rdp_threshold, position=1, desc='Thr', leave=False):
+        for t in tqdm.tqdm(rdp_number_points, position=1, desc='NuP', leave=False):
             for c in tqdm.tqdm(rdp_metrics, position=2, desc='Cst', leave=False):
                 for o in tqdm.tqdm(rdp_order, position=3, desc='Ord', leave=False):
                     # convert the threhold from cost to similarity
@@ -101,17 +101,18 @@ def main(args):
                         r = 1.0 - t
                     else:
                         r = t
-                    logger.info(f'\nconfig {f} {t} {c} {o}.csv')
+                    #logger.info(f'\nconfig {f} {t} {c} {o}.csv')
                     try:
-                        with timeout(seconds=120):
-                            reduced, _ = rdp.grdp(points, r, c, order=o)
+                        with timeout(seconds=300):
+                            #reduced, _ = rdp.grdp(points, r, c, order=o)
+                            reduced, _ = rdp.rdp_fixed(points, t, cost=c, order=o)
                             cost = compute_global_rmse(points, reduced)
                     except:
                         reduced = []
                         cost = 0
                     
                     # open the corret csv file and write the result
-                    with open(f'out/grdp_{t}_{c}_{o}.csv', 'a', newline='') as csvfile:
+                    with open(f'out/grdp2_{t}_{c}_{o}.csv', 'a', newline='') as csvfile:
                         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
                         writer.writerow([pathlib.Path(f).stem, cost, len(reduced)])
 
