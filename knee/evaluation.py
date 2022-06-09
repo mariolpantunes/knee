@@ -590,6 +590,8 @@ def mcc(cm: np.ndarray) -> float:
 def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
     y, y_hat = [], []
 
+    #errors = []
+
     left = reduced[0]
     for i in range(1, len(reduced)):
         right = reduced[i]
@@ -602,10 +604,16 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
         y_temp = pt[:, 1]
         y.extend(y_temp)
 
+        #temp_errors = lf.perpendicular_distance(pt)
+        #errors.extend(temp_errors)
+
         left = right
 
     # compute the cost function
     return metrics.rmse(np.array(y), np.array(y_hat))
+    #mse = np.square(errors).mean()
+    #rmse = math.sqrt(mse)
+    #return rmse
 
 
 def aip(points: np.ndarray, reduced: np.ndarray):
@@ -619,6 +627,6 @@ def aip(points: np.ndarray, reduced: np.ndarray):
         cost_ref = compute_global_rmse(points, np.delete(reduced, i))
         ip.append(cost_ref - cost_fin)
 
-    #print(f'{ip}')
+    print(f'{ip} {np.median(ip)} {np.min(ip)}')
 
     return np.average(ip)

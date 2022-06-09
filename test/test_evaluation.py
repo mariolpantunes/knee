@@ -152,14 +152,33 @@ class TestEvaluation(unittest.TestCase):
         desired = -1.0
         self.assertAlmostEqual(result, desired)
 
+    def test_compute_global_rmse(self):
+        points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
+        reduced = np.array([0,2,4])
+        result = evaluation.compute_global_rmse(points, reduced)
+        desired = 0.0
+        self.assertAlmostEqual(result, desired)
+    
+    def test_compute_global_rmse_2(self):
+        points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
+        reduced = np.array([0,1,3,4])
+        result = evaluation.compute_global_rmse(points, reduced)
+        desired = 0.3779644730092272
+        self.assertAlmostEqual(result, desired)
+    
     def test_aip(self):
-        points = np.array([[1,.5],[2,.33],[3,.25],[4,.2], [5,.16], [6, 0.14], [7, .125], [8,.11], [9,.1]])
-        reduced = np.array([0, 1, 4, 8])
+        points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
+        reduced = np.array([0,2,4])
         result = evaluation.aip(points, reduced)
-        desired = 0.03145264095570805
+        desired = 1.0954451150103321
         self.assertAlmostEqual(result, desired)
 
-
+    def test_aip_1(self):
+        points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
+        reduced = np.array([0,1,3,4])
+        result = evaluation.aip(points, reduced)
+        desired = 0.2306161464409574
+        self.assertAlmostEqual(result, desired)
 
 if __name__ == '__main__':
     unittest.main()

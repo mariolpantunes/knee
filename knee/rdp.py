@@ -242,7 +242,6 @@ def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
     metrics.Metrics.smape: metrics.smape}
 
     cost = methods[cost](np.array(y), np.array(y_hat))
-
     cost = 0 if cost < 0 else cost
 
     return cost
