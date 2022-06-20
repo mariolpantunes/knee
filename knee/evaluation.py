@@ -627,6 +627,4 @@ def aip(points: np.ndarray, reduced: np.ndarray):
         cost_ref = compute_global_rmse(points, np.delete(reduced, i))
         ip.append(cost_ref - cost_fin)
 
-    print(f'{ip} {np.median(ip)} {np.min(ip)}')
-
-    return np.average(ip)
+    return np.median(ip)
