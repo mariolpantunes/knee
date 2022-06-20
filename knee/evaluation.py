@@ -594,7 +594,6 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -> float:
     For each segment within the point reduction set, computes a straight line.
     For each line segment it computes the error with the original set.
  
-
     Args:
         points (np.ndarray): the original points
         reduced (np.ndarray): the indexes of the reduced points
@@ -622,7 +621,22 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -> float:
     return metrics.rmse(np.array(y), np.array(y_hat))
 
 
-def mip(points: np.ndarray, reduced: np.ndarray):
+def mip(points: np.ndarray, reduced: np.ndarray) -> float:
+    """
+    Computes the median improvement per point (MIP).
+
+    Improvement is defined as a relation between a final cost against a reference cost.
+    The final cost is the RSME with the complete reduced set.
+    The reference cost id different for each point.
+    It is computed as the RMSE of the reconstruction without that specific point. 
+
+    Args:
+        points (np.ndarray): the original points
+        reduced (np.ndarray): the indexes of the reduced points
+
+    Returns:
+        float: the median improvement per point (MIP)
+    """
     ip = []
 
     # Compute the final RSME

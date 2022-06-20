@@ -40,6 +40,7 @@ import math
 import logging
 import numpy as np
 import knee.linear_fit as lf
+import knee.metrics as metrics
 
 
 logger = logging.getLogger(__name__)
@@ -612,7 +613,70 @@ def mcc(cm: np.ndarray) -&gt; float:
     n = tp*tn - fp*fn
     d = math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
 
-    return n/d</code></pre>
+    return n/d
+
+
+def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the global RMSE for a point reduction set.
+
+    For each segment within the point reduction set, computes a straight line.
+    For each line segment it computes the error with the original set.
+ 
+    Args:
+        points (np.ndarray): the original points
+        reduced (np.ndarray): the indexes of the reduced points
+
+    Returns:
+        float: the global RMSE
+    &#34;&#34;&#34;
+    y, y_hat = [], []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        
+        coef = lf.linear_fit_points(pt)
+        y_hat_temp = lf.linear_transform_points(pt, coef)
+        
+        y_hat.extend(y_hat_temp)
+        y_temp = pt[:, 1]
+        y.extend(y_temp)
+
+        left = right
+
+    # compute the cost function
+    return metrics.rmse(np.array(y), np.array(y_hat))
+
+
+def mip(points: np.ndarray, reduced: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the median improvement per point (MIP).
+
+    Improvement is defined as a relation between a final cost against a reference cost.
+    The final cost is the RSME with the complete reduced set.
+    The reference cost id different for each point.
+    It is computed as the RMSE of the reconstruction without that specific point. 
+
+    Args:
+        points (np.ndarray): the original points
+        reduced (np.ndarray): the indexes of the reduced points
+
+    Returns:
+        float: the median improvement per point (MIP)
+    &#34;&#34;&#34;
+    ip = []
+
+    # Compute the final RSME
+    cost_fin = compute_global_rmse(points, reduced)
+
+    for i in range(1, len(reduced)-1):
+        # Compute the reference RMSE
+        cost_ref = compute_global_rmse(points, np.delete(reduced, i))
+        ip.append(cost_ref - cost_fin)
+
+    return np.median(ip)</code></pre>
 </details>
 </section>
 <section>
@@ -907,6 +971,63 @@ In this version it is used the points from the current knee to the previous.</p>
     tn = len(points) - (tp+fp+fn)
 
     return np.array([[tp, fp], [fn, tn]])</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.compute_global_rmse"><code class="name flex">
+<span>def <span class="ident">compute_global_rmse</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the global RMSE for a point reduction set.</p>
+<p>For each segment within the point reduction set, computes a straight line.
+For each line segment it computes the error with the original set.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the original points</dd>
+<dt><strong><code>reduced</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the indexes of the reduced points</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the global RMSE</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the global RMSE for a point reduction set.
+
+    For each segment within the point reduction set, computes a straight line.
+    For each line segment it computes the error with the original set.
+ 
+    Args:
+        points (np.ndarray): the original points
+        reduced (np.ndarray): the indexes of the reduced points
+
+    Returns:
+        float: the global RMSE
+    &#34;&#34;&#34;
+    y, y_hat = [], []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        
+        coef = lf.linear_fit_points(pt)
+        y_hat_temp = lf.linear_transform_points(pt, coef)
+        
+        y_hat.extend(y_hat_temp)
+        y_temp = pt[:, 1]
+        y.extend(y_temp)
+
+        left = right
+
+    # compute the cost function
+    return metrics.rmse(np.array(y), np.array(y_hat))</code></pre>
 </details>
 </dd>
 <dt id="knee.evaluation.f1score"><code class="name flex">
@@ -1349,6 +1470,60 @@ and computes the error based on the closest point.</p>
     return n/d</code></pre>
 </details>
 </dd>
+<dt id="knee.evaluation.mip"><code class="name flex">
+<span>def <span class="ident">mip</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the median improvement per point (MIP).</p>
+<p>Improvement is defined as a relation between a final cost against a reference cost.
+The final cost is the RSME with the complete reduced set.
+The reference cost id different for each point.
+It is computed as the RMSE of the reconstruction without that specific point. </p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the original points</dd>
+<dt><strong><code>reduced</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>the indexes of the reduced points</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>the median improvement per point (MIP)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mip(points: np.ndarray, reduced: np.ndarray) -&gt; float:
+    &#34;&#34;&#34;
+    Computes the median improvement per point (MIP).
+
+    Improvement is defined as a relation between a final cost against a reference cost.
+    The final cost is the RSME with the complete reduced set.
+    The reference cost id different for each point.
+    It is computed as the RMSE of the reconstruction without that specific point. 
+
+    Args:
+        points (np.ndarray): the original points
+        reduced (np.ndarray): the indexes of the reduced points
+
+    Returns:
+        float: the median improvement per point (MIP)
+    &#34;&#34;&#34;
+    ip = []
+
+    # Compute the final RSME
+    cost_fin = compute_global_rmse(points, reduced)
+
+    for i in range(1, len(reduced)-1):
+        # Compute the reference RMSE
+        cost_ref = compute_global_rmse(points, np.delete(reduced, i))
+        ip.append(cost_ref - cost_fin)
+
+    return np.median(ip)</code></pre>
+</details>
+</dd>
 <dt id="knee.evaluation.mse"><code class="name flex">
 <span>def <span class="ident">mse</span></span>(<span>points: numpy.ndarray, knees: numpy.ndarray, expected: numpy.ndarray, s: <a title="knee.evaluation.Strategy" href="#knee.evaluation.Strategy">Strategy</a> = expected) ‑> float</span>
 </code></dt>
@@ -1637,6 +1812,7 @@ It uses the euclidean distance to find the closer points, and computes the error
 <li><code><a title="knee.evaluation.accuracy_knee" href="#knee.evaluation.accuracy_knee">accuracy_knee</a></code></li>
 <li><code><a title="knee.evaluation.accuracy_trace" href="#knee.evaluation.accuracy_trace">accuracy_trace</a></code></li>
 <li><code><a title="knee.evaluation.cm" href="#knee.evaluation.cm">cm</a></code></li>
+<li><code><a title="knee.evaluation.compute_global_rmse" href="#knee.evaluation.compute_global_rmse">compute_global_rmse</a></code></li>
 <li><code><a title="knee.evaluation.f1score" href="#knee.evaluation.f1score">f1score</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood" href="#knee.evaluation.get_neighbourhood">get_neighbourhood</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_binary" href="#knee.evaluation.get_neighbourhood_binary">get_neighbourhood_binary</a></code></li>
@@ -1645,6 +1821,7 @@ It uses the euclidean distance to find the closer points, and computes the error
 <li><code><a title="knee.evaluation.get_neighbourhood_points" href="#knee.evaluation.get_neighbourhood_points">get_neighbourhood_points</a></code></li>
 <li><code><a title="knee.evaluation.mae" href="#knee.evaluation.mae">mae</a></code></li>
 <li><code><a title="knee.evaluation.mcc" href="#knee.evaluation.mcc">mcc</a></code></li>
+<li><code><a title="knee.evaluation.mip" href="#knee.evaluation.mip">mip</a></code></li>
 <li><code><a title="knee.evaluation.mse" href="#knee.evaluation.mse">mse</a></code></li>
 <li><code><a title="knee.evaluation.rmse" href="#knee.evaluation.rmse">rmse</a></code></li>
 <li><code><a title="knee.evaluation.rmspe" href="#knee.evaluation.rmspe">rmspe</a></code></li>
