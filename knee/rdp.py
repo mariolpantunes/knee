@@ -12,6 +12,7 @@ import logging
 import numpy as np
 import knee.linear_fit as lf
 import knee.metrics as metrics
+import knee.evaluation as evaluation
 
 
 logger = logging.getLogger(__name__)
@@ -146,6 +147,19 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Met
     return np.array(reduced), np.array(removed)
 
 
+def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
+    removed = []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        removed.append([left,len(pt)-2])
+        left = right
+
+    return np.array(removed)
+
+
 def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
@@ -177,7 +191,7 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
         distance_points = lf.shortest_distance_points
 
     while length > 0:
-        sg, left, right = stack.pop()
+        _, left, right = stack.pop()
         pt = points[left:right]
 
         d = distance_points(pt, pt[0], pt[-1])
@@ -215,7 +229,7 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
             stack.append((right_area, left+index, left+len(pt)))
         else:
             # compute the cost of the current solution
-            _, cost_segment = compute_global_cost(points, reduced, cost)
+            _, cost_segment = evaluation.compute_global_cost(points, reduced, cost)
             
             # the cost is based on the segment error
             cost_index = reduced.index(left+index) - 1
@@ -234,58 +248,6 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
     return reduced, compute_removed_points(points, reduced)
 
 
-def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
-    methods = {metrics.Metrics.r2: metrics.r2,
-    metrics.Metrics.rpd: metrics.rpd,
-    metrics.Metrics.rmsle: metrics.rmsle,
-    metrics.Metrics.rmspe: metrics.rmspe,
-    metrics.Metrics.smape: metrics.smape}
-
-    cost = methods[cost](np.array(y), np.array(y_hat))
-    cost = 0 if cost < 0 else cost
-
-    return cost
-
-
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd) -> tuple:
-    y, y_hat = [], []
-
-    cost_segment = []
-
-    left = reduced[0]
-    for i in range(1, len(reduced)):
-        right = reduced[i]
-        pt = points[left:right+1]
-        
-        coef = lf.linear_fit_points(pt)
-        y_hat_temp = lf.linear_transform_points(pt, coef)
-        
-        y_hat.extend(y_hat_temp)
-        y_temp = pt[:, 1]
-        y.extend(y_temp)
-
-        # compute the cost function
-        cost_segment.append(compute_cost(y_temp, y_hat_temp, cost))
-        
-        left = right
-
-    # compute the cost function
-    return compute_cost(y, y_hat, cost), cost_segment
-
-
-def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
-    removed = []
-
-    left = reduced[0]
-    for i in range(1, len(reduced)):
-        right = reduced[i]
-        pt = points[left:right+1]
-        removed.append([left,len(pt)-2])
-        left = right
-
-    return np.array(removed)
-
-
 def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
@@ -299,7 +261,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     else:
         distance_points = lf.shortest_distance_points
 
-    global_cost, _ = compute_global_cost(points, reduced, cost)
+    global_cost, _ = evaluation.compute_global_cost(points, reduced, cost)
     curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
 
     while curved:
@@ -314,7 +276,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         reduced.sort()
 
         # compute the cost of the current solution
-        global_cost, cost_segment = compute_global_cost(points, reduced, cost)
+        global_cost, cost_segment = evaluation.compute_global_cost(points, reduced, cost)
         curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
         
         if order is Order.triangle:
@@ -355,6 +317,6 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         # Sort the stack based on the cost
         reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
         stack.sort(key=lambda t: t[0], reverse=reverse)
-        
+
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)

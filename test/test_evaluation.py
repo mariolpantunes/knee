@@ -152,21 +152,21 @@ class TestEvaluation(unittest.TestCase):
         desired = -1.0
         self.assertAlmostEqual(result, desired)
 
-    def test_compute_global_rmse(self):
+    def test_compute_global_rmse_0(self):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,2,4])
         result = evaluation.compute_global_rmse(points, reduced)
         desired = 0.0
         self.assertAlmostEqual(result, desired)
     
-    def test_compute_global_rmse_2(self):
+    def test_compute_global_rmse_1(self):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,1,3,4])
         result = evaluation.compute_global_rmse(points, reduced)
         desired = 0.3779644730092272
         self.assertAlmostEqual(result, desired)
     
-    def test_mip(self):
+    def test_mip_0(self):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,2,4])
         result = evaluation.mip(points, reduced)
@@ -179,6 +179,21 @@ class TestEvaluation(unittest.TestCase):
         result = evaluation.mip(points, reduced)
         desired = 0.2306161464409574
         self.assertAlmostEqual(result, desired)
+
+    def test_compute_global_cost_0(self):
+        points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
+        reduced = np.array([0, 2, 3, 5])
+        result, _ = evaluation.compute_global_cost(points, reduced)
+        desired = 0.0
+        self.assertEqual(result, desired)
+    
+    def test_compute_global_cost_1(self):
+        points = np.array([[0, 2], [0, 1], [1/2, 1/2], [1, 0], [2, 0]])
+        reduced = np.array([0, 1, 3, 4])
+        result, _ = evaluation.compute_global_cost(points, reduced)
+        desired = 0.0
+        self.assertEqual(result, desired)
+
 
 if __name__ == '__main__':
     unittest.main()

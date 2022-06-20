@@ -32,8 +32,8 @@ def main(args):
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
     cost = evaluation.compute_global_rmse(points, reduced)
-    aip = evaluation.aip(points, reduced)
-    logger.info(f'AIP = {aip}')
+    mip = evaluation.mip(points, reduced)
+    logger.info(f'AIP = {mip}')
     logger.info(f'Global RMSE cost = {cost}')
     
     x = points[:, 0]

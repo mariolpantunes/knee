@@ -6,7 +6,6 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import enum
 import math
 import logging
 import numpy as np
@@ -87,6 +86,34 @@ def linear_transform(x: np.ndarray, coef: tuple) -> np.ndarray:
     b, m = coef
     y_hat = x * m + b
     return y_hat
+
+
+def linear_hv_residuals_points(points: np.ndarray) -> np.ndarray:
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_hv_residuals(x,y)
+
+
+def linear_hv_residuals(x: np.ndarray, y: np.ndarray) -> float:
+    # try a tipical y = mx + b line
+    coef1 = linear_fit(x, y)
+    #y_hat = linear_transform(x, coef1)
+    y_residuals = linear_residuals(x, y, coef1)
+
+    # try a non-typical x = my + b line
+    coef2 = linear_fit(y, x)
+    #x_hat = linear_transform(y, coef2)
+    x_residuals = linear_residuals(y, x, coef2)
+
+    #print(f'X {x} Y {y} / {coef1} / {coef2}')
+    #print(f'HV residuals: {y_residuals}/{x_residuals}')
+    #print(f'y_hat: {y_hat}')
+    #print(f'x_hat: {x_hat}')
+
+    if y_residuals <= x_residuals:
+        return y_residuals
+    else:
+        return x_residuals
 
 
 def linear_r2_points(points: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -> float:

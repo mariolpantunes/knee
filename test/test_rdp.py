@@ -44,13 +44,6 @@ class TestRDP(unittest.TestCase):
         result = rdp.mapping(indexes, reduced, removed)
         desired = np.array([0, 2, 4, 6, 10])
         np.testing.assert_array_equal(result, desired)
-
-    def test_compute_global_cost(self):
-        points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
-        reduced = np.array([0, 2, 3, 5])
-        result, _ = rdp.compute_global_cost(points, reduced)
-        desired = 0.0
-        self.assertEqual(result, desired)
     
     def test_compute_removed_points_00(self):
         points = np.array([[1, 5], [2, 5], [3, 5], [4, 5], [5, 5]])
