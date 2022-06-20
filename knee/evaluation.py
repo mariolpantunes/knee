@@ -587,10 +587,22 @@ def mcc(cm: np.ndarray) -> float:
     return n/d
 
 
-def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
-    y, y_hat = [], []
+def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -> float:
+    """
+    Computes the global RMSE for a point reduction set.
 
-    #errors = []
+    For each segment within the point reduction set, computes a straight line.
+    For each line segment it computes the error with the original set.
+ 
+
+    Args:
+        points (np.ndarray): the original points
+        reduced (np.ndarray): the indexes of the reduced points
+
+    Returns:
+        float: the global RMSE
+    """
+    y, y_hat = [], []
 
     left = reduced[0]
     for i in range(1, len(reduced)):
@@ -604,19 +616,13 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
         y_temp = pt[:, 1]
         y.extend(y_temp)
 
-        #temp_errors = lf.perpendicular_distance(pt)
-        #errors.extend(temp_errors)
-
         left = right
 
     # compute the cost function
     return metrics.rmse(np.array(y), np.array(y_hat))
-    #mse = np.square(errors).mean()
-    #rmse = math.sqrt(mse)
-    #return rmse
 
 
-def aip(points: np.ndarray, reduced: np.ndarray):
+def mip(points: np.ndarray, reduced: np.ndarray):
     ip = []
 
     # Compute the final RSME

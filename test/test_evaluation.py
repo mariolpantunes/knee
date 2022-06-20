@@ -166,17 +166,17 @@ class TestEvaluation(unittest.TestCase):
         desired = 0.3779644730092272
         self.assertAlmostEqual(result, desired)
     
-    def test_aip(self):
+    def test_mip(self):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,2,4])
-        result = evaluation.aip(points, reduced)
+        result = evaluation.mip(points, reduced)
         desired = 1.0954451150103321
         self.assertAlmostEqual(result, desired)
 
-    def test_aip_1(self):
+    def test_mip_1(self):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,1,3,4])
-        result = evaluation.aip(points, reduced)
+        result = evaluation.mip(points, reduced)
         desired = 0.2306161464409574
         self.assertAlmostEqual(result, desired)
 
