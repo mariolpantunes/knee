@@ -663,7 +663,7 @@ def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
     return cost
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd) -> tuple:
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, vertical=False) -> tuple:
     y, y_hat = [], []
 
     cost_segment = []
@@ -673,20 +673,20 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.M
         right = reduced[i]
         pt = points[left:right+1]
         
-        coef = lf.linear_fit_points(pt)
-        y_hat_temp = lf.linear_transform_points(pt, coef)
+        y_temp, y_hat_temp = lf.linear_fit_transform_points(pt, vertical)
+
+        #coef = lf.linear_fit_points(pt)
+        #y_hat_temp = lf.linear_transform_points(pt, coef)
         
         y_hat.extend(y_hat_temp)
-        y_temp = pt[:, 1]
+        #y_temp = pt[:, 1]
         y.extend(y_temp)
 
         # compute the cost function
-        #c = compute_cost(y_temp, y_hat_temp, cost)
-        residuals = lf.linear_hv_residuals_points(pt)
-        c = residuals
+        c = compute_cost(y_temp, y_hat_temp, cost)
+        #residuals = lf.linear_hv_residuals_points(pt)
+        #c = residuals
         cost_segment.append(c)
-        
-        #print(f'[{left}, {right}] = {c}')
 
         left = right
 

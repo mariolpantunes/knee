@@ -191,6 +191,13 @@ class TestEvaluation(unittest.TestCase):
         points = np.array([[0, 2], [0, 1], [1/2, 1/2], [1, 0], [2, 0]])
         reduced = np.array([0, 1, 3, 4])
         result, _ = evaluation.compute_global_cost(points, reduced)
+        desired = 0.2857142857142857
+        self.assertEqual(result, desired)
+    
+    def test_compute_global_cost_2(self):
+        points = np.array([[0, 2], [0, 1], [1/2, 1/2], [1, 0], [2, 0]])
+        reduced = np.array([0, 1, 3, 4])
+        result, _ = evaluation.compute_global_cost(points, reduced, vertical=True)
         desired = 0.0
         self.assertEqual(result, desired)
 
