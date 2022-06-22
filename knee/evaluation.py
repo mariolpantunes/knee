@@ -650,7 +650,7 @@ def mip(points: np.ndarray, reduced: np.ndarray) -> float:
     return np.median(ip)
 
 
-def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
+def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics) -> float:
     methods = {metrics.Metrics.r2: metrics.r2,
     metrics.Metrics.rpd: metrics.rpd,
     metrics.Metrics.rmsle: metrics.rmsle,
@@ -661,6 +661,17 @@ def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics):
     cost = 0 if cost < 0 else cost
 
     return cost
+
+
+def compute_segment_cost(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
+    cost_segment = []
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        cost_segment.append(lf.linear_hv_residuals_points(pt))
+        left = right
+    return cost_segment
 
 
 def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, vertical=False) -> tuple:
@@ -674,18 +685,13 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.M
         pt = points[left:right+1]
         
         y_temp, y_hat_temp = lf.linear_fit_transform_points(pt, vertical)
-
-        #coef = lf.linear_fit_points(pt)
-        #y_hat_temp = lf.linear_transform_points(pt, coef)
         
         y_hat.extend(y_hat_temp)
-        #y_temp = pt[:, 1]
         y.extend(y_temp)
 
         # compute the cost function
-        c = compute_cost(y_temp, y_hat_temp, cost)
-        #residuals = lf.linear_hv_residuals_points(pt)
-        #c = residuals
+        #c = compute_cost(y_temp, y_hat_temp, cost)
+        c = lf.linear_hv_residuals_points(pt) 
         cost_segment.append(c)
 
         left = right

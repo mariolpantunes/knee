@@ -160,7 +160,7 @@ def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarra
     return np.array(removed)
 
 
-def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
+def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -171,6 +171,8 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
         points (np.ndarray): numpy array with the points (x, y)
         lenght (int): the fixed length of reduced points
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+        order (Order): the metric used to sort the segments (default: Order.triangle)
+        
 
     Returns:
         tuple: the index of the reduced space, the points that were removed
@@ -229,7 +231,7 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
             stack.append((right_area, left+index, left+len(pt)))
         else:
             # compute the cost of the current solution
-            _, cost_segment = evaluation.compute_global_cost(points, reduced, cost)
+            cost_segment = evaluation.compute_segment_cost(points, reduced)
             
             # the cost is based on the segment error
             cost_index = reduced.index(left+index) - 1
@@ -240,7 +242,8 @@ def rdp_fixed(points: np.ndarray, length:int, cost: metrics.Metrics = metrics.Me
             stack.append((right_cost, left+index, left+len(pt)))
         
         # Sort the stack based on the cost
-        reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
+        #reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
+        reverse = False
         stack.sort(key=lambda t: t[0], reverse=reverse)
         length -= 1
 
