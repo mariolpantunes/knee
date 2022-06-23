@@ -12,6 +12,7 @@ import numpy as np
 
 import knee.rdp as rdp
 import knee.metrics as metrics
+import knee.evaluation as evaluation
 import matplotlib.pyplot as plt
 
 
@@ -29,8 +30,10 @@ def main(args):
     reduced, _ = rdp.grdp(points, args.r, cost=args.c, distance=args.d, order=args.o)
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
-    cost, _ = rdp.compute_global_cost(points, reduced, cost=args.c)
-    logger.info(f'Global cost = {cost}')
+    cost = evaluation.compute_global_rmse(points, reduced)
+    mip = evaluation.mip(points, reduced)
+    logger.info(f'AIP = {mip}')
+    logger.info(f'Global RMSE cost = {cost}')
     
     x = points[:, 0]
     y = points[:, 1]

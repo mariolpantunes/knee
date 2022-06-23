@@ -671,10 +671,26 @@ def compute_segment_cost(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
         pt = points[left:right+1]
         cost_segment.append(lf.linear_hv_residuals_points(pt))
         left = right
-    return cost_segment
+    return np.array(cost_segment)
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, vertical=False) -> tuple:
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, vertical=False) -> float:
+    y, y_hat = [], []
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        
+        y_temp, y_hat_temp = lf.linear_fit_transform_points(pt, vertical)
+        
+        y_hat.extend(y_hat_temp)
+        y.extend(y_temp)
+        left = right
+
+    # compute the cost function
+    return compute_cost(y, y_hat, cost)
+
+def compute_global_segment_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, vertical=False) -> tuple:
     y, y_hat = [], []
 
     cost_segment = []
@@ -697,4 +713,4 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.M
         left = right
 
     # compute the cost function
-    return compute_cost(y, y_hat, cost), cost_segment
+    return compute_cost(y, y_hat, cost), np.array(cost_segment)

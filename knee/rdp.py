@@ -172,7 +172,6 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
         lenght (int): the fixed length of reduced points
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
         order (Order): the metric used to sort the segments (default: Order.triangle)
-        
 
     Returns:
         tuple: the index of the reduced space, the points that were removed
@@ -243,8 +242,7 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
         
         # Sort the stack based on the cost
         #reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
-        reverse = False
-        stack.sort(key=lambda t: t[0], reverse=reverse)
+        stack.sort(key=lambda t: t[0], reverse=False)
         length -= 1
 
     reduced = np.array(reduced)
@@ -264,7 +262,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     else:
         distance_points = lf.shortest_distance_points
 
-    global_cost, _ = evaluation.compute_global_cost(points, reduced, cost)
+    global_cost = evaluation.compute_global_cost(points, reduced, cost)
     curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
 
     while curved:
@@ -279,7 +277,11 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         reduced.sort()
 
         # compute the cost of the current solution
-        global_cost, cost_segment = evaluation.compute_global_cost(points, reduced, cost)
+        if order is Order.segment:
+            global_cost, cost_segment = evaluation.compute_global_segment_cost(points, reduced, cost)
+        else:
+            global_cost = evaluation.compute_global_cost(points, reduced, cost)
+        
         curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
         
         if order is Order.triangle:
@@ -318,8 +320,8 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
             stack.append((right_cost, left+index, left+len(pt)))
         
         # Sort the stack based on the cost
-        reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
-        stack.sort(key=lambda t: t[0], reverse=reverse)
+        #reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
+        stack.sort(key=lambda t: t[0], reverse=False)
 
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)
