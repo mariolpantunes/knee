@@ -621,7 +621,7 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -> float:
     return metrics.rmse(np.array(y), np.array(y_hat))
 
 
-def mip(points: np.ndarray, reduced: np.ndarray) -> float:
+def mip(points: np.ndarray, reduced: np.ndarray) -> tuple:
     """
     Computes the median improvement per point (MIP).
 
@@ -635,7 +635,7 @@ def mip(points: np.ndarray, reduced: np.ndarray) -> float:
         reduced (np.ndarray): the indexes of the reduced points
 
     Returns:
-        float: the median improvement per point (MIP)
+        tuple: the median improvement per point (MIP) and the MAD
     """
     ip = []
 
@@ -647,7 +647,9 @@ def mip(points: np.ndarray, reduced: np.ndarray) -> float:
         cost_ref = compute_global_rmse(points, np.delete(reduced, i))
         ip.append(cost_ref - cost_fin)
 
-    return np.median(ip)
+    mip = np.median(ip)
+
+    return mip, np.median(np.absolute(ip - mip))
 
 
 def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics) -> float:

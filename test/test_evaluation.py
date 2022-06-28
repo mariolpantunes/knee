@@ -169,16 +169,16 @@ class TestEvaluation(unittest.TestCase):
     def test_mip_0(self):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,2,4])
-        result = evaluation.mip(points, reduced)
+        mip, _ = evaluation.mip(points, reduced)
         desired = 1.0954451150103321
-        self.assertAlmostEqual(result, desired)
+        self.assertAlmostEqual(mip, desired)
 
     def test_mip_1(self):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,1,3,4])
-        result = evaluation.mip(points, reduced)
+        mip, _ = evaluation.mip(points, reduced)
         desired = 0.2306161464409574
-        self.assertAlmostEqual(result, desired)
+        self.assertAlmostEqual(mip, desired)
 
     def test_compute_global_cost_0(self):
         points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])

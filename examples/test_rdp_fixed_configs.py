@@ -86,13 +86,13 @@ def main(args):
                 ti, std, rv = timeit.timeit(3, rdp.rdp_fixed, points, t, order=o)
                 reduced, _ = rv
                 cost = compute_global_rmse(points, reduced)
-                mip = evaluation.mip(points, reduced)
+                mip, mad = evaluation.mip(points, reduced)
                 
                 
                 # open the corret csv file and write the result
                 with open(f'out/grdp2_{t}_{o}.csv', 'a', newline='') as csvfile:
                     writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
-                    writer.writerow([pathlib.Path(f).stem, cost, len(reduced), mip, ti, std])
+                    writer.writerow([pathlib.Path(f).stem, cost, len(reduced), mip, mad, ti, std])
 
 
 if __name__ == '__main__':
