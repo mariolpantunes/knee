@@ -204,17 +204,11 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
 
         if order is Order.triangle:
             # compute the area of the triangles made from the farthest point
-            #h = d[index]
-            #hip_left = np.linalg.norm(pt[0]-pt[index])
-            #b_left = math.sqrt(hip_left**2 - h**2)
             base_left = np.linalg.norm(pt[0]-pt[index])
             pt_left = points[left:left+index+1]
-            
             height_left = distance_points(pt_left, pt_left[0], pt_left[-1]).max()
             left_tri_area = 0.5*base_left*height_left
 
-            #hip_right = np.linalg.norm(pt[-1]-pt[index])
-            #b_right = math.sqrt(hip_right**2 - h**2)
             base_right = np.linalg.norm(pt[index]-pt[-1])
             pt_right = points[left+index:left+len(pt)]
             height_right = distance_points(pt_right, pt_right[0], pt_right[-1]).max()
@@ -248,7 +242,6 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
             stack.append((right_cost, left+index, left+len(pt)))
         
         # Sort the stack based on the cost
-        #reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
         stack.sort(key=lambda t: t[0], reverse=False)
         length -= 1
 
@@ -284,26 +277,23 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         reduced.sort()
 
         # compute the cost of the current solution
-        if order is Order.segment:
-            global_cost, cost_segment = evaluation.compute_global_segment_cost(points, reduced, cost)
-        else:
-            global_cost = evaluation.compute_global_cost(points, reduced, cost)
-        
+        global_cost = evaluation.compute_global_cost(points, reduced, cost)
         curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
         
         if order is Order.triangle:
             # compute the area of the triangles made from the farthest point
-            h = d[index]
-            hip_left = np.linalg.norm(pt[0]-pt[index])
-            b_left = math.sqrt(hip_left**2 - h**2)
-            left_tri_area = 0.5*b_left*h
+            base_left = np.linalg.norm(pt[0]-pt[index])
+            pt_left = points[left:left+index+1]
+            height_left = distance_points(pt_left, pt_left[0], pt_left[-1]).max()
+            left_tri_area = 0.5*base_left*height_left
 
-            hip_right = np.linalg.norm(pt[-1]-pt[index])
-            b_right = math.sqrt(hip_right**2 - h**2)
-            right_tri_area = 0.5*b_right*h
+            base_right = np.linalg.norm(pt[index]-pt[-1])
+            pt_right = points[left+index:left+len(pt)]
+            height_right = distance_points(pt_right, pt_right[0], pt_right[-1]).max()
+            right_tri_area = 0.5*base_right*height_right
 
-            stack.append((right_tri_area, left+index, left+len(pt)))
             stack.append((left_tri_area, left, left+index+1))
+            stack.append((right_tri_area, left+index, left+len(pt)))
         elif order is Order.area:
             # compute the area using the distance function
             pt_left = points[left:left+index+1]
@@ -318,6 +308,9 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
             stack.append((left_area, left, left+index+1))
             stack.append((right_area, left+index, left+len(pt)))
         else:
+            # compute the cost of the current solution
+            cost_segment = evaluation.compute_segment_cost(points, reduced)
+            
             # the cost is based on the segment error
             cost_index = reduced.index(left+index) - 1
             left_cost = cost_segment[cost_index]
@@ -327,7 +320,6 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
             stack.append((right_cost, left+index, left+len(pt)))
         
         # Sort the stack based on the cost
-        #reverse = True if cost is metrics.Metrics.r2 and order is Order.segment else False
         stack.sort(key=lambda t: t[0], reverse=False)
 
     reduced = np.array(reduced)
