@@ -14,6 +14,12 @@ import numpy as np
 import knee.rdp as rdp
 import knee.linear_fit as lf
 import knee.metrics as metrics
+import knee.evaluation as evaluation
+
+
+import exectime.timeit as timeit
+
+
 import matplotlib.pyplot as plt
 
 
@@ -23,6 +29,10 @@ logger = logging.getLogger(__name__)
 
 
 def main(args):
+    import cProfile, pstats
+    profiler = cProfile.Profile()
+    profiler.enable()
+
     points = np.genfromtxt(args.i, delimiter=',')
 
     if points.ndim == 1:
@@ -30,13 +40,21 @@ def main(args):
         x = np.arange(0, len(y))
         points = np.array([x,y]).T
     
-    reduced, _ = rdp.rdp(points, args.r, cost=args.c, distance=args.d)
+    ti, std, rv = timeit.timeit(5, rdp.rdp, points, t=args.r, cost=args.c, distance=args.d)
+    reduced, _ = rv
     
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
-    cost, _ = rdp.compute_global_cost(points, reduced, cost=args.c)
-    logger.info(f'Global cost = {cost}')
+    cost = evaluation.compute_global_rmse(points, reduced)
+    mip = evaluation.mip(points, reduced)
+    logger.info(f'AIP = {mip}')
+    logger.info(f'Global RMSE cost = {cost}')
+    logger.info(f'Time = {ti} ± {std}')
     
+    profiler.disable()
+    stats = pstats.Stats(profiler).sort_stats('ncalls')
+    stats.print_stats()
+
     x = points[:, 0]
     y = points[:, 1]
     plt.plot(x, y)
@@ -47,7 +65,7 @@ def main(args):
 
     plt.plot(x, y, marker='o', markersize=3)
     plt.show()
-    
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RDP test application')

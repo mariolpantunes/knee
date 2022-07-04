@@ -11,7 +11,6 @@ import re
 import csv
 import enum
 import tqdm
-import signal
 import pathlib
 import logging
 import argparse
@@ -21,6 +20,10 @@ import numpy as np
 import knee.rdp as rdp
 import knee.linear_fit as lf
 import knee.metrics as metrics
+import knee.evaluation as evaluation
+
+
+import exectime.timeit as timeit
 
 
 class Trace(enum.Enum):
@@ -34,19 +37,6 @@ class Trace(enum.Enum):
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
-
-
-class timeout:
-    def __init__(self, seconds=1, error_message='Timeout'):
-        self.seconds = seconds
-        self.error_message = error_message
-    def handle_timeout(self, signum, frame):
-        raise TimeoutError(self.error_message)
-    def __enter__(self):
-        signal.signal(signal.SIGALRM, self.handle_timeout)
-        signal.alarm(self.seconds)
-    def __exit__(self, type, value, traceback):
-        signal.alarm(0)
 
 
 def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
@@ -80,14 +70,13 @@ def main(args):
     else:
         files = [f for f in os.listdir(path) if re.match(r'w[0-9]*-lru\.csv', f)]
     
+    print(files)
+    
     ## RDP threshold
     rdp_threshold = [0.05, 0.01, 0.001]
     
     ## RDP Metric
     rdp_metrics = list(metrics.Metrics)
-
-    ## RDP Order
-    rdp_order = list(rdp.Order)
 
     for f in tqdm.tqdm(files, position=0, desc='MRC', leave=False):
         points = np.genfromtxt(f'{path}{f}', delimiter=',')
@@ -95,25 +84,22 @@ def main(args):
         ## RDP
         for t in tqdm.tqdm(rdp_threshold, position=1, desc='Thr', leave=False):
             for c in tqdm.tqdm(rdp_metrics, position=2, desc='Cst', leave=False):
-                for o in tqdm.tqdm(rdp_order, position=3, desc='Ord', leave=False):
-                    # convert the threhold from cost to similarity
-                    if c is metrics.Metrics.r2:
-                        r = 1.0 - t
-                    else:
-                        r = t
-                    logger.info(f'\nconfig {f} {t} {c} {o}.csv')
-                    try:
-                        with timeout(seconds=120):
-                            reduced, _ = rdp.grdp(points, r, c, order=o)
-                            cost = compute_global_rmse(points, reduced)
-                    except:
-                        reduced = []
-                        cost = 0
-                    
-                    # open the corret csv file and write the result
-                    with open(f'out/grdp_{t}_{c}_{o}.csv', 'a', newline='') as csvfile:
-                        writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
-                        writer.writerow([pathlib.Path(f).stem, cost, len(reduced)])
+                # convert the threhold from cost to similarity
+                if c is metrics.Metrics.r2:
+                    r = 1.0 - t
+                else:
+                    r = t
+                
+                ti, std, rv = timeit.timeit(5, rdp.rdp, points, t=r, cost=c)
+                reduced, _ = rv
+                cost = compute_global_rmse(points, reduced)
+                mip, mad = evaluation.mip(points, reduced)
+                
+                # open the corret csv file and write the result
+                with open(f'out/rdp_{t}_{c}.csv', 'a', newline='') as csvfile:
+                    writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
+                    writer.writerow([pathlib.Path(f).stem, cost, len(reduced), mip, mad, ti, std])
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Evaluate all the RDPs configurations')

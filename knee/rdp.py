@@ -249,7 +249,7 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
     return reduced, compute_removed_points(points, reduced)
 
 
-def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
+def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.rpd, order:Order=Order.triangle, distance: Distance = Distance.shortest) -> tuple:
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
     

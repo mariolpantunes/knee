@@ -71,7 +71,10 @@ def main(args):
         files = [f for f in os.listdir(path) if re.match(r'w[0-9]*-lru\.csv', f)]
     
     ## RDP threshold
-    rdp_number_points = [10, 20, 30]
+    rdp_threshold = [0.05, 0.01, 0.001]
+    
+    ## RDP Metric
+    rdp_metrics = list(metrics.Metrics)
 
     ## RDP Order
     rdp_order = list(rdp.Order)
@@ -79,23 +82,27 @@ def main(args):
     for f in tqdm.tqdm(files, position=0, desc='MRC', leave=False):
         points = np.genfromtxt(f'{path}{f}', delimiter=',')
         
-        ## RDP
-        for t in tqdm.tqdm(rdp_number_points, position=1, desc='NuP', leave=False):
-            for o in tqdm.tqdm(rdp_order, position=2, desc='Ord', leave=False):
-                #ti, std, rv = timeit.timeit(rdp.rdp_fixed(points, t, order=o))
-                ti, std, rv = timeit.timeit(5, rdp.rdp_fixed, points, t, order=o)
-                reduced, _ = rv
-                cost = compute_global_rmse(points, reduced)
-                mip, mad = evaluation.mip(points, reduced)
-                
-                # open the corret csv file and write the result
-                with open(f'out/grdp_fixed_{t}_{o}.csv', 'a', newline='') as csvfile:
-                    writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
-                    writer.writerow([pathlib.Path(f).stem, cost, len(reduced), mip, mad, ti, std])
-
+        for t in tqdm.tqdm(rdp_threshold, position=1, desc='Thr', leave=False):
+            for c in tqdm.tqdm(rdp_metrics, position=2, desc='Cst', leave=False):
+                for o in tqdm.tqdm(rdp_order, position=3, desc='Ord', leave=False):
+                    # convert the threhold from cost to similarity
+                    if c is metrics.Metrics.r2:
+                        r = 1.0 - t
+                    else:
+                        r = t
+                    
+                    ti, std, rv = timeit.timeit(5, rdp.grdp, points, t=r, cost=c, order=o)
+                    reduced, _ = rv
+                    cost = compute_global_rmse(points, reduced)
+                    mip, mad = evaluation.mip(points, reduced)
+                    
+                    # open the corret csv file and write the result
+                    with open(f'out/grdp_{t}_{c}_{o}.csv', 'a', newline='') as csvfile:
+                        writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
+                        writer.writerow([pathlib.Path(f).stem, cost, len(reduced), mip, mad, ti, std])
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Evaluate all the RDPs configurations')
+    parser = argparse.ArgumentParser(description='Evaluate all the gRDPs configurations')
     parser.add_argument('-p', type=str, help='input path', default='~/mrcs/')
     parser.add_argument('-tr', type=Trace, choices=list(Trace), default='all')
     args = parser.parse_args()
