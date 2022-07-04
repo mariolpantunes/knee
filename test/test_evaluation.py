@@ -163,7 +163,7 @@ class TestEvaluation(unittest.TestCase):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,1,3,4])
         result = evaluation.compute_global_rmse(points, reduced)
-        desired = 0.3779644730092272
+        desired = 0.4472135954999579
         self.assertAlmostEqual(result, desired)
     
     def test_mip_0(self):
@@ -177,7 +177,7 @@ class TestEvaluation(unittest.TestCase):
         points = np.array([[0,2], [1,1], [2,0], [3,1], [4,2]])
         reduced = np.array([0,1,3,4])
         mip, _ = evaluation.mip(points, reduced)
-        desired = 0.2306161464409574
+        desired = 0.2194530711667088
         self.assertAlmostEqual(mip, desired)
 
     def test_compute_global_cost_0(self):

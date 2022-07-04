@@ -601,7 +601,8 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -> float:
     Returns:
         float: the global RMSE
     """
-    y, y_hat = [], []
+    y = points[:,1]
+    y_hat = np.zeros(len(y))
 
     left = reduced[0]
     for i in range(1, len(reduced)):
@@ -610,15 +611,11 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -> float:
         
         coef = lf.linear_fit_points(pt)
         y_hat_temp = lf.linear_transform_points(pt, coef)
-        
-        y_hat.extend(y_hat_temp)
-        y_temp = pt[:, 1]
-        y.extend(y_temp)
-
+        y_hat[left:right+1] = y_hat_temp
         left = right
 
     # compute the cost function
-    return metrics.rmse(np.array(y), np.array(y_hat))
+    return metrics.rmse(y, y_hat)
 
 
 def mip(points: np.ndarray, reduced: np.ndarray) -> tuple:
@@ -637,7 +634,7 @@ def mip(points: np.ndarray, reduced: np.ndarray) -> tuple:
     Returns:
         tuple: the median improvement per point (MIP) and the MAD
     """
-    ip = []
+    ip = np.zeros(len(reduced)-2)
 
     # Compute the final RSME
     cost_fin = compute_global_rmse(points, reduced)
@@ -645,7 +642,8 @@ def mip(points: np.ndarray, reduced: np.ndarray) -> tuple:
     for i in range(1, len(reduced)-1):
         # Compute the reference RMSE
         cost_ref = compute_global_rmse(points, np.delete(reduced, i))
-        ip.append(cost_ref - cost_fin)
+        #ip.append(cost_ref - cost_fin)
+        ip[i-1] = cost_ref - cost_fin
 
     mip = np.median(ip)
 
