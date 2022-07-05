@@ -587,7 +587,10 @@ def mcc(cm: np.ndarray) -> float:
     return n/d
 
 
-def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -> float:
+
+
+
+def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache={}) -> float:
     """
     Computes the global RMSE for a point reduction set.
 
@@ -601,21 +604,31 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -> float:
     Returns:
         float: the global RMSE
     """
-    y = points[:,1]
-    y_hat = np.zeros(len(y))
+    #y = points[:,1]
+    #y_hat = np.zeros(len(y))
+    segment_errors = np.zeros(len(reduced)-1)
 
     left = reduced[0]
     for i in range(1, len(reduced)):
         right = reduced[i]
-        pt = points[left:right+1]
+
+        # Get data from cache
+        if (left, right) not in cache:
+            pt = points[left:right+1]
+            coef = lf.linear_fit_points(pt)
+            y_hat = lf.linear_transform_points(pt, coef)
+            y = pt[:,1]
+            segment_error = np.sum(np.square((y-y_hat)))
+            cache[(left, right)] = segment_error
         
-        coef = lf.linear_fit_points(pt)
-        y_hat_temp = lf.linear_transform_points(pt, coef)
-        y_hat[left:right+1] = y_hat_temp
+        #segment_error = 
+        segment_errors[i-1] = cache[(left, right)]
+        #y_hat[left:right+1] = compute_y_hat_cache(left, right)
         left = right
 
     # compute the cost function
-    return metrics.rmse(y, y_hat)
+    # return metrics.rmse(y, y_hat)
+    return math.sqrt(np.sum(segment_errors)/len(points))
 
 
 def mip(points: np.ndarray, reduced: np.ndarray) -> tuple:
@@ -634,15 +647,17 @@ def mip(points: np.ndarray, reduced: np.ndarray) -> tuple:
     Returns:
         tuple: the median improvement per point (MIP) and the MAD
     """
+    # Setup the cache
+    cache = {}
+
     ip = np.zeros(len(reduced)-2)
 
     # Compute the final RSME
-    cost_fin = compute_global_rmse(points, reduced)
+    cost_fin = compute_global_rmse(points, reduced, cache)
 
     for i in range(1, len(reduced)-1):
         # Compute the reference RMSE
-        cost_ref = compute_global_rmse(points, np.delete(reduced, i))
-        #ip.append(cost_ref - cost_fin)
+        cost_ref = compute_global_rmse(points, np.delete(reduced, i), cache)
         ip[i-1] = cost_ref - cost_fin
 
     mip = np.median(ip)
