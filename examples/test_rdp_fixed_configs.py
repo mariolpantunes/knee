@@ -83,7 +83,7 @@ def main(args):
         for t in tqdm.tqdm(rdp_number_points, position=1, desc='NuP', leave=False):
             for o in tqdm.tqdm(rdp_order, position=2, desc='Ord', leave=False):
                 #ti, std, rv = timeit.timeit(rdp.rdp_fixed(points, t, order=o))
-                ti, std, rv = timeit.timeit(5, rdp.rdp_fixed, points, t, order=o)
+                ti, std, rv = timeit.timeit(args.n, rdp.rdp_fixed, points, t, order=o)
                 reduced, _ = rv
                 cost = compute_global_rmse(points, reduced)
                 mip, mad = evaluation.mip(points, reduced)
@@ -97,6 +97,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Evaluate all the RDPs configurations')
     parser.add_argument('-p', type=str, help='input path', default='~/mrcs/')
-    parser.add_argument('-tr', type=Trace, choices=list(Trace), default='all')
+    parser.add_argument('-tr', type=Trace, choices=list(Trace), help='type of traces', default='all')
+    parser.add_argument('-n', type=int, help='number of repetition (for timeit)', default=5)
     args = parser.parse_args()
     main(args)
