@@ -13,10 +13,12 @@ import numpy as np
 import knee.rdp as rdp
 import knee.metrics as metrics
 import knee.evaluation as evaluation
-import matplotlib.pyplot as plt
 
 
 import exectime.timeit as timeit
+
+
+import matplotlib.pyplot as plt
 
 
 logging.basicConfig(level=logging.DEBUG, format='%(message)s')

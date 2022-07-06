@@ -35,7 +35,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Fixed RDP application')
     parser.add_argument('-i', type=str, required=True, help='input file')
     parser.add_argument('-o', type=str, required=True, help='output file')
-    parser.add_argument('-l', type=int, help='RDP fixed lenght', default=32)
+    parser.add_argument('-l', type=int, help='RDP fixed length', default=32)
     args = parser.parse_args()
     
     main(args)

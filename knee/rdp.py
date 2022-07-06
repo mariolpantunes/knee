@@ -169,7 +169,7 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        lenght (int): the fixed length of reduced points
+        length (int): the fixed length of reduced points
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
         order (Order): the metric used to sort the segments (default: Order.triangle)
 
