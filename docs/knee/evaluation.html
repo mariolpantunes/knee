@@ -616,7 +616,7 @@ def mcc(cm: np.ndarray) -&gt; float:
     return n/d
 
 
-def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -&gt; float:
+def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache:dict=None) -&gt; float:
     &#34;&#34;&#34;
     Computes the global RMSE for a point reduction set.
 
@@ -626,31 +626,37 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -&gt; float:
     Args:
         points (np.ndarray): the original points
         reduced (np.ndarray): the indexes of the reduced points
+        cache (dict): cache used to speedup the computation (default None)
 
     Returns:
         float: the global RMSE
     &#34;&#34;&#34;
-    y, y_hat = [], []
+    # Setup the cache
+    if cache is None: cache = {}
+
+    segment_errors = np.zeros(len(reduced)-1)
 
     left = reduced[0]
     for i in range(1, len(reduced)):
         right = reduced[i]
-        pt = points[left:right+1]
-        
-        coef = lf.linear_fit_points(pt)
-        y_hat_temp = lf.linear_transform_points(pt, coef)
-        
-        y_hat.extend(y_hat_temp)
-        y_temp = pt[:, 1]
-        y.extend(y_temp)
 
+        # Get data from cache
+        if (left, right) not in cache:
+            pt = points[left:right+1]
+            coef = lf.linear_fit_points(pt)
+            y_hat = lf.linear_transform_points(pt, coef)
+            y = pt[:,1]
+            segment_error = np.sum(np.square((y-y_hat)))
+            cache[(left, right)] = segment_error
+        
+        segment_errors[i-1] = cache[(left, right)]
         left = right
 
     # compute the cost function
-    return metrics.rmse(np.array(y), np.array(y_hat))
+    return math.sqrt(np.sum(segment_errors)/len(points))
 
 
-def mip(points: np.ndarray, reduced: np.ndarray) -&gt; float:
+def mip(points: np.ndarray, reduced: np.ndarray) -&gt; tuple:
     &#34;&#34;&#34;
     Computes the median improvement per point (MIP).
 
@@ -664,19 +670,144 @@ def mip(points: np.ndarray, reduced: np.ndarray) -&gt; float:
         reduced (np.ndarray): the indexes of the reduced points
 
     Returns:
-        float: the median improvement per point (MIP)
+        tuple: the median improvement per point (MIP) and the MAD
     &#34;&#34;&#34;
-    ip = []
+    # Setup the cache
+    cache = {}
+
+    ip = np.zeros(len(reduced)-2)
 
     # Compute the final RSME
-    cost_fin = compute_global_rmse(points, reduced)
+    cost_fin = compute_global_rmse(points, reduced, cache)
 
     for i in range(1, len(reduced)-1):
         # Compute the reference RMSE
-        cost_ref = compute_global_rmse(points, np.delete(reduced, i))
-        ip.append(cost_ref - cost_fin)
+        cost_ref = compute_global_rmse(points, np.delete(reduced, i), cache)
+        ip[i-1] = cost_ref - cost_fin
 
-    return np.median(ip)</code></pre>
+    mip = np.median(ip)
+
+    return mip, np.median(np.absolute(ip - mip))
+
+
+def compute_cost(points: np.ndarray, segment_errors:np.ndarray, cost: metrics.Metrics, cache:dict) -&gt; float:
+    # methods = {metrics.Metrics.r2: metrics.r2,metrics.Metrics.rpd: metrics.rpd,metrics.Metrics.rmsle: metrics.rmsle,metrics.Metrics.rmspe: metrics.rmspe,metrics.Metrics.smape: metrics.smape}
+    # cost = methods[cost](np.array(y), np.array(y_hat))
+
+    # We have to account for the head of each segment
+    total = len(points) + len(segment_errors) - 1
+
+    if cost is metrics.Metrics.r2:
+        # Get tss from the cache
+        if &#39;tss&#39; not in cache:
+            # Compute TSS and add it to cache (single operation)
+            y = points[:,1]
+            y_mean = np.mean(y)
+            tss = np.sum(np.square(y-y_mean))
+            cache[&#39;tss&#39;] = tss
+        tss = cache[&#39;tss&#39;]
+        rss = np.sum(segment_errors)
+        cost = 1.0 - rss if tss == 0 else 1.0 - (rss/tss)
+        #return np.sum(np.square(y-y_hat))
+    elif cost is metrics.Metrics.rmsle:
+        #return np.sum(np.square((np.log(y+1) - np.log(y_hat+1))))
+        cost = math.sqrt(np.sum(segment_errors)/total)
+    elif cost is metrics.Metrics.rmspe:
+        #return np.sum(np.square((y - y_hat) / (y+eps)))
+        cost = math.sqrt(np.sum(segment_errors)/total)
+    elif cost is metrics.Metrics.rpd:
+        #return np.sum(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+        cost = np.sum(segment_errors)/total
+    else:
+        #return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
+        cost = np.sum(segment_errors)/total
+
+    cost = 0 if cost &lt; 0 else cost
+
+    return cost
+
+
+def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, eps: float = 1e-16) -&gt; float:
+    if cost is metrics.Metrics.r2:
+        return np.sum(np.square(y-y_hat))
+    elif cost is metrics.Metrics.rmsle:
+        return np.sum(np.square((np.log(y+1) - np.log(y_hat+1))))
+    elif cost is metrics.Metrics.rmspe:
+        return np.sum(np.square((y - y_hat) / (y+eps)))
+    elif cost is metrics.Metrics.rpd:
+        return np.sum(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+    else:
+        return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
+
+
+def compute_segment_cost(points: np.ndarray, reduced: np.ndarray, idx:int) -&gt; tuple:
+    #cost_segment = []
+    # Compute the left cost
+    left, right = reduced[idx: idx+2]
+    pt = points[left:right+1]
+    left_cost = lf.linear_fit_residuals_points(pt)
+    # Compute the right cost
+    left, right = reduced[idx+1:idx+3]
+    pt = points[left:right+1]
+    right_cost = lf.linear_fit_residuals_points(pt)
+    #for i in range(1, len(reduced)):
+    #    right = reduced[i]
+    #    pt = points[left:right+1]
+    #    cost_segment.append(lf.linear_hv_residuals_points(pt))
+    #    left = right
+    
+    #return np.array(cost_segment)
+    return left_cost, right_cost
+
+
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict=None) -&gt; float:
+    # Setup the cache
+    if cache is None: cache = {}
+
+    segment_errors = np.zeros(len(reduced)-1)
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+
+        # Get data from cache
+        if (left, right) not in cache:
+            pt = points[left:right+1]
+            y_hat = lf.linear_fit_transform_points(pt)
+            y = pt[:,1]
+            segment_error = compute_partial_cost(y, y_hat, cost)
+            cache[(left, right)] = segment_error
+        
+        segment_errors[i-1] = cache[(left, right)]
+        left = right
+
+    return compute_cost(points, segment_errors, cost, cache)
+
+
+def compute_global_segment_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd) -&gt; tuple:
+    y, y_hat = [], []
+
+    cost_segment = []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+        
+        y_temp, y_hat_temp = lf.linear_fit_transform_points(pt)
+        
+        y_hat.extend(y_hat_temp)
+        y.extend(y_temp)
+
+        # compute the cost function
+        #c = compute_cost(y_temp, y_hat_temp, cost)
+        c = lf.linear_hv_residuals_points(pt) 
+        cost_segment.append(c)
+
+        left = right
+
+    # compute the cost function
+    return compute_cost(y, y_hat, cost), np.array(cost_segment)</code></pre>
 </details>
 </section>
 <section>
@@ -973,8 +1104,87 @@ In this version it is used the points from the current knee to the previous.</p>
     return np.array([[tp, fp], [fn, tn]])</code></pre>
 </details>
 </dd>
+<dt id="knee.evaluation.compute_cost"><code class="name flex">
+<span>def <span class="ident">compute_cost</span></span>(<span>points: numpy.ndarray, segment_errors: numpy.ndarray, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a>, cache: dict) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_cost(points: np.ndarray, segment_errors:np.ndarray, cost: metrics.Metrics, cache:dict) -&gt; float:
+    # methods = {metrics.Metrics.r2: metrics.r2,metrics.Metrics.rpd: metrics.rpd,metrics.Metrics.rmsle: metrics.rmsle,metrics.Metrics.rmspe: metrics.rmspe,metrics.Metrics.smape: metrics.smape}
+    # cost = methods[cost](np.array(y), np.array(y_hat))
+
+    # We have to account for the head of each segment
+    total = len(points) + len(segment_errors) - 1
+
+    if cost is metrics.Metrics.r2:
+        # Get tss from the cache
+        if &#39;tss&#39; not in cache:
+            # Compute TSS and add it to cache (single operation)
+            y = points[:,1]
+            y_mean = np.mean(y)
+            tss = np.sum(np.square(y-y_mean))
+            cache[&#39;tss&#39;] = tss
+        tss = cache[&#39;tss&#39;]
+        rss = np.sum(segment_errors)
+        cost = 1.0 - rss if tss == 0 else 1.0 - (rss/tss)
+        #return np.sum(np.square(y-y_hat))
+    elif cost is metrics.Metrics.rmsle:
+        #return np.sum(np.square((np.log(y+1) - np.log(y_hat+1))))
+        cost = math.sqrt(np.sum(segment_errors)/total)
+    elif cost is metrics.Metrics.rmspe:
+        #return np.sum(np.square((y - y_hat) / (y+eps)))
+        cost = math.sqrt(np.sum(segment_errors)/total)
+    elif cost is metrics.Metrics.rpd:
+        #return np.sum(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+        cost = np.sum(segment_errors)/total
+    else:
+        #return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
+        cost = np.sum(segment_errors)/total
+
+    cost = 0 if cost &lt; 0 else cost
+
+    return cost</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.compute_global_cost"><code class="name flex">
+<span>def <span class="ident">compute_global_cost</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a> = rpd, cache: dict = None) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict=None) -&gt; float:
+    # Setup the cache
+    if cache is None: cache = {}
+
+    segment_errors = np.zeros(len(reduced)-1)
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+
+        # Get data from cache
+        if (left, right) not in cache:
+            pt = points[left:right+1]
+            y_hat = lf.linear_fit_transform_points(pt)
+            y = pt[:,1]
+            segment_error = compute_partial_cost(y, y_hat, cost)
+            cache[(left, right)] = segment_error
+        
+        segment_errors[i-1] = cache[(left, right)]
+        left = right
+
+    return compute_cost(points, segment_errors, cost, cache)</code></pre>
+</details>
+</dd>
 <dt id="knee.evaluation.compute_global_rmse"><code class="name flex">
-<span>def <span class="ident">compute_global_rmse</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray) ‑> float</span>
+<span>def <span class="ident">compute_global_rmse</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray, cache: dict = None) ‑> float</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the global RMSE for a point reduction set.</p>
@@ -986,6 +1196,8 @@ For each line segment it computes the error with the original set.</p>
 <dd>the original points</dd>
 <dt><strong><code>reduced</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>the indexes of the reduced points</dd>
+<dt><strong><code>cache</code></strong> :&ensp;<code>dict</code></dt>
+<dd>cache used to speedup the computation (default None)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -996,7 +1208,7 @@ For each line segment it computes the error with the original set.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def compute_global_rmse(points: np.ndarray, reduced: np.ndarray) -&gt; float:
+<pre><code class="python">def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache:dict=None) -&gt; float:
     &#34;&#34;&#34;
     Computes the global RMSE for a point reduction set.
 
@@ -1006,28 +1218,120 @@ For each line segment it computes the error with the original set.</p>
     Args:
         points (np.ndarray): the original points
         reduced (np.ndarray): the indexes of the reduced points
+        cache (dict): cache used to speedup the computation (default None)
 
     Returns:
         float: the global RMSE
     &#34;&#34;&#34;
+    # Setup the cache
+    if cache is None: cache = {}
+
+    segment_errors = np.zeros(len(reduced)-1)
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+
+        # Get data from cache
+        if (left, right) not in cache:
+            pt = points[left:right+1]
+            coef = lf.linear_fit_points(pt)
+            y_hat = lf.linear_transform_points(pt, coef)
+            y = pt[:,1]
+            segment_error = np.sum(np.square((y-y_hat)))
+            cache[(left, right)] = segment_error
+        
+        segment_errors[i-1] = cache[(left, right)]
+        left = right
+
+    # compute the cost function
+    return math.sqrt(np.sum(segment_errors)/len(points))</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.compute_global_segment_cost"><code class="name flex">
+<span>def <span class="ident">compute_global_segment_cost</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a> = rpd) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_global_segment_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd) -&gt; tuple:
     y, y_hat = [], []
+
+    cost_segment = []
 
     left = reduced[0]
     for i in range(1, len(reduced)):
         right = reduced[i]
         pt = points[left:right+1]
         
-        coef = lf.linear_fit_points(pt)
-        y_hat_temp = lf.linear_transform_points(pt, coef)
+        y_temp, y_hat_temp = lf.linear_fit_transform_points(pt)
         
         y_hat.extend(y_hat_temp)
-        y_temp = pt[:, 1]
         y.extend(y_temp)
+
+        # compute the cost function
+        #c = compute_cost(y_temp, y_hat_temp, cost)
+        c = lf.linear_hv_residuals_points(pt) 
+        cost_segment.append(c)
 
         left = right
 
     # compute the cost function
-    return metrics.rmse(np.array(y), np.array(y_hat))</code></pre>
+    return compute_cost(y, y_hat, cost), np.array(cost_segment)</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.compute_partial_cost"><code class="name flex">
+<span>def <span class="ident">compute_partial_cost</span></span>(<span>y: numpy.ndarray, y_hat: numpy.ndarray, cost: <a title="knee.metrics.Metrics" href="metrics.html#knee.metrics.Metrics">Metrics</a>, eps: float = 1e-16) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, eps: float = 1e-16) -&gt; float:
+    if cost is metrics.Metrics.r2:
+        return np.sum(np.square(y-y_hat))
+    elif cost is metrics.Metrics.rmsle:
+        return np.sum(np.square((np.log(y+1) - np.log(y_hat+1))))
+    elif cost is metrics.Metrics.rmspe:
+        return np.sum(np.square((y - y_hat) / (y+eps)))
+    elif cost is metrics.Metrics.rpd:
+        return np.sum(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+    else:
+        return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))</code></pre>
+</details>
+</dd>
+<dt id="knee.evaluation.compute_segment_cost"><code class="name flex">
+<span>def <span class="ident">compute_segment_cost</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray, idx: int) ‑> tuple</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_segment_cost(points: np.ndarray, reduced: np.ndarray, idx:int) -&gt; tuple:
+    #cost_segment = []
+    # Compute the left cost
+    left, right = reduced[idx: idx+2]
+    pt = points[left:right+1]
+    left_cost = lf.linear_fit_residuals_points(pt)
+    # Compute the right cost
+    left, right = reduced[idx+1:idx+3]
+    pt = points[left:right+1]
+    right_cost = lf.linear_fit_residuals_points(pt)
+    #for i in range(1, len(reduced)):
+    #    right = reduced[i]
+    #    pt = points[left:right+1]
+    #    cost_segment.append(lf.linear_hv_residuals_points(pt))
+    #    left = right
+    
+    #return np.array(cost_segment)
+    return left_cost, right_cost</code></pre>
 </details>
 </dd>
 <dt id="knee.evaluation.f1score"><code class="name flex">
@@ -1471,7 +1775,7 @@ and computes the error based on the closest point.</p>
 </details>
 </dd>
 <dt id="knee.evaluation.mip"><code class="name flex">
-<span>def <span class="ident">mip</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray) ‑> float</span>
+<span>def <span class="ident">mip</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray) ‑> tuple</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the median improvement per point (MIP).</p>
@@ -1488,14 +1792,14 @@ It is computed as the RMSE of the reconstruction without that specific point. </
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>float</code></dt>
-<dd>the median improvement per point (MIP)</dd>
+<dt><code>tuple</code></dt>
+<dd>the median improvement per point (MIP) and the MAD</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mip(points: np.ndarray, reduced: np.ndarray) -&gt; float:
+<pre><code class="python">def mip(points: np.ndarray, reduced: np.ndarray) -&gt; tuple:
     &#34;&#34;&#34;
     Computes the median improvement per point (MIP).
 
@@ -1509,19 +1813,24 @@ It is computed as the RMSE of the reconstruction without that specific point. </
         reduced (np.ndarray): the indexes of the reduced points
 
     Returns:
-        float: the median improvement per point (MIP)
+        tuple: the median improvement per point (MIP) and the MAD
     &#34;&#34;&#34;
-    ip = []
+    # Setup the cache
+    cache = {}
+
+    ip = np.zeros(len(reduced)-2)
 
     # Compute the final RSME
-    cost_fin = compute_global_rmse(points, reduced)
+    cost_fin = compute_global_rmse(points, reduced, cache)
 
     for i in range(1, len(reduced)-1):
         # Compute the reference RMSE
-        cost_ref = compute_global_rmse(points, np.delete(reduced, i))
-        ip.append(cost_ref - cost_fin)
+        cost_ref = compute_global_rmse(points, np.delete(reduced, i), cache)
+        ip[i-1] = cost_ref - cost_fin
 
-    return np.median(ip)</code></pre>
+    mip = np.median(ip)
+
+    return mip, np.median(np.absolute(ip - mip))</code></pre>
 </details>
 </dd>
 <dt id="knee.evaluation.mse"><code class="name flex">
@@ -1812,7 +2121,12 @@ It uses the euclidean distance to find the closer points, and computes the error
 <li><code><a title="knee.evaluation.accuracy_knee" href="#knee.evaluation.accuracy_knee">accuracy_knee</a></code></li>
 <li><code><a title="knee.evaluation.accuracy_trace" href="#knee.evaluation.accuracy_trace">accuracy_trace</a></code></li>
 <li><code><a title="knee.evaluation.cm" href="#knee.evaluation.cm">cm</a></code></li>
+<li><code><a title="knee.evaluation.compute_cost" href="#knee.evaluation.compute_cost">compute_cost</a></code></li>
+<li><code><a title="knee.evaluation.compute_global_cost" href="#knee.evaluation.compute_global_cost">compute_global_cost</a></code></li>
 <li><code><a title="knee.evaluation.compute_global_rmse" href="#knee.evaluation.compute_global_rmse">compute_global_rmse</a></code></li>
+<li><code><a title="knee.evaluation.compute_global_segment_cost" href="#knee.evaluation.compute_global_segment_cost">compute_global_segment_cost</a></code></li>
+<li><code><a title="knee.evaluation.compute_partial_cost" href="#knee.evaluation.compute_partial_cost">compute_partial_cost</a></code></li>
+<li><code><a title="knee.evaluation.compute_segment_cost" href="#knee.evaluation.compute_segment_cost">compute_segment_cost</a></code></li>
 <li><code><a title="knee.evaluation.f1score" href="#knee.evaluation.f1score">f1score</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood" href="#knee.evaluation.get_neighbourhood">get_neighbourhood</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_binary" href="#knee.evaluation.get_neighbourhood_binary">get_neighbourhood_binary</a></code></li>

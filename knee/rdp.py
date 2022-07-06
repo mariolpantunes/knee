@@ -230,13 +230,10 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
             stack.append((left_area, left, left+index+1))
             stack.append((right_area, left+index, left+len(pt)))
         else:
-            # compute the cost of the current solution
-            cost_segment = evaluation.compute_segment_cost(points, reduced)
-            
             # the cost is based on the segment error
             cost_index = reduced.index(left+index) - 1
-            left_cost = cost_segment[cost_index]
-            right_cost = cost_segment[cost_index+1]
+            # compute the cost of the current solution
+            left_cost, right_cost = evaluation.compute_segment_cost(points, reduced, cost_index)
 
             stack.append((left_cost, left, left+index+1))
             stack.append((right_cost, left+index, left+len(pt)))
@@ -312,14 +309,10 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
             stack.append((left_area, left, left+index+1))
             stack.append((right_area, left+index, left+len(pt)))
         else:
-            # compute the cost of the current solution
-            # TODO: This method needs to improve...
-            cost_segment = evaluation.compute_segment_cost(points, reduced)
-            
             # the cost is based on the segment error
             cost_index = reduced.index(left+index) - 1
-            left_cost = cost_segment[cost_index]
-            right_cost = cost_segment[cost_index+1]
+            # compute the cost of the current solution
+            left_cost, right_cost = evaluation.compute_segment_cost(points, reduced, cost_index)
 
             stack.append((left_cost, left, left+index+1))
             stack.append((right_cost, left+index, left+len(pt)))

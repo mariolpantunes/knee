@@ -85,6 +85,7 @@ def main(args):
         for t in tqdm.tqdm(rdp_threshold, position=1, desc='Thr', leave=False):
             for c in tqdm.tqdm(rdp_metrics, position=2, desc='Cst', leave=False):
                 for o in tqdm.tqdm(rdp_order, position=3, desc='Ord', leave=False):
+                    
                     # convert the threhold from cost to similarity
                     if c is metrics.Metrics.r2:
                         r = 1.0 - t
@@ -100,6 +101,7 @@ def main(args):
                     with open(f'out/grdp_{t}_{c}_{o}.csv', 'a', newline='') as csvfile:
                         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
                         writer.writerow([pathlib.Path(f).stem, cost, len(reduced), mip, mad, ti, std])
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Evaluate all the gRDPs configurations')

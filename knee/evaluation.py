@@ -587,10 +587,7 @@ def mcc(cm: np.ndarray) -> float:
     return n/d
 
 
-
-
-
-def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache={}) -> float:
+def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache:dict=None) -> float:
     """
     Computes the global RMSE for a point reduction set.
 
@@ -600,12 +597,14 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache={}) -> fl
     Args:
         points (np.ndarray): the original points
         reduced (np.ndarray): the indexes of the reduced points
+        cache (dict): cache used to speedup the computation (default None)
 
     Returns:
         float: the global RMSE
     """
-    #y = points[:,1]
-    #y_hat = np.zeros(len(y))
+    # Setup the cache
+    if cache is None: cache = {}
+
     segment_errors = np.zeros(len(reduced)-1)
 
     left = reduced[0]
@@ -621,13 +620,10 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache={}) -> fl
             segment_error = np.sum(np.square((y-y_hat)))
             cache[(left, right)] = segment_error
         
-        #segment_error = 
         segment_errors[i-1] = cache[(left, right)]
-        #y_hat[left:right+1] = compute_y_hat_cache(left, right)
         left = right
 
     # compute the cost function
-    # return metrics.rmse(y, y_hat)
     return math.sqrt(np.sum(segment_errors)/len(points))
 
 
@@ -715,23 +711,28 @@ def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, 
         return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
 
 
-def compute_segment_cost(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
-    cost_segment = []
-    left = reduced[0]
-    for i in range(1, len(reduced)):
-        right = reduced[i]
-        pt = points[left:right+1]
-        cost_segment.append(lf.linear_hv_residuals_points(pt))
-        left = right
-    return np.array(cost_segment)
+def compute_segment_cost(points: np.ndarray, reduced: np.ndarray, idx:int) -> tuple:
+    #cost_segment = []
+    # Compute the left cost
+    left, right = reduced[idx: idx+2]
+    pt = points[left:right+1]
+    left_cost = lf.linear_fit_residuals_points(pt)
+    # Compute the right cost
+    left, right = reduced[idx+1:idx+3]
+    pt = points[left:right+1]
+    right_cost = lf.linear_fit_residuals_points(pt)
+    #for i in range(1, len(reduced)):
+    #    right = reduced[i]
+    #    pt = points[left:right+1]
+    #    cost_segment.append(lf.linear_hv_residuals_points(pt))
+    #    left = right
+    
+    #return np.array(cost_segment)
+    return left_cost, right_cost
 
 
 def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict=None) -> float:
-    y_global, y_hat_global = [], []
-
     # Setup the cache
-    # cache = {}
-
     if cache is None: cache = {}
 
     segment_errors = np.zeros(len(reduced)-1)
@@ -743,32 +744,14 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.M
         # Get data from cache
         if (left, right) not in cache:
             pt = points[left:right+1]
-            #coef = lf.linear_fit_points(pt)
-            #y_hat = lf.linear_transform_points(pt, coef)
             y_hat = lf.linear_fit_transform_points(pt)
             y = pt[:,1]
-
-            #print(f'({left}, {right}) y={y} y_hat={y_hat}')
-
             segment_error = compute_partial_cost(y, y_hat, cost)
-            #np.sum(np.square((y-y_hat)))
             cache[(left, right)] = segment_error
-
-            y_global.extend(y)
-            y_hat_global.extend(y_hat)
         
-        #segment_error = 
         segment_errors[i-1] = cache[(left, right)]
-
-        #y_hat.extend(y_hat_temp)
-        #y.extend(y_temp)
-        
         left = right
 
-    # compute the cost function
-    #return compute_cost(y, y_hat, cost)
-    #print(f'{cache}')
-    #print(f'{metrics.rpd(np.array(y_global), np.array(y_hat_global))}')
     return compute_cost(points, segment_errors, cost, cache)
 
 

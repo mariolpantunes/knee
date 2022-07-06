@@ -366,6 +366,18 @@ def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
     return metrics.residuals(y, y_hat)
 
 
+def linear_fit_residuals_points(points: np.ndarray) -> float:
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_fit_residuals(x, y)
+
+
+def linear_fit_residuals(x: np.ndarray, y: np.ndarray) -> float:
+    coef = linear_fit(x, y)
+    y_hat = linear_transform(x, coef)
+    return metrics.residuals(y, y_hat)
+
+
 def r2_points(points: np.ndarray, t: metrics.R2 = metrics.R2.classic) -> float:
     """
     Computes the coefficient of determination (R2).

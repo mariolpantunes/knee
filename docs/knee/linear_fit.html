@@ -35,11 +35,13 @@ __email__ = &#39;mariolpantunes@gmail.com&#39;
 __status__ = &#39;Development&#39;
 
 
-import enum
 import math
 import logging
 import numpy as np
 import knee.metrics as metrics
+
+
+from typing import Union
 
 
 logger = logging.getLogger(__name__)
@@ -116,6 +118,53 @@ def linear_transform(x: np.ndarray, coef: tuple) -&gt; np.ndarray:
     b, m = coef
     y_hat = x * m + b
     return y_hat
+
+
+def linear_hv_residuals_points(points: np.ndarray) -&gt; float:
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_hv_residuals(x,y)
+
+
+def linear_hv_residuals(x: np.ndarray, y: np.ndarray) -&gt; float:
+    # try a tipical y = mx + b line
+    coef1 = linear_fit(x, y)
+    y_residuals = linear_residuals(x, y, coef1)
+
+    # try a non-typical x = my + b line
+    coef2 = linear_fit(y, x)
+    x_residuals = linear_residuals(y, x, coef2)
+
+    if y_residuals &lt;= x_residuals:
+        return y_residuals
+    else:
+        return x_residuals
+
+
+def linear_fit_transform_points(points: np.ndarray, vertical=False) -&gt; Union[np.ndarray, tuple]:
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_fit_transform(x, y, vertical)
+
+
+def linear_fit_transform(x: np.ndarray, y: np.ndarray, vertical=False) -&gt; Union[np.ndarray, tuple]:
+    # try a tipical y = mx + b line
+    coef1 = linear_fit(x, y)
+    y_hat = linear_transform(x, coef1)
+    
+    if vertical:
+        y_residuals = linear_residuals(x, y, coef1)
+        # try a non-typical x = my + b line
+        coef2 = linear_fit(y, x)
+        x_hat = linear_transform(y, coef2)
+        x_residuals = linear_residuals(y, x, coef2)
+
+        if y_residuals &lt;= x_residuals:
+            return y, y_hat
+        else:
+            return x, x_hat
+    else:
+        return y_hat
 
 
 def linear_r2_points(points: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -&gt; float:
@@ -342,6 +391,18 @@ def linear_residuals(x: np.ndarray, y: np.ndarray, coef: tuple) -&gt; float:
     Returns:
         float: residual error of the linear fit
     &#34;&#34;&#34;
+    y_hat = linear_transform(x, coef)
+    return metrics.residuals(y, y_hat)
+
+
+def linear_fit_residuals_points(points: np.ndarray) -&gt; float:
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_fit_residuals(x, y)
+
+
+def linear_fit_residuals(x: np.ndarray, y: np.ndarray) -&gt; float:
+    coef = linear_fit(x, y)
     y_hat = linear_transform(x, coef)
     return metrics.residuals(y, y_hat)
 
@@ -621,6 +682,119 @@ first and last points in a curve.</p>
     x = points[:, 0]
     y = points[:, 1]
     return linear_fit(x, y)</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.linear_fit_residuals"><code class="name flex">
+<span>def <span class="ident">linear_fit_residuals</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear_fit_residuals(x: np.ndarray, y: np.ndarray) -&gt; float:
+    coef = linear_fit(x, y)
+    y_hat = linear_transform(x, coef)
+    return metrics.residuals(y, y_hat)</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.linear_fit_residuals_points"><code class="name flex">
+<span>def <span class="ident">linear_fit_residuals_points</span></span>(<span>points: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear_fit_residuals_points(points: np.ndarray) -&gt; float:
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_fit_residuals(x, y)</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.linear_fit_transform"><code class="name flex">
+<span>def <span class="ident">linear_fit_transform</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, vertical=False) ‑> Union[numpy.ndarray, tuple]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear_fit_transform(x: np.ndarray, y: np.ndarray, vertical=False) -&gt; Union[np.ndarray, tuple]:
+    # try a tipical y = mx + b line
+    coef1 = linear_fit(x, y)
+    y_hat = linear_transform(x, coef1)
+    
+    if vertical:
+        y_residuals = linear_residuals(x, y, coef1)
+        # try a non-typical x = my + b line
+        coef2 = linear_fit(y, x)
+        x_hat = linear_transform(y, coef2)
+        x_residuals = linear_residuals(y, x, coef2)
+
+        if y_residuals &lt;= x_residuals:
+            return y, y_hat
+        else:
+            return x, x_hat
+    else:
+        return y_hat</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.linear_fit_transform_points"><code class="name flex">
+<span>def <span class="ident">linear_fit_transform_points</span></span>(<span>points: numpy.ndarray, vertical=False) ‑> Union[numpy.ndarray, tuple]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear_fit_transform_points(points: np.ndarray, vertical=False) -&gt; Union[np.ndarray, tuple]:
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_fit_transform(x, y, vertical)</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.linear_hv_residuals"><code class="name flex">
+<span>def <span class="ident">linear_hv_residuals</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear_hv_residuals(x: np.ndarray, y: np.ndarray) -&gt; float:
+    # try a tipical y = mx + b line
+    coef1 = linear_fit(x, y)
+    y_residuals = linear_residuals(x, y, coef1)
+
+    # try a non-typical x = my + b line
+    coef2 = linear_fit(y, x)
+    x_residuals = linear_residuals(y, x, coef2)
+
+    if y_residuals &lt;= x_residuals:
+        return y_residuals
+    else:
+        return x_residuals</code></pre>
+</details>
+</dd>
+<dt id="knee.linear_fit.linear_hv_residuals_points"><code class="name flex">
+<span>def <span class="ident">linear_hv_residuals_points</span></span>(<span>points: numpy.ndarray) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear_hv_residuals_points(points: np.ndarray) -&gt; float:
+    x = points[:, 0]
+    y = points[:, 1]
+    return linear_hv_residuals(x,y)</code></pre>
 </details>
 </dd>
 <dt id="knee.linear_fit.linear_r2"><code class="name flex">
@@ -1520,6 +1694,12 @@ straight line defined by the left and right point.</p>
 <li><code><a title="knee.linear_fit.angle" href="#knee.linear_fit.angle">angle</a></code></li>
 <li><code><a title="knee.linear_fit.linear_fit" href="#knee.linear_fit.linear_fit">linear_fit</a></code></li>
 <li><code><a title="knee.linear_fit.linear_fit_points" href="#knee.linear_fit.linear_fit_points">linear_fit_points</a></code></li>
+<li><code><a title="knee.linear_fit.linear_fit_residuals" href="#knee.linear_fit.linear_fit_residuals">linear_fit_residuals</a></code></li>
+<li><code><a title="knee.linear_fit.linear_fit_residuals_points" href="#knee.linear_fit.linear_fit_residuals_points">linear_fit_residuals_points</a></code></li>
+<li><code><a title="knee.linear_fit.linear_fit_transform" href="#knee.linear_fit.linear_fit_transform">linear_fit_transform</a></code></li>
+<li><code><a title="knee.linear_fit.linear_fit_transform_points" href="#knee.linear_fit.linear_fit_transform_points">linear_fit_transform_points</a></code></li>
+<li><code><a title="knee.linear_fit.linear_hv_residuals" href="#knee.linear_fit.linear_hv_residuals">linear_hv_residuals</a></code></li>
+<li><code><a title="knee.linear_fit.linear_hv_residuals_points" href="#knee.linear_fit.linear_hv_residuals_points">linear_hv_residuals_points</a></code></li>
 <li><code><a title="knee.linear_fit.linear_r2" href="#knee.linear_fit.linear_r2">linear_r2</a></code></li>
 <li><code><a title="knee.linear_fit.linear_r2_points" href="#knee.linear_fit.linear_r2_points">linear_r2_points</a></code></li>
 <li><code><a title="knee.linear_fit.linear_residuals" href="#knee.linear_fit.linear_residuals">linear_residuals</a></code></li>
