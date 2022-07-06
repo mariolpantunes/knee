@@ -49,8 +49,8 @@ def r2(y: np.ndarray, y_hat: np.ndarray, r2: R2 = R2.classic) -> float:
         float: coefficient of determination (R2)
     """
     y_mean = np.mean(y)
-    rss = np.sum((y-y_hat)**2)
-    tss = np.sum((y-y_mean)**2)
+    rss = np.sum(np.square(y-y_hat))
+    tss = np.sum(np.square(y-y_mean))
     rv = 0.0
 
     if tss == 0:

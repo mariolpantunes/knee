@@ -665,17 +665,54 @@ def mip(points: np.ndarray, reduced: np.ndarray) -> tuple:
     return mip, np.median(np.absolute(ip - mip))
 
 
-def compute_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics) -> float:
-    methods = {metrics.Metrics.r2: metrics.r2,
-    metrics.Metrics.rpd: metrics.rpd,
-    metrics.Metrics.rmsle: metrics.rmsle,
-    metrics.Metrics.rmspe: metrics.rmspe,
-    metrics.Metrics.smape: metrics.smape}
+def compute_cost(points: np.ndarray, segment_errors:np.ndarray, cost: metrics.Metrics, cache:dict) -> float:
+    # methods = {metrics.Metrics.r2: metrics.r2,metrics.Metrics.rpd: metrics.rpd,metrics.Metrics.rmsle: metrics.rmsle,metrics.Metrics.rmspe: metrics.rmspe,metrics.Metrics.smape: metrics.smape}
+    # cost = methods[cost](np.array(y), np.array(y_hat))
 
-    cost = methods[cost](np.array(y), np.array(y_hat))
+    # We have to account for the head of each segment
+    total = len(points) + len(segment_errors) - 1
+
+    if cost is metrics.Metrics.r2:
+        # Get tss from the cache
+        if 'tss' not in cache:
+            # Compute TSS and add it to cache (single operation)
+            y = points[:,1]
+            y_mean = np.mean(y)
+            tss = np.sum(np.square(y-y_mean))
+            cache['tss'] = tss
+        tss = cache['tss']
+        rss = np.sum(segment_errors)
+        cost = 1.0 - rss if tss == 0 else 1.0 - (rss/tss)
+        #return np.sum(np.square(y-y_hat))
+    elif cost is metrics.Metrics.rmsle:
+        #return np.sum(np.square((np.log(y+1) - np.log(y_hat+1))))
+        cost = math.sqrt(np.sum(segment_errors)/total)
+    elif cost is metrics.Metrics.rmspe:
+        #return np.sum(np.square((y - y_hat) / (y+eps)))
+        cost = math.sqrt(np.sum(segment_errors)/total)
+    elif cost is metrics.Metrics.rpd:
+        #return np.sum(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+        cost = np.sum(segment_errors)/total
+    else:
+        #return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
+        cost = np.sum(segment_errors)/total
+
     cost = 0 if cost < 0 else cost
 
     return cost
+
+
+def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, eps: float = 1e-16) -> float:
+    if cost is metrics.Metrics.r2:
+        return np.sum(np.square(y-y_hat))
+    elif cost is metrics.Metrics.rmsle:
+        return np.sum(np.square((np.log(y+1) - np.log(y_hat+1))))
+    elif cost is metrics.Metrics.rmspe:
+        return np.sum(np.square((y - y_hat) / (y+eps)))
+    elif cost is metrics.Metrics.rpd:
+        return np.sum(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+    else:
+        return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
 
 
 def compute_segment_cost(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
@@ -689,23 +726,53 @@ def compute_segment_cost(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
     return np.array(cost_segment)
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, vertical=False) -> float:
-    y, y_hat = [], []
+def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict=None) -> float:
+    y_global, y_hat_global = [], []
+
+    # Setup the cache
+    # cache = {}
+
+    if cache is None: cache = {}
+
+    segment_errors = np.zeros(len(reduced)-1)
+
     left = reduced[0]
     for i in range(1, len(reduced)):
         right = reduced[i]
-        pt = points[left:right+1]
+
+        # Get data from cache
+        if (left, right) not in cache:
+            pt = points[left:right+1]
+            #coef = lf.linear_fit_points(pt)
+            #y_hat = lf.linear_transform_points(pt, coef)
+            y_hat = lf.linear_fit_transform_points(pt)
+            y = pt[:,1]
+
+            #print(f'({left}, {right}) y={y} y_hat={y_hat}')
+
+            segment_error = compute_partial_cost(y, y_hat, cost)
+            #np.sum(np.square((y-y_hat)))
+            cache[(left, right)] = segment_error
+
+            y_global.extend(y)
+            y_hat_global.extend(y_hat)
         
-        y_temp, y_hat_temp = lf.linear_fit_transform_points(pt, vertical)
+        #segment_error = 
+        segment_errors[i-1] = cache[(left, right)]
+
+        #y_hat.extend(y_hat_temp)
+        #y.extend(y_temp)
         
-        y_hat.extend(y_hat_temp)
-        y.extend(y_temp)
         left = right
 
     # compute the cost function
-    return compute_cost(y, y_hat, cost)
+    #return compute_cost(y, y_hat, cost)
+    #print(f'{cache}')
+    #print(f'{metrics.rpd(np.array(y_global), np.array(y_hat_global))}')
+    return compute_cost(points, segment_errors, cost, cache)
 
-def compute_global_segment_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, vertical=False) -> tuple:
+
+def compute_global_segment_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd) -> tuple:
     y, y_hat = [], []
 
     cost_segment = []
@@ -715,7 +782,7 @@ def compute_global_segment_cost(points: np.ndarray, reduced: np.ndarray, cost: m
         right = reduced[i]
         pt = points[left:right+1]
         
-        y_temp, y_hat_temp = lf.linear_fit_transform_points(pt, vertical)
+        y_temp, y_hat_temp = lf.linear_fit_transform_points(pt)
         
         y_hat.extend(y_hat_temp)
         y.extend(y_temp)

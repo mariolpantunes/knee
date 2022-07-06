@@ -49,11 +49,11 @@ def main(args):
     
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='RDP test application')
+    parser = argparse.ArgumentParser(description='RDP (fixed length) test application')
     parser.add_argument('-i', type=str, required=True, help='input file')
-    parser.add_argument('-l', type=int, help='RDP fixed lenght', default=10)
-    parser.add_argument('-d', type=rdp.Distance, choices=list(rdp.Distance), default='shortest')
-    parser.add_argument('-o', type=rdp.Order, choices=list(rdp.Order), default='area')
+    parser.add_argument('-l', type=int, help='number of points', default=10)
+    parser.add_argument('-d', type=rdp.Distance, choices=list(rdp.Distance), help='distance metric', default='shortest')
+    parser.add_argument('-o', type=rdp.Order, choices=list(rdp.Order), help='ordering metric', default='area')
     args = parser.parse_args()
     
     main(args)

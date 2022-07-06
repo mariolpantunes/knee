@@ -12,6 +12,9 @@ import numpy as np
 import knee.metrics as metrics
 
 
+from typing import Union
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -109,19 +112,19 @@ def linear_hv_residuals(x: np.ndarray, y: np.ndarray) -> float:
         return x_residuals
 
 
-def linear_fit_transform_points(points: np.ndarray, vertical=False) -> tuple:
+def linear_fit_transform_points(points: np.ndarray, vertical=False) -> Union[np.ndarray, tuple]:
     x = points[:, 0]
     y = points[:, 1]
     return linear_fit_transform(x, y, vertical)
 
 
-def linear_fit_transform(x: np.ndarray, y: np.ndarray, vertical=False) -> tuple:
+def linear_fit_transform(x: np.ndarray, y: np.ndarray, vertical=False) -> Union[np.ndarray, tuple]:
     # try a tipical y = mx + b line
     coef1 = linear_fit(x, y)
     y_hat = linear_transform(x, coef1)
-    y_residuals = linear_residuals(x, y, coef1)
-
+    
     if vertical:
+        y_residuals = linear_residuals(x, y, coef1)
         # try a non-typical x = my + b line
         coef2 = linear_fit(y, x)
         x_hat = linear_transform(y, coef2)
@@ -132,7 +135,8 @@ def linear_fit_transform(x: np.ndarray, y: np.ndarray, vertical=False) -> tuple:
         else:
             return x, x_hat
     else:
-        return y, y_hat
+        return y_hat
+
 
 def linear_r2_points(points: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -> float:
     """

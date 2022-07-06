@@ -253,6 +253,10 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
     
+    # Setup cache that is used to speedup the global cost computation
+    cache = {}
+    #cache = None
+
     # select the distance metric to be used
     distance_points = None
     if distance is Distance.shortest:
@@ -262,7 +266,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     else:
         distance_points = lf.shortest_distance_points
 
-    global_cost = evaluation.compute_global_cost(points, reduced, cost)
+    global_cost = evaluation.compute_global_cost(points, reduced, cost, cache)
     curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
 
     while curved:
@@ -277,7 +281,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         reduced.sort()
 
         # compute the cost of the current solution
-        global_cost = evaluation.compute_global_cost(points, reduced, cost)
+        global_cost = evaluation.compute_global_cost(points, reduced, cost, cache)
         curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
         
         if order is Order.triangle:
@@ -309,6 +313,7 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
             stack.append((right_area, left+index, left+len(pt)))
         else:
             # compute the cost of the current solution
+            # TODO: This method needs to improve...
             cost_segment = evaluation.compute_segment_cost(points, reduced)
             
             # the cost is based on the segment error
