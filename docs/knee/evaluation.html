@@ -740,26 +740,6 @@ def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, 
         return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
 
 
-def compute_segment_cost(points: np.ndarray, reduced: np.ndarray, idx:int) -&gt; tuple:
-    #cost_segment = []
-    # Compute the left cost
-    left, right = reduced[idx: idx+2]
-    pt = points[left:right+1]
-    left_cost = lf.linear_fit_residuals_points(pt)
-    # Compute the right cost
-    left, right = reduced[idx+1:idx+3]
-    pt = points[left:right+1]
-    right_cost = lf.linear_fit_residuals_points(pt)
-    #for i in range(1, len(reduced)):
-    #    right = reduced[i]
-    #    pt = points[left:right+1]
-    #    cost_segment.append(lf.linear_hv_residuals_points(pt))
-    #    left = right
-    
-    #return np.array(cost_segment)
-    return left_cost, right_cost
-
-
 def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict=None) -&gt; float:
     # Setup the cache
     if cache is None: cache = {}
@@ -1303,35 +1283,6 @@ For each line segment it computes the error with the original set.</p>
         return np.sum(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
     else:
         return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))</code></pre>
-</details>
-</dd>
-<dt id="knee.evaluation.compute_segment_cost"><code class="name flex">
-<span>def <span class="ident">compute_segment_cost</span></span>(<span>points: numpy.ndarray, reduced: numpy.ndarray, idx: int) ‑> tuple</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def compute_segment_cost(points: np.ndarray, reduced: np.ndarray, idx:int) -&gt; tuple:
-    #cost_segment = []
-    # Compute the left cost
-    left, right = reduced[idx: idx+2]
-    pt = points[left:right+1]
-    left_cost = lf.linear_fit_residuals_points(pt)
-    # Compute the right cost
-    left, right = reduced[idx+1:idx+3]
-    pt = points[left:right+1]
-    right_cost = lf.linear_fit_residuals_points(pt)
-    #for i in range(1, len(reduced)):
-    #    right = reduced[i]
-    #    pt = points[left:right+1]
-    #    cost_segment.append(lf.linear_hv_residuals_points(pt))
-    #    left = right
-    
-    #return np.array(cost_segment)
-    return left_cost, right_cost</code></pre>
 </details>
 </dd>
 <dt id="knee.evaluation.f1score"><code class="name flex">
@@ -2126,7 +2077,6 @@ It uses the euclidean distance to find the closer points, and computes the error
 <li><code><a title="knee.evaluation.compute_global_rmse" href="#knee.evaluation.compute_global_rmse">compute_global_rmse</a></code></li>
 <li><code><a title="knee.evaluation.compute_global_segment_cost" href="#knee.evaluation.compute_global_segment_cost">compute_global_segment_cost</a></code></li>
 <li><code><a title="knee.evaluation.compute_partial_cost" href="#knee.evaluation.compute_partial_cost">compute_partial_cost</a></code></li>
-<li><code><a title="knee.evaluation.compute_segment_cost" href="#knee.evaluation.compute_segment_cost">compute_segment_cost</a></code></li>
 <li><code><a title="knee.evaluation.f1score" href="#knee.evaluation.f1score">f1score</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood" href="#knee.evaluation.get_neighbourhood">get_neighbourhood</a></code></li>
 <li><code><a title="knee.evaluation.get_neighbourhood_binary" href="#knee.evaluation.get_neighbourhood_binary">get_neighbourhood_binary</a></code></li>

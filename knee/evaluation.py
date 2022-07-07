@@ -711,26 +711,6 @@ def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, 
         return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
 
 
-def compute_segment_cost(points: np.ndarray, reduced: np.ndarray, idx:int) -> tuple:
-    #cost_segment = []
-    # Compute the left cost
-    left, right = reduced[idx: idx+2]
-    pt = points[left:right+1]
-    left_cost = lf.linear_fit_residuals_points(pt)
-    # Compute the right cost
-    left, right = reduced[idx+1:idx+3]
-    pt = points[left:right+1]
-    right_cost = lf.linear_fit_residuals_points(pt)
-    #for i in range(1, len(reduced)):
-    #    right = reduced[i]
-    #    pt = points[left:right+1]
-    #    cost_segment.append(lf.linear_hv_residuals_points(pt))
-    #    left = right
-    
-    #return np.array(cost_segment)
-    return left_cost, right_cost
-
-
 def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict=None) -> float:
     # Setup the cache
     if cache is None: cache = {}

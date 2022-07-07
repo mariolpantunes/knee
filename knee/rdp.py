@@ -160,6 +160,47 @@ def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarra
     return np.array(removed)
 
 
+def order_triangle(pt: np.ndarray, index:int, distance_points) -> tuple:
+    # compute the area of the triangles made from the farthest point
+    base_left = np.linalg.norm(pt[0]-pt[index])
+    pt_left = pt[0:index+1]
+    height_left = distance_points(pt_left, pt_left[0], pt_left[-1]).max()
+    left_tri_area = 0.5*base_left*height_left
+
+    base_right = np.linalg.norm(pt[index]-pt[-1])
+    pt_right = pt[index:]
+    height_right = distance_points(pt_right, pt_right[0], pt_right[-1]).max()
+    right_tri_area = 0.5*base_right*height_right
+
+    return left_tri_area, right_tri_area
+
+
+def order_area(pt: np.ndarray, index:int, distance_points) -> tuple:
+    # compute the area using the distance function
+    #pt_left = points[left:left+index+1]
+    pt_left = pt[0:index+1]
+    left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
+    
+    #pt_right = points[left+index:left+len(pt)]
+    pt_right = pt[index:]
+    right_distance = distance_points(pt_right, pt_right[0], pt_right[-1])
+
+    left_area = np.sum(left_distance)
+    right_area = np.sum(right_distance)
+    
+    return  left_area, right_area
+
+
+def order_segment(pt: np.ndarray, index:int) -> tuple:
+    pt_left = pt[0:index+1]
+    left_cost = lf.linear_fit_residuals_points(pt_left)
+    
+    pt_right = pt[index:]
+    right_cost = lf.linear_fit_residuals_points(pt_right)
+    
+    return left_cost, right_cost
+
+
 def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shortest, order:Order=Order.triangle) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
@@ -203,37 +244,17 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
         reduced.sort()
 
         if order is Order.triangle:
-            # compute the area of the triangles made from the farthest point
-            base_left = np.linalg.norm(pt[0]-pt[index])
-            pt_left = points[left:left+index+1]
-            height_left = distance_points(pt_left, pt_left[0], pt_left[-1]).max()
-            left_tri_area = 0.5*base_left*height_left
-
-            base_right = np.linalg.norm(pt[index]-pt[-1])
-            pt_right = points[left+index:left+len(pt)]
-            height_right = distance_points(pt_right, pt_right[0], pt_right[-1]).max()
-            right_tri_area = 0.5*base_right*height_right
+            left_tri_area, right_tri_area = order_triangle(pt, index, distance_points)
 
             stack.append((left_tri_area, left, left+index+1))
             stack.append((right_tri_area, left+index, left+len(pt)))
         elif order is Order.area:
-            # compute the area using the distance function
-            pt_left = points[left:left+index+1]
-            left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
-            
-            pt_right = points[left+index:left+len(pt)]
-            right_distance = distance_points(pt_right, pt_right[0], pt_right[-1])
-
-            left_area = np.sum(left_distance)
-            right_area = np.sum(right_distance)
+            left_area, right_area = order_area(pt, index, distance_points)
 
             stack.append((left_area, left, left+index+1))
             stack.append((right_area, left+index, left+len(pt)))
         else:
-            # the cost is based on the segment error
-            cost_index = reduced.index(left+index) - 1
-            # compute the cost of the current solution
-            left_cost, right_cost = evaluation.compute_segment_cost(points, reduced, cost_index)
+            left_cost, right_cost = order_segment(pt, index)
 
             stack.append((left_cost, left, left+index+1))
             stack.append((right_cost, left+index, left+len(pt)))
@@ -252,7 +273,6 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     
     # Setup cache that is used to speedup the global cost computation
     cache = {}
-    #cache = None
 
     # select the distance metric to be used
     distance_points = None
@@ -282,37 +302,17 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
         curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
         
         if order is Order.triangle:
-            # compute the area of the triangles made from the farthest point
-            base_left = np.linalg.norm(pt[0]-pt[index])
-            pt_left = points[left:left+index+1]
-            height_left = distance_points(pt_left, pt_left[0], pt_left[-1]).max()
-            left_tri_area = 0.5*base_left*height_left
-
-            base_right = np.linalg.norm(pt[index]-pt[-1])
-            pt_right = points[left+index:left+len(pt)]
-            height_right = distance_points(pt_right, pt_right[0], pt_right[-1]).max()
-            right_tri_area = 0.5*base_right*height_right
+            left_tri_area, right_tri_area = order_triangle(pt, index, distance_points)
 
             stack.append((left_tri_area, left, left+index+1))
             stack.append((right_tri_area, left+index, left+len(pt)))
         elif order is Order.area:
-            # compute the area using the distance function
-            pt_left = points[left:left+index+1]
-            left_distance = distance_points(pt_left, pt_left[0], pt_left[-1])
-            
-            pt_right = points[left+index:left+len(pt)]
-            right_distance = distance_points(pt_right, pt_right[0], pt_right[-1])
-
-            left_area = np.sum(left_distance)
-            right_area = np.sum(right_distance)
+            left_area, right_area = order_area(pt, index, distance_points)
 
             stack.append((left_area, left, left+index+1))
             stack.append((right_area, left+index, left+len(pt)))
         else:
-            # the cost is based on the segment error
-            cost_index = reduced.index(left+index) - 1
-            # compute the cost of the current solution
-            left_cost, right_cost = evaluation.compute_segment_cost(points, reduced, cost_index)
+            left_cost, right_cost = order_segment(pt, index)
 
             stack.append((left_cost, left, left+index+1))
             stack.append((right_cost, left+index, left+len(pt)))
