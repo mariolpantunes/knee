@@ -724,10 +724,13 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.M
         # Get data from cache
         if (left, right) not in cache:
             pt = points[left:right+1]
-            y_hat = lf.linear_fit_transform_points(pt)
-            y = pt[:,1]
-            segment_error = compute_partial_cost(y, y_hat, cost)
-            cache[(left, right)] = segment_error
+            if len(pt) <= 2:
+                cache[(left, right)] = 0
+            else:
+                y_hat = lf.linear_fit_transform_points(pt)
+                y = pt[:,1]
+                segment_error = compute_partial_cost(y, y_hat, cost)
+                cache[(left, right)] = segment_error
         
         segment_errors[i-1] = cache[(left, right)]
         left = right
