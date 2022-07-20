@@ -39,6 +39,22 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 
+import signal
+import time
+
+class timeout:
+    def __init__(self, seconds=1, error_message='Timeout'):
+        self.seconds = seconds
+        self.error_message = error_message
+    def handle_timeout(self, signum, frame):
+        raise TimeoutError(self.error_message)
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.handle_timeout)
+        signal.alarm(self.seconds)
+    def __exit__(self, type, value, traceback):
+        signal.alarm(0)
+
+
 def compute_global_rmse(points: np.ndarray, reduced: np.ndarray):
     y, y_hat = [], []
 
@@ -84,16 +100,26 @@ def main(args):
         ## RDP
         for t in tqdm.tqdm(rdp_threshold, position=1, desc='Thr', leave=False):
             for c in tqdm.tqdm(rdp_metrics, position=2, desc='Cst', leave=False):
+                
                 # convert the threhold from cost to similarity
                 if c is metrics.Metrics.r2:
                     r = 1.0 - t
                 else:
                     r = t
                 
-                ti, std, rv = timeit.timeit(args.n, rdp.rdp, points, t=r, cost=c)
-                reduced, _ = rv
-                cost = compute_global_rmse(points, reduced)
-                mip, mad = evaluation.mip(points, reduced)
+                done = True
+                while not done:
+                    done=True
+                try:
+                    with timeout(seconds=60):
+                        ti, std, rv = timeit.timeit(args.n, rdp.rdp, points, t=r, cost=c)
+                        reduced, _ = rv
+                        cost = compute_global_rmse(points, reduced)
+                        mip, mad = evaluation.mip(points, reduced)
+                except TimeoutError:
+                    done = False
+                    r = r - .01
+                    print(f'Timeout ({r})')
                 
                 # open the corret csv file and write the result
                 with open(f'out/rdp_{t}_{c}.csv', 'a', newline='') as csvfile:
