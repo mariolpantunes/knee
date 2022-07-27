@@ -90,7 +90,7 @@ def differences(points: np.ndarray, cd: Direction, cc: Concavity) -> np.ndarray:
     return rv
 
 
-def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
+def knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
     """Returns the index of the knee point based on the Kneedle method.
 
     Args:
@@ -103,30 +103,15 @@ def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> i
         int: the index of the knee point
     """
 
-    #import matplotlib.pyplot as plt
-
-    # plot original points
-    #plt.plot(points[:,0], points[:,1])
-
     Ds = ema.linear(points, t)
     pmin = Ds.min(axis=0)
     pmax = Ds.max(axis=0)
     diff = pmax - pmin
     diff[diff == 0] = 1.0
 
-    # plot DS
-    #plt.plot(Ds[:,0], Ds[:,1])
-    #plt.show()
-
     Dn = (Ds - pmin)/diff 
-    #plot Dn
-    #plt.plot(Dn[:,0], Dn[:,1])
-    #plt.show()
 
     Dd = differences(Dn, cd, cc)
-    #plot Dd
-    #plt.plot(Dd[:,0], Dd[:,1])
-    #plt.show()
 
     peaks = pd.all_peaks(Dd)
     
@@ -264,7 +249,7 @@ def auto_knee(points: np.ndarray, t: float = 1.0) -> int:
     else:
         cc = Concavity.Counterclockwise
 
-    return single_knee(points, t, cd, cc)
+    return knee(points, t, cd, cc)
 
 
 def multi_knee(points, t1=0.01, t2=3):
