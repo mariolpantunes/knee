@@ -61,7 +61,7 @@ class Fit(Enum):
 
 def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -&gt; int:
     &#34;&#34;&#34;
-    Returns the index of the knee point based on menger curvature.
+    Returns the index of the knee point based on the L-method.
 
     This method uses the iterative refinement.
 
@@ -122,13 +122,16 @@ def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -&gt; int:
     return (index, coef_left, coef_right)
 
 
-def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -&gt; int:
+def knee(points:np.ndarray, fit:Fit=Fit.point_fit, it:bool=True) -&gt; int:
     &#34;&#34;&#34;
     Returns the index of the knee point based on the L-method.
+
+    This method uses the iterative refinement.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         fit (Fit): select between point fit and best fit
+        it (bool): flag the usage of iterative refinement (True)
 
     Returns:
         int: the index of the knee point
@@ -139,14 +142,12 @@ def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -&gt; int:
 
     last_knee = -1
     cutoff  = current_knee = len(x)
-    #logger.info(&#39;Knee [%s, %s, %s]&#39;, cutoff, last_knee, current_knee)
-
     done = False
     while current_knee != last_knee and not done:
         last_knee = current_knee
         current_knee, _, _ = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
         cutoff = int((current_knee + last_knee)/2)
-        if cutoff &lt; 10:
+        if cutoff &lt; 10 or not it:
             done = True
         
     return current_knee
@@ -179,7 +180,7 @@ def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 4) -&gt; np.ndarr
 <span>def <span class="ident">get_knee</span></span>(<span>x: numpy.ndarray, y: numpy.ndarray, fit=pointfit) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns the index of the knee point based on menger curvature.</p>
+<div class="desc"><p>Returns the index of the knee point based on the L-method.</p>
 <p>This method uses the iterative refinement.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -201,7 +202,7 @@ def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 4) -&gt; np.ndarr
 </summary>
 <pre><code class="python">def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -&gt; int:
     &#34;&#34;&#34;
-    Returns the index of the knee point based on menger curvature.
+    Returns the index of the knee point based on the L-method.
 
     This method uses the iterative refinement.
 
@@ -263,16 +264,19 @@ def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 4) -&gt; np.ndarr
 </details>
 </dd>
 <dt id="knee.lmethod.knee"><code class="name flex">
-<span>def <span class="ident">knee</span></span>(<span>points: numpy.ndarray, fit: <a title="knee.lmethod.Fit" href="#knee.lmethod.Fit">Fit</a> = pointfit) ‑> int</span>
+<span>def <span class="ident">knee</span></span>(<span>points: numpy.ndarray, fit: <a title="knee.lmethod.Fit" href="#knee.lmethod.Fit">Fit</a> = pointfit, it: bool = True) ‑> int</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the index of the knee point based on the L-method.</p>
+<p>This method uses the iterative refinement.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
 <dd>numpy array with the points (x, y)</dd>
 <dt><strong><code>fit</code></strong> :&ensp;<code><a title="knee.lmethod.Fit" href="#knee.lmethod.Fit">Fit</a></code></dt>
 <dd>select between point fit and best fit</dd>
+<dt><strong><code>it</code></strong> :&ensp;<code>bool</code></dt>
+<dd>flag the usage of iterative refinement (True)</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -283,13 +287,16 @@ def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 4) -&gt; np.ndarr
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -&gt; int:
+<pre><code class="python">def knee(points:np.ndarray, fit:Fit=Fit.point_fit, it:bool=True) -&gt; int:
     &#34;&#34;&#34;
     Returns the index of the knee point based on the L-method.
+
+    This method uses the iterative refinement.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         fit (Fit): select between point fit and best fit
+        it (bool): flag the usage of iterative refinement (True)
 
     Returns:
         int: the index of the knee point
@@ -300,14 +307,12 @@ def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 4) -&gt; np.ndarr
 
     last_knee = -1
     cutoff  = current_knee = len(x)
-    #logger.info(&#39;Knee [%s, %s, %s]&#39;, cutoff, last_knee, current_knee)
-
     done = False
     while current_knee != last_knee and not done:
         last_knee = current_knee
         current_knee, _, _ = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
         cutoff = int((current_knee + last_knee)/2)
-        if cutoff &lt; 10:
+        if cutoff &lt; 10 or not it:
             done = True
         
     return current_knee</code></pre>

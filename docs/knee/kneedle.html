@@ -119,7 +119,7 @@ def differences(points: np.ndarray, cd: Direction, cc: Concavity) -&gt; np.ndarr
     return rv
 
 
-def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -&gt; int:
+def knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -&gt; int:
     &#34;&#34;&#34;Returns the index of the knee point based on the Kneedle method.
 
     Args:
@@ -131,15 +131,20 @@ def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -&gt
     Returns:
         int: the index of the knee point
     &#34;&#34;&#34;
+
     Ds = ema.linear(points, t)
     pmin = Ds.min(axis=0)
     pmax = Ds.max(axis=0)
     diff = pmax - pmin
     diff[diff == 0] = 1.0
+
     Dn = (Ds - pmin)/diff 
+
     Dd = differences(Dn, cd, cc)
+
     peaks = pd.all_peaks(Dd)
-    idx = pd.highest_peak(points, peaks)
+    
+    idx = pd.highest_peak(Dd, peaks)
     if idx == -1:
         return None
     else:
@@ -273,7 +278,7 @@ def auto_knee(points: np.ndarray, t: float = 1.0) -&gt; int:
     else:
         cc = Concavity.Counterclockwise
 
-    return single_knee(points, t, cd, cc)
+    return knee(points, t, cd, cc)
 
 
 def multi_knee(points, t1=0.01, t2=3):
@@ -361,7 +366,7 @@ the direction and rotation of the concavity.</p>
     else:
         cc = Concavity.Counterclockwise
 
-    return single_knee(points, t, cd, cc)</code></pre>
+    return knee(points, t, cd, cc)</code></pre>
 </details>
 </dd>
 <dt id="knee.kneedle.auto_knees"><code class="name flex">
@@ -498,6 +503,63 @@ relevant knees:
     return rv</code></pre>
 </details>
 </dd>
+<dt id="knee.kneedle.knee"><code class="name flex">
+<span>def <span class="ident">knee</span></span>(<span>points: numpy.ndarray, t: float, cd: <a title="knee.kneedle.Direction" href="#knee.kneedle.Direction">Direction</a>, cc: <a title="knee.kneedle.Concavity" href="#knee.kneedle.Concavity">Concavity</a>) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the index of the knee point based on the Kneedle method.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
+<dd>numpy array with the points (x, y)</dd>
+<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
+<dd>tau of the side window used to smooth the curve</dd>
+<dt><strong><code>cd</code></strong> :&ensp;<code><a title="knee.kneedle.Direction" href="#knee.kneedle.Direction">Direction</a></code></dt>
+<dd>direction of the concavity</dd>
+<dt><strong><code>cc</code></strong> :&ensp;<code><a title="knee.kneedle.Concavity" href="#knee.kneedle.Concavity">Concavity</a></code></dt>
+<dd>rotation of the concavity</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>the index of the knee point</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -&gt; int:
+    &#34;&#34;&#34;Returns the index of the knee point based on the Kneedle method.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): tau of the side window used to smooth the curve
+        cd (Direction): direction of the concavity
+        cc (Concavity): rotation of the concavity
+
+    Returns:
+        int: the index of the knee point
+    &#34;&#34;&#34;
+
+    Ds = ema.linear(points, t)
+    pmin = Ds.min(axis=0)
+    pmax = Ds.max(axis=0)
+    diff = pmax - pmin
+    diff[diff == 0] = 1.0
+
+    Dn = (Ds - pmin)/diff 
+
+    Dd = differences(Dn, cd, cc)
+
+    peaks = pd.all_peaks(Dd)
+    
+    idx = pd.highest_peak(Dd, peaks)
+    if idx == -1:
+        return None
+    else:
+        return idx</code></pre>
+</details>
+</dd>
 <dt id="knee.kneedle.knees"><code class="name flex">
 <span>def <span class="ident">knees</span></span>(<span>points: numpy.ndarray, t: float, cd: <a title="knee.kneedle.Direction" href="#knee.kneedle.Direction">Direction</a>, cc: <a title="knee.kneedle.Concavity" href="#knee.kneedle.Concavity">Concavity</a>, sensitivity: float = 1.0, p: <a title="knee.kneedle.PeakDetection" href="#knee.kneedle.PeakDetection">PeakDetection</a> = Kneedle, debug: bool = False) ‑> numpy.ndarray</span>
 </code></dt>
@@ -630,58 +692,6 @@ relevant knees:
     &#34;&#34;&#34;
     knees = mk.multi_knee(auto_knee, points, t1, t2)
     return knees</code></pre>
-</details>
-</dd>
-<dt id="knee.kneedle.single_knee"><code class="name flex">
-<span>def <span class="ident">single_knee</span></span>(<span>points: numpy.ndarray, t: float, cd: <a title="knee.kneedle.Direction" href="#knee.kneedle.Direction">Direction</a>, cc: <a title="knee.kneedle.Concavity" href="#knee.kneedle.Concavity">Concavity</a>) ‑> int</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Returns the index of the knee point based on the Kneedle method.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>points</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>numpy array with the points (x, y)</dd>
-<dt><strong><code>t</code></strong> :&ensp;<code>float</code></dt>
-<dd>tau of the side window used to smooth the curve</dd>
-<dt><strong><code>cd</code></strong> :&ensp;<code><a title="knee.kneedle.Direction" href="#knee.kneedle.Direction">Direction</a></code></dt>
-<dd>direction of the concavity</dd>
-<dt><strong><code>cc</code></strong> :&ensp;<code><a title="knee.kneedle.Concavity" href="#knee.kneedle.Concavity">Concavity</a></code></dt>
-<dd>rotation of the concavity</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>int</code></dt>
-<dd>the index of the knee point</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def single_knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -&gt; int:
-    &#34;&#34;&#34;Returns the index of the knee point based on the Kneedle method.
-
-    Args:
-        points (np.ndarray): numpy array with the points (x, y)
-        t (float): tau of the side window used to smooth the curve
-        cd (Direction): direction of the concavity
-        cc (Concavity): rotation of the concavity
-
-    Returns:
-        int: the index of the knee point
-    &#34;&#34;&#34;
-    Ds = ema.linear(points, t)
-    pmin = Ds.min(axis=0)
-    pmax = Ds.max(axis=0)
-    diff = pmax - pmin
-    diff[diff == 0] = 1.0
-    Dn = (Ds - pmin)/diff 
-    Dd = differences(Dn, cd, cc)
-    peaks = pd.all_peaks(Dd)
-    idx = pd.highest_peak(points, peaks)
-    if idx == -1:
-        return None
-    else:
-        return idx</code></pre>
 </details>
 </dd>
 </dl>
@@ -826,9 +836,9 @@ relevant knees:
 <li><code><a title="knee.kneedle.auto_knee" href="#knee.kneedle.auto_knee">auto_knee</a></code></li>
 <li><code><a title="knee.kneedle.auto_knees" href="#knee.kneedle.auto_knees">auto_knees</a></code></li>
 <li><code><a title="knee.kneedle.differences" href="#knee.kneedle.differences">differences</a></code></li>
+<li><code><a title="knee.kneedle.knee" href="#knee.kneedle.knee">knee</a></code></li>
 <li><code><a title="knee.kneedle.knees" href="#knee.kneedle.knees">knees</a></code></li>
 <li><code><a title="knee.kneedle.multi_knee" href="#knee.kneedle.multi_knee">multi_knee</a></code></li>
-<li><code><a title="knee.kneedle.single_knee" href="#knee.kneedle.single_knee">single_knee</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

@@ -32,7 +32,7 @@ class Fit(Enum):
 
 def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -> int:
     """
-    Returns the index of the knee point based on menger curvature.
+    Returns the index of the knee point based on the L-method.
 
     This method uses the iterative refinement.
 
@@ -93,13 +93,16 @@ def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -> int:
     return (index, coef_left, coef_right)
 
 
-def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -> int:
+def knee(points:np.ndarray, fit:Fit=Fit.point_fit, it:bool=True) -> int:
     """
     Returns the index of the knee point based on the L-method.
+
+    This method uses the iterative refinement.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         fit (Fit): select between point fit and best fit
+        it (bool): flag the usage of iterative refinement (True)
 
     Returns:
         int: the index of the knee point
@@ -110,14 +113,12 @@ def knee(points:np.ndarray, fit:Fit=Fit.point_fit) -> int:
 
     last_knee = -1
     cutoff  = current_knee = len(x)
-    #logger.info('Knee [%s, %s, %s]', cutoff, last_knee, current_knee)
-
     done = False
     while current_knee != last_knee and not done:
         last_knee = current_knee
         current_knee, _, _ = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
         cutoff = int((current_knee + last_knee)/2)
-        if cutoff < 10:
+        if cutoff < 10 or not it:
             done = True
         
     return current_knee
