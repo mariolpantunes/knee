@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_knee(x: np.ndarray, y: np.ndarray) -> int:
-    """Return the index of the knee point based on the DFDT method.
+    """
+    Return the index of the knee point based on the DFDT method.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
@@ -32,7 +33,8 @@ def get_knee(x: np.ndarray, y: np.ndarray) -> int:
 
 
 def get_knee_gradient(gradient: np.ndarray) -> int:
-    """Return the index of the knee point based on the DFDT method.
+    """
+    Return the index of the knee point based on the DFDT method.
 
     Args:
         gradient (np.ndarray): the first order gradient of the trace points
@@ -47,7 +49,8 @@ def get_knee_gradient(gradient: np.ndarray) -> int:
 
 
 def knee(points: np.ndarray) -> int:
-    """Returns the index of the knee point based on the DFDT method.
+    """
+    Returns the index of the knee point based on the DFDT method.
 
     It uses the iterative refinement  method.
 
@@ -74,7 +77,8 @@ def knee(points: np.ndarray) -> int:
 
 
 def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 3) -> np.ndarray:
-    """Recursive knee point detection based on DFDT.
+    """
+    Recursive knee point detection based on DFDT.
 
     It returns the knee points on the curve.
 

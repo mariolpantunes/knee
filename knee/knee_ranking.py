@@ -32,8 +32,16 @@ class ClusterRanking(enum.Enum):
 
 def distances(point:np.ndarray, points:np.ndarray) -> np.ndarray:
     """
+    Computes the euclidean distance from a single point to a vector of points.
+
+    Args:
+        point (np.ndarray): the point
+        points (np.ndarray): the vector of points
+    
+    Returns:
+        np.ndarray: a vector with the distances from point to all the points. 
     """
-    return np.sqrt(np.sum((points - point)**2, axis=1))
+    return np.sqrt(np.sum(np.power(points - point, 2), axis=1))
 
 
 def rect_overlap(amin: np.ndarray, amax: np.ndarray, bmin: np.ndarray, bmax: np.ndarray) -> float:
@@ -111,7 +119,8 @@ def rank(array: np.ndarray) -> np.ndarray:
 
 
 def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.ndarray:
-    """Computes the rank of a set of knees in a curve.
+    """
+    Computes the rank of a set of knees in a curve.
 
     The ranking is based on the slope of the left of the knee point.
     The left neighbourhood is computed based on the R2 metric.

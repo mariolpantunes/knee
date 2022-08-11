@@ -16,8 +16,8 @@ This library was documented using the google style docstring, it can be accessed
 Run the following commands to produce the documentation for this library.
 
 ```bash
-pip install pdoc3
-pdoc -c latex_math=True --html -o docs knee --force
+pip install pdoc
+pdoc --math -d google -o docs knee
 ```
 
 ## Instalation

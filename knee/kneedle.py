@@ -55,7 +55,8 @@ class PeakDetection(enum.Enum):
 
 
 def differences(points: np.ndarray, cd: Direction, cc: Concavity) -> np.ndarray:
-    """Computes the differences from the y axis.
+    """
+    Computes the differences from the y axis.
 
     These differences represent a rotation within the original algorithm.
 
@@ -91,7 +92,8 @@ def differences(points: np.ndarray, cd: Direction, cc: Concavity) -> np.ndarray:
 
 
 def knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
-    """Returns the index of the knee point based on the Kneedle method.
+    """
+    Returns the index of the knee point based on the Kneedle method.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
@@ -123,7 +125,8 @@ def knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
 
 
 def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle, debug:bool=False) -> np.ndarray:
-    """Returns the index of the knees point based on the Kneedle method.
+    """
+    Returns the index of the knees point based on the Kneedle method.
 
     This implementation uses an heuristic to automatically define
     the direction and rotation of the concavity.
@@ -174,7 +177,8 @@ def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivit
 
 
 def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p: PeakDetection = PeakDetection.Kneedle) -> np.ndarray:
-    """Returns the index of the knees point based on the Kneedle method.
+    """
+    Returns the index of the knees point based on the Kneedle method.
 
     This implementation uses an heuristic to automatically define
     the direction and rotation of the concavity.
@@ -214,7 +218,8 @@ def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p:
 
 
 def auto_knee(points: np.ndarray, t: float = 1.0) -> int:
-    """Returns the index of the knee point based on the Kneedle method.
+    """
+    Returns the index of the knee point based on the Kneedle method.
 
     This implementation uses an heuristic to automatically define
     the direction and rotation of the concavity.

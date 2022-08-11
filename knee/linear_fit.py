@@ -92,12 +92,39 @@ def linear_transform(x: np.ndarray, coef: tuple) -> np.ndarray:
 
 
 def linear_hv_residuals_points(points: np.ndarray) -> float:
+    """
+    Computes the residual error from a straight line fitting.
+
+    This methods tries a horizontal (typical $f(x)=m \\times x + b$ equation)
+    and a vertinal line (a non typical $f(y) = m \\times y + b$ equation).
+    It returns the smaller residual errors.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+    
+    Returns:
+        float: the residuals of the line fitting.
+    """
     x = points[:, 0]
     y = points[:, 1]
     return linear_hv_residuals(x,y)
 
 
 def linear_hv_residuals(x: np.ndarray, y: np.ndarray) -> float:
+    """
+    Computes the residual error from a straight line fitting.
+
+    This methods tries a horizontal (typical $f(x)=m \\times x + b$ equation)
+    and a vertinal line (a non typical $f(y) = m \\times y + b$ equation).
+    It returns the smaller residual errors.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+    
+    Returns:
+        float: the residuals of the line fitting.
+    """
     # try a tipical y = mx + b line
     coef1 = linear_fit(x, y)
     y_residuals = linear_residuals(x, y, coef1)
@@ -112,7 +139,21 @@ def linear_hv_residuals(x: np.ndarray, y: np.ndarray) -> float:
         return x_residuals
 
 
-def linear_fit_transform_points(points: np.ndarray, vertical=False) -> Union[np.ndarray, tuple]:
+def linear_fit_transform_points(points: np.ndarray, vertical:bool=False) -> Union[np.ndarray, tuple]:
+    """
+    Computes the horizontal or vertical line fitting.
+
+    A horizontal line fitting uses the typical $f(x)=m \\times x + b$ equation.
+    The vertinal line fitting uses the non typical $f(y) = m \\times y + b$ equation.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        vertical (bool): if True computes the vertical line fitting (default: False)
+    
+    Returns:
+        Union[np.ndarray, tuple]: for horizontal retuns only the computed y_hat values.
+        For the vertical line fitting returns the x points and the y_hat values.
+    """
     x = points[:, 0]
     y = points[:, 1]
     return linear_fit_transform(x, y, vertical)
@@ -435,7 +476,7 @@ def angle(coef1: tuple, coef2: tuple) -> float:
         coef2 (tuple): the coefficients from the second line
 
     Returns:
-        float: the angle between two lines \\( \\left[0,\\frac{\\pi}{2} \\right] \\)
+        float: the angle between two lines $\\left[0,\\frac{\\pi}{2} \\right]$
     """
     _, m1 = coef1
     _, m2 = coef2
