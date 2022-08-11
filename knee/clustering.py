@@ -32,18 +32,16 @@ def single_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     """
     clusters = []
     cluster_index = 0
-    duration = points[-1, 0] - points[0, 0]
+    length = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
 
     for i in range(1, len(points)):
-        distance = math.fabs(points[i][0]-points[i-1][0])/duration
-        if distance < t:
-            clusters.append(cluster_index)
-        else:
+        distance = math.fabs(points[i][0]-points[i-1][0])/length
+        if distance >= t:
             cluster_index += 1
-            clusters.append(cluster_index)
+        clusters.append(cluster_index)
 
     return np.array(clusters)
 
@@ -66,21 +64,18 @@ def complete_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     """
     clusters = []
     cluster_index = 0
-    duration = points[-1, 0] - points[0, 0]
+    length = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
     cluster_point_idx = 0
 
     for i in range(1, len(points)):
-        distance = math.fabs(
-            points[i][0]-points[cluster_point_idx][0])/duration
-        if distance < t:
-            clusters.append(cluster_index)
-        else:
+        distance = math.fabs(points[i][0]-points[cluster_point_idx][0])/length
+        if distance >= t:
             cluster_index += 1
-            clusters.append(cluster_index)
             cluster_point_idx = i
+        clusters.append(cluster_index)
 
     return np.array(clusters)
 
@@ -103,7 +98,7 @@ def centroid_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     """
     clusters = []
     cluster_index = 0
-    duration = points[-1, 0] - points[0, 0]
+    length = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
@@ -111,20 +106,18 @@ def centroid_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     cluster_size = 1
 
     for i in range(1, len(points)):
-        distance = math.fabs(points[i][0] - cluster_center)/duration
+        distance = math.fabs(points[i][0] - cluster_center)/length
         if distance < t:
             clusters.append(cluster_index)
             # Update center
             cluster_center = (cluster_size/(cluster_size+1)) * \
                 cluster_center + (1/(cluster_size+1)) * points[i][0]
             cluster_size += 1
-            #logger.info('Cluster Center %s (%s)', cluster_center, cluster_size)
         else:
             cluster_index += 1
             clusters.append(cluster_index)
             cluster_center = points[i, 0]
             cluster_size = 1
-            #logger.info('Cluster Center %s (%s)', cluster_center, cluster_size)
 
     return np.array(clusters)
 
@@ -147,7 +140,7 @@ def average_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     """
     clusters = []
     cluster_index = 0
-    duration = points[-1, 0] - points[0, 0]
+    length = points[-1, 0] - points[0, 0]
 
     # First Point is a cluster
     clusters.append(cluster_index)
@@ -156,12 +149,10 @@ def average_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     for i in range(1, len(points)):
         cluster_points = points[idx:i, 0]
         distances = np.abs(cluster_points - points[i][0])
-        distance = np.sum(distances)/(len(cluster_points)*duration)
-        if distance < t:
-            clusters.append(cluster_index)
-        else:
+        distance = np.sum(distances)/(len(cluster_points)*length)
+        if distance >= t:
             cluster_index += 1
-            clusters.append(cluster_index)
             idx = i
+        clusters.append(cluster_index)
 
     return np.array(clusters)
