@@ -34,13 +34,13 @@ def get_neighbourhood_points(points: np.ndarray, a: int, b: int, t: float) -> tu
     """
     Get the neighbourhood (closest points) from a to b.
 
-    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).
+    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         a (int): the initial point of the search
         b (int): the left limit of the search
-        t (float): \\(R^2\\) threshold
+        t (float): $R^2$ threshold
 
     Returns:
         tuple: (neighbourhood index, r2, slope)
@@ -55,14 +55,14 @@ def get_neighbourhood_fast_points(points: np.ndarray, a: int, b: int, t: float) 
     """
     Get the neighbourhood (closest points) from a to b.
 
-    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).
+    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).
     This version uses a inaccurate binary search to speedup the search.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         a (int): the initial point of the search
         b (int): the left limit of the search
-        t (float): \\(R^2\\) threshold
+        t (float): $R^2$ threshold
 
     Returns:
         tuple: (neighbourhood index, r2, slope)
@@ -75,7 +75,7 @@ def get_neighbourhood_fast_points(points: np.ndarray, a: int, b: int, t: float) 
 
 def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a: int, b: int, t=0.9) -> int:
     """
-    Get the index of the point within the range \\([b, a]\\) where the \\(R^2\\) is close to the threshold.
+    Get the index of the point within the range $[b, a]$ where the $R^2$ is close to the threshold.
 
     This version uses a inaccurate binary search to speedup the search.
 
@@ -84,7 +84,7 @@ def get_neighbourhood_binary(x: np.ndarray, y: np.ndarray, a: int, b: int, t=0.9
         y (np.ndarray): the value of the points in the y axis coordinates
         a (int): the initial point of the search
         b (int): the left limit of the search
-        t (float): \\(R^2\\) threshold (default 0.9)
+        t (float): $R^2$ threshold (default 0.9)
 
     Returns:
         int: index of the point
@@ -110,7 +110,7 @@ def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: floa
     """
     Get the neighbourhood (closest points) from a to b.
 
-    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).
+    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).
     This version uses a inaccurate binary search to speedup the search.
 
     Args:
@@ -118,7 +118,7 @@ def get_neighbourhood_fast(x: np.ndarray, y: np.ndarray, a: int, b: int, t: floa
         y (np.ndarray): the value of the points in the y axis coordinates
         a (int): the initial point of the search
         b (int): the left limit of the search
-        t (float): \\(R^2\\) threshold (default 0.9)
+        t (float): $R^2$ threshold (default 0.9)
 
     Returns:
         tuple: (neighbourhood index, r2, slope)
@@ -144,14 +144,14 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
     """
     Get the neighbourhood (closest points) from a to b.
 
-    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).
+    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
         y (np.ndarray): the value of the points in the y axis coordinates
         a (int): the initial point of the search
         b (int): the left limit of the search
-        t (float): \\(R^2\\) threshold (default 0.9)
+        t (float): $R^2$ threshold (default 0.9)
 
     Returns:
         tuple: (neighbourhood index, r2, slope)
@@ -179,13 +179,13 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
 def accuracy_knee(points: np.ndarray, knees: np.ndarray, t: float = 0.9) -> tuple:
     """Compute the accuracy heuristic for a set of knees.
 
-    The heuristic is based on the average distance of X and Y axis, the slope and the \\(R^2\\).
+    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.
     In this version it is used the left neighbourhood of the knee.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
-        t (float): \\(R^2\\) threshold (default 0.9)
+        t (float): $R^2$ threshold (default 0.9)
 
     Returns:
         tuple: (average_x, average_y, average_slope, average_coeffients, cost)
@@ -240,7 +240,7 @@ def accuracy_knee(points: np.ndarray, knees: np.ndarray, t: float = 0.9) -> tupl
 def accuracy_trace(points: np.ndarray, knees: np.ndarray) -> tuple:
     """Compute the accuracy heuristic for a set of knees.
 
-    The heuristic is based on the average distance of X and Y axis, the slope and the \\(R^2\\).
+    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.
     In this version it is used the points from the current knee to the previous.
 
     Args:

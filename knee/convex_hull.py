@@ -19,7 +19,7 @@ def ccw(a:np.ndarray, b:np.ndarray, c:np.ndarray) -> float:
         c (np.ndarray): numpy array with a single point (x, y)
 
     Returns:
-        float: \\( \\gt 0\\) if counter-clockwise; \\( \\lt 0\\) if clockwise; \\( = 0\\) if collinear
+        float: $ \\gt 0$ if counter-clockwise; $ \\lt 0$ if clockwise; $ = 0$ if collinear
     """
     return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])
 
