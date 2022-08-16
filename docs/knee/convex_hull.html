@@ -39,6 +39,7 @@
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
 </svg>                &nbsp;knee</a>
 
+            <img src="media/knee.png" class="logo" alt="project logo"/>
 
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
@@ -104,7 +105,7 @@
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">        c (np.ndarray): numpy array with a single point (x, y)</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">    Returns:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">        float: \\( \\gt 0\\) if counter-clockwise; \\( \\lt 0\\) if clockwise; \\( = 0\\) if collinear</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">        float: $ \\gt 0$ if counter-clockwise; $ \\lt 0$ if clockwise; $ = 0$ if collinear</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
@@ -223,7 +224,7 @@
 </span><span id="ccw-20"><a href="#ccw-20"><span class="linenos">20</span></a><span class="sd">        c (np.ndarray): numpy array with a single point (x, y)</span>
 </span><span id="ccw-21"><a href="#ccw-21"><span class="linenos">21</span></a>
 </span><span id="ccw-22"><a href="#ccw-22"><span class="linenos">22</span></a><span class="sd">    Returns:</span>
-</span><span id="ccw-23"><a href="#ccw-23"><span class="linenos">23</span></a><span class="sd">        float: \\( \\gt 0\\) if counter-clockwise; \\( \\lt 0\\) if clockwise; \\( = 0\\) if collinear</span>
+</span><span id="ccw-23"><a href="#ccw-23"><span class="linenos">23</span></a><span class="sd">        float: $ \\gt 0$ if counter-clockwise; $ \\lt 0$ if clockwise; $ = 0$ if collinear</span>
 </span><span id="ccw-24"><a href="#ccw-24"><span class="linenos">24</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="ccw-25"><a href="#ccw-25"><span class="linenos">25</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </span></pre></div>
@@ -242,7 +243,7 @@
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>float: ( \gt 0) if counter-clockwise; ( \lt 0) if clockwise; ( = 0) if collinear</p>
+  <p>float: $ \gt 0$ if counter-clockwise; $ \lt 0$ if clockwise; $ = 0$ if collinear</p>
 </blockquote>
 </div>
 

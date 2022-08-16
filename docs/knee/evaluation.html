@@ -39,6 +39,7 @@
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
 </svg>                &nbsp;knee</a>
 
+            <img src="media/knee.png" class="logo" alt="project logo"/>
 
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
@@ -185,13 +186,13 @@
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    Args:</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">        points (np.ndarray): numpy array with the points (x, y)</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">        t (float): \\(R^2\\) threshold</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">        t (float): $R^2$ threshold</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    Returns:</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        tuple: (neighbourhood index, r2, slope)</span>
@@ -206,14 +207,14 @@
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    This version uses a inaccurate binary search to speedup the search.</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    Args:</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">        points (np.ndarray): numpy array with the points (x, y)</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">        t (float): \\(R^2\\) threshold</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">        t (float): $R^2$ threshold</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    Returns:</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        tuple: (neighbourhood index, r2, slope)</span>
@@ -226,7 +227,7 @@
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_binary</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    Get the index of the point within the range \\([b, a]\\) where the \\(R^2\\) is close to the threshold.</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    Get the index of the point within the range $[b, a]$ where the $R^2$ is close to the threshold.</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    This version uses a inaccurate binary search to speedup the search.</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
@@ -235,7 +236,7 @@
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        y (np.ndarray): the value of the points in the y axis coordinates</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        t (float): \\(R^2\\) threshold (default 0.9)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        t (float): $R^2$ threshold (default 0.9)</span>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">    Returns:</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        int: index of the point</span>
@@ -261,7 +262,7 @@
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">    This version uses a inaccurate binary search to speedup the search.</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">    Args:</span>
@@ -269,7 +270,7 @@
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        y (np.ndarray): the value of the points in the y axis coordinates</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        t (float): \\(R^2\\) threshold (default 0.9)</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        t (float): $R^2$ threshold (default 0.9)</span>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">    Returns:</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        tuple: (neighbourhood index, r2, slope)</span>
@@ -295,14 +296,14 @@
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">    Args:</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        x (np.ndarray): the value of the points in the x axis coordinates</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">        y (np.ndarray): the value of the points in the y axis coordinates</span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        t (float): \\(R^2\\) threshold (default 0.9)</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        t (float): $R^2$ threshold (default 0.9)</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">    Returns:</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">        tuple: (neighbourhood index, r2, slope)</span>
@@ -330,13 +331,13 @@
 </span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="k">def</span> <span class="nf">accuracy_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 </span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the \\(R^2\\).</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.</span>
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">    In this version it is used the left neighbourhood of the knee.</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
 </span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">    Args:</span>
 </span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">        points (np.ndarray): numpy array with the points (x, y)</span>
 </span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">        knees (np.ndarray): knees indexes</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        t (float): \\(R^2\\) threshold (default 0.9)</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        t (float): $R^2$ threshold (default 0.9)</span>
 </span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>
 </span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">    Returns:</span>
 </span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">        tuple: (average_x, average_y, average_slope, average_coeffients, cost)</span>
@@ -391,7 +392,7 @@
 </span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="k">def</span> <span class="nf">accuracy_trace</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 </span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>    <span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
 </span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the \\(R^2\\).</span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.</span>
 </span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">    In this version it is used the points from the current knee to the previous.</span>
 </span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>
 </span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="sd">    Args:</span>
@@ -1074,13 +1075,13 @@
 </span><span id="get_neighbourhood_points-35"><a href="#get_neighbourhood_points-35"><span class="linenos">35</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood_points-36"><a href="#get_neighbourhood_points-36"><span class="linenos">36</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="get_neighbourhood_points-37"><a href="#get_neighbourhood_points-37"><span class="linenos">37</span></a>
-</span><span id="get_neighbourhood_points-38"><a href="#get_neighbourhood_points-38"><span class="linenos">38</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).</span>
+</span><span id="get_neighbourhood_points-38"><a href="#get_neighbourhood_points-38"><span class="linenos">38</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
 </span><span id="get_neighbourhood_points-39"><a href="#get_neighbourhood_points-39"><span class="linenos">39</span></a>
 </span><span id="get_neighbourhood_points-40"><a href="#get_neighbourhood_points-40"><span class="linenos">40</span></a><span class="sd">    Args:</span>
 </span><span id="get_neighbourhood_points-41"><a href="#get_neighbourhood_points-41"><span class="linenos">41</span></a><span class="sd">        points (np.ndarray): numpy array with the points (x, y)</span>
 </span><span id="get_neighbourhood_points-42"><a href="#get_neighbourhood_points-42"><span class="linenos">42</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="get_neighbourhood_points-43"><a href="#get_neighbourhood_points-43"><span class="linenos">43</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="get_neighbourhood_points-44"><a href="#get_neighbourhood_points-44"><span class="linenos">44</span></a><span class="sd">        t (float): \\(R^2\\) threshold</span>
+</span><span id="get_neighbourhood_points-44"><a href="#get_neighbourhood_points-44"><span class="linenos">44</span></a><span class="sd">        t (float): $R^2$ threshold</span>
 </span><span id="get_neighbourhood_points-45"><a href="#get_neighbourhood_points-45"><span class="linenos">45</span></a>
 </span><span id="get_neighbourhood_points-46"><a href="#get_neighbourhood_points-46"><span class="linenos">46</span></a><span class="sd">    Returns:</span>
 </span><span id="get_neighbourhood_points-47"><a href="#get_neighbourhood_points-47"><span class="linenos">47</span></a><span class="sd">        tuple: (neighbourhood index, r2, slope)</span>
@@ -1094,7 +1095,7 @@
 
             <div class="docstring"><p>Get the neighbourhood (closest points) from a to b.</p>
 
-<p>The neighbourhood is defined as the longest straitgh line (defined by (R^2)).</p>
+<p>The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</p>
 
 <h6 id="args">Args</h6>
 
@@ -1102,7 +1103,7 @@
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>a (int):</strong>  the initial point of the search</li>
 <li><strong>b (int):</strong>  the left limit of the search</li>
-<li><strong>t (float):</strong>  (R^2) threshold</li>
+<li><strong>t (float):</strong>  $R^2$ threshold</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -1129,14 +1130,14 @@
 </span><span id="get_neighbourhood_fast_points-56"><a href="#get_neighbourhood_fast_points-56"><span class="linenos">56</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood_fast_points-57"><a href="#get_neighbourhood_fast_points-57"><span class="linenos">57</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="get_neighbourhood_fast_points-58"><a href="#get_neighbourhood_fast_points-58"><span class="linenos">58</span></a>
-</span><span id="get_neighbourhood_fast_points-59"><a href="#get_neighbourhood_fast_points-59"><span class="linenos">59</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).</span>
+</span><span id="get_neighbourhood_fast_points-59"><a href="#get_neighbourhood_fast_points-59"><span class="linenos">59</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
 </span><span id="get_neighbourhood_fast_points-60"><a href="#get_neighbourhood_fast_points-60"><span class="linenos">60</span></a><span class="sd">    This version uses a inaccurate binary search to speedup the search.</span>
 </span><span id="get_neighbourhood_fast_points-61"><a href="#get_neighbourhood_fast_points-61"><span class="linenos">61</span></a>
 </span><span id="get_neighbourhood_fast_points-62"><a href="#get_neighbourhood_fast_points-62"><span class="linenos">62</span></a><span class="sd">    Args:</span>
 </span><span id="get_neighbourhood_fast_points-63"><a href="#get_neighbourhood_fast_points-63"><span class="linenos">63</span></a><span class="sd">        points (np.ndarray): numpy array with the points (x, y)</span>
 </span><span id="get_neighbourhood_fast_points-64"><a href="#get_neighbourhood_fast_points-64"><span class="linenos">64</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="get_neighbourhood_fast_points-65"><a href="#get_neighbourhood_fast_points-65"><span class="linenos">65</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="get_neighbourhood_fast_points-66"><a href="#get_neighbourhood_fast_points-66"><span class="linenos">66</span></a><span class="sd">        t (float): \\(R^2\\) threshold</span>
+</span><span id="get_neighbourhood_fast_points-66"><a href="#get_neighbourhood_fast_points-66"><span class="linenos">66</span></a><span class="sd">        t (float): $R^2$ threshold</span>
 </span><span id="get_neighbourhood_fast_points-67"><a href="#get_neighbourhood_fast_points-67"><span class="linenos">67</span></a>
 </span><span id="get_neighbourhood_fast_points-68"><a href="#get_neighbourhood_fast_points-68"><span class="linenos">68</span></a><span class="sd">    Returns:</span>
 </span><span id="get_neighbourhood_fast_points-69"><a href="#get_neighbourhood_fast_points-69"><span class="linenos">69</span></a><span class="sd">        tuple: (neighbourhood index, r2, slope)</span>
@@ -1150,7 +1151,7 @@
 
             <div class="docstring"><p>Get the neighbourhood (closest points) from a to b.</p>
 
-<p>The neighbourhood is defined as the longest straitgh line (defined by (R^2)).
+<p>The neighbourhood is defined as the longest straitgh line (defined by $R^2$).
 This version uses a inaccurate binary search to speedup the search.</p>
 
 <h6 id="args">Args</h6>
@@ -1159,7 +1160,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>a (int):</strong>  the initial point of the search</li>
 <li><strong>b (int):</strong>  the left limit of the search</li>
-<li><strong>t (float):</strong>  (R^2) threshold</li>
+<li><strong>t (float):</strong>  $R^2$ threshold</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -1184,7 +1185,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
     <a class="headerlink" href="#get_neighbourhood_binary"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_neighbourhood_binary-77"><a href="#get_neighbourhood_binary-77"><span class="linenos"> 77</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_binary</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="get_neighbourhood_binary-78"><a href="#get_neighbourhood_binary-78"><span class="linenos"> 78</span></a>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="get_neighbourhood_binary-79"><a href="#get_neighbourhood_binary-79"><span class="linenos"> 79</span></a><span class="sd">    Get the index of the point within the range \\([b, a]\\) where the \\(R^2\\) is close to the threshold.</span>
+</span><span id="get_neighbourhood_binary-79"><a href="#get_neighbourhood_binary-79"><span class="linenos"> 79</span></a><span class="sd">    Get the index of the point within the range $[b, a]$ where the $R^2$ is close to the threshold.</span>
 </span><span id="get_neighbourhood_binary-80"><a href="#get_neighbourhood_binary-80"><span class="linenos"> 80</span></a>
 </span><span id="get_neighbourhood_binary-81"><a href="#get_neighbourhood_binary-81"><span class="linenos"> 81</span></a><span class="sd">    This version uses a inaccurate binary search to speedup the search.</span>
 </span><span id="get_neighbourhood_binary-82"><a href="#get_neighbourhood_binary-82"><span class="linenos"> 82</span></a>
@@ -1193,7 +1194,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 </span><span id="get_neighbourhood_binary-85"><a href="#get_neighbourhood_binary-85"><span class="linenos"> 85</span></a><span class="sd">        y (np.ndarray): the value of the points in the y axis coordinates</span>
 </span><span id="get_neighbourhood_binary-86"><a href="#get_neighbourhood_binary-86"><span class="linenos"> 86</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="get_neighbourhood_binary-87"><a href="#get_neighbourhood_binary-87"><span class="linenos"> 87</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="get_neighbourhood_binary-88"><a href="#get_neighbourhood_binary-88"><span class="linenos"> 88</span></a><span class="sd">        t (float): \\(R^2\\) threshold (default 0.9)</span>
+</span><span id="get_neighbourhood_binary-88"><a href="#get_neighbourhood_binary-88"><span class="linenos"> 88</span></a><span class="sd">        t (float): $R^2$ threshold (default 0.9)</span>
 </span><span id="get_neighbourhood_binary-89"><a href="#get_neighbourhood_binary-89"><span class="linenos"> 89</span></a>
 </span><span id="get_neighbourhood_binary-90"><a href="#get_neighbourhood_binary-90"><span class="linenos"> 90</span></a><span class="sd">    Returns:</span>
 </span><span id="get_neighbourhood_binary-91"><a href="#get_neighbourhood_binary-91"><span class="linenos"> 91</span></a><span class="sd">        int: index of the point</span>
@@ -1216,7 +1217,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Get the index of the point within the range ([b, a]) where the (R^2) is close to the threshold.</p>
+            <div class="docstring"><p>Get the index of the point within the range $[b, a]$ where the $R^2$ is close to the threshold.</p>
 
 <p>This version uses a inaccurate binary search to speedup the search.</p>
 
@@ -1227,7 +1228,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <li><strong>y (np.ndarray):</strong>  the value of the points in the y axis coordinates</li>
 <li><strong>a (int):</strong>  the initial point of the search</li>
 <li><strong>b (int):</strong>  the left limit of the search</li>
-<li><strong>t (float):</strong>  (R^2) threshold (default 0.9)</li>
+<li><strong>t (float):</strong>  $R^2$ threshold (default 0.9)</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -1254,7 +1255,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 </span><span id="get_neighbourhood_fast-111"><a href="#get_neighbourhood_fast-111"><span class="linenos">111</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood_fast-112"><a href="#get_neighbourhood_fast-112"><span class="linenos">112</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="get_neighbourhood_fast-113"><a href="#get_neighbourhood_fast-113"><span class="linenos">113</span></a>
-</span><span id="get_neighbourhood_fast-114"><a href="#get_neighbourhood_fast-114"><span class="linenos">114</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).</span>
+</span><span id="get_neighbourhood_fast-114"><a href="#get_neighbourhood_fast-114"><span class="linenos">114</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
 </span><span id="get_neighbourhood_fast-115"><a href="#get_neighbourhood_fast-115"><span class="linenos">115</span></a><span class="sd">    This version uses a inaccurate binary search to speedup the search.</span>
 </span><span id="get_neighbourhood_fast-116"><a href="#get_neighbourhood_fast-116"><span class="linenos">116</span></a>
 </span><span id="get_neighbourhood_fast-117"><a href="#get_neighbourhood_fast-117"><span class="linenos">117</span></a><span class="sd">    Args:</span>
@@ -1262,7 +1263,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 </span><span id="get_neighbourhood_fast-119"><a href="#get_neighbourhood_fast-119"><span class="linenos">119</span></a><span class="sd">        y (np.ndarray): the value of the points in the y axis coordinates</span>
 </span><span id="get_neighbourhood_fast-120"><a href="#get_neighbourhood_fast-120"><span class="linenos">120</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="get_neighbourhood_fast-121"><a href="#get_neighbourhood_fast-121"><span class="linenos">121</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="get_neighbourhood_fast-122"><a href="#get_neighbourhood_fast-122"><span class="linenos">122</span></a><span class="sd">        t (float): \\(R^2\\) threshold (default 0.9)</span>
+</span><span id="get_neighbourhood_fast-122"><a href="#get_neighbourhood_fast-122"><span class="linenos">122</span></a><span class="sd">        t (float): $R^2$ threshold (default 0.9)</span>
 </span><span id="get_neighbourhood_fast-123"><a href="#get_neighbourhood_fast-123"><span class="linenos">123</span></a>
 </span><span id="get_neighbourhood_fast-124"><a href="#get_neighbourhood_fast-124"><span class="linenos">124</span></a><span class="sd">    Returns:</span>
 </span><span id="get_neighbourhood_fast-125"><a href="#get_neighbourhood_fast-125"><span class="linenos">125</span></a><span class="sd">        tuple: (neighbourhood index, r2, slope)</span>
@@ -1287,7 +1288,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 
             <div class="docstring"><p>Get the neighbourhood (closest points) from a to b.</p>
 
-<p>The neighbourhood is defined as the longest straitgh line (defined by (R^2)).
+<p>The neighbourhood is defined as the longest straitgh line (defined by $R^2$).
 This version uses a inaccurate binary search to speedup the search.</p>
 
 <h6 id="args">Args</h6>
@@ -1297,7 +1298,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <li><strong>y (np.ndarray):</strong>  the value of the points in the y axis coordinates</li>
 <li><strong>a (int):</strong>  the initial point of the search</li>
 <li><strong>b (int):</strong>  the left limit of the search</li>
-<li><strong>t (float):</strong>  (R^2) threshold (default 0.9)</li>
+<li><strong>t (float):</strong>  $R^2$ threshold (default 0.9)</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -1324,14 +1325,14 @@ This version uses a inaccurate binary search to speedup the search.</p>
 </span><span id="get_neighbourhood-145"><a href="#get_neighbourhood-145"><span class="linenos">145</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood-146"><a href="#get_neighbourhood-146"><span class="linenos">146</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="get_neighbourhood-147"><a href="#get_neighbourhood-147"><span class="linenos">147</span></a>
-</span><span id="get_neighbourhood-148"><a href="#get_neighbourhood-148"><span class="linenos">148</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by \\(R^2\\)).</span>
+</span><span id="get_neighbourhood-148"><a href="#get_neighbourhood-148"><span class="linenos">148</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
 </span><span id="get_neighbourhood-149"><a href="#get_neighbourhood-149"><span class="linenos">149</span></a>
 </span><span id="get_neighbourhood-150"><a href="#get_neighbourhood-150"><span class="linenos">150</span></a><span class="sd">    Args:</span>
 </span><span id="get_neighbourhood-151"><a href="#get_neighbourhood-151"><span class="linenos">151</span></a><span class="sd">        x (np.ndarray): the value of the points in the x axis coordinates</span>
 </span><span id="get_neighbourhood-152"><a href="#get_neighbourhood-152"><span class="linenos">152</span></a><span class="sd">        y (np.ndarray): the value of the points in the y axis coordinates</span>
 </span><span id="get_neighbourhood-153"><a href="#get_neighbourhood-153"><span class="linenos">153</span></a><span class="sd">        a (int): the initial point of the search</span>
 </span><span id="get_neighbourhood-154"><a href="#get_neighbourhood-154"><span class="linenos">154</span></a><span class="sd">        b (int): the left limit of the search</span>
-</span><span id="get_neighbourhood-155"><a href="#get_neighbourhood-155"><span class="linenos">155</span></a><span class="sd">        t (float): \\(R^2\\) threshold (default 0.9)</span>
+</span><span id="get_neighbourhood-155"><a href="#get_neighbourhood-155"><span class="linenos">155</span></a><span class="sd">        t (float): $R^2$ threshold (default 0.9)</span>
 </span><span id="get_neighbourhood-156"><a href="#get_neighbourhood-156"><span class="linenos">156</span></a>
 </span><span id="get_neighbourhood-157"><a href="#get_neighbourhood-157"><span class="linenos">157</span></a><span class="sd">    Returns:</span>
 </span><span id="get_neighbourhood-158"><a href="#get_neighbourhood-158"><span class="linenos">158</span></a><span class="sd">        tuple: (neighbourhood index, r2, slope)</span>
@@ -1359,7 +1360,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 
             <div class="docstring"><p>Get the neighbourhood (closest points) from a to b.</p>
 
-<p>The neighbourhood is defined as the longest straitgh line (defined by (R^2)).</p>
+<p>The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</p>
 
 <h6 id="args">Args</h6>
 
@@ -1368,7 +1369,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <li><strong>y (np.ndarray):</strong>  the value of the points in the y axis coordinates</li>
 <li><strong>a (int):</strong>  the initial point of the search</li>
 <li><strong>b (int):</strong>  the left limit of the search</li>
-<li><strong>t (float):</strong>  (R^2) threshold (default 0.9)</li>
+<li><strong>t (float):</strong>  $R^2$ threshold (default 0.9)</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -1394,13 +1395,13 @@ This version uses a inaccurate binary search to speedup the search.</p>
             <div class="pdoc-code codehilite"><pre><span></span><span id="accuracy_knee-180"><a href="#accuracy_knee-180"><span class="linenos">180</span></a><span class="k">def</span> <span class="nf">accuracy_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 </span><span id="accuracy_knee-181"><a href="#accuracy_knee-181"><span class="linenos">181</span></a>    <span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
 </span><span id="accuracy_knee-182"><a href="#accuracy_knee-182"><span class="linenos">182</span></a>
-</span><span id="accuracy_knee-183"><a href="#accuracy_knee-183"><span class="linenos">183</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the \\(R^2\\).</span>
+</span><span id="accuracy_knee-183"><a href="#accuracy_knee-183"><span class="linenos">183</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.</span>
 </span><span id="accuracy_knee-184"><a href="#accuracy_knee-184"><span class="linenos">184</span></a><span class="sd">    In this version it is used the left neighbourhood of the knee.</span>
 </span><span id="accuracy_knee-185"><a href="#accuracy_knee-185"><span class="linenos">185</span></a>
 </span><span id="accuracy_knee-186"><a href="#accuracy_knee-186"><span class="linenos">186</span></a><span class="sd">    Args:</span>
 </span><span id="accuracy_knee-187"><a href="#accuracy_knee-187"><span class="linenos">187</span></a><span class="sd">        points (np.ndarray): numpy array with the points (x, y)</span>
 </span><span id="accuracy_knee-188"><a href="#accuracy_knee-188"><span class="linenos">188</span></a><span class="sd">        knees (np.ndarray): knees indexes</span>
-</span><span id="accuracy_knee-189"><a href="#accuracy_knee-189"><span class="linenos">189</span></a><span class="sd">        t (float): \\(R^2\\) threshold (default 0.9)</span>
+</span><span id="accuracy_knee-189"><a href="#accuracy_knee-189"><span class="linenos">189</span></a><span class="sd">        t (float): $R^2$ threshold (default 0.9)</span>
 </span><span id="accuracy_knee-190"><a href="#accuracy_knee-190"><span class="linenos">190</span></a>
 </span><span id="accuracy_knee-191"><a href="#accuracy_knee-191"><span class="linenos">191</span></a><span class="sd">    Returns:</span>
 </span><span id="accuracy_knee-192"><a href="#accuracy_knee-192"><span class="linenos">192</span></a><span class="sd">        tuple: (average_x, average_y, average_slope, average_coeffients, cost)</span>
@@ -1455,7 +1456,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 
             <div class="docstring"><p>Compute the accuracy heuristic for a set of knees.</p>
 
-<p>The heuristic is based on the average distance of X and Y axis, the slope and the (R^2).
+<p>The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.
 In this version it is used the left neighbourhood of the knee.</p>
 
 <h6 id="args">Args</h6>
@@ -1463,7 +1464,7 @@ In this version it is used the left neighbourhood of the knee.</p>
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>knees (np.ndarray):</strong>  knees indexes</li>
-<li><strong>t (float):</strong>  (R^2) threshold (default 0.9)</li>
+<li><strong>t (float):</strong>  $R^2$ threshold (default 0.9)</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -1489,7 +1490,7 @@ In this version it is used the left neighbourhood of the knee.</p>
             <div class="pdoc-code codehilite"><pre><span></span><span id="accuracy_trace-241"><a href="#accuracy_trace-241"><span class="linenos">241</span></a><span class="k">def</span> <span class="nf">accuracy_trace</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 </span><span id="accuracy_trace-242"><a href="#accuracy_trace-242"><span class="linenos">242</span></a>    <span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
 </span><span id="accuracy_trace-243"><a href="#accuracy_trace-243"><span class="linenos">243</span></a>
-</span><span id="accuracy_trace-244"><a href="#accuracy_trace-244"><span class="linenos">244</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the \\(R^2\\).</span>
+</span><span id="accuracy_trace-244"><a href="#accuracy_trace-244"><span class="linenos">244</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.</span>
 </span><span id="accuracy_trace-245"><a href="#accuracy_trace-245"><span class="linenos">245</span></a><span class="sd">    In this version it is used the points from the current knee to the previous.</span>
 </span><span id="accuracy_trace-246"><a href="#accuracy_trace-246"><span class="linenos">246</span></a>
 </span><span id="accuracy_trace-247"><a href="#accuracy_trace-247"><span class="linenos">247</span></a><span class="sd">    Args:</span>
@@ -1570,7 +1571,7 @@ In this version it is used the left neighbourhood of the knee.</p>
 
             <div class="docstring"><p>Compute the accuracy heuristic for a set of knees.</p>
 
-<p>The heuristic is based on the average distance of X and Y axis, the slope and the (R^2).
+<p>The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.
 In this version it is used the points from the current knee to the previous.</p>
 
 <h6 id="args">Args</h6>
