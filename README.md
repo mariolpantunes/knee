@@ -44,7 +44,9 @@ Run the following commands to produce the documentation for this library.
 
 ```bash
 pip install pdoc
-pdoc --math -d google -o docs knee
+pdoc --math -d google -o docs knee \
+--logo https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png \
+--favicon https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png
 ```
 
 ## Instalation
