@@ -1,0 +1,20 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: (Multi)Knee/Elbow point detection library
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Mário
+    family-names: Antunes
+    email: mario.antunes@av.it.pt
+    affiliation: Instituto de Telecomunicações
+    orcid: 'https://orcid.org/0000-0002-6504-9441'
+  - given-names: Tyler
+    email: testro@cs.stonybrook.edu
+    family-names: Estro
+    affiliation: Stony Brook University
+    orcid: 'https://orcid.org/0000-0002-5851-8801'
