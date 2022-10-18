@@ -30,11 +30,69 @@ class Fit(Enum):
         return self.value
 
 
-def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -> int:
+class Cost(Enum):
+    """
+    Enum that defines the cost used in the L-method
+    
+    RMSE was originaly used by the original authors.
+    RSS can be used to speedup the computation 
+    (it has similar results in most practical cases).
+    """
+    rss = 'rss'
+    rmse = 'rmse'
+
+    def __str__(self):
+        return self.value
+
+
+def compute_error(x: np.ndarray, y: np.ndarray, index:int, length:int, fit=Fit.point_fit, cost=Cost.rmse):
+    """
+    Returns the fitting error that is minimized by the L-method algorithm.
+
+    Args:
+        x (np.ndarray): the value of the points in the x axis coordinates
+        y (np.ndarray): the value of the points in the y axis coordinates
+        index (int): the index where the fitting line is divided
+        lenght (int): the lenght of the points considered
+        fit (Fit): select between point fit and best fit
+        cost (Cost): use either RMSE (original work) or RSS (faster implementation)
+    
+    Returns:
+        float: the fitting cost
+    """
+    
+    left_length = x[index] - x[0]
+    right_length = x[-1] - x[index]
+
+    left_ratio = left_length/length
+    right_ratio = right_length/length
+
+    if fit is Fit.best_fit:
+        coef_left, r_left, *_  = np.polyfit(x[0:index+1], y[0:index+1], 1, full=True)
+        coef_right, r_rigth, *_ = np.polyfit(x[index:], y[index:], 1, full=True)
+        #error = r_left[0]*(left_length/length) + r_rigth[0]*(right_length/length)
+        r_left = r_left[0]
+        r_rigth = r_rigth[0]
+    else:
+        coef_left = lf.linear_fit(x[0:index+1], y[0:index+1])
+        coef_right = lf.linear_fit(x[index:], y[index:])
+        r_left = lf.linear_residuals(x[0:index+1], y[0:index+1], coef_left)
+        r_rigth = lf.linear_residuals(x[index:], y[index:], coef_right)
+        
+    if cost is Cost.rmse:
+        error = left_ratio*math.sqrt(r_left*left_ratio) + right_ratio*math.sqrt(right_ratio*r_rigth)
+    else:
+        error = r_left*left_ratio + r_rigth*right_ratio
+    
+    return error, coef_left, coef_right
+
+
+def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit, cost=Cost.rmse) -> int:
     """
     Returns the index of the knee point based on the L-method.
 
-    This method uses the iterative refinement.
+    This method does not use the iterative refinement.
+    It represents a single iteration of the refinement technique.
 
     Args:
         x (np.ndarray): the value of the points in the x axis coordinates
@@ -47,41 +105,11 @@ def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit) -> int:
 
     index = 2
     length = x[-1] - x[0]
-    left_length = x[index] - x[0]
-    right_length = x[-1] - x[index]
-
-    if fit is Fit.best_fit:
-        coef_left, r_left, *_  = np.polyfit(x[0:index+1], y[0:index+1], 1, full=True)
-        coef_right, r_rigth, *_ = np.polyfit(x[index:], y[index:], 1, full=True)
-        error = r_left[0]*(left_length/length) + r_rigth[0]*(right_length/length)
-        #error = (r_left[0] + r_rigth[0]) / 2.0
-    else:
-        coef_left = lf.linear_fit(x[0:index+1], y[0:index+1])
-        coef_right = lf.linear_fit(x[index:], y[index:])
-        r_left = lf.linear_residuals(x[0:index+1], y[0:index+1], coef_left)
-        r_rigth = lf.linear_residuals(x[index:], y[index:], coef_right)
-        error = r_left*(left_length/length) + r_rigth*(right_length/length)
-        #error = (r_left + r_rigth) / 2.0
-    
+    error, coef_left, coef_right = compute_error(x, y, index, length, fit, cost)
     #logger.info("Error(%s) = %s", index, error)
 
     for i in range(index+1, len(x)-2):
-        left_length = x[i] - x[0]
-        right_length = x[-1] - x[i]
-
-        if fit is Fit.best_fit:
-            i_coef_left, r_left, *_  = np.polyfit(x[0:i+1], y[0:i+1], 1, full=True)
-            i_coef_right, r_rigth, *_ = np.polyfit(x[i:], y[i:], 1, full=True)
-            current_error = r_left[0]*(left_length/length) + r_rigth[0]*(right_length/length)
-            #current_error = (r_left[0] + r_rigth[0]) / 2.0
-        else:
-            i_coef_left = lf.linear_fit(x[0:i+1], y[0:i+1])
-            i_coef_right = lf.linear_fit(x[i:], y[i:])
-            r_left = lf.linear_residuals(x[0:i+1], y[0:i+1], i_coef_left)
-            r_rigth = lf.linear_residuals(x[i:], y[i:], i_coef_right)
-            current_error = r_left*(left_length/length) + r_rigth*(right_length/length)
-            #current_error = (r_left + r_rigth) / 2.0
-        
+        current_error, i_coef_left, i_coef_right = compute_error(x, y, i, length, fit, cost)
         #logger.info("Error(%s) = %s", i, error)
 
         if current_error < error:
