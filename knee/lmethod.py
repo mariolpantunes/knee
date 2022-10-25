@@ -32,7 +32,7 @@ class Fit(Enum):
 
 class Cost(Enum):
     """
-    Enum that defines the cost used in the L-method
+    Enum that defines the cost used in L-method
     
     RMSE was originaly used by the original authors.
     RSS can be used to speedup the computation 
@@ -40,6 +40,22 @@ class Cost(Enum):
     """
     rss = 'rss'
     rmse = 'rmse'
+
+    def __str__(self):
+        return self.value
+
+
+class Refinement(Enum):
+    """
+    Enum that defines the iterative refinement used in L-method
+
+    none as the name implies, it avoids the iterative refinement
+    original apply the iterative refinement from the paper
+    adjusted applies a variant that should be stable on noisy data
+    """
+    none='none'
+    original='original'
+    adjusted='adjusted'
 
     def __str__(self):
         return self.value
@@ -121,16 +137,17 @@ def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit, cost=Cost.rmse) ->
     return (index, coef_left, coef_right)
 
 
-def knee(points:np.ndarray, fit:Fit=Fit.point_fit, it:bool=True) -> int:
+def knee(points:np.ndarray, fit:Fit=Fit.point_fit, it:Refinement=Refinement.adjusted, limit:int=10) -> int:
     """
     Returns the index of the knee point based on the L-method.
 
-    This method uses the iterative refinement.
+    This method uses iterative refinement.
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        fit (Fit): select between point fit and best fit
-        it (bool): flag the usage of iterative refinement (True)
+        fit (Fit): select between point fit and best fit (Fit.point_fit)
+        it (Refinement): defines the iterative refinement method (Refinement.adjusted)
+        limit(int): minimal number of points for the fitted lines (10)
 
     Returns:
         int: the index of the knee point
@@ -140,13 +157,16 @@ def knee(points:np.ndarray, fit:Fit=Fit.point_fit, it:bool=True) -> int:
     y = points[:,1]
 
     last_knee = -1
-    cutoff  = current_knee = len(x)
+    cutoff  = current_knee = len(points)
     done = False
     while current_knee != last_knee and not done:
         last_knee = current_knee
         current_knee, _, _ = get_knee(x[0:cutoff+1], y[0:cutoff+1], fit)
-        cutoff = int((current_knee + last_knee)/2)
-        if cutoff < 10 or not it:
+        if it is Refinement.adjusted:
+            cutoff = max(limit, int((current_knee + last_knee)/2.0))
+        elif it is Refinement.original:
+            cutoff = max(limit, min(current_knee*2, len(points)))
+        else:
             done = True
         
     return current_knee
