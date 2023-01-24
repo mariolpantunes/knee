@@ -7,7 +7,6 @@ __status__ = 'Development'
 
 
 import math
-import typing
 import logging
 import numpy as np
 import knee.rdp as rdp
@@ -119,7 +118,7 @@ def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
 
 
 def filter_clusters(points: np.ndarray, knees: np.ndarray,
-clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01,
+clustering: callable, t: float = 0.01,
 method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
     """
     Filter the knee points based on clustering.
@@ -130,7 +129,7 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
-        clustering (typing.Callable[[np.ndarray, float]): the clustering function
+        clustering (callable): the clustering function
         t (float): the threshold for merging (in percentage, default 0.01)
         method (ranking.ClusterRanking): represents the direction of the ranking within a cluster (default ranking.ClusterRanking.linear)
 
@@ -239,7 +238,7 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
 
 
 def filter_clusters_corners(points: np.ndarray, knees: np.ndarray,
-clustering: typing.Callable[[np.ndarray, float], np.ndarray], t: float = 0.01) -> np.ndarray:
+clustering: callable, t: float = 0.01) -> np.ndarray:
     knee_points = points[knees]
     clusters = clustering(knee_points, t)
 

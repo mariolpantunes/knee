@@ -79,7 +79,19 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     return np.array(rv)
 
 
-def compute_cost_coef(pt: np.ndarray, coef, cost: metrics.Metrics):
+def compute_cost_coef(pt: np.ndarray, coef, cost: metrics.Metrics=metrics.Metrics.smape) -> float:
+    """
+    Computes the cost of fitting a linear function (with a given coefficient)
+    in the points array.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        coef (tuple): the coefficients from the linear fit
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
+
+    Returns:
+        float: the cost of fitting the linear function
+    """
     methods = {metrics.Metrics.r2: lf.linear_r2_points,
     metrics.Metrics.rmspe: lf.rmspe_points,
     metrics.Metrics.rmsle: lf.rmsle_points,
@@ -99,7 +111,7 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Met
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t (float): the coefficient of determination threshold (default 0.01)
-        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
 
     Returns:
@@ -148,6 +160,17 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Met
 
 
 def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarray:
+    """
+    Given an array of points and the reduced set it computes how many
+    points were removed per segment.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        reduced (np.ndarray): numpy array with the reduced set of points
+    
+    Returns:
+        np.ndarray: the points that were removed
+    """
     removed = []
 
     left = reduced[0]
@@ -160,7 +183,20 @@ def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarra
     return np.array(removed)
 
 
-def order_triangle(pt: np.ndarray, index:int, distance_points) -> tuple:
+def order_triangle(pt: np.ndarray, index:int, distance_points: callable) -> tuple:
+    """
+    Computes the triangle area of the left and right segments.
+    The triangle area is a fast heuristic to estimate the how curve
+    the left and right segment are.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        index (int): the index that separates the left from the right segment
+        distance_points (callable): methods that computes the distance between points
+
+    Returns:
+        tuple: the left and right triangle area
+    """
     # compute the area of the triangles made from the farthest point
     base_left = np.linalg.norm(pt[0]-pt[index])
     pt_left = pt[0:index+1]
@@ -175,7 +211,20 @@ def order_triangle(pt: np.ndarray, index:int, distance_points) -> tuple:
     return left_tri_area, right_tri_area
 
 
-def order_area(pt: np.ndarray, index:int, distance_points) -> tuple:
+def order_area(pt: np.ndarray, index:int, distance_points:callable) -> tuple:
+    """
+    Computes the area of the left and right segments.
+    The area is an heuristic to estimate the how curve
+    the left and right segment are.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        index (int): the index that separates the left from the right segment
+        distance_points (callable): methods that computes the distance between points
+
+    Returns:
+        tuple: the left and right area
+    """
     # compute the area using the distance function
     #pt_left = points[left:left+index+1]
     pt_left = pt[0:index+1]
@@ -192,6 +241,16 @@ def order_area(pt: np.ndarray, index:int, distance_points) -> tuple:
 
 
 def order_segment(pt: np.ndarray, index:int) -> tuple:
+    """
+    Computes the fitting error for the left and right segments.
+
+    Args:
+        pt (np.ndarray): numpy array with the points (x, y)
+        index (int): the index that separates the left from the right segment
+        
+    Returns:
+        tuple: the left and right fitting error
+    """
     pt_left = pt[0:index+1]
     left_cost = lf.linear_fit_residuals_points(pt_left)
     
@@ -201,7 +260,7 @@ def order_segment(pt: np.ndarray, index:int) -> tuple:
     return left_cost, right_cost
 
 
-def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shortest, order:Order=Order.segment) -> tuple:
+def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.shortest, order:Order=Order.segment) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -210,9 +269,9 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        length (int): the fixed length of reduced points
+        length (int): the fixed length of reduced points (default: 10)
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
-        order (Order): the metric used to sort the segments (default: Order.triangle)
+        order (Order): the metric used to sort the segments (default: Order.segment)
 
     Returns:
         tuple: the index of the reduced space, the points that were removed
@@ -268,6 +327,25 @@ def rdp_fixed(points: np.ndarray, length:int, distance: Distance = Distance.shor
 
 
 def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment, distance: Distance = Distance.shortest) -> tuple:
+    """
+    Global Ramer–Douglas–Peucker (RDP) algorithm.
+
+    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.
+    This version computes the global cost of reconstruction (instead of the cost of the current segment).
+    It uses a cache to keep the cost of the segments that are not being explored right now.
+    The exploration is based on the segment that has an overall higher reconstruction error.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the coefficient of determination threshold (default 0.01)
+        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
+        order (Order): the metric used to sort the segments (default: Order.segment)
+        distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+
+    Returns:
+        tuple: the index of the reduced space, the points that were removed
+    """
+
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
     
@@ -322,3 +400,32 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
 
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)
+
+
+def min_point_rdp(points: np.ndarray, t:list=[0.01, 0.001, 0.0001], min_points:int=10) -> tuple:
+    """
+    Minimal points RDP.
+
+    Given a minimal amount of points, this version runs Global RDP with different threshold
+    values. The threshold are sorted in decreasing order.
+    The methods returns as soon as a threshold value returns the minimal amount of points.
+    If necessary the method will execute the fixed version of RDP to get the exact amount of points.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): a list of coefficient of determination thresholds (default [0.01, 0.001, 0.0001])
+        min_points (int): the minimal amount of points (default 10)
+
+    Returns:
+        tuple: the index of the reduced space, the points that were removed
+    """    
+    
+    # sort the threshold in 
+    t.sort(reverse=True)
+
+    for current_t in t:
+        reduced, removed = grdp(points, t=current_t)
+        if len(reduced) >= min_points:
+            return reduced, removed
+    
+    return rdp_fixed(points, min_points)

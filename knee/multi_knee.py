@@ -6,7 +6,6 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import typing
 import logging
 import numpy as np
 import knee.linear_fit as lf
@@ -17,14 +16,14 @@ logger = logging.getLogger(__name__)
 
 
 #TODO: support all the other metrics
-def multi_knee(get_knee: typing.Callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: metrics.Metrics = metrics.Metrics.rpd) -> np.ndarray:
+def multi_knee(get_knee: callable, points: np.ndarray, t1: float = 0.01, t2: int = 3, cost: metrics.Metrics = metrics.Metrics.rpd) -> np.ndarray:
     """
     Wrapper that convert a single knee point detection into a multi knee point detector.
 
     It uses recursion on the left and right parts of the curve after detecting the current knee.
 
     Args:
-        get_knee (typing.Callable): method that returns a single knee point
+        get_knee (callable): method that returns a single knee point
         points (np.ndarray): numpy array with the points (x, y)
         t1 (float): the coefficient of determination used as a threshold (default 0.01)
         t2 (int): the mininum number of points used as a threshold (default 3)
