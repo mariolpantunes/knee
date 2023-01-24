@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.2"/>
+    <meta name="generator" content="pdoc 12.3.1"/>
     <title>knee.kneedle API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -29,7 +29,12 @@
             {childList: true}
         );
     })
-</script></head>
+</script>
+<style>
+    mjx-container {
+        overflow-x: auto;
+    }
+</style></head>
 <body>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
@@ -126,9 +131,9 @@
 <a href="./../knee.html">knee</a><wbr>.kneedle    </h1>
 
                 
-                        <input id="kneedle-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                        <input id="mod-kneedle-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-                        <label class="view-source-button" for="kneedle-view-source"><span>View Source</span></label>
+                        <label class="view-source-button" for="mod-kneedle-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># coding: utf-8</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
@@ -152,7 +157,7 @@
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="k">class</span> <span class="nc">Direction</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">    Enum data type that represents the direction of a concavity.</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">Increasing</span> <span class="o">=</span> <span class="s1">&#39;increasing&#39;</span>
@@ -163,7 +168,7 @@
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="k">class</span> <span class="nc">Concavity</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    Enum data type that represents the rotation of a concavity.</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">Counterclockwise</span> <span class="o">=</span> <span class="s1">&#39;counter-clockwise&#39;</span>
@@ -174,7 +179,7 @@
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="k">class</span> <span class="nc">PeakDetection</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">    Enum data type that identifies the peak selection algorithm.</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">Kneedle</span> <span class="o">=</span> <span class="s1">&#39;Kneedle&#39;</span>
@@ -187,7 +192,7 @@
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="k">def</span> <span class="nf">differences</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cd</span><span class="p">:</span> <span class="n">Direction</span><span class="p">,</span> <span class="n">cc</span><span class="p">:</span> <span class="n">Concavity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    Computes the differences from the y axis.</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    These differences represent a rotation within the original algorithm.</span>
@@ -224,7 +229,7 @@
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span> <span class="nf">knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cd</span><span class="p">:</span> <span class="n">Direction</span><span class="p">,</span> <span class="n">cc</span><span class="p">:</span> <span class="n">Concavity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    Returns the index of the knee point based on the Kneedle method.</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    Args:</span>
@@ -257,7 +262,7 @@
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>
 </span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="k">def</span> <span class="nf">knees</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cd</span><span class="p">:</span> <span class="n">Direction</span><span class="p">,</span> <span class="n">cc</span><span class="p">:</span> <span class="n">Concavity</span><span class="p">,</span> <span class="n">sensitivity</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span><span class="n">PeakDetection</span><span class="o">=</span><span class="n">PeakDetection</span><span class="o">.</span><span class="n">Kneedle</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">    Returns the index of the knees point based on the Kneedle method.</span>
 </span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
 </span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">    This implementation uses an heuristic to automatically define</span>
@@ -309,7 +314,7 @@
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
 </span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="k">def</span> <span class="nf">auto_knees</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>  <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">sensitivity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">PeakDetection</span> <span class="o">=</span> <span class="n">PeakDetection</span><span class="o">.</span><span class="n">Kneedle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">    Returns the index of the knees point based on the Kneedle method.</span>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">    This implementation uses an heuristic to automatically define</span>
@@ -350,7 +355,7 @@
 </span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>
 </span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>
 </span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="k">def</span> <span class="nf">auto_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="sd">    Returns the index of the knee point based on the Kneedle method.</span>
 </span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>
 </span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a><span class="sd">    This implementation uses an heuristic to automatically define</span>
@@ -390,7 +395,7 @@
 </span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>
 </span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>
 </span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">t1</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">t2</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a><span class="sd">    Recursive knee point detection based on Kneedle.</span>
 </span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>
 </span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="sd">    It returns the knee points on the curve.</span>
@@ -422,7 +427,7 @@
     </div>
     <a class="headerlink" href="#Direction"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Direction-23"><a href="#Direction-23"><span class="linenos">23</span></a><span class="k">class</span> <span class="nc">Direction</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Direction-24"><a href="#Direction-24"><span class="linenos">24</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Direction-24"><a href="#Direction-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Direction-25"><a href="#Direction-25"><span class="linenos">25</span></a><span class="sd">    Enum data type that represents the direction of a concavity.</span>
 </span><span id="Direction-26"><a href="#Direction-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Direction-27"><a href="#Direction-27"><span class="linenos">27</span></a>    <span class="n">Increasing</span> <span class="o">=</span> <span class="s1">&#39;increasing&#39;</span>
@@ -482,7 +487,7 @@
     </div>
     <a class="headerlink" href="#Concavity"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Concavity-34"><a href="#Concavity-34"><span class="linenos">34</span></a><span class="k">class</span> <span class="nc">Concavity</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Concavity-35"><a href="#Concavity-35"><span class="linenos">35</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Concavity-35"><a href="#Concavity-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Concavity-36"><a href="#Concavity-36"><span class="linenos">36</span></a><span class="sd">    Enum data type that represents the rotation of a concavity.</span>
 </span><span id="Concavity-37"><a href="#Concavity-37"><span class="linenos">37</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Concavity-38"><a href="#Concavity-38"><span class="linenos">38</span></a>    <span class="n">Counterclockwise</span> <span class="o">=</span> <span class="s1">&#39;counter-clockwise&#39;</span>
@@ -542,7 +547,7 @@
     </div>
     <a class="headerlink" href="#PeakDetection"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="PeakDetection-45"><a href="#PeakDetection-45"><span class="linenos">45</span></a><span class="k">class</span> <span class="nc">PeakDetection</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="PeakDetection-46"><a href="#PeakDetection-46"><span class="linenos">46</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PeakDetection-46"><a href="#PeakDetection-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="PeakDetection-47"><a href="#PeakDetection-47"><span class="linenos">47</span></a><span class="sd">    Enum data type that identifies the peak selection algorithm.</span>
 </span><span id="PeakDetection-48"><a href="#PeakDetection-48"><span class="linenos">48</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="PeakDetection-49"><a href="#PeakDetection-49"><span class="linenos">49</span></a>    <span class="n">Kneedle</span> <span class="o">=</span> <span class="s1">&#39;Kneedle&#39;</span>
@@ -626,7 +631,7 @@
     </div>
     <a class="headerlink" href="#differences"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="differences-58"><a href="#differences-58"><span class="linenos">58</span></a><span class="k">def</span> <span class="nf">differences</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cd</span><span class="p">:</span> <span class="n">Direction</span><span class="p">,</span> <span class="n">cc</span><span class="p">:</span> <span class="n">Concavity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="differences-59"><a href="#differences-59"><span class="linenos">59</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="differences-59"><a href="#differences-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="differences-60"><a href="#differences-60"><span class="linenos">60</span></a><span class="sd">    Computes the differences from the y axis.</span>
 </span><span id="differences-61"><a href="#differences-61"><span class="linenos">61</span></a>
 </span><span id="differences-62"><a href="#differences-62"><span class="linenos">62</span></a><span class="sd">    These differences represent a rotation within the original algorithm.</span>
@@ -667,7 +672,7 @@
 
 <p>These differences represent a rotation within the original algorithm.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -675,7 +680,7 @@
 <li><strong>cc (Concavity):</strong>  rotation of the concavity</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the points array with the differences</p>
@@ -696,7 +701,7 @@
     </div>
     <a class="headerlink" href="#knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="knee-95"><a href="#knee-95"><span class="linenos"> 95</span></a><span class="k">def</span> <span class="nf">knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cd</span><span class="p">:</span> <span class="n">Direction</span><span class="p">,</span> <span class="n">cc</span><span class="p">:</span> <span class="n">Concavity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="knee-96"><a href="#knee-96"><span class="linenos"> 96</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="knee-96"><a href="#knee-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="knee-97"><a href="#knee-97"><span class="linenos"> 97</span></a><span class="sd">    Returns the index of the knee point based on the Kneedle method.</span>
 </span><span id="knee-98"><a href="#knee-98"><span class="linenos"> 98</span></a>
 </span><span id="knee-99"><a href="#knee-99"><span class="linenos"> 99</span></a><span class="sd">    Args:</span>
@@ -731,7 +736,7 @@
 
             <div class="docstring"><p>Returns the index of the knee point based on the Kneedle method.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -740,7 +745,7 @@
 <li><strong>cc (Concavity):</strong>  rotation of the concavity</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>int: the index of the knee point</p>
@@ -761,7 +766,7 @@
     </div>
     <a class="headerlink" href="#knees"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="knees-128"><a href="#knees-128"><span class="linenos">128</span></a><span class="k">def</span> <span class="nf">knees</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cd</span><span class="p">:</span> <span class="n">Direction</span><span class="p">,</span> <span class="n">cc</span><span class="p">:</span> <span class="n">Concavity</span><span class="p">,</span> <span class="n">sensitivity</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span><span class="n">PeakDetection</span><span class="o">=</span><span class="n">PeakDetection</span><span class="o">.</span><span class="n">Kneedle</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="knees-129"><a href="#knees-129"><span class="linenos">129</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="knees-129"><a href="#knees-129"><span class="linenos">129</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="knees-130"><a href="#knees-130"><span class="linenos">130</span></a><span class="sd">    Returns the index of the knees point based on the Kneedle method.</span>
 </span><span id="knees-131"><a href="#knees-131"><span class="linenos">131</span></a>
 </span><span id="knees-132"><a href="#knees-132"><span class="linenos">132</span></a><span class="sd">    This implementation uses an heuristic to automatically define</span>
@@ -827,7 +832,7 @@ relevant knees:</p>
 <li>ZScore     : significant knee peak detection based on zscore</li>
 </ol>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -839,7 +844,7 @@ relevant knees:</p>
 <li><strong>debug (bool):</strong>  debug flag; when True the algorithm returns more information</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the indexes of the knee points</p>
@@ -860,7 +865,7 @@ relevant knees:</p>
     </div>
     <a class="headerlink" href="#auto_knees"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="auto_knees-180"><a href="#auto_knees-180"><span class="linenos">180</span></a><span class="k">def</span> <span class="nf">auto_knees</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>  <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">sensitivity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">PeakDetection</span> <span class="o">=</span> <span class="n">PeakDetection</span><span class="o">.</span><span class="n">Kneedle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="auto_knees-181"><a href="#auto_knees-181"><span class="linenos">181</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="auto_knees-181"><a href="#auto_knees-181"><span class="linenos">181</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="auto_knees-182"><a href="#auto_knees-182"><span class="linenos">182</span></a><span class="sd">    Returns the index of the knees point based on the Kneedle method.</span>
 </span><span id="auto_knees-183"><a href="#auto_knees-183"><span class="linenos">183</span></a>
 </span><span id="auto_knees-184"><a href="#auto_knees-184"><span class="linenos">184</span></a><span class="sd">    This implementation uses an heuristic to automatically define</span>
@@ -915,7 +920,7 @@ relevant knees:</p>
 <li>ZScore     : significant knee peak detection based on zscore</li>
 </ol>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -924,7 +929,7 @@ relevant knees:</p>
 <li><strong>p (PeakDetection):</strong>  selects the peak detection method</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the indexes of the knee points</p>
@@ -945,7 +950,7 @@ relevant knees:</p>
     </div>
     <a class="headerlink" href="#auto_knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="auto_knee-221"><a href="#auto_knee-221"><span class="linenos">221</span></a><span class="k">def</span> <span class="nf">auto_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="auto_knee-222"><a href="#auto_knee-222"><span class="linenos">222</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="auto_knee-222"><a href="#auto_knee-222"><span class="linenos">222</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="auto_knee-223"><a href="#auto_knee-223"><span class="linenos">223</span></a><span class="sd">    Returns the index of the knee point based on the Kneedle method.</span>
 </span><span id="auto_knee-224"><a href="#auto_knee-224"><span class="linenos">224</span></a>
 </span><span id="auto_knee-225"><a href="#auto_knee-225"><span class="linenos">225</span></a><span class="sd">    This implementation uses an heuristic to automatically define</span>
@@ -990,14 +995,14 @@ relevant knees:</p>
 <p>This implementation uses an heuristic to automatically define
 the direction and rotation of the concavity.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>t (float):</strong>  tau of the side window used to smooth the curve</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>int: the index of the knee point</p>
@@ -1011,14 +1016,14 @@ the direction and rotation of the concavity.</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">multi_knee</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">points</span>, </span><span class="param"><span class="n">t1</span><span class="o">=</span><span class="mf">0.01</span>, </span><span class="param"><span class="n">t2</span><span class="o">=</span><span class="mi">3</span></span>)</span>
+        <span class="name">multi_knee</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">points</span>, </span><span class="param"><span class="n">t1</span><span class="o">=</span><span class="mf">0.01</span>, </span><span class="param"><span class="n">t2</span><span class="o">=</span><span class="mi">3</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="multi_knee-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#multi_knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="multi_knee-261"><a href="#multi_knee-261"><span class="linenos">261</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">t1</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">t2</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-</span><span id="multi_knee-262"><a href="#multi_knee-262"><span class="linenos">262</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="multi_knee-262"><a href="#multi_knee-262"><span class="linenos">262</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="multi_knee-263"><a href="#multi_knee-263"><span class="linenos">263</span></a><span class="sd">    Recursive knee point detection based on Kneedle.</span>
 </span><span id="multi_knee-264"><a href="#multi_knee-264"><span class="linenos">264</span></a>
 </span><span id="multi_knee-265"><a href="#multi_knee-265"><span class="linenos">265</span></a><span class="sd">    It returns the knee points on the curve.</span>
@@ -1041,7 +1046,7 @@ the direction and rotation of the concavity.</p>
 
 <p>It returns the knee points on the curve.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1049,7 +1054,7 @@ the direction and rotation of the concavity.</p>
 <li><strong>t2 (int):</strong>  number of points threshold (default 3)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: knee points on the curve</p>
@@ -1159,9 +1164,13 @@ the direction and rotation of the concavity.</p>
                 }
 
                 let heading;
-                switch (result.doc.type) {
+                switch (result.doc.kind) {
                     case "function":
-                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
@@ -1182,7 +1191,7 @@ the direction and rotation of the concavity.</p>
                 }
                 html += `
                         <section class="search-result">
-                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
+                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
                         <div class="docstring">${doc.doc}</div>
                         </section>
                     `;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.2"/>
+    <meta name="generator" content="pdoc 12.3.1"/>
     <title>knee.evaluation API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -29,7 +29,12 @@
             {childList: true}
         );
     })
-</script></head>
+</script>
+<style>
+    mjx-container {
+        overflow-x: auto;
+    }
+</style></head>
 <body>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
@@ -147,9 +152,9 @@
 <a href="./../knee.html">knee</a><wbr>.evaluation    </h1>
 
                 
-                        <input id="evaluation-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                        <input id="mod-evaluation-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-                        <label class="view-source-button" for="evaluation-view-source"><span>View Source</span></label>
+                        <label class="view-source-button" for="mod-evaluation-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># coding: utf-8</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
@@ -171,7 +176,7 @@
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="k">class</span> <span class="nc">Strategy</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    Enum data type that represents the strategy of MAE, MSE and RMSE</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">knees</span> <span class="o">=</span> <span class="s1">&#39;knees&#39;</span>
@@ -184,7 +189,7 @@
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
@@ -205,7 +210,7 @@
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_fast_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
@@ -227,7 +232,7 @@
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_binary</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    Get the index of the point within the range $[b, a]$ where the $R^2$ is close to the threshold.</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    This version uses a inaccurate binary search to speedup the search.</span>
@@ -260,7 +265,7 @@
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_fast</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
@@ -294,7 +299,7 @@
 </span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
 </span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
 </span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="k">def</span> <span class="nf">get_neighbourhood</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
@@ -330,7 +335,7 @@
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
 </span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="k">def</span> <span class="nf">accuracy_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.</span>
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">    In this version it is used the left neighbourhood of the knee.</span>
@@ -391,7 +396,7 @@
 </span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>
 </span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>
 </span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="k">def</span> <span class="nf">accuracy_trace</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>    <span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
 </span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>
 </span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.</span>
 </span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">    In this version it is used the points from the current knee to the previous.</span>
@@ -472,7 +477,7 @@
 </span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a>
 </span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a>
 </span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a><span class="k">def</span> <span class="nf">mae</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="o">.</span><span class="n">expected</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a><span class="sd">    Estimates the worst case Mean Absolute Error (MAE) for the given</span>
 </span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a><span class="sd">    knee and expected points.</span>
 </span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>
@@ -525,7 +530,7 @@
 </span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>
 </span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>
 </span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a><span class="k">def</span> <span class="nf">mse</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="o">.</span><span class="n">expected</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a><span class="sd">    Estimates the worst case Mean Squared Error (MSE) for the given</span>
 </span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a><span class="sd">    knee and expected points.</span>
 </span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>
@@ -578,7 +583,7 @@
 </span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>
 </span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>
 </span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="o">.</span><span class="n">expected</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a><span class="sd">    Estimates the worst case Root Mean Squared Error (RMSE) for the given</span>
 </span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a><span class="sd">    knee and expected points.</span>
 </span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>
@@ -600,7 +605,7 @@
 </span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>
 </span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>
 </span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a><span class="k">def</span> <span class="nf">rmspe</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="o">.</span><span class="n">expected</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a><span class="sd">    Estimates the worst case Root Mean Squared Percentage Error (RMSPE) for the given knee and expected points.</span>
 </span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>
 </span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a><span class="sd">    Suppports different size arrays, and estimates the RMSPE based on the worst case.</span>
@@ -653,7 +658,7 @@
 </span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a>
 </span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a>
 </span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a><span class="k">def</span> <span class="nf">cm</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a><span class="sd">    Computes the Confusion Matrix based on the knees and expected points.</span>
 </span><span id="L-505"><a href="#L-505"><span class="linenos">505</span></a>
 </span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a><span class="sd">    Args:</span>
@@ -689,7 +694,7 @@
 </span><span id="L-536"><a href="#L-536"><span class="linenos">536</span></a>
 </span><span id="L-537"><a href="#L-537"><span class="linenos">537</span></a>
 </span><span id="L-538"><a href="#L-538"><span class="linenos">538</span></a><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="n">cm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-539"><a href="#L-539"><span class="linenos">539</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-539"><a href="#L-539"><span class="linenos">539</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-540"><a href="#L-540"><span class="linenos">540</span></a><span class="sd">    Computes accuracy based on a Confusion Matrix.</span>
 </span><span id="L-541"><a href="#L-541"><span class="linenos">541</span></a>
 </span><span id="L-542"><a href="#L-542"><span class="linenos">542</span></a><span class="sd">    Args:</span>
@@ -706,7 +711,7 @@
 </span><span id="L-553"><a href="#L-553"><span class="linenos">553</span></a>
 </span><span id="L-554"><a href="#L-554"><span class="linenos">554</span></a>
 </span><span id="L-555"><a href="#L-555"><span class="linenos">555</span></a><span class="k">def</span> <span class="nf">f1score</span><span class="p">(</span><span class="n">cm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-556"><a href="#L-556"><span class="linenos">556</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-556"><a href="#L-556"><span class="linenos">556</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-557"><a href="#L-557"><span class="linenos">557</span></a><span class="sd">    Computes F1-Score based on a Confusion Matrix.</span>
 </span><span id="L-558"><a href="#L-558"><span class="linenos">558</span></a>
 </span><span id="L-559"><a href="#L-559"><span class="linenos">559</span></a><span class="sd">    Args:</span>
@@ -723,7 +728,7 @@
 </span><span id="L-570"><a href="#L-570"><span class="linenos">570</span></a>
 </span><span id="L-571"><a href="#L-571"><span class="linenos">571</span></a>
 </span><span id="L-572"><a href="#L-572"><span class="linenos">572</span></a><span class="k">def</span> <span class="nf">mcc</span><span class="p">(</span><span class="n">cm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-573"><a href="#L-573"><span class="linenos">573</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-573"><a href="#L-573"><span class="linenos">573</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-574"><a href="#L-574"><span class="linenos">574</span></a><span class="sd">    Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.</span>
 </span><span id="L-575"><a href="#L-575"><span class="linenos">575</span></a>
 </span><span id="L-576"><a href="#L-576"><span class="linenos">576</span></a><span class="sd">    Args:</span>
@@ -743,7 +748,7 @@
 </span><span id="L-590"><a href="#L-590"><span class="linenos">590</span></a>
 </span><span id="L-591"><a href="#L-591"><span class="linenos">591</span></a>
 </span><span id="L-592"><a href="#L-592"><span class="linenos">592</span></a><span class="k">def</span> <span class="nf">compute_global_rmse</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-593"><a href="#L-593"><span class="linenos">593</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-593"><a href="#L-593"><span class="linenos">593</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-594"><a href="#L-594"><span class="linenos">594</span></a><span class="sd">    Computes the global RMSE for a point reduction set.</span>
 </span><span id="L-595"><a href="#L-595"><span class="linenos">595</span></a>
 </span><span id="L-596"><a href="#L-596"><span class="linenos">596</span></a><span class="sd">    For each segment within the point reduction set, computes a straight line.</span>
@@ -783,7 +788,7 @@
 </span><span id="L-630"><a href="#L-630"><span class="linenos">630</span></a>
 </span><span id="L-631"><a href="#L-631"><span class="linenos">631</span></a>
 </span><span id="L-632"><a href="#L-632"><span class="linenos">632</span></a><span class="k">def</span> <span class="nf">mip</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-633"><a href="#L-633"><span class="linenos">633</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-633"><a href="#L-633"><span class="linenos">633</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-634"><a href="#L-634"><span class="linenos">634</span></a><span class="sd">    Computes the median improvement per point (MIP).</span>
 </span><span id="L-635"><a href="#L-635"><span class="linenos">635</span></a>
 </span><span id="L-636"><a href="#L-636"><span class="linenos">636</span></a><span class="sd">    Improvement is defined as a relation between a final cost against a reference cost.</span>
@@ -817,7 +822,7 @@
 </span><span id="L-664"><a href="#L-664"><span class="linenos">664</span></a>
 </span><span id="L-665"><a href="#L-665"><span class="linenos">665</span></a>
 </span><span id="L-666"><a href="#L-666"><span class="linenos">666</span></a><span class="k">def</span> <span class="nf">compute_cost</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">segment_errors</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span><span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-667"><a href="#L-667"><span class="linenos">667</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-667"><a href="#L-667"><span class="linenos">667</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-668"><a href="#L-668"><span class="linenos">668</span></a><span class="sd">    Compute the cost of multi-point fitting using the segment errors.</span>
 </span><span id="L-669"><a href="#L-669"><span class="linenos">669</span></a><span class="sd">    </span>
 </span><span id="L-670"><a href="#L-670"><span class="linenos">670</span></a><span class="sd">    It uses a cache to speedup the compuation of the cost.</span>
@@ -869,7 +874,7 @@
 </span><span id="L-716"><a href="#L-716"><span class="linenos">716</span></a>
 </span><span id="L-717"><a href="#L-717"><span class="linenos">717</span></a>
 </span><span id="L-718"><a href="#L-718"><span class="linenos">718</span></a><span class="k">def</span> <span class="nf">compute_partial_cost</span><span class="p">(</span><span class="n">y</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-719"><a href="#L-719"><span class="linenos">719</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-719"><a href="#L-719"><span class="linenos">719</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-720"><a href="#L-720"><span class="linenos">720</span></a><span class="sd">    Compute the partial cost of a multi-point fitting.</span>
 </span><span id="L-721"><a href="#L-721"><span class="linenos">721</span></a>
 </span><span id="L-722"><a href="#L-722"><span class="linenos">722</span></a><span class="sd">    Args:</span>
@@ -894,7 +899,7 @@
 </span><span id="L-741"><a href="#L-741"><span class="linenos">741</span></a>
 </span><span id="L-742"><a href="#L-742"><span class="linenos">742</span></a>
 </span><span id="L-743"><a href="#L-743"><span class="linenos">743</span></a><span class="k">def</span> <span class="nf">compute_global_cost</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">rpd</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-744"><a href="#L-744"><span class="linenos">744</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-744"><a href="#L-744"><span class="linenos">744</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-745"><a href="#L-745"><span class="linenos">745</span></a><span class="sd">    Compute the cost of multi-point fitting using the segment errors.</span>
 </span><span id="L-746"><a href="#L-746"><span class="linenos">746</span></a><span class="sd">    </span>
 </span><span id="L-747"><a href="#L-747"><span class="linenos">747</span></a><span class="sd">    It uses a cache to speedup the compuation of the cost.</span>
@@ -936,7 +941,7 @@
 </span><span id="L-783"><a href="#L-783"><span class="linenos">783</span></a>
 </span><span id="L-784"><a href="#L-784"><span class="linenos">784</span></a>
 </span><span id="L-785"><a href="#L-785"><span class="linenos">785</span></a><span class="k">def</span> <span class="nf">compute_global_segment_cost</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">rpd</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-786"><a href="#L-786"><span class="linenos">786</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-786"><a href="#L-786"><span class="linenos">786</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-787"><a href="#L-787"><span class="linenos">787</span></a><span class="sd">    Compute the cost of multi-point fitting using the segment errors.</span>
 </span><span id="L-788"><a href="#L-788"><span class="linenos">788</span></a><span class="sd">    </span>
 </span><span id="L-789"><a href="#L-789"><span class="linenos">789</span></a><span class="sd">    Legacy function that does not use a cache or combines the segments costs.</span>
@@ -989,7 +994,7 @@
     </div>
     <a class="headerlink" href="#Strategy"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Strategy-21"><a href="#Strategy-21"><span class="linenos">21</span></a><span class="k">class</span> <span class="nc">Strategy</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Strategy-22"><a href="#Strategy-22"><span class="linenos">22</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Strategy-22"><a href="#Strategy-22"><span class="linenos">22</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Strategy-23"><a href="#Strategy-23"><span class="linenos">23</span></a><span class="sd">    Enum data type that represents the strategy of MAE, MSE and RMSE</span>
 </span><span id="Strategy-24"><a href="#Strategy-24"><span class="linenos">24</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Strategy-25"><a href="#Strategy-25"><span class="linenos">25</span></a>    <span class="n">knees</span> <span class="o">=</span> <span class="s1">&#39;knees&#39;</span>
@@ -1073,7 +1078,7 @@
     </div>
     <a class="headerlink" href="#get_neighbourhood_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_neighbourhood_points-34"><a href="#get_neighbourhood_points-34"><span class="linenos">34</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="get_neighbourhood_points-35"><a href="#get_neighbourhood_points-35"><span class="linenos">35</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_neighbourhood_points-35"><a href="#get_neighbourhood_points-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood_points-36"><a href="#get_neighbourhood_points-36"><span class="linenos">36</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="get_neighbourhood_points-37"><a href="#get_neighbourhood_points-37"><span class="linenos">37</span></a>
 </span><span id="get_neighbourhood_points-38"><a href="#get_neighbourhood_points-38"><span class="linenos">38</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
@@ -1098,7 +1103,7 @@
 
 <p>The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1107,7 +1112,7 @@
 <li><strong>t (float):</strong>  $R^2$ threshold</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: (neighbourhood index, r2, slope)</p>
@@ -1128,7 +1133,7 @@
     </div>
     <a class="headerlink" href="#get_neighbourhood_fast_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_neighbourhood_fast_points-55"><a href="#get_neighbourhood_fast_points-55"><span class="linenos">55</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_fast_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="get_neighbourhood_fast_points-56"><a href="#get_neighbourhood_fast_points-56"><span class="linenos">56</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_neighbourhood_fast_points-56"><a href="#get_neighbourhood_fast_points-56"><span class="linenos">56</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood_fast_points-57"><a href="#get_neighbourhood_fast_points-57"><span class="linenos">57</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="get_neighbourhood_fast_points-58"><a href="#get_neighbourhood_fast_points-58"><span class="linenos">58</span></a>
 </span><span id="get_neighbourhood_fast_points-59"><a href="#get_neighbourhood_fast_points-59"><span class="linenos">59</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
@@ -1155,7 +1160,7 @@
 <p>The neighbourhood is defined as the longest straitgh line (defined by $R^2$).
 This version uses a inaccurate binary search to speedup the search.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1164,7 +1169,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <li><strong>t (float):</strong>  $R^2$ threshold</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: (neighbourhood index, r2, slope)</p>
@@ -1185,7 +1190,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
     </div>
     <a class="headerlink" href="#get_neighbourhood_binary"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_neighbourhood_binary-77"><a href="#get_neighbourhood_binary-77"><span class="linenos"> 77</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_binary</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="get_neighbourhood_binary-78"><a href="#get_neighbourhood_binary-78"><span class="linenos"> 78</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_neighbourhood_binary-78"><a href="#get_neighbourhood_binary-78"><span class="linenos"> 78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood_binary-79"><a href="#get_neighbourhood_binary-79"><span class="linenos"> 79</span></a><span class="sd">    Get the index of the point within the range $[b, a]$ where the $R^2$ is close to the threshold.</span>
 </span><span id="get_neighbourhood_binary-80"><a href="#get_neighbourhood_binary-80"><span class="linenos"> 80</span></a>
 </span><span id="get_neighbourhood_binary-81"><a href="#get_neighbourhood_binary-81"><span class="linenos"> 81</span></a><span class="sd">    This version uses a inaccurate binary search to speedup the search.</span>
@@ -1222,7 +1227,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 
 <p>This version uses a inaccurate binary search to speedup the search.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1232,7 +1237,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <li><strong>t (float):</strong>  $R^2$ threshold (default 0.9)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>int: index of the point</p>
@@ -1253,7 +1258,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
     </div>
     <a class="headerlink" href="#get_neighbourhood_fast"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_neighbourhood_fast-110"><a href="#get_neighbourhood_fast-110"><span class="linenos">110</span></a><span class="k">def</span> <span class="nf">get_neighbourhood_fast</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="get_neighbourhood_fast-111"><a href="#get_neighbourhood_fast-111"><span class="linenos">111</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_neighbourhood_fast-111"><a href="#get_neighbourhood_fast-111"><span class="linenos">111</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood_fast-112"><a href="#get_neighbourhood_fast-112"><span class="linenos">112</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="get_neighbourhood_fast-113"><a href="#get_neighbourhood_fast-113"><span class="linenos">113</span></a>
 </span><span id="get_neighbourhood_fast-114"><a href="#get_neighbourhood_fast-114"><span class="linenos">114</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
@@ -1292,7 +1297,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <p>The neighbourhood is defined as the longest straitgh line (defined by $R^2$).
 This version uses a inaccurate binary search to speedup the search.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1302,7 +1307,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <li><strong>t (float):</strong>  $R^2$ threshold (default 0.9)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: (neighbourhood index, r2, slope)</p>
@@ -1323,7 +1328,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
     </div>
     <a class="headerlink" href="#get_neighbourhood"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_neighbourhood-144"><a href="#get_neighbourhood-144"><span class="linenos">144</span></a><span class="k">def</span> <span class="nf">get_neighbourhood</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="get_neighbourhood-145"><a href="#get_neighbourhood-145"><span class="linenos">145</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_neighbourhood-145"><a href="#get_neighbourhood-145"><span class="linenos">145</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_neighbourhood-146"><a href="#get_neighbourhood-146"><span class="linenos">146</span></a><span class="sd">    Get the neighbourhood (closest points) from a to b.</span>
 </span><span id="get_neighbourhood-147"><a href="#get_neighbourhood-147"><span class="linenos">147</span></a>
 </span><span id="get_neighbourhood-148"><a href="#get_neighbourhood-148"><span class="linenos">148</span></a><span class="sd">    The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</span>
@@ -1363,7 +1368,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 
 <p>The neighbourhood is defined as the longest straitgh line (defined by $R^2$).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1373,7 +1378,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <li><strong>t (float):</strong>  $R^2$ threshold (default 0.9)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: (neighbourhood index, r2, slope)</p>
@@ -1394,7 +1399,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
     </div>
     <a class="headerlink" href="#accuracy_knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="accuracy_knee-180"><a href="#accuracy_knee-180"><span class="linenos">180</span></a><span class="k">def</span> <span class="nf">accuracy_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="accuracy_knee-181"><a href="#accuracy_knee-181"><span class="linenos">181</span></a>    <span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
+</span><span id="accuracy_knee-181"><a href="#accuracy_knee-181"><span class="linenos">181</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
 </span><span id="accuracy_knee-182"><a href="#accuracy_knee-182"><span class="linenos">182</span></a>
 </span><span id="accuracy_knee-183"><a href="#accuracy_knee-183"><span class="linenos">183</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.</span>
 </span><span id="accuracy_knee-184"><a href="#accuracy_knee-184"><span class="linenos">184</span></a><span class="sd">    In this version it is used the left neighbourhood of the knee.</span>
@@ -1460,7 +1465,7 @@ This version uses a inaccurate binary search to speedup the search.</p>
 <p>The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.
 In this version it is used the left neighbourhood of the knee.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1468,7 +1473,7 @@ In this version it is used the left neighbourhood of the knee.</p>
 <li><strong>t (float):</strong>  $R^2$ threshold (default 0.9)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: (average_x, average_y, average_slope, average_coeffients, cost)</p>
@@ -1489,7 +1494,7 @@ In this version it is used the left neighbourhood of the knee.</p>
     </div>
     <a class="headerlink" href="#accuracy_trace"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="accuracy_trace-241"><a href="#accuracy_trace-241"><span class="linenos">241</span></a><span class="k">def</span> <span class="nf">accuracy_trace</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="accuracy_trace-242"><a href="#accuracy_trace-242"><span class="linenos">242</span></a>    <span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
+</span><span id="accuracy_trace-242"><a href="#accuracy_trace-242"><span class="linenos">242</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the accuracy heuristic for a set of knees.</span>
 </span><span id="accuracy_trace-243"><a href="#accuracy_trace-243"><span class="linenos">243</span></a>
 </span><span id="accuracy_trace-244"><a href="#accuracy_trace-244"><span class="linenos">244</span></a><span class="sd">    The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.</span>
 </span><span id="accuracy_trace-245"><a href="#accuracy_trace-245"><span class="linenos">245</span></a><span class="sd">    In this version it is used the points from the current knee to the previous.</span>
@@ -1575,14 +1580,14 @@ In this version it is used the left neighbourhood of the knee.</p>
 <p>The heuristic is based on the average distance of X and Y axis, the slope and the $R^2$.
 In this version it is used the points from the current knee to the previous.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>knees (np.ndarray):</strong>  knees indexes</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: (average_x, average_y, average_slope, average_coeffients, cost)</p>
@@ -1603,7 +1608,7 @@ In this version it is used the points from the current knee to the previous.</p>
     </div>
     <a class="headerlink" href="#mae"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="mae-322"><a href="#mae-322"><span class="linenos">322</span></a><span class="k">def</span> <span class="nf">mae</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="o">.</span><span class="n">expected</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="mae-323"><a href="#mae-323"><span class="linenos">323</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="mae-323"><a href="#mae-323"><span class="linenos">323</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="mae-324"><a href="#mae-324"><span class="linenos">324</span></a><span class="sd">    Estimates the worst case Mean Absolute Error (MAE) for the given</span>
 </span><span id="mae-325"><a href="#mae-325"><span class="linenos">325</span></a><span class="sd">    knee and expected points.</span>
 </span><span id="mae-326"><a href="#mae-326"><span class="linenos">326</span></a>
@@ -1664,7 +1669,7 @@ on the worst case.
 It uses the euclidean distance to find the closer points,
 and computes the error based on the closest point.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1673,7 +1678,7 @@ and computes the error based on the closest point.</p>
 <li><strong>s (Strategy):</strong>  enum that controls the point matching (default <a href="#Strategy.expected">Strategy.expected</a>)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the worst case MAE</p>
@@ -1694,7 +1699,7 @@ and computes the error based on the closest point.</p>
     </div>
     <a class="headerlink" href="#mse"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="mse-375"><a href="#mse-375"><span class="linenos">375</span></a><span class="k">def</span> <span class="nf">mse</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="o">.</span><span class="n">expected</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="mse-376"><a href="#mse-376"><span class="linenos">376</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="mse-376"><a href="#mse-376"><span class="linenos">376</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="mse-377"><a href="#mse-377"><span class="linenos">377</span></a><span class="sd">    Estimates the worst case Mean Squared Error (MSE) for the given</span>
 </span><span id="mse-378"><a href="#mse-378"><span class="linenos">378</span></a><span class="sd">    knee and expected points.</span>
 </span><span id="mse-379"><a href="#mse-379"><span class="linenos">379</span></a>
@@ -1755,7 +1760,7 @@ on the worst case.
 It uses the euclidean distance to find the closer points,
 and computes the error based on the closest point.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1764,7 +1769,7 @@ and computes the error based on the closest point.</p>
 <li><strong>s (Strategy):</strong>  enum that controls the point matching (default <a href="#Strategy.expected">Strategy.expected</a>)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the worst case MSE</p>
@@ -1785,7 +1790,7 @@ and computes the error based on the closest point.</p>
     </div>
     <a class="headerlink" href="#rmse"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmse-428"><a href="#rmse-428"><span class="linenos">428</span></a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="o">.</span><span class="n">expected</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmse-429"><a href="#rmse-429"><span class="linenos">429</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmse-429"><a href="#rmse-429"><span class="linenos">429</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmse-430"><a href="#rmse-430"><span class="linenos">430</span></a><span class="sd">    Estimates the worst case Root Mean Squared Error (RMSE) for the given</span>
 </span><span id="rmse-431"><a href="#rmse-431"><span class="linenos">431</span></a><span class="sd">    knee and expected points.</span>
 </span><span id="rmse-432"><a href="#rmse-432"><span class="linenos">432</span></a>
@@ -1815,7 +1820,7 @@ on the worst case.
 It uses the euclidean distance to find the closer points,
 and computes the error based on the closest point.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1824,7 +1829,7 @@ and computes the error based on the closest point.</p>
 <li><strong>s (Strategy):</strong>  enum that controls the point matching (default <a href="#Strategy.expected">Strategy.expected</a>)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the worst case RMSE</p>
@@ -1845,7 +1850,7 @@ and computes the error based on the closest point.</p>
     </div>
     <a class="headerlink" href="#rmspe"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmspe-450"><a href="#rmspe-450"><span class="linenos">450</span></a><span class="k">def</span> <span class="nf">rmspe</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="o">.</span><span class="n">expected</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmspe-451"><a href="#rmspe-451"><span class="linenos">451</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmspe-451"><a href="#rmspe-451"><span class="linenos">451</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmspe-452"><a href="#rmspe-452"><span class="linenos">452</span></a><span class="sd">    Estimates the worst case Root Mean Squared Percentage Error (RMSPE) for the given knee and expected points.</span>
 </span><span id="rmspe-453"><a href="#rmspe-453"><span class="linenos">453</span></a>
 </span><span id="rmspe-454"><a href="#rmspe-454"><span class="linenos">454</span></a><span class="sd">    Suppports different size arrays, and estimates the RMSPE based on the worst case.</span>
@@ -1903,7 +1908,7 @@ and computes the error based on the closest point.</p>
 <p>Suppports different size arrays, and estimates the RMSPE based on the worst case.
 It uses the euclidean distance to find the closer points, and computes the error based on the closest point.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1913,7 +1918,7 @@ It uses the euclidean distance to find the closer points, and computes the error
 <li><strong>eps (float):</strong>  eps value to prevent division by zero (default: 1E-16)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the worst case RMSPE</p>
@@ -1934,7 +1939,7 @@ It uses the euclidean distance to find the closer points, and computes the error
     </div>
     <a class="headerlink" href="#cm"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="cm-503"><a href="#cm-503"><span class="linenos">503</span></a><span class="k">def</span> <span class="nf">cm</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">knees</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="cm-504"><a href="#cm-504"><span class="linenos">504</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="cm-504"><a href="#cm-504"><span class="linenos">504</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="cm-505"><a href="#cm-505"><span class="linenos">505</span></a><span class="sd">    Computes the Confusion Matrix based on the knees and expected points.</span>
 </span><span id="cm-506"><a href="#cm-506"><span class="linenos">506</span></a>
 </span><span id="cm-507"><a href="#cm-507"><span class="linenos">507</span></a><span class="sd">    Args:</span>
@@ -1972,7 +1977,7 @@ It uses the euclidean distance to find the closer points, and computes the error
 
             <div class="docstring"><p>Computes the Confusion Matrix based on the knees and expected points.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1981,7 +1986,7 @@ It uses the euclidean distance to find the closer points, and computes the error
 <li><strong>t (float):</strong>  the maximum allowed distance in percentage (default 0.01)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the confusion matrix</p>
@@ -2002,7 +2007,7 @@ It uses the euclidean distance to find the closer points, and computes the error
     </div>
     <a class="headerlink" href="#accuracy"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="accuracy-539"><a href="#accuracy-539"><span class="linenos">539</span></a><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="n">cm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="accuracy-540"><a href="#accuracy-540"><span class="linenos">540</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="accuracy-540"><a href="#accuracy-540"><span class="linenos">540</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="accuracy-541"><a href="#accuracy-541"><span class="linenos">541</span></a><span class="sd">    Computes accuracy based on a Confusion Matrix.</span>
 </span><span id="accuracy-542"><a href="#accuracy-542"><span class="linenos">542</span></a>
 </span><span id="accuracy-543"><a href="#accuracy-543"><span class="linenos">543</span></a><span class="sd">    Args:</span>
@@ -2021,13 +2026,13 @@ It uses the euclidean distance to find the closer points, and computes the error
 
             <div class="docstring"><p>Computes accuracy based on a Confusion Matrix.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>cm (np.ndarray):</strong>  the confusion matrix</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the accuracy</p>
@@ -2048,7 +2053,7 @@ It uses the euclidean distance to find the closer points, and computes the error
     </div>
     <a class="headerlink" href="#f1score"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="f1score-556"><a href="#f1score-556"><span class="linenos">556</span></a><span class="k">def</span> <span class="nf">f1score</span><span class="p">(</span><span class="n">cm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="f1score-557"><a href="#f1score-557"><span class="linenos">557</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="f1score-557"><a href="#f1score-557"><span class="linenos">557</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="f1score-558"><a href="#f1score-558"><span class="linenos">558</span></a><span class="sd">    Computes F1-Score based on a Confusion Matrix.</span>
 </span><span id="f1score-559"><a href="#f1score-559"><span class="linenos">559</span></a>
 </span><span id="f1score-560"><a href="#f1score-560"><span class="linenos">560</span></a><span class="sd">    Args:</span>
@@ -2067,13 +2072,13 @@ It uses the euclidean distance to find the closer points, and computes the error
 
             <div class="docstring"><p>Computes F1-Score based on a Confusion Matrix.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>cm (np.ndarray):</strong>  the confusion matrix</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the F1-Score</p>
@@ -2094,7 +2099,7 @@ It uses the euclidean distance to find the closer points, and computes the error
     </div>
     <a class="headerlink" href="#mcc"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="mcc-573"><a href="#mcc-573"><span class="linenos">573</span></a><span class="k">def</span> <span class="nf">mcc</span><span class="p">(</span><span class="n">cm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="mcc-574"><a href="#mcc-574"><span class="linenos">574</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="mcc-574"><a href="#mcc-574"><span class="linenos">574</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="mcc-575"><a href="#mcc-575"><span class="linenos">575</span></a><span class="sd">    Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.</span>
 </span><span id="mcc-576"><a href="#mcc-576"><span class="linenos">576</span></a>
 </span><span id="mcc-577"><a href="#mcc-577"><span class="linenos">577</span></a><span class="sd">    Args:</span>
@@ -2116,13 +2121,13 @@ It uses the euclidean distance to find the closer points, and computes the error
 
             <div class="docstring"><p>Computes Matthews Correlation Coefficient (MCC) based on a Confusion Matrix.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>cm (np.ndarray):</strong>  the confusion matrix</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the mcc</p>
@@ -2143,7 +2148,7 @@ It uses the euclidean distance to find the closer points, and computes the error
     </div>
     <a class="headerlink" href="#compute_global_rmse"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="compute_global_rmse-593"><a href="#compute_global_rmse-593"><span class="linenos">593</span></a><span class="k">def</span> <span class="nf">compute_global_rmse</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="compute_global_rmse-594"><a href="#compute_global_rmse-594"><span class="linenos">594</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="compute_global_rmse-594"><a href="#compute_global_rmse-594"><span class="linenos">594</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="compute_global_rmse-595"><a href="#compute_global_rmse-595"><span class="linenos">595</span></a><span class="sd">    Computes the global RMSE for a point reduction set.</span>
 </span><span id="compute_global_rmse-596"><a href="#compute_global_rmse-596"><span class="linenos">596</span></a>
 </span><span id="compute_global_rmse-597"><a href="#compute_global_rmse-597"><span class="linenos">597</span></a><span class="sd">    For each segment within the point reduction set, computes a straight line.</span>
@@ -2188,7 +2193,7 @@ It uses the euclidean distance to find the closer points, and computes the error
 <p>For each segment within the point reduction set, computes a straight line.
 For each line segment it computes the error with the original set.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  the original points</li>
@@ -2196,7 +2201,7 @@ For each line segment it computes the error with the original set.</p>
 <li><strong>cache (dict):</strong>  cache used to speedup the computation (default None)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the global RMSE</p>
@@ -2217,7 +2222,7 @@ For each line segment it computes the error with the original set.</p>
     </div>
     <a class="headerlink" href="#mip"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="mip-633"><a href="#mip-633"><span class="linenos">633</span></a><span class="k">def</span> <span class="nf">mip</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="mip-634"><a href="#mip-634"><span class="linenos">634</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="mip-634"><a href="#mip-634"><span class="linenos">634</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="mip-635"><a href="#mip-635"><span class="linenos">635</span></a><span class="sd">    Computes the median improvement per point (MIP).</span>
 </span><span id="mip-636"><a href="#mip-636"><span class="linenos">636</span></a>
 </span><span id="mip-637"><a href="#mip-637"><span class="linenos">637</span></a><span class="sd">    Improvement is defined as a relation between a final cost against a reference cost.</span>
@@ -2258,14 +2263,14 @@ The final cost is the RSME with the complete reduced set.
 The reference cost id different for each point.
 It is computed as the RMSE of the reconstruction without that specific point. </p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  the original points</li>
 <li><strong>reduced (np.ndarray):</strong>  the indexes of the reduced points</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: the median improvement per point (MIP) and the MAD</p>
@@ -2286,7 +2291,7 @@ It is computed as the RMSE of the reconstruction without that specific point. </
     </div>
     <a class="headerlink" href="#compute_cost"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="compute_cost-667"><a href="#compute_cost-667"><span class="linenos">667</span></a><span class="k">def</span> <span class="nf">compute_cost</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">segment_errors</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span><span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="compute_cost-668"><a href="#compute_cost-668"><span class="linenos">668</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="compute_cost-668"><a href="#compute_cost-668"><span class="linenos">668</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="compute_cost-669"><a href="#compute_cost-669"><span class="linenos">669</span></a><span class="sd">    Compute the cost of multi-point fitting using the segment errors.</span>
 </span><span id="compute_cost-670"><a href="#compute_cost-670"><span class="linenos">670</span></a><span class="sd">    </span>
 </span><span id="compute_cost-671"><a href="#compute_cost-671"><span class="linenos">671</span></a><span class="sd">    It uses a cache to speedup the compuation of the cost.</span>
@@ -2343,7 +2348,7 @@ It is computed as the RMSE of the reconstruction without that specific point. </
 <p>It uses a cache to speedup the compuation of the cost.
 The cache contains the cost of previously computed segments.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  the original points</li>
@@ -2352,7 +2357,7 @@ The cache contains the cost of previously computed segments.</p>
 <li><strong>cache (dict):</strong>  the cache used to store the segments costs</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the global cost of a multi-point fitting</p>
@@ -2373,7 +2378,7 @@ The cache contains the cost of previously computed segments.</p>
     </div>
     <a class="headerlink" href="#compute_partial_cost"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="compute_partial_cost-719"><a href="#compute_partial_cost-719"><span class="linenos">719</span></a><span class="k">def</span> <span class="nf">compute_partial_cost</span><span class="p">(</span><span class="n">y</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="compute_partial_cost-720"><a href="#compute_partial_cost-720"><span class="linenos">720</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="compute_partial_cost-720"><a href="#compute_partial_cost-720"><span class="linenos">720</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="compute_partial_cost-721"><a href="#compute_partial_cost-721"><span class="linenos">721</span></a><span class="sd">    Compute the partial cost of a multi-point fitting.</span>
 </span><span id="compute_partial_cost-722"><a href="#compute_partial_cost-722"><span class="linenos">722</span></a>
 </span><span id="compute_partial_cost-723"><a href="#compute_partial_cost-723"><span class="linenos">723</span></a><span class="sd">    Args:</span>
@@ -2400,7 +2405,7 @@ The cache contains the cost of previously computed segments.</p>
 
             <div class="docstring"><p>Compute the partial cost of a multi-point fitting.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>y (np.ndarray):</strong>  the y values from the points</li>
@@ -2409,7 +2414,7 @@ The cache contains the cost of previously computed segments.</p>
 <li><strong>eps (float):</strong>  eps value to prevent division by zero (default: 1E-16)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the global cost of a multi-point fitting</p>
@@ -2430,7 +2435,7 @@ The cache contains the cost of previously computed segments.</p>
     </div>
     <a class="headerlink" href="#compute_global_cost"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="compute_global_cost-744"><a href="#compute_global_cost-744"><span class="linenos">744</span></a><span class="k">def</span> <span class="nf">compute_global_cost</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">rpd</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="compute_global_cost-745"><a href="#compute_global_cost-745"><span class="linenos">745</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="compute_global_cost-745"><a href="#compute_global_cost-745"><span class="linenos">745</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="compute_global_cost-746"><a href="#compute_global_cost-746"><span class="linenos">746</span></a><span class="sd">    Compute the cost of multi-point fitting using the segment errors.</span>
 </span><span id="compute_global_cost-747"><a href="#compute_global_cost-747"><span class="linenos">747</span></a><span class="sd">    </span>
 </span><span id="compute_global_cost-748"><a href="#compute_global_cost-748"><span class="linenos">748</span></a><span class="sd">    It uses a cache to speedup the compuation of the cost.</span>
@@ -2477,7 +2482,7 @@ The cache contains the cost of previously computed segments.</p>
 <p>It uses a cache to speedup the compuation of the cost.
 The cache contains the cost of previously computed segments.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  the original points</li>
@@ -2486,7 +2491,7 @@ The cache contains the cost of previously computed segments.</p>
 <li><strong>cache (dict):</strong>  the cache used to store the segments costs (default: None)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the global cost of a multi-point fitting</p>
@@ -2507,7 +2512,7 @@ The cache contains the cost of previously computed segments.</p>
     </div>
     <a class="headerlink" href="#compute_global_segment_cost"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="compute_global_segment_cost-786"><a href="#compute_global_segment_cost-786"><span class="linenos">786</span></a><span class="k">def</span> <span class="nf">compute_global_segment_cost</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">rpd</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="compute_global_segment_cost-787"><a href="#compute_global_segment_cost-787"><span class="linenos">787</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="compute_global_segment_cost-787"><a href="#compute_global_segment_cost-787"><span class="linenos">787</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="compute_global_segment_cost-788"><a href="#compute_global_segment_cost-788"><span class="linenos">788</span></a><span class="sd">    Compute the cost of multi-point fitting using the segment errors.</span>
 </span><span id="compute_global_segment_cost-789"><a href="#compute_global_segment_cost-789"><span class="linenos">789</span></a><span class="sd">    </span>
 </span><span id="compute_global_segment_cost-790"><a href="#compute_global_segment_cost-790"><span class="linenos">790</span></a><span class="sd">    Legacy function that does not use a cache or combines the segments costs.</span>
@@ -2552,7 +2557,7 @@ The cache contains the cost of previously computed segments.</p>
 <p>Legacy function that does not use a cache or combines the segments costs.
 Used for unit testing.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  the original points</li>
@@ -2560,7 +2565,7 @@ Used for unit testing.</p>
 <li><strong>cost (metrics.Metrics):</strong>  the metric used for the cost calculation (default: metrics.Metrics.rpd)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: the global cost, and partial costs</p>
@@ -2670,9 +2675,13 @@ Used for unit testing.</p>
                 }
 
                 let heading;
-                switch (result.doc.type) {
+                switch (result.doc.kind) {
                     case "function":
-                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
@@ -2693,7 +2702,7 @@ Used for unit testing.</p>
                 }
                 html += `
                         <section class="search-result">
-                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
+                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
                         <div class="docstring">${doc.doc}</div>
                         </section>
                     `;

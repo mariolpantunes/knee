@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.2"/>
+    <meta name="generator" content="pdoc 12.3.1"/>
     <title>knee.linear_fit API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -29,7 +29,12 @@
             {childList: true}
         );
     })
-</script></head>
+</script>
+<style>
+    mjx-container {
+        overflow-x: auto;
+    }
+</style></head>
 <body>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
@@ -159,9 +164,9 @@
 <a href="./../knee.html">knee</a><wbr>.linear_fit    </h1>
 
                 
-                        <input id="linear_fit-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                        <input id="mod-linear_fit-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-                        <label class="view-source-button" for="linear_fit-view-source"><span>View Source</span></label>
+                        <label class="view-source-button" for="mod-linear_fit-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># coding: utf-8</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
@@ -184,7 +189,7 @@
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="k">def</span> <span class="nf">linear_fit_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    Computes the linear fit for the points.</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    This methods approximates the linear fit using only the</span>
@@ -202,7 +207,7 @@
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="k">def</span> <span class="nf">linear_fit</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">    Computes the linear fit for the points.</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    This methods approximates the linear fit using only the</span>
@@ -226,7 +231,7 @@
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="k">def</span> <span class="nf">linear_transform_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">    Computes the y values for an x array and the given coefficients.</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    Args:</span>
@@ -241,7 +246,7 @@
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="k">def</span> <span class="nf">linear_transform</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    Computes the y values for an x array and the given coefficients.</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    Args:</span>
@@ -257,7 +262,7 @@
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span> <span class="nf">linear_hv_residuals_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    Computes the residual error from a straight line fitting.</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    This methods tries a horizontal (typical $f(x)=m \\times x + b$ equation)</span>
@@ -276,7 +281,7 @@
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="k">def</span> <span class="nf">linear_hv_residuals</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">    Computes the residual error from a straight line fitting.</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">    This methods tries a horizontal (typical $f(x)=m \\times x + b$ equation)</span>
@@ -305,7 +310,7 @@
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
 </span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
 </span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="k">def</span> <span class="nf">linear_fit_transform_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">vertical</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]:</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">    Computes the horizontal or vertical line fitting.</span>
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">    A horizontal line fitting uses the typical $f(x)=m \\times x + b$ equation.</span>
@@ -345,7 +350,7 @@
 </span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="k">def</span> <span class="nf">linear_r2_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">r2</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="sd">    Computes the coefficient of determination (R2).</span>
 </span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>
 </span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">    Args:</span>
@@ -362,7 +367,7 @@
 </span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>
 </span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="k">def</span> <span class="nf">linear_r2</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">r2</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">    Computes the coefficient of determination (R2).</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>
 </span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">    Args:</span>
@@ -392,7 +397,7 @@
 </span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="k">def</span> <span class="nf">rmspe_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">    Computes the Root Mean Squared Percentage Error (RMSPE).</span>
 </span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>
 </span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">    Args:</span>
@@ -409,7 +414,7 @@
 </span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>
 </span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>
 </span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="k">def</span> <span class="nf">rmspe</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a><span class="sd">    Computes the Root Mean Squared Percentage Error (RMSPE).</span>
 </span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>
 </span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">    Args:</span>
@@ -426,7 +431,7 @@
 </span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>
 </span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>
 </span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a><span class="k">def</span> <span class="nf">rmsle_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a><span class="sd">    Computes the Root Mean Squared Log Error (RMSLE):</span>
 </span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a><span class="sd">    $$</span>
 </span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="sd">    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}</span>
@@ -445,7 +450,7 @@
 </span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>
 </span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>
 </span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">    Computes the Root Mean Squared Log Error (RMSLE):</span>
 </span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="sd">    $$</span>
 </span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a><span class="sd">    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}</span>
@@ -475,7 +480,7 @@
 </span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a>
 </span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>
 </span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a><span class="k">def</span> <span class="nf">rpd_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a><span class="sd">    Computes the Relative Percentage Difference (RPD).</span>
 </span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a>
 </span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a><span class="sd">    Args:</span>
@@ -492,7 +497,7 @@
 </span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>
 </span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>
 </span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a><span class="k">def</span> <span class="nf">rpd</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a><span class="sd">    Computes the Relative Percentage Difference (RPD).</span>
 </span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a>
 </span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a><span class="sd">    Args:</span>
@@ -509,7 +514,7 @@
 </span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>
 </span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>
 </span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a><span class="k">def</span> <span class="nf">rmse_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a><span class="sd">    Computes the Root Mean Squared Error (RMSE).</span>
 </span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>
 </span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a><span class="sd">    Args:</span>
@@ -525,7 +530,7 @@
 </span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a>
 </span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a>
 </span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a><span class="sd">    Computes the Root Mean Squared Error (RMSE).</span>
 </span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>
 </span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="sd">    Args:</span>
@@ -541,7 +546,7 @@
 </span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>
 </span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>
 </span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a><span class="k">def</span> <span class="nf">linear_residuals_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a><span class="sd">    Computes the residual error of the linear fit.</span>
 </span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>
 </span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a><span class="sd">    Args:</span>
@@ -557,7 +562,7 @@
 </span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>
 </span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>
 </span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a><span class="k">def</span> <span class="nf">linear_residuals</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a><span class="sd">    Computes the residual error of the linear fit.</span>
 </span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>
 </span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a><span class="sd">    Args:</span>
@@ -585,7 +590,7 @@
 </span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a>
 </span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>
 </span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a><span class="k">def</span> <span class="nf">r2_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a><span class="sd">    Computes the coefficient of determination (R2).</span>
 </span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>
 </span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a><span class="sd">    Computes the best fit (and not the fast point fit)</span>
@@ -607,7 +612,7 @@
 </span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>
 </span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>
 </span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a><span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>    <span class="sd">&quot;&quot;&quot;Computes the coefficient of determination (R2).</span>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the coefficient of determination (R2).</span>
 </span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>
 </span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a><span class="sd">    Computes the best fit (and not the fast point fit)</span>
 </span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a><span class="sd">    and computes the corresponding R2.</span>
@@ -633,7 +638,7 @@
 </span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a>
 </span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>
 </span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a><span class="k">def</span> <span class="nf">angle</span><span class="p">(</span><span class="n">coef1</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">coef2</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a><span class="sd">    Computes the angle between two lines.</span>
 </span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a>
 </span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a><span class="sd">    Args:</span>
@@ -649,7 +654,7 @@
 </span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a>
 </span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a>
 </span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a><span class="k">def</span> <span class="nf">shortest_distance_points</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a><span class="sd">    Computes the shortest distance from the points to the </span>
 </span><span id="L-489"><a href="#L-489"><span class="linenos">489</span></a><span class="sd">    straight line defined by the left and right point.</span>
 </span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a>
@@ -685,7 +690,7 @@
 </span><span id="L-520"><a href="#L-520"><span class="linenos">520</span></a>
 </span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a>
 </span><span id="L-522"><a href="#L-522"><span class="linenos">522</span></a><span class="k">def</span> <span class="nf">perpendicular_distance</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-523"><a href="#L-523"><span class="linenos">523</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-523"><a href="#L-523"><span class="linenos">523</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-524"><a href="#L-524"><span class="linenos">524</span></a><span class="sd">    Computes the perpendicular distance from the points to the </span>
 </span><span id="L-525"><a href="#L-525"><span class="linenos">525</span></a><span class="sd">    straight line defined by the first and last point.</span>
 </span><span id="L-526"><a href="#L-526"><span class="linenos">526</span></a>
@@ -700,7 +705,7 @@
 </span><span id="L-535"><a href="#L-535"><span class="linenos">535</span></a>
 </span><span id="L-536"><a href="#L-536"><span class="linenos">536</span></a>
 </span><span id="L-537"><a href="#L-537"><span class="linenos">537</span></a><span class="k">def</span> <span class="nf">perpendicular_distance_index</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-538"><a href="#L-538"><span class="linenos">538</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-538"><a href="#L-538"><span class="linenos">538</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-539"><a href="#L-539"><span class="linenos">539</span></a><span class="sd">    Computes the perpendicular distance from the points to the </span>
 </span><span id="L-540"><a href="#L-540"><span class="linenos">540</span></a><span class="sd">    straight line defined by the left and right point.</span>
 </span><span id="L-541"><a href="#L-541"><span class="linenos">541</span></a>
@@ -716,7 +721,7 @@
 </span><span id="L-551"><a href="#L-551"><span class="linenos">551</span></a>
 </span><span id="L-552"><a href="#L-552"><span class="linenos">552</span></a>
 </span><span id="L-553"><a href="#L-553"><span class="linenos">553</span></a><span class="k">def</span> <span class="nf">perpendicular_distance_points</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-554"><a href="#L-554"><span class="linenos">554</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-554"><a href="#L-554"><span class="linenos">554</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-555"><a href="#L-555"><span class="linenos">555</span></a><span class="sd">    Computes the perpendicular distance from the points to the </span>
 </span><span id="L-556"><a href="#L-556"><span class="linenos">556</span></a><span class="sd">    straight line defined by the left and right point.</span>
 </span><span id="L-557"><a href="#L-557"><span class="linenos">557</span></a>
@@ -745,7 +750,7 @@
     </div>
     <a class="headerlink" href="#linear_fit_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_fit_points-22"><a href="#linear_fit_points-22"><span class="linenos">22</span></a><span class="k">def</span> <span class="nf">linear_fit_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="linear_fit_points-23"><a href="#linear_fit_points-23"><span class="linenos">23</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_fit_points-23"><a href="#linear_fit_points-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_fit_points-24"><a href="#linear_fit_points-24"><span class="linenos">24</span></a><span class="sd">    Computes the linear fit for the points.</span>
 </span><span id="linear_fit_points-25"><a href="#linear_fit_points-25"><span class="linenos">25</span></a>
 </span><span id="linear_fit_points-26"><a href="#linear_fit_points-26"><span class="linenos">26</span></a><span class="sd">    This methods approximates the linear fit using only the</span>
@@ -768,13 +773,13 @@
 <p>This methods approximates the linear fit using only the
 first and last points in a curve.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: (b, m)</p>
@@ -795,7 +800,7 @@ first and last points in a curve.</p>
     </div>
     <a class="headerlink" href="#linear_fit"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_fit-40"><a href="#linear_fit-40"><span class="linenos">40</span></a><span class="k">def</span> <span class="nf">linear_fit</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="linear_fit-41"><a href="#linear_fit-41"><span class="linenos">41</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_fit-41"><a href="#linear_fit-41"><span class="linenos">41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_fit-42"><a href="#linear_fit-42"><span class="linenos">42</span></a><span class="sd">    Computes the linear fit for the points.</span>
 </span><span id="linear_fit-43"><a href="#linear_fit-43"><span class="linenos">43</span></a>
 </span><span id="linear_fit-44"><a href="#linear_fit-44"><span class="linenos">44</span></a><span class="sd">    This methods approximates the linear fit using only the</span>
@@ -824,14 +829,14 @@ first and last points in a curve.</p>
 <p>This methods approximates the linear fit using only the
 first and last points in a curve.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
 <li><strong>y (np.ndarray):</strong>  the value of the points in the y axis coordinates</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>tuple: (b, m)</p>
@@ -852,7 +857,7 @@ first and last points in a curve.</p>
     </div>
     <a class="headerlink" href="#linear_transform_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_transform_points-64"><a href="#linear_transform_points-64"><span class="linenos">64</span></a><span class="k">def</span> <span class="nf">linear_transform_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="linear_transform_points-65"><a href="#linear_transform_points-65"><span class="linenos">65</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_transform_points-65"><a href="#linear_transform_points-65"><span class="linenos">65</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_transform_points-66"><a href="#linear_transform_points-66"><span class="linenos">66</span></a><span class="sd">    Computes the y values for an x array and the given coefficients.</span>
 </span><span id="linear_transform_points-67"><a href="#linear_transform_points-67"><span class="linenos">67</span></a>
 </span><span id="linear_transform_points-68"><a href="#linear_transform_points-68"><span class="linenos">68</span></a><span class="sd">    Args:</span>
@@ -869,14 +874,14 @@ first and last points in a curve.</p>
 
             <div class="docstring"><p>Computes the y values for an x array and the given coefficients.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>coef (tuple):</strong>  the coefficients from the linear fit</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the corresponding y values</p>
@@ -897,7 +902,7 @@ first and last points in a curve.</p>
     </div>
     <a class="headerlink" href="#linear_transform"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_transform-79"><a href="#linear_transform-79"><span class="linenos">79</span></a><span class="k">def</span> <span class="nf">linear_transform</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="linear_transform-80"><a href="#linear_transform-80"><span class="linenos">80</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_transform-80"><a href="#linear_transform-80"><span class="linenos">80</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_transform-81"><a href="#linear_transform-81"><span class="linenos">81</span></a><span class="sd">    Computes the y values for an x array and the given coefficients.</span>
 </span><span id="linear_transform-82"><a href="#linear_transform-82"><span class="linenos">82</span></a>
 </span><span id="linear_transform-83"><a href="#linear_transform-83"><span class="linenos">83</span></a><span class="sd">    Args:</span>
@@ -915,14 +920,14 @@ first and last points in a curve.</p>
 
             <div class="docstring"><p>Computes the y values for an x array and the given coefficients.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
 <li><strong>coef (tuple):</strong>  the coefficients from the linear fit</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the corresponding y values</p>
@@ -943,7 +948,7 @@ first and last points in a curve.</p>
     </div>
     <a class="headerlink" href="#linear_hv_residuals_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_hv_residuals_points-95"><a href="#linear_hv_residuals_points-95"><span class="linenos"> 95</span></a><span class="k">def</span> <span class="nf">linear_hv_residuals_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="linear_hv_residuals_points-96"><a href="#linear_hv_residuals_points-96"><span class="linenos"> 96</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_hv_residuals_points-96"><a href="#linear_hv_residuals_points-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_hv_residuals_points-97"><a href="#linear_hv_residuals_points-97"><span class="linenos"> 97</span></a><span class="sd">    Computes the residual error from a straight line fitting.</span>
 </span><span id="linear_hv_residuals_points-98"><a href="#linear_hv_residuals_points-98"><span class="linenos"> 98</span></a>
 </span><span id="linear_hv_residuals_points-99"><a href="#linear_hv_residuals_points-99"><span class="linenos"> 99</span></a><span class="sd">    This methods tries a horizontal (typical $f(x)=m \\times x + b$ equation)</span>
@@ -968,13 +973,13 @@ first and last points in a curve.</p>
 and a vertinal line (a non typical $f(y) = m \times y + b$ equation).
 It returns the smaller residual errors.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the residuals of the line fitting.</p>
@@ -995,7 +1000,7 @@ It returns the smaller residual errors.</p>
     </div>
     <a class="headerlink" href="#linear_hv_residuals"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_hv_residuals-114"><a href="#linear_hv_residuals-114"><span class="linenos">114</span></a><span class="k">def</span> <span class="nf">linear_hv_residuals</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="linear_hv_residuals-115"><a href="#linear_hv_residuals-115"><span class="linenos">115</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_hv_residuals-115"><a href="#linear_hv_residuals-115"><span class="linenos">115</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_hv_residuals-116"><a href="#linear_hv_residuals-116"><span class="linenos">116</span></a><span class="sd">    Computes the residual error from a straight line fitting.</span>
 </span><span id="linear_hv_residuals-117"><a href="#linear_hv_residuals-117"><span class="linenos">117</span></a>
 </span><span id="linear_hv_residuals-118"><a href="#linear_hv_residuals-118"><span class="linenos">118</span></a><span class="sd">    This methods tries a horizontal (typical $f(x)=m \\times x + b$ equation)</span>
@@ -1030,14 +1035,14 @@ It returns the smaller residual errors.</p>
 and a vertinal line (a non typical $f(y) = m \times y + b$ equation).
 It returns the smaller residual errors.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
 <li><strong>y (np.ndarray):</strong>  the value of the points in the y axis coordinates</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the residuals of the line fitting.</p>
@@ -1058,7 +1063,7 @@ It returns the smaller residual errors.</p>
     </div>
     <a class="headerlink" href="#linear_fit_transform_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_fit_transform_points-143"><a href="#linear_fit_transform_points-143"><span class="linenos">143</span></a><span class="k">def</span> <span class="nf">linear_fit_transform_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">vertical</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]:</span>
-</span><span id="linear_fit_transform_points-144"><a href="#linear_fit_transform_points-144"><span class="linenos">144</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_fit_transform_points-144"><a href="#linear_fit_transform_points-144"><span class="linenos">144</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_fit_transform_points-145"><a href="#linear_fit_transform_points-145"><span class="linenos">145</span></a><span class="sd">    Computes the horizontal or vertical line fitting.</span>
 </span><span id="linear_fit_transform_points-146"><a href="#linear_fit_transform_points-146"><span class="linenos">146</span></a>
 </span><span id="linear_fit_transform_points-147"><a href="#linear_fit_transform_points-147"><span class="linenos">147</span></a><span class="sd">    A horizontal line fitting uses the typical $f(x)=m \\times x + b$ equation.</span>
@@ -1083,14 +1088,14 @@ It returns the smaller residual errors.</p>
 <p>A horizontal line fitting uses the typical $f(x)=m \times x + b$ equation.
 The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>vertical (bool):</strong>  if True computes the vertical line fitting (default: False)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>Union[np.ndarray, tuple]: for horizontal retuns only the computed y_hat values.
@@ -1147,7 +1152,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
     </div>
     <a class="headerlink" href="#linear_r2_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_r2_points-183"><a href="#linear_r2_points-183"><span class="linenos">183</span></a><span class="k">def</span> <span class="nf">linear_r2_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">r2</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="linear_r2_points-184"><a href="#linear_r2_points-184"><span class="linenos">184</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_r2_points-184"><a href="#linear_r2_points-184"><span class="linenos">184</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_r2_points-185"><a href="#linear_r2_points-185"><span class="linenos">185</span></a><span class="sd">    Computes the coefficient of determination (R2).</span>
 </span><span id="linear_r2_points-186"><a href="#linear_r2_points-186"><span class="linenos">186</span></a>
 </span><span id="linear_r2_points-187"><a href="#linear_r2_points-187"><span class="linenos">187</span></a><span class="sd">    Args:</span>
@@ -1166,7 +1171,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
 
             <div class="docstring"><p>Computes the coefficient of determination (R2).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1174,7 +1179,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
 <li><strong>r2 (R2):</strong>  select the type of coefficient of determination (default: R2.classic)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: coefficient of determination (R2)</p>
@@ -1195,7 +1200,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
     </div>
     <a class="headerlink" href="#linear_r2"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_r2-200"><a href="#linear_r2-200"><span class="linenos">200</span></a><span class="k">def</span> <span class="nf">linear_r2</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">r2</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="linear_r2-201"><a href="#linear_r2-201"><span class="linenos">201</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_r2-201"><a href="#linear_r2-201"><span class="linenos">201</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_r2-202"><a href="#linear_r2-202"><span class="linenos">202</span></a><span class="sd">    Computes the coefficient of determination (R2).</span>
 </span><span id="linear_r2-203"><a href="#linear_r2-203"><span class="linenos">203</span></a>
 </span><span id="linear_r2-204"><a href="#linear_r2-204"><span class="linenos">204</span></a><span class="sd">    Args:</span>
@@ -1227,7 +1232,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
 
             <div class="docstring"><p>Computes the coefficient of determination (R2).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1236,7 +1241,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
 <li><strong>r2 (R2):</strong>  select the type of coefficient of determination (default: R2.classic)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: coefficient of determination (R2)</p>
@@ -1257,7 +1262,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
     </div>
     <a class="headerlink" href="#rmspe_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmspe_points-230"><a href="#rmspe_points-230"><span class="linenos">230</span></a><span class="k">def</span> <span class="nf">rmspe_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmspe_points-231"><a href="#rmspe_points-231"><span class="linenos">231</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmspe_points-231"><a href="#rmspe_points-231"><span class="linenos">231</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmspe_points-232"><a href="#rmspe_points-232"><span class="linenos">232</span></a><span class="sd">    Computes the Root Mean Squared Percentage Error (RMSPE).</span>
 </span><span id="rmspe_points-233"><a href="#rmspe_points-233"><span class="linenos">233</span></a>
 </span><span id="rmspe_points-234"><a href="#rmspe_points-234"><span class="linenos">234</span></a><span class="sd">    Args:</span>
@@ -1276,7 +1281,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
 
             <div class="docstring"><p>Computes the Root Mean Squared Percentage Error (RMSPE).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1284,7 +1289,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
 <li><strong>eps (float):</strong>  eps value to prevent division by zero (default: 1E-16)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: Root Mean Squared Percentage Error (RMSPE)</p>
@@ -1305,7 +1310,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
     </div>
     <a class="headerlink" href="#rmspe"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmspe-247"><a href="#rmspe-247"><span class="linenos">247</span></a><span class="k">def</span> <span class="nf">rmspe</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmspe-248"><a href="#rmspe-248"><span class="linenos">248</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmspe-248"><a href="#rmspe-248"><span class="linenos">248</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmspe-249"><a href="#rmspe-249"><span class="linenos">249</span></a><span class="sd">    Computes the Root Mean Squared Percentage Error (RMSPE).</span>
 </span><span id="rmspe-250"><a href="#rmspe-250"><span class="linenos">250</span></a>
 </span><span id="rmspe-251"><a href="#rmspe-251"><span class="linenos">251</span></a><span class="sd">    Args:</span>
@@ -1324,7 +1329,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
 
             <div class="docstring"><p>Computes the Root Mean Squared Percentage Error (RMSPE).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1333,7 +1338,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
 <li><strong>eps (float):</strong>  eps value to prevent division by zero (default: 1E-16)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: Root Mean Squared Percentage Error (RMSPE)</p>
@@ -1354,7 +1359,7 @@ The vertinal line fitting uses the non typical $f(y) = m \times y + b$ equation.
     </div>
     <a class="headerlink" href="#rmsle_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmsle_points-264"><a href="#rmsle_points-264"><span class="linenos">264</span></a><span class="k">def</span> <span class="nf">rmsle_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmsle_points-265"><a href="#rmsle_points-265"><span class="linenos">265</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmsle_points-265"><a href="#rmsle_points-265"><span class="linenos">265</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmsle_points-266"><a href="#rmsle_points-266"><span class="linenos">266</span></a><span class="sd">    Computes the Root Mean Squared Log Error (RMSLE):</span>
 </span><span id="rmsle_points-267"><a href="#rmsle_points-267"><span class="linenos">267</span></a><span class="sd">    $$</span>
 </span><span id="rmsle_points-268"><a href="#rmsle_points-268"><span class="linenos">268</span></a><span class="sd">    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}</span>
@@ -1378,14 +1383,14 @@ $$
 RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1))^2}{n}}
 $$</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>coef (tuple):</strong>  the coefficients from the linear fit</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: Root Mean Squared Log Error (RMSLE)</p>
@@ -1406,7 +1411,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#rmsle"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmsle-283"><a href="#rmsle-283"><span class="linenos">283</span></a><span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmsle-284"><a href="#rmsle-284"><span class="linenos">284</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmsle-284"><a href="#rmsle-284"><span class="linenos">284</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmsle-285"><a href="#rmsle-285"><span class="linenos">285</span></a><span class="sd">    Computes the Root Mean Squared Log Error (RMSLE):</span>
 </span><span id="rmsle-286"><a href="#rmsle-286"><span class="linenos">286</span></a><span class="sd">    $$</span>
 </span><span id="rmsle-287"><a href="#rmsle-287"><span class="linenos">287</span></a><span class="sd">    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}</span>
@@ -1430,7 +1435,7 @@ $$
 RMSLE(y, \hat{y}) = \sqrt{\frac{\sum_{i=1}^{n}(\log (y_i+1) - \log (\hat{y_i}+1))^2}{n}}
 $$</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1438,7 +1443,7 @@ $$</p>
 <li><strong>coef (tuple):</strong>  the coefficients from the linear fit</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: Root Mean Squared Log Error (RMSLE)</p>
@@ -1500,7 +1505,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#rpd_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rpd_points-313"><a href="#rpd_points-313"><span class="linenos">313</span></a><span class="k">def</span> <span class="nf">rpd_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rpd_points-314"><a href="#rpd_points-314"><span class="linenos">314</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rpd_points-314"><a href="#rpd_points-314"><span class="linenos">314</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rpd_points-315"><a href="#rpd_points-315"><span class="linenos">315</span></a><span class="sd">    Computes the Relative Percentage Difference (RPD).</span>
 </span><span id="rpd_points-316"><a href="#rpd_points-316"><span class="linenos">316</span></a>
 </span><span id="rpd_points-317"><a href="#rpd_points-317"><span class="linenos">317</span></a><span class="sd">    Args:</span>
@@ -1519,7 +1524,7 @@ $$</p>
 
             <div class="docstring"><p>Computes the Relative Percentage Difference (RPD).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -1527,7 +1532,7 @@ $$</p>
 <li><strong>eps (float):</strong>  eps value to prevent division by zero (default: 1E-16)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: Relative Percentage Difference (RPD)</p>
@@ -1548,7 +1553,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#rpd"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rpd-330"><a href="#rpd-330"><span class="linenos">330</span></a><span class="k">def</span> <span class="nf">rpd</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rpd-331"><a href="#rpd-331"><span class="linenos">331</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rpd-331"><a href="#rpd-331"><span class="linenos">331</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rpd-332"><a href="#rpd-332"><span class="linenos">332</span></a><span class="sd">    Computes the Relative Percentage Difference (RPD).</span>
 </span><span id="rpd-333"><a href="#rpd-333"><span class="linenos">333</span></a>
 </span><span id="rpd-334"><a href="#rpd-334"><span class="linenos">334</span></a><span class="sd">    Args:</span>
@@ -1567,7 +1572,7 @@ $$</p>
 
             <div class="docstring"><p>Computes the Relative Percentage Difference (RPD).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1576,7 +1581,7 @@ $$</p>
 <li><strong>eps (float):</strong>  eps value to prevent division by zero (default: 1E-16)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: Relative Percentage Difference (RPD)</p>
@@ -1597,7 +1602,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#rmse_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmse_points-347"><a href="#rmse_points-347"><span class="linenos">347</span></a><span class="k">def</span> <span class="nf">rmse_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmse_points-348"><a href="#rmse_points-348"><span class="linenos">348</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmse_points-348"><a href="#rmse_points-348"><span class="linenos">348</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmse_points-349"><a href="#rmse_points-349"><span class="linenos">349</span></a><span class="sd">    Computes the Root Mean Squared Error (RMSE).</span>
 </span><span id="rmse_points-350"><a href="#rmse_points-350"><span class="linenos">350</span></a>
 </span><span id="rmse_points-351"><a href="#rmse_points-351"><span class="linenos">351</span></a><span class="sd">    Args:</span>
@@ -1615,14 +1620,14 @@ $$</p>
 
             <div class="docstring"><p>Computes the Root Mean Squared Error (RMSE).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>coef (tuple):</strong>  the coefficients from the linear fit</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: Root Mean Squared Error (RMSE)</p>
@@ -1643,7 +1648,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#rmse"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmse-363"><a href="#rmse-363"><span class="linenos">363</span></a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmse-364"><a href="#rmse-364"><span class="linenos">364</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmse-364"><a href="#rmse-364"><span class="linenos">364</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmse-365"><a href="#rmse-365"><span class="linenos">365</span></a><span class="sd">    Computes the Root Mean Squared Error (RMSE).</span>
 </span><span id="rmse-366"><a href="#rmse-366"><span class="linenos">366</span></a>
 </span><span id="rmse-367"><a href="#rmse-367"><span class="linenos">367</span></a><span class="sd">    Args:</span>
@@ -1661,7 +1666,7 @@ $$</p>
 
             <div class="docstring"><p>Computes the Root Mean Squared Error (RMSE).</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1669,7 +1674,7 @@ $$</p>
 <li><strong>coef (tuple):</strong>  the coefficients from the linear fit</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: Root Mean Squared Error (RMSE)</p>
@@ -1690,7 +1695,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#linear_residuals_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_residuals_points-379"><a href="#linear_residuals_points-379"><span class="linenos">379</span></a><span class="k">def</span> <span class="nf">linear_residuals_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="linear_residuals_points-380"><a href="#linear_residuals_points-380"><span class="linenos">380</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_residuals_points-380"><a href="#linear_residuals_points-380"><span class="linenos">380</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_residuals_points-381"><a href="#linear_residuals_points-381"><span class="linenos">381</span></a><span class="sd">    Computes the residual error of the linear fit.</span>
 </span><span id="linear_residuals_points-382"><a href="#linear_residuals_points-382"><span class="linenos">382</span></a>
 </span><span id="linear_residuals_points-383"><a href="#linear_residuals_points-383"><span class="linenos">383</span></a><span class="sd">    Args:</span>
@@ -1708,14 +1713,14 @@ $$</p>
 
             <div class="docstring"><p>Computes the residual error of the linear fit.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>coef (tuple):</strong>  the coefficients from the linear fit</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: residual error of the linear fit</p>
@@ -1736,7 +1741,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#linear_residuals"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="linear_residuals-395"><a href="#linear_residuals-395"><span class="linenos">395</span></a><span class="k">def</span> <span class="nf">linear_residuals</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="linear_residuals-396"><a href="#linear_residuals-396"><span class="linenos">396</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="linear_residuals-396"><a href="#linear_residuals-396"><span class="linenos">396</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="linear_residuals-397"><a href="#linear_residuals-397"><span class="linenos">397</span></a><span class="sd">    Computes the residual error of the linear fit.</span>
 </span><span id="linear_residuals-398"><a href="#linear_residuals-398"><span class="linenos">398</span></a>
 </span><span id="linear_residuals-399"><a href="#linear_residuals-399"><span class="linenos">399</span></a><span class="sd">    Args:</span>
@@ -1754,7 +1759,7 @@ $$</p>
 
             <div class="docstring"><p>Computes the residual error of the linear fit.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1762,7 +1767,7 @@ $$</p>
 <li><strong>coef (tuple):</strong>  the coefficients from the linear fit</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: residual error of the linear fit</p>
@@ -1825,7 +1830,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#r2_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="r2_points-423"><a href="#r2_points-423"><span class="linenos">423</span></a><span class="k">def</span> <span class="nf">r2_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="r2_points-424"><a href="#r2_points-424"><span class="linenos">424</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="r2_points-424"><a href="#r2_points-424"><span class="linenos">424</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="r2_points-425"><a href="#r2_points-425"><span class="linenos">425</span></a><span class="sd">    Computes the coefficient of determination (R2).</span>
 </span><span id="r2_points-426"><a href="#r2_points-426"><span class="linenos">426</span></a>
 </span><span id="r2_points-427"><a href="#r2_points-427"><span class="linenos">427</span></a><span class="sd">    Computes the best fit (and not the fast point fit)</span>
@@ -1852,14 +1857,14 @@ $$</p>
 <p>Computes the best fit (and not the fast point fit)
 and computes the corresponding R2.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 <li><strong>t (R2):</strong>  select the type of coefficient of determination</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: coefficient of determination (R2)</p>
@@ -1880,7 +1885,7 @@ and computes the corresponding R2.</p>
     </div>
     <a class="headerlink" href="#r2"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="r2-445"><a href="#r2-445"><span class="linenos">445</span></a><span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="r2-446"><a href="#r2-446"><span class="linenos">446</span></a>    <span class="sd">&quot;&quot;&quot;Computes the coefficient of determination (R2).</span>
+</span><span id="r2-446"><a href="#r2-446"><span class="linenos">446</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the coefficient of determination (R2).</span>
 </span><span id="r2-447"><a href="#r2-447"><span class="linenos">447</span></a>
 </span><span id="r2-448"><a href="#r2-448"><span class="linenos">448</span></a><span class="sd">    Computes the best fit (and not the fast point fit)</span>
 </span><span id="r2-449"><a href="#r2-449"><span class="linenos">449</span></a><span class="sd">    and computes the corresponding R2.</span>
@@ -1911,7 +1916,7 @@ and computes the corresponding R2.</p>
 <p>Computes the best fit (and not the fast point fit)
 and computes the corresponding R2.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>x (np.ndarray):</strong>  the value of the points in the x axis coordinates</li>
@@ -1919,7 +1924,7 @@ and computes the corresponding R2.</p>
 <li><strong>t (R2):</strong>  select the type of coefficient of determination</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: coefficient of determination (R2)</p>
@@ -1940,7 +1945,7 @@ and computes the corresponding R2.</p>
     </div>
     <a class="headerlink" href="#angle"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="angle-471"><a href="#angle-471"><span class="linenos">471</span></a><span class="k">def</span> <span class="nf">angle</span><span class="p">(</span><span class="n">coef1</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">coef2</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="angle-472"><a href="#angle-472"><span class="linenos">472</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="angle-472"><a href="#angle-472"><span class="linenos">472</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="angle-473"><a href="#angle-473"><span class="linenos">473</span></a><span class="sd">    Computes the angle between two lines.</span>
 </span><span id="angle-474"><a href="#angle-474"><span class="linenos">474</span></a>
 </span><span id="angle-475"><a href="#angle-475"><span class="linenos">475</span></a><span class="sd">    Args:</span>
@@ -1958,14 +1963,14 @@ and computes the corresponding R2.</p>
 
             <div class="docstring"><p>Computes the angle between two lines.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>coef1 (tuple):</strong>  the coefficients from the first line</li>
 <li><strong>coef2 (tuple):</strong>  the coefficients from the second line</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>float: the angle between two lines $\left[0,\frac{\pi}{2} \right]$</p>
@@ -1979,14 +1984,14 @@ and computes the corresponding R2.</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">shortest_distance_points</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">p</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">a</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">b</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span></span>)</span>
+        <span class="name">shortest_distance_points</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">p</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">a</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">b</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="shortest_distance_points-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#shortest_distance_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="shortest_distance_points-487"><a href="#shortest_distance_points-487"><span class="linenos">487</span></a><span class="k">def</span> <span class="nf">shortest_distance_points</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-</span><span id="shortest_distance_points-488"><a href="#shortest_distance_points-488"><span class="linenos">488</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="shortest_distance_points-488"><a href="#shortest_distance_points-488"><span class="linenos">488</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="shortest_distance_points-489"><a href="#shortest_distance_points-489"><span class="linenos">489</span></a><span class="sd">    Computes the shortest distance from the points to the </span>
 </span><span id="shortest_distance_points-490"><a href="#shortest_distance_points-490"><span class="linenos">490</span></a><span class="sd">    straight line defined by the left and right point.</span>
 </span><span id="shortest_distance_points-491"><a href="#shortest_distance_points-491"><span class="linenos">491</span></a>
@@ -2025,7 +2030,7 @@ and computes the corresponding R2.</p>
             <div class="docstring"><p>Computes the shortest distance from the points to the 
 straight line defined by the left and right point.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>pt (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -2033,7 +2038,7 @@ straight line defined by the left and right point.</p>
 <li><strong>end (np.ndarray):</strong>  the right point</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the perpendicular distances</p>
@@ -2054,7 +2059,7 @@ straight line defined by the left and right point.</p>
     </div>
     <a class="headerlink" href="#perpendicular_distance"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="perpendicular_distance-523"><a href="#perpendicular_distance-523"><span class="linenos">523</span></a><span class="k">def</span> <span class="nf">perpendicular_distance</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="perpendicular_distance-524"><a href="#perpendicular_distance-524"><span class="linenos">524</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="perpendicular_distance-524"><a href="#perpendicular_distance-524"><span class="linenos">524</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="perpendicular_distance-525"><a href="#perpendicular_distance-525"><span class="linenos">525</span></a><span class="sd">    Computes the perpendicular distance from the points to the </span>
 </span><span id="perpendicular_distance-526"><a href="#perpendicular_distance-526"><span class="linenos">526</span></a><span class="sd">    straight line defined by the first and last point.</span>
 </span><span id="perpendicular_distance-527"><a href="#perpendicular_distance-527"><span class="linenos">527</span></a>
@@ -2072,13 +2077,13 @@ straight line defined by the left and right point.</p>
             <div class="docstring"><p>Computes the perpendicular distance from the points to the 
 straight line defined by the first and last point.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the perpendicular distances</p>
@@ -2099,7 +2104,7 @@ straight line defined by the first and last point.</p>
     </div>
     <a class="headerlink" href="#perpendicular_distance_index"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="perpendicular_distance_index-538"><a href="#perpendicular_distance_index-538"><span class="linenos">538</span></a><span class="k">def</span> <span class="nf">perpendicular_distance_index</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="perpendicular_distance_index-539"><a href="#perpendicular_distance_index-539"><span class="linenos">539</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="perpendicular_distance_index-539"><a href="#perpendicular_distance_index-539"><span class="linenos">539</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="perpendicular_distance_index-540"><a href="#perpendicular_distance_index-540"><span class="linenos">540</span></a><span class="sd">    Computes the perpendicular distance from the points to the </span>
 </span><span id="perpendicular_distance_index-541"><a href="#perpendicular_distance_index-541"><span class="linenos">541</span></a><span class="sd">    straight line defined by the left and right point.</span>
 </span><span id="perpendicular_distance_index-542"><a href="#perpendicular_distance_index-542"><span class="linenos">542</span></a>
@@ -2118,7 +2123,7 @@ straight line defined by the first and last point.</p>
             <div class="docstring"><p>Computes the perpendicular distance from the points to the 
 straight line defined by the left and right point.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -2126,7 +2131,7 @@ straight line defined by the left and right point.</p>
 <li><strong>right (int):</strong>  the index of the right point</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the perpendicular distances</p>
@@ -2147,7 +2152,7 @@ straight line defined by the left and right point.</p>
     </div>
     <a class="headerlink" href="#perpendicular_distance_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="perpendicular_distance_points-554"><a href="#perpendicular_distance_points-554"><span class="linenos">554</span></a><span class="k">def</span> <span class="nf">perpendicular_distance_points</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="perpendicular_distance_points-555"><a href="#perpendicular_distance_points-555"><span class="linenos">555</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="perpendicular_distance_points-555"><a href="#perpendicular_distance_points-555"><span class="linenos">555</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="perpendicular_distance_points-556"><a href="#perpendicular_distance_points-556"><span class="linenos">556</span></a><span class="sd">    Computes the perpendicular distance from the points to the </span>
 </span><span id="perpendicular_distance_points-557"><a href="#perpendicular_distance_points-557"><span class="linenos">557</span></a><span class="sd">    straight line defined by the left and right point.</span>
 </span><span id="perpendicular_distance_points-558"><a href="#perpendicular_distance_points-558"><span class="linenos">558</span></a>
@@ -2166,7 +2171,7 @@ straight line defined by the left and right point.</p>
             <div class="docstring"><p>Computes the perpendicular distance from the points to the 
 straight line defined by the left and right point.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>pt (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -2174,7 +2179,7 @@ straight line defined by the left and right point.</p>
 <li><strong>end (np.ndarray):</strong>  the right point</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: the perpendicular distances</p>
@@ -2284,9 +2289,13 @@ straight line defined by the left and right point.</p>
                 }
 
                 let heading;
-                switch (result.doc.type) {
+                switch (result.doc.kind) {
                     case "function":
-                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
@@ -2307,7 +2316,7 @@ straight line defined by the left and right point.</p>
                 }
                 html += `
                         <section class="search-result">
-                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
+                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
                         <div class="docstring">${doc.doc}</div>
                         </section>
                     `;

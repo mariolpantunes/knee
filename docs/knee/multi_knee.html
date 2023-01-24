@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.0.2"/>
+    <meta name="generator" content="pdoc 12.3.1"/>
     <title>knee.multi_knee API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -29,7 +29,12 @@
             {childList: true}
         );
     })
-</script></head>
+</script>
+<style>
+    mjx-container {
+        overflow-x: auto;
+    }
+</style></head>
 <body>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
@@ -69,9 +74,9 @@
 <a href="./../knee.html">knee</a><wbr>.multi_knee    </h1>
 
                 
-                        <input id="multi_knee-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                        <input id="mod-multi_knee-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-                        <label class="view-source-button" for="multi_knee-view-source"><span>View Source</span></label>
+                        <label class="view-source-button" for="mod-multi_knee-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="c1"># coding: utf-8</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
@@ -92,7 +97,7 @@
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="c1">#TODO: support all the other metrics</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">get_knee</span><span class="p">:</span> <span class="n">callable</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">rpd</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    Wrapper that convert a single knee point detection into a multi knee point detector.</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    It uses recursion on the left and right parts of the curve after detecting the current knee.</span>
@@ -158,7 +163,7 @@
     </div>
     <a class="headerlink" href="#multi_knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="multi_knee-20"><a href="#multi_knee-20"><span class="linenos">20</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">get_knee</span><span class="p">:</span> <span class="n">callable</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">rpd</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="multi_knee-21"><a href="#multi_knee-21"><span class="linenos">21</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="multi_knee-21"><a href="#multi_knee-21"><span class="linenos">21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="multi_knee-22"><a href="#multi_knee-22"><span class="linenos">22</span></a><span class="sd">    Wrapper that convert a single knee point detection into a multi knee point detector.</span>
 </span><span id="multi_knee-23"><a href="#multi_knee-23"><span class="linenos">23</span></a>
 </span><span id="multi_knee-24"><a href="#multi_knee-24"><span class="linenos">24</span></a><span class="sd">    It uses recursion on the left and right parts of the curve after detecting the current knee.</span>
@@ -215,7 +220,7 @@
 
 <p>It uses recursion on the left and right parts of the curve after detecting the current knee.</p>
 
-<h6 id="args">Args</h6>
+<h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>get_knee (callable):</strong>  method that returns a single knee point</li>
@@ -225,7 +230,7 @@
 <li><strong>cost (lf.Linear_Metrics):</strong>  the cost method used to evaluate a point set (default: lf.Linear_Metrics.rmspe)</li>
 </ul>
 
-<h6 id="returns">Returns</h6>
+<h6 id="returns">Returns:</h6>
 
 <blockquote>
   <p>np.ndarray: knee points on the curve</p>
@@ -335,9 +340,13 @@
                 }
 
                 let heading;
-                switch (result.doc.type) {
+                switch (result.doc.kind) {
                     case "function":
-                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
@@ -358,7 +367,7 @@
                 }
                 html += `
                         <section class="search-result">
-                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
+                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
                         <div class="docstring">${doc.doc}</div>
                         </section>
                     `;

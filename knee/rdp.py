@@ -111,7 +111,7 @@ def rdp(points: np.ndarray, t: float = 0.01, distance: Distance = Distance.short
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t (float): the coefficient of determination threshold (default 0.01)
-        distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+        distance (Distance): the distance metric used to decide the split point (default: Distance.shortest)
         cost (metrics.Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
 
     Returns:
@@ -261,7 +261,7 @@ def order_segment(pt: np.ndarray, index:int) -> tuple:
 
 
 def _rdp_fixed(points: np.ndarray, length:int, distance_points:callable, 
-order:Order, stack:list, reduced:list) -> tuple:
+order:Order, stack:list, reduced:list) -> list:
     """
     Main loop of the RDP fixed version.
 
@@ -277,8 +277,7 @@ order:Order, stack:list, reduced:list) -> tuple:
         reduced (list): set of reduced points
 
     Returns:
-        tuple: the index of the reduced space, the points that were removed
-
+        list: the index of the reduced space
     """
 
     while length > 0 and stack:
@@ -328,7 +327,7 @@ def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.s
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         length (int): the fixed length of reduced points (default: 10)
-        distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+        distance (Distance): the distance metric used to decide the split point (default: Distance.shortest)
         order (Order): the metric used to sort the segments (default: Order.segment)
 
     Returns:
@@ -353,7 +352,26 @@ def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.s
     return reduced, compute_removed_points(points, reduced)
 
 
-def _grdp(points, t, cost, order, distance_points, stack, reduced) -> tuple:
+def _grdp(points:np.ndarray, t:float, cost:metrics.Metrics, order:Order, 
+distance_points:callable, stack:list, reduced:list) -> tuple:
+    """
+    Main loop of the gRDP version.
+
+    Not intended to be used as a single method.
+    It is used internally on grdp and mp_grdp.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the coefficient of determination threshold
+        cost (metrics.Metrics): the cost method used to evaluate a point set 
+        order (Order): the metric used to sort the segments
+        distance_points (callable): the distance function
+        stack (list): stack used to explore the points space
+        reduced (list): set of reduced points
+
+    Returns:
+        tuple: the index of the reduced space, stack
+    """
     # Setup cache that is used to speedup the global cost computation
     cache = {}
 
@@ -412,7 +430,7 @@ cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment, ) -> t
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t (float): the coefficient of determination threshold (default 0.01)
-        distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+        distance (Distance): the distance metric used to decide the split point (default: Distance.shortest)
         cost (metrics.Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
         order (Order): the metric used to sort the segments (default: Order.segment)
        
@@ -440,6 +458,25 @@ cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment, ) -> t
 def mp_grdp(points: np.ndarray, t: float = 0.01, min_points:int = 10, distance: Distance = Distance.shortest,
 cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment) -> tuple:
     """
+    MP gRDP (Min Points Global RDP)
+
+    This version computes the gRDP with the given threshold.
+    At the end, if the minimum number of points constraint is not satisfied
+    it executes the rdp_fixed version.
+
+    This method stores the reduced set and stack of the gRDP, meaning that
+    the rdp_fixed method continues from the previous point onwards.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        t (float): the coefficient of determination threshold (default 0.01)
+        min_points (int): the minimal amount of points (default 10)
+        distance (Distance): the distance metric used to decide the split point (default: Distance.shortest)
+        cost (metrics.Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
+        order (Order): the metric used to sort the segments (default: Order.segment)
+    
+    Returns:
+        tuple: the index of the reduced space, the points that were removed
     """
 
     stack = [(0, 0, len(points))]
