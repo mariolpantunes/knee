@@ -82,3 +82,43 @@ class TestRDP(unittest.TestCase):
         np.testing.assert_array_equal(reduced, desired)
         desired = np.array([[0, 1], [2, 0], [3, 1]])
         np.testing.assert_array_equal(removed, desired)
+    
+    def test_fixed_rdp_00(self):
+        points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
+        reduced, removed = rdp.rdp_fixed(points, 3)
+        desired = np.array([0, 2, 5])
+        np.testing.assert_array_equal(reduced, desired)
+        desired = np.array([[0, 1], [2, 2]])
+        np.testing.assert_array_equal(removed, desired)
+
+    def test_fixed_rdp_01(self):
+        points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
+        reduced, removed = rdp.rdp_fixed(points, 4)
+        desired = np.array([0, 2, 3, 5])
+        np.testing.assert_array_equal(reduced, desired)
+        desired = np.array([[0, 1], [2, 0], [3, 1]])
+        np.testing.assert_array_equal(removed, desired)
+    
+    def test_mp_grdp_00(self):
+        points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
+        reduced, removed = rdp.mp_grdp(points, min_points=3)
+        desired = np.array([0, 2, 3, 5])
+        np.testing.assert_array_equal(reduced, desired)
+        desired = np.array([[0, 1], [2, 0], [3, 1]])
+        np.testing.assert_array_equal(removed, desired)
+    
+    def test_mp_grdp_01(self):
+        points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
+        reduced, removed = rdp.mp_grdp(points, min_points=10)
+        desired = np.array([0, 1, 2, 3, 4, 5])
+        np.testing.assert_array_equal(reduced, desired)
+        desired = np.array([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]])
+        np.testing.assert_array_equal(removed, desired)
+    
+    def test_mp_grdp_02(self):
+        points = np.array([[0, 0], [1, 1], [2, 2], [3, 2], [4, 3], [5, 4]])
+        reduced, removed = rdp.mp_grdp(points, t = 0.1, min_points=4)
+        desired = np.array([0, 2, 3, 5])
+        np.testing.assert_array_equal(reduced, desired)
+        desired = np.array([[0, 1], [2, 0], [3, 1]])
+        np.testing.assert_array_equal(removed, desired)

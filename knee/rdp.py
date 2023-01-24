@@ -101,7 +101,7 @@ def compute_cost_coef(pt: np.ndarray, coef, cost: metrics.Metrics=metrics.Metric
     return methods[cost](pt, coef)
 
 
-def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.smape, distance: Distance = Distance.shortest) -> tuple:
+def rdp(points: np.ndarray, t: float = 0.01, distance: Distance = Distance.shortest, cost: metrics.Metrics = metrics.Metrics.smape) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -111,8 +111,8 @@ def rdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Met
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t (float): the coefficient of determination threshold (default 0.01)
-        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
+        cost (metrics.Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
 
     Returns:
         tuple: the index of the reduced space, the points that were removed
@@ -260,6 +260,64 @@ def order_segment(pt: np.ndarray, index:int) -> tuple:
     return left_cost, right_cost
 
 
+def _rdp_fixed(points: np.ndarray, length:int, distance_points:callable, 
+order:Order, stack:list, reduced:list) -> tuple:
+    """
+    Main loop of the RDP fixed version.
+
+    Not intended to be used as a single method.
+    It is used internally on rdp_fixed and mp_grdp.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        length (int): the fixed length of reduced points 
+        distance_points (callable): the distance function
+        order (Order): the metric used to sort the segments
+        stack (list): stack used to explore the points space
+        reduced (list): set of reduced points
+
+    Returns:
+        tuple: the index of the reduced space, the points that were removed
+
+    """
+
+    while length > 0 and stack:
+        _, left, right = stack.pop()
+
+        pt = points[left:right]
+        d = distance_points(pt, pt[0], pt[-1])
+
+        # fix issue when all distances are 0 (perfect fit)
+        if d.sum() == 0:
+            index = int((len(d))/2)
+        else:
+            index = np.argmax(d)
+        
+        # add the relevant point to the reduced set
+        reduced.append(left+index)
+        reduced.sort()
+
+        if order is Order.triangle:
+            left_cost, right_cost = order_triangle(pt, index, distance_points)
+        elif order is Order.area:
+            left_cost, right_cost = order_area(pt, index, distance_points)
+        else:
+            left_cost, right_cost = order_segment(pt, index)
+
+        # Prevent the insertion of single point segments
+        if (left+index+1) - (left) > 2:
+            stack.append((left_cost, left, left+index+1))
+        
+        if (left+len(pt)) - (left+index) > 2:
+            stack.append((right_cost, left+index, left+len(pt)))
+        
+        # Sort the stack based on the cost
+        stack.sort(key=lambda t: t[0], reverse=False)
+        length -= 1
+    
+    return reduced
+
+
 def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.shortest, order:Order=Order.segment) -> tuple:
     """
     Ramer–Douglas–Peucker (RDP) algorithm.
@@ -279,7 +337,6 @@ def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.s
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
 
-    #TODO: trivial cases
     length -= 2
 
     # select the distance metric to be used
@@ -291,42 +348,59 @@ def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.s
     else:
         distance_points = lf.shortest_distance_points
 
-    while length > 0:
-        _, left, right = stack.pop()
-        pt = points[left:right]
-
-        d = distance_points(pt, pt[0], pt[-1])
-        index = np.argmax(d)
-        
-        # add the relevant point to the reduced set
-        reduced.append(left+index)
-        reduced.sort()
-
-        if order is Order.triangle:
-            left_tri_area, right_tri_area = order_triangle(pt, index, distance_points)
-
-            stack.append((left_tri_area, left, left+index+1))
-            stack.append((right_tri_area, left+index, left+len(pt)))
-        elif order is Order.area:
-            left_area, right_area = order_area(pt, index, distance_points)
-
-            stack.append((left_area, left, left+index+1))
-            stack.append((right_area, left+index, left+len(pt)))
-        else:
-            left_cost, right_cost = order_segment(pt, index)
-
-            stack.append((left_cost, left, left+index+1))
-            stack.append((right_cost, left+index, left+len(pt)))
-        
-        # Sort the stack based on the cost
-        stack.sort(key=lambda t: t[0], reverse=False)
-        length -= 1
-
+    reduced = _rdp_fixed(points, length, distance_points, order, stack, reduced)
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)
 
 
-def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment, distance: Distance = Distance.shortest) -> tuple:
+def _grdp(points, t, cost, order, distance_points, stack, reduced) -> tuple:
+    # Setup cache that is used to speedup the global cost computation
+    cache = {}
+
+    global_cost = evaluation.compute_global_cost(points, reduced, cost, cache)
+    curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
+
+    while curved and stack:
+        _, left, right = stack.pop()
+        pt = points[left:right]
+
+        d = distance_points(pt, pt[0], pt[-1])
+        # fix issue when all distances are 0 (perfect fit)
+        if d.sum() == 0:
+            index = int((len(d))/2)
+        else:
+            index = np.argmax(d)
+        
+        # add the relevant point to the reduced set and sort
+        reduced.append(left+index)
+        reduced.sort()
+
+        # compute the cost of the current solution
+        global_cost = evaluation.compute_global_cost(points, reduced, cost, cache)
+        curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
+        
+        if order is Order.triangle:
+            left_cost, right_cost = order_triangle(pt, index, distance_points)
+        elif order is Order.area:
+            left_cost, right_cost = order_area(pt, index, distance_points)
+        else:
+            left_cost, right_cost = order_segment(pt, index)
+        
+        # Prevent the insertion of single point segments
+        if (left+index+1) - (left) > 2:
+            stack.append((left_cost, left, left+index+1))
+        
+        if (left+len(pt)) - (left+index) > 2:
+            stack.append((right_cost, left+index, left+len(pt)))
+        
+        # Sort the stack based on the cost
+        stack.sort(key=lambda t: t[0], reverse=False)
+
+    return reduced, stack
+
+
+def grdp(points: np.ndarray, t: float = 0.01, distance: Distance = Distance.shortest, 
+cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment, ) -> tuple:
     """
     Global Ramer–Douglas–Peucker (RDP) algorithm.
 
@@ -338,10 +412,10 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         t (float): the coefficient of determination threshold (default 0.01)
-        cost (lf.Linear_Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
-        order (Order): the metric used to sort the segments (default: Order.segment)
         distance (RDP_Distance): the distance metric used to decide the split point (default: RDP_Distance.shortest)
-
+        cost (metrics.Metrics): the cost method used to evaluate a point set (default: metrics.Metrics.smape)
+        order (Order): the metric used to sort the segments (default: Order.segment)
+       
     Returns:
         tuple: the index of the reduced space, the points that were removed
     """
@@ -349,9 +423,6 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     stack = [(0, 0, len(points))]
     reduced = [0, len(points)-1]
     
-    # Setup cache that is used to speedup the global cost computation
-    cache = {}
-
     # select the distance metric to be used
     distance_points = None
     if distance is Distance.shortest:
@@ -361,46 +432,39 @@ def grdp(points: np.ndarray, t: float = 0.01, cost: metrics.Metrics = metrics.Me
     else:
         distance_points = lf.shortest_distance_points
 
-    global_cost = evaluation.compute_global_cost(points, reduced, cost, cache)
-    curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
-
-    while curved:
-        _, left, right = stack.pop()
-        pt = points[left:right]
-
-        d = distance_points(pt, pt[0], pt[-1])
-        index = np.argmax(d)
-        
-        # add the relevant point to the reduced set and sort
-        reduced.append(left+index)
-        reduced.sort()
-
-        # compute the cost of the current solution
-        global_cost = evaluation.compute_global_cost(points, reduced, cost, cache)
-        curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
-        
-        if order is Order.triangle:
-            left_tri_area, right_tri_area = order_triangle(pt, index, distance_points)
-
-            stack.append((left_tri_area, left, left+index+1))
-            stack.append((right_tri_area, left+index, left+len(pt)))
-        elif order is Order.area:
-            left_area, right_area = order_area(pt, index, distance_points)
-
-            stack.append((left_area, left, left+index+1))
-            stack.append((right_area, left+index, left+len(pt)))
-        else:
-            left_cost, right_cost = order_segment(pt, index)
-
-            stack.append((left_cost, left, left+index+1))
-            stack.append((right_cost, left+index, left+len(pt)))
-        
-        # Sort the stack based on the cost
-        stack.sort(key=lambda t: t[0], reverse=False)
-
+    reduced, _ = _grdp(points, t, cost, order, distance_points, stack, reduced)
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)
 
+
+def mp_grdp(points: np.ndarray, t: float = 0.01, min_points:int = 10, distance: Distance = Distance.shortest,
+cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment) -> tuple:
+    """
+    """
+
+    stack = [(0, 0, len(points))]
+    reduced = [0, len(points)-1]
+    
+    # select the distance metric to be used
+    distance_points = None
+    if distance is Distance.shortest:
+        distance_points = lf.shortest_distance_points
+    elif distance is Distance.perpendicular:
+        distance_points = lf.perpendicular_distance_points
+    else:
+        distance_points = lf.shortest_distance_points
+
+    reduced, stack = _grdp(points, t, cost, order, distance_points, stack, reduced)
+
+    if len(reduced) >= min_points:
+        reduced = np.array(reduced)
+        return reduced, compute_removed_points(points, reduced)
+    else:
+        length = min_points - len(reduced)
+        reduced = _rdp_fixed(points, length, distance_points, order, stack, reduced)
+        reduced = np.array(reduced)
+        return reduced, compute_removed_points(points, reduced)
+    
 
 def min_point_rdp(points: np.ndarray, t:list=[0.01, 0.001, 0.0001], min_points:int=10) -> tuple:
     """
