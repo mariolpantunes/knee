@@ -406,9 +406,9 @@ def min_point_rdp(points: np.ndarray, t:list=[0.01, 0.001, 0.0001], min_points:i
     """
     Minimal points RDP.
 
-    Given a minimal amount of points, this version runs Global RDP with different threshold
-    values. The threshold are sorted in decreasing order.
-    The methods returns as soon as a threshold value returns the minimal amount of points.
+    Given a minimal amount of points, this version runs Global RDP with different threshold 
+    values. The thresholds are sorted in decreasing order.
+    The method returns as soon as a threshold value returns a minimal amount of points.
     If necessary the method will execute the fixed version of RDP to get the exact amount of points.
 
     Args:

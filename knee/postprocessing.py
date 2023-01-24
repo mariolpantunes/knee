@@ -237,8 +237,20 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
         return np.array(filtered_knees)
 
 
-def filter_clusters_corners(points: np.ndarray, knees: np.ndarray,
-clustering: callable, t: float = 0.01) -> np.ndarray:
+def filter_clusters_corners(points: np.ndarray, knees: np.ndarray, clustering: callable, t: float = 0.01) -> np.ndarray:
+    """
+    This methods finds and removes corner points.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        clustering (callable): the clustering function
+        t (float): the threshold for merging (in percentage, default 0.01)
+    
+    Returns:
+        np.ndarray: the filtered knees
+
+    """
     knee_points = points[knees]
     clusters = clustering(knee_points, t)
 
@@ -424,16 +436,36 @@ def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, 
 
 
 def triangle_area(p: np.ndarray) -> float:
+    """
+    Given 3 points computes the triangle area.
+
+    Args:
+        p (np.ndarray): numpy array with 3 2D points (x, y)
+    
+    Returns:
+        float: triange area
+    """
     area = 0.5 * (p[0][0]*(p[1][1]-p[2][1]) + p[1][0]*(p[2][1]-p[0][1]) + p[2][0]*(p[0][1]-p[1][1]))
     return area
 
 
 def rank_corners_triangle(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
+    """
+    Ranks knees based on the triangle fast heuristic.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+    
+    Returns:
+        np.ndarray: the ranks
+    """
     ranks = []
 
     for i in range(0, len(knees)):
         idx = [knees[i]-1, knees[i], knees[i]+1]
         pt = points[idx]
+        #TODO: use the above function
         area = 0.5*((pt[1][0]-pt[0][0])*(pt[1][1]-pt[2][1]))
         ranks.append(area)
 
@@ -441,6 +473,16 @@ def rank_corners_triangle(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
 
 
 def rank_corners(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
+    """
+    Ranks knees based on their corners.
+    
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+    
+    Returns:
+        np.ndarray: the ranks
+    """
     ranks = []
 
     # compute the first rank
