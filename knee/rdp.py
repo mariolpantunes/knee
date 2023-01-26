@@ -287,14 +287,14 @@ order:Order, stack:list, reduced:list) -> list:
         d = distance_points(pt, pt[0], pt[-1])
 
         # fix issue when all distances are 0 (perfect fit)
-        if d.sum() == 0:
+        # changed to EPS for improve robustness
+        if d.sum() < np.finfo(float).eps:
             index = int((len(d))/2)
         else:
             index = np.argmax(d)
-        
+
         # add the relevant point to the reduced set
         reduced.append(left+index)
-        reduced.sort()
 
         if order is Order.triangle:
             left_cost, right_cost = order_triangle(pt, index, distance_points)
@@ -313,7 +313,8 @@ order:Order, stack:list, reduced:list) -> list:
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0], reverse=False)
         length -= 1
-    
+    # sort the reduced set
+    reduced.sort()
     return reduced
 
 
@@ -381,10 +382,11 @@ distance_points:callable, stack:list, reduced:list) -> tuple:
     while curved and stack:
         _, left, right = stack.pop()
         pt = points[left:right]
-
         d = distance_points(pt, pt[0], pt[-1])
+
         # fix issue when all distances are 0 (perfect fit)
-        if d.sum() == 0:
+        # changed to EPS for improve robustness
+        if d.sum() < np.finfo(float).eps:
             index = int((len(d))/2)
         else:
             index = np.argmax(d)
@@ -418,7 +420,7 @@ distance_points:callable, stack:list, reduced:list) -> tuple:
 
 
 def grdp(points: np.ndarray, t: float = 0.01, distance: Distance = Distance.shortest, 
-cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment, ) -> tuple:
+cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment) -> tuple:
     """
     Global Ramer–Douglas–Peucker (RDP) algorithm.
 
