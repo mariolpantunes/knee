@@ -288,7 +288,8 @@ order:Order, stack:list, reduced:list) -> list:
 
         # fix issue when all distances are 0 (perfect fit)
         # changed to EPS for improve robustness
-        if d.sum() < np.finfo(float).eps:
+        #if d.sum() < np.finfo(float).eps:
+        if np.all((d < np.finfo(float).eps)):
             index = int((len(d))/2)
         else:
             index = np.argmax(d)
@@ -386,7 +387,8 @@ distance_points:callable, stack:list, reduced:list) -> tuple:
 
         # fix issue when all distances are 0 (perfect fit)
         # changed to EPS for improve robustness
-        if d.sum() < np.finfo(float).eps:
+        #if d.sum() < np.finfo(float).eps:
+        if np.all((d < np.finfo(float).eps)):
             index = int((len(d))/2)
         else:
             index = np.argmax(d)
