@@ -6,10 +6,15 @@ __email__ = 'testro@cs.stonybrook.edu'
 __status__ = 'Development'
 
 
-import numpy as np
+import math
 import logging
+import numpy as np
+import knee.postprocessing as pp
+
+
 import uts.gradient as grad
 from uts.zscore import zscore_array
+from uts.thresholding import isodata
 
 
 logger = logging.getLogger(__name__)
@@ -28,6 +33,70 @@ def map_index(a:np.ndarray, b:np.ndarray) -> np.ndarray:
     sort_idx = np.argsort(a)
     out = sort_idx[np.searchsorted(a, b, sorter=sort_idx)]
     return out
+
+
+def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05):
+    x = points[:, 0]
+    y = points[:, 1]
+
+    logger.info(f'Number of points {len(points)}')
+    
+    # get the step for the space contrains (BB)
+    x_step = (max(x) - min (x))*dx
+    y_step = (max(y) - min (y))*dy
+    
+    # get the z-score from the second derivative
+    yd2 = grad.csd(x, y)
+    z_yd2 = zscore_array(x, yd2) #<-- TODO T-score
+
+    #TODO: code here
+    # compute the outlier as a automatic threshold
+    #outlier_z = 3#isodata(z_yd2)
+    outlier_z = np.median(z_yd2)
+    logger.info(f'outlier threshold {outlier_z}')
+
+    candidates = [i for i in range(len(z_yd2)) if z_yd2[i] >= outlier_z]
+    logger.info(f'Candidates: {candidates}({len(candidates)})')
+
+    counter = 0
+    done = False
+    while not done:
+        counter += 1
+        logger.info(f'Round {counter}')
+        logger.info(f'Current candidates {candidates}')
+
+        best_candidates = []
+        # cluster points based on dx and dy
+        for i in candidates:
+            c = points[i]
+            n = [candidates[j] for j in range(len(candidates)) if math.fabs(points[candidates[j],0] - c[0])<=x_step and math.fabs(points[candidates[j],1] - c[1])<=y_step] #and i!=j]
+            logger.info(f'Candidate {c}/{i} neighbourhood {n}')
+            
+            # filter worst and corner points
+            n = pp.filter_worst_knees(points, n)
+            n = pp.filter_corner_knees(points, n, t=0.3)
+
+            if len(n) == 1 and n[0] == i:
+                best_candidates.append(i)
+                logger.info(f'found best knee...')
+            elif len(n) > 1:
+                # find the best candidate from the remaining list
+                r = pp.rank_corners(points, n)
+                logger.info(f'{n} -> rank {r}')
+                if n[np.argmax(r)] == i:
+                    best_candidates.append(i)
+                    logger.info(f'found best knee...')
+            else:
+                logger.info(f'Ups...')
+        logger.info(f'Candidates {candidates}({len(candidates)}) best candidates {best_candidates}({len(best_candidates)})')
+        if best_candidates == candidates:
+            done = True
+        else:
+            candidates = best_candidates
+
+    logger.info(f'Final list {candidates}')
+
+    return np.array(candidates)
 
 
 def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, x_max:int=None, y_range:list=None) -> np.ndarray:
@@ -87,30 +156,41 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
     x_width = max(1, int(x_max * dx))
     y_height = (y_max - y_min) * dy
     
+    #logger.info(f'X width {x_width} y height {y_height}')
+
     # get z-score
     x = points[:, 0]
     y = points[:, 1]
     yd2 = grad.csd(x, y)
     z_yd2 = zscore_array(x, yd2)
     min_zscore = min(z_yd2)
+
+    #logger.info(f'zscore [{min_zscore} {max(z_yd2)}]')
+
     # stack the 2nd derivative zscore with the points
     points = np.column_stack((points, z_yd2))
 
     # outlier_points holds our final selected points
     outlier_points = np.empty((0,2))
+
+    #logger.info(f'outlier points {outlier_points}')
     
     # main loop. start with outliers >= 3 z-score
+    # TODO: Magic number
     outlier_z = 3
+    #logger.info(f' Initial outlier Z value: {outlier_z}')
     while True:
-    
         points_added = 0
         # candidate points have a zscore >= outlier_z
         candidates = points[points[:,2] >= outlier_z]
         #print('Candidates: ' + str(len(candidates)) + ' Points: ' + str(len(points)) + ' Outlier_Points: ' +
         #        str(len(outlier_points)) + ' Outlier_Z: '  + str(round(outlier_z,3)))
         
+        
+
         if len(candidates) > 0:
             x_diff = np.argwhere(np.diff(candidates, axis=0)[:,0] >= x_width).flatten()
+            
             if len(x_diff) == 0:
                 outlier_best = candidates[np.argmin(candidates[:,1])] # best miss ratio in range
                 if all(abs(outlier_best[1]-i) >= y_height for i in outlier_points[:,1]):
@@ -120,7 +200,7 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
                     points_added += 1
             else:
                 candidate_outliers = np.empty((0,3))
-                x_diff = np.hstack(([0],x_diff,[len(candidates)-1]))
+                x_diff = np.hstack(([0], x_diff,[len(candidates)-1]))
                 
                 # first create an array of candidate outliers
                 for i in range(0, len(x_diff)-1):
@@ -149,12 +229,18 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
             break
 
         outlier_z -= dz
+        
+        #logger.info(f'Outlier Z value: {outlier_z}')
 
+
+    # TODO: what is this step
     # sweep through and points to avoid picking concavity issues
     outlier_min_mr = 1.0
     
     # convert to a dict so we can delete in-place
+    #logger.info(f'Outlier points {outlier_points}')
     outlier_points = {int(x[0]):x[1] for x in outlier_points}
+    #logger.info(f'Outlier points {outlier_points}')
     outlier_keys = list(sorted(outlier_points.keys()))
     for k in outlier_keys:
         if outlier_points[k] > outlier_min_mr:
