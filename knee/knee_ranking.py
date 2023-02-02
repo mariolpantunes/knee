@@ -187,13 +187,13 @@ def smooth_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> 
     j = knees[0]
     peak = np.max(y[knees])
 
+    # TODO: find a better approximation, for example SMAPE
     for i in range(0, len(knees)):
         # R2 score
         r2 = 0
         if t is ClusterRanking.linear:
             r2_left = lf.r2(x[j:knees[i]+1], y[j:knees[i]+1])
-            r2_right = lf.r2(
-                x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
+            r2_right = lf.r2(x[knees[i]:knees[-1]], y[knees[i]:knees[-1]])
             r2 = (r2_left + r2_right) / 2.0
         elif t is ClusterRanking.left:
             r2 = lf.r2(x[j:knees[i]+1], y[j:knees[i]+1])

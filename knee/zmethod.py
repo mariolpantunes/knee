@@ -47,16 +47,28 @@ def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05):
     
     # get the z-score from the second derivative
     yd2 = grad.csd(x, y)
-    z_yd2 = zscore_array(x, yd2) #<-- TODO T-score
 
+    # interquartile range method
+    q1, q3 = np.percentile(yd2, [25, 75])
+    iqr = q3 - q1
+    logger.info(f'Quartiles = [{q1}, {q3}] -> IQR {iqr}')
+    outlier_z = q3 + (1.5 * iqr)
+    logger.info(f'outlier threshold {outlier_z}')
+    candidates = [i for i in range(len(yd2)) if yd2[i] >= outlier_z]
+    logger.info(f'Candidates: {candidates}({len(candidates)})')
+    
+    #z_yd2 = zscore_array(x, yd2) #<-- TODO T-score
     #TODO: code here
     # compute the outlier as a automatic threshold
     #outlier_z = 3#isodata(z_yd2)
-    outlier_z = np.median(z_yd2)
-    logger.info(f'outlier threshold {outlier_z}')
+    #outlier_z = np.median(z_yd2)
+    #candidates = [i for i in range(len(z_yd2)) if z_yd2[i] >= outlier_z]
+    
+    
+    
 
-    candidates = [i for i in range(len(z_yd2)) if z_yd2[i] >= outlier_z]
-    logger.info(f'Candidates: {candidates}({len(candidates)})')
+    
+    
 
     counter = 0
     done = False
