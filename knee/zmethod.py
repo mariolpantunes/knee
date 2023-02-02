@@ -6,6 +6,7 @@ __email__ = 'testro@cs.stonybrook.edu'
 __status__ = 'Development'
 
 
+import enum
 import math
 import logging
 import numpy as np
@@ -18,6 +19,17 @@ from uts.thresholding import isodata
 
 
 logger = logging.getLogger(__name__)
+
+
+class Outlier(enum.Enum):
+    """
+    """
+    zscore = 'zscore'
+    iqr = 'iqr'
+    hampel = 'hampel'
+
+    def __str__(self):
+        return self.value
 
 
 def map_index(a:np.ndarray, b:np.ndarray) -> np.ndarray:
@@ -35,7 +47,7 @@ def map_index(a:np.ndarray, b:np.ndarray) -> np.ndarray:
     return out
 
 
-def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05):
+def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05, out:Outlier=Outlier.iqr):
     x = points[:, 0]
     y = points[:, 1]
 
@@ -48,27 +60,29 @@ def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05):
     # get the z-score from the second derivative
     yd2 = grad.csd(x, y)
 
-    # interquartile range method
-    q1, q3 = np.percentile(yd2, [25, 75])
-    iqr = q3 - q1
-    logger.info(f'Quartiles = [{q1}, {q3}] -> IQR {iqr}')
-    outlier_z = q3 + (1.5 * iqr)
-    logger.info(f'outlier threshold {outlier_z}')
-    candidates = [i for i in range(len(yd2)) if yd2[i] >= outlier_z]
+    if out is Outlier.iqr:
+        # interquartile range method
+        q1, q3 = np.percentile(yd2, [25, 75])
+        iqr = q3 - q1
+        outlier_z = q3 + (1.5 * iqr)
+        candidates = [i for i in range(len(yd2)) if yd2[i] >= outlier_z]
+    elif out is Outlier.hampel:
+        # Hampel method
+        med = np.median(yd2)
+        t = np.abs(yd2-med)
+        outlier_z = np.median(t) * 4.5
+        candidates = [i for i in range(len(yd2)) if yd2[i] >= outlier_z]
+    else:
+        # Z-score
+        z_yd2 = zscore_array(x, yd2) # <-- TODO T-score or other
+        outlier_z = np.median(z_yd2) # <-- TODO outher metric
+        candidates = [i for i in range(len(z_yd2)) if z_yd2[i] >= outlier_z]
+    
     logger.info(f'Candidates: {candidates}({len(candidates)})')
     
-    #z_yd2 = zscore_array(x, yd2) #<-- TODO T-score
-    #TODO: code here
-    # compute the outlier as a automatic threshold
-    #outlier_z = 3#isodata(z_yd2)
-    #outlier_z = np.median(z_yd2)
-    #candidates = [i for i in range(len(z_yd2)) if z_yd2[i] >= outlier_z]
-    
-    
-    
-
-    
-    
+    # filter worst and corner points
+    candidates = pp.filter_worst_knees(points, candidates)
+    candidates = pp.filter_corner_knees(points, candidates, t=0.3)
 
     counter = 0
     done = False
@@ -81,12 +95,8 @@ def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05):
         # cluster points based on dx and dy
         for i in candidates:
             c = points[i]
-            n = [candidates[j] for j in range(len(candidates)) if math.fabs(points[candidates[j],0] - c[0])<=x_step and math.fabs(points[candidates[j],1] - c[1])<=y_step] #and i!=j]
+            n = [candidates[j] for j in range(len(candidates)) if (math.fabs(points[candidates[j],0] - c[0])<=x_step) and (math.fabs(points[candidates[j],1] - c[1])<=y_step)]
             logger.info(f'Candidate {c}/{i} neighbourhood {n}')
-            
-            # filter worst and corner points
-            n = pp.filter_worst_knees(points, n)
-            n = pp.filter_corner_knees(points, n, t=0.3)
 
             if len(n) == 1 and n[0] == i:
                 best_candidates.append(i)

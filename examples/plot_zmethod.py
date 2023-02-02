@@ -54,7 +54,6 @@ def main(args):
     knees = rdp.mapping(knees, reduced, removed)
 
     logger.info(f'Number of knees {len(knees)}')
-    
     plt.plot(x[knees], y[knees], 'r+')
 
     knees = zmethod.knees2(points_reduced, args.dx, args.dy)
@@ -73,9 +72,9 @@ if __name__ == '__main__':
     parser.add_argument('--dx', type=float, help='minimum number of points', default=.05)
     parser.add_argument('--dy', type=float, help='minimum number of points', default=.05)
     parser.add_argument('--dz', type=float, help='minimum number of points', default=.05)
+    parser.add_argument('-o', help='Outlier detection method', type=zmethod.Outlier, choices=list(zmethod.Outlier), default='iqr')
 
     #parser.add_argument('-a', help='add even spaced points', action='store_true')
-    
     
     args = parser.parse_args()
 
