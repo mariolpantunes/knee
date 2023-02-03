@@ -42,7 +42,7 @@ def knee(points: np.ndarray) -> int:
     return idx
 
 
-def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 3) -> np.ndarray:
+def multi_knee(points: np.ndarray, t1: float = 0.001, t2: int = 3) -> np.ndarray:
     """
     Recursive knee point detection based on the curvature equations.
 

@@ -76,7 +76,7 @@ def knee(points: np.ndarray) -> int:
     return knee
 
 
-def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 3) -> np.ndarray:
+def multi_knee(points: np.ndarray, t1: float = 0.001, t2: int = 3) -> np.ndarray:
     """
     Recursive knee point detection based on DFDT.
 
@@ -84,7 +84,7 @@ def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 3) -> np.ndarray:
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t1 (float): coefficient of determination threshold (default 0.01)
+        t1 (float): coefficient of determination threshold (default 0.001)
         t2 (int): number of points threshold (default 3)
 
     Returns:
