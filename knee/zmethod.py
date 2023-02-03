@@ -111,7 +111,7 @@ def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05, out:Outlier=Outlier.
             else:
                 logger.info(f'Ups...')
         logger.info(f'Candidates {candidates}({len(candidates)}) best candidates {best_candidates}({len(best_candidates)})')
-        if best_candidates == candidates:
+        if np.array_equal(best_candidates, candidates):
             done = True
         else:
             candidates = best_candidates
