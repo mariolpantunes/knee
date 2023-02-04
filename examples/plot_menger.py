@@ -8,12 +8,13 @@ __status__ = 'Development'
 
 import os
 import csv
+import math
 import logging
 import argparse
 import numpy as np
 
 import knee.rdp as rdp
-import knee.menger as menger
+import knee.lmethod as menger
 import knee.postprocessing as pp
 import knee.clustering as clustering
 import knee.evaluation as evaluation
@@ -27,9 +28,8 @@ logging.getLogger('matplotlib').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
-def kneedle_novel(points, args):
-    
-    return knees
+def orderOfMagnitude(number):
+    return math.floor(math.log(number, 10))
 
 
 def main(args):
@@ -48,6 +48,9 @@ def main(args):
         expected = []
     expected = np.array(expected)
     points = np.genfromtxt(args.i, delimiter=',')
+
+    order_magnitude = orderOfMagnitude(0.07)
+    logger.info(f'order of magnitude {math.pow(10, order_magnitude)}')
 
     # Plot knees
     x = points[:,0]

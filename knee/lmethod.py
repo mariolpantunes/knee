@@ -172,7 +172,7 @@ def knee(points:np.ndarray, fit:Fit=Fit.point_fit, it:Refinement=Refinement.adju
     return current_knee
 
 
-def multi_knee(points: np.ndarray, t1: float = 0.01, t2: int = 4) -> np.ndarray:
+def multi_knee(points: np.ndarray, t1: float = 0.001, t2: int = 4) -> np.ndarray:
     """Recursive knee point detection based on the L-method.
 
     It returns the knee points on the curve.
