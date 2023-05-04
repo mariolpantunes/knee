@@ -6,7 +6,7 @@ __email__ = 'mariolpantunes@gmail.com'
 __status__ = 'Development'
 
 
-import math
+#import math
 import enum
 import logging
 import numpy as np
@@ -14,6 +14,8 @@ import knee.linear_fit as lf
 import knee.metrics as metrics
 import knee.evaluation as evaluation
 
+
+#import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
@@ -354,6 +356,20 @@ def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.s
     return reduced, compute_removed_points(points, reduced)
 
 
+def plot_frame(points, reduced, t):
+    fig = plt.figure(figsize=(6, 6))
+    x = points[:, 0]
+    y = points[:, 1]
+    plt.plot(x, y)
+    points_reduced = points[reduced]
+    x = points_reduced[:, 0]
+    y = points_reduced[:, 1]
+    plt.plot(x, y, marker='o', markersize=3)
+    plt.savefig(f'./img/img_{t}.png', transparent = False,  facecolor = 'white')
+    print(f'{t}')
+    plt.close()
+
+
 def _grdp(points:np.ndarray, t:float, cost:metrics.Metrics, order:Order, 
 distance_points:callable, stack:list, reduced:list) -> tuple:
     """
@@ -379,6 +395,8 @@ distance_points:callable, stack:list, reduced:list) -> tuple:
 
     global_cost = evaluation.compute_global_cost(points, reduced, cost, cache)
     curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
+
+    ti = 0
 
     while curved and stack:
         _, left, right = stack.pop()
@@ -417,6 +435,11 @@ distance_points:callable, stack:list, reduced:list) -> tuple:
         
         # Sort the stack based on the cost
         stack.sort(key=lambda t: t[0], reverse=False)
+
+        ## TO DELETE ##
+        #plot_frame(points, reduced, ti)
+        #ti = ti + 1 
+        
 
     return reduced, stack
 

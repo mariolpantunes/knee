@@ -52,15 +52,15 @@ def main(args):
     logger.info(f'Time = {ti} ± {std}')
 
     
-    x = points[:, 0]
-    y = points[:, 1]
-    plt.plot(x, y)
+    #x = points[:, 0]
+    #y = points[:, 1]
+    #plt.plot(x, y)
 
-    points_reduced = points[reduced]
-    x = points_reduced[:, 0]
-    y = points_reduced[:, 1]
-    plt.plot(x, y, marker='o', markersize=3)
-    plt.show()
+    #points_reduced = points[reduced]
+    #x = points_reduced[:, 0]
+    #y = points_reduced[:, 1]
+    #plt.plot(x, y, marker='o', markersize=3)
+    #plt.show()
     
 
 if __name__ == '__main__':
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', type=rdp.Distance, choices=list(rdp.Distance), help='distance metric', default='shortest')
     parser.add_argument('-o', type=rdp.Order, choices=list(rdp.Order), help='ordering metric', default='area')
     parser.add_argument('-r', type=float, help='RDP reconstruction threshold', default=0.01)
-    parser.add_argument('-n', type=int, help='number of repetition (for timeit)', default=3)
+    parser.add_argument('-n', type=int, help='number of repetition (for timeit)', default=1)
 
     args = parser.parse_args()
     

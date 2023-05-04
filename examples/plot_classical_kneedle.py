@@ -83,31 +83,31 @@ def main(args):
     points = np.genfromtxt(args.i, delimiter=',')
 
     # Kneedle classic window
-    knees_00 = kneedle_classic(points, args, args.sw)
-    cm = evaluation.cm(points, knees_00, expected)
-    mcc00 = evaluation.mcc(cm)
+    #knees_00 = kneedle_classic(points, args, args.sw)
+    #cm = evaluation.cm(points, knees_00, expected)
+    #mcc00 = evaluation.mcc(cm)
 
     # Kneedle classic all
     knees_01 = kneedle_classic(points, args, -1)
-    cm = evaluation.cm(points, knees_01, expected)
-    mcc01 = evaluation.mcc(cm)
+    #cm = evaluation.cm(points, knees_01, expected)
+    #mcc01 = evaluation.mcc(cm)
 
     # Novel Kneedle
     knees_02 = kneedle_novel(points, args)
-    if len(knees_02) > 0:
-        cm = evaluation.cm(points, knees_02, expected)
-        mcc02 = evaluation.mcc(cm)
-    else:
-        mcc02 = 0.0
+    #if len(knees_02) > 0:
+        #cm = evaluation.cm(points, knees_02, expected)
+        #mcc02 = evaluation.mcc(cm)
+    #else:
+        #mcc02 = 0.0
 
-    logger.info(f'{mcc00:10.2E} {mcc01:10.2E} {mcc02:10.2E}')
+    #logger.info(f'{mcc00:10.2E} {mcc01:10.2E} {mcc02:10.2E}')
 
     # Plot knees
     x = points[:,0]
     y = points[:,1]
-    _, (ax1, ax2, ax3) = plt.subplots(1, 3)
-    ax1.plot(x, y)
-    ax1.plot(x[knees_00], y[knees_00], 'r+')
+    _, (ax2, ax3) = plt.subplots(1, 2)
+    #ax1.plot(x, y)
+    #ax1.plot(x[knees_00], y[knees_00], 'r+')
     ax2.plot(x, y)
     ax2.plot(x[knees_01], y[knees_01], 'r+')
     ax3.plot(x, y)
