@@ -41,6 +41,6 @@ import knee.lmethod
 import knee.menger
 import knee.metrics
 import knee.multi_knee
-import knee.zmethod
 import knee.postprocessing
 import knee.rdp
+import knee.zmethod
