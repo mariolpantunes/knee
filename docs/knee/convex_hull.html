@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.3.1"/>
+    <meta name="generator" content="pdoc 12.0.2"/>
     <title>knee.convex_hull API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -29,12 +29,7 @@
             {childList: true}
         );
     })
-</script>
-<style>
-    mjx-container {
-        overflow-x: auto;
-    }
-</style></head>
+</script></head>
 <body>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
@@ -86,9 +81,9 @@
 <a href="./../knee.html">knee</a><wbr>.convex_hull    </h1>
 
                 
-                        <input id="mod-convex_hull-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                        <input id="convex_hull-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-                        <label class="view-source-button" for="mod-convex_hull-view-source"><span>View Source</span></label>
+                        <label class="view-source-button" for="convex_hull-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># coding: utf-8</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
@@ -102,7 +97,7 @@
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="k">def</span> <span class="nf">ccw</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="sd">    Check if three points make a counter-clockwise turn.</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">    Args:</span>
@@ -117,7 +112,7 @@
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="k">def</span> <span class="nf">sort_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    Sort and array of points on their distance to the first point.</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    Args:</span>
@@ -131,7 +126,7 @@
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="k">def</span> <span class="nf">graham_scan</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    Returns an array of indexes that make up the convex hull surrounding the points.</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    </span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    Args:</span>
@@ -156,7 +151,7 @@
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="k">def</span> <span class="nf">graham_scan_lower</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    Returns an array of indexes that make up the lower convex hull.</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    </span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    Args:</span>
@@ -182,7 +177,7 @@
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="k">def</span> <span class="nf">graham_scan_upper</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">    Returns an array of indexes that make up the upper convex hull.</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    </span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    Args:</span>
@@ -221,7 +216,7 @@
     </div>
     <a class="headerlink" href="#ccw"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="ccw-13"><a href="#ccw-13"><span class="linenos">13</span></a><span class="k">def</span> <span class="nf">ccw</span><span class="p">(</span><span class="n">a</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="ccw-14"><a href="#ccw-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ccw-14"><a href="#ccw-14"><span class="linenos">14</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="ccw-15"><a href="#ccw-15"><span class="linenos">15</span></a><span class="sd">    Check if three points make a counter-clockwise turn.</span>
 </span><span id="ccw-16"><a href="#ccw-16"><span class="linenos">16</span></a>
 </span><span id="ccw-17"><a href="#ccw-17"><span class="linenos">17</span></a><span class="sd">    Args:</span>
@@ -238,7 +233,7 @@
 
             <div class="docstring"><p>Check if three points make a counter-clockwise turn.</p>
 
-<h6 id="arguments">Arguments:</h6>
+<h6 id="args">Args</h6>
 
 <ul>
 <li><strong>a (np.ndarray):</strong>  numpy array with a single point (x, y)</li>
@@ -246,7 +241,7 @@
 <li><strong>c (np.ndarray):</strong>  numpy array with a single point (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>float: $ \gt 0$ if counter-clockwise; $ \lt 0$ if clockwise; $ = 0$ if collinear</p>
@@ -267,7 +262,7 @@
     </div>
     <a class="headerlink" href="#sort_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="sort_points-28"><a href="#sort_points-28"><span class="linenos">28</span></a><span class="k">def</span> <span class="nf">sort_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="sort_points-29"><a href="#sort_points-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="sort_points-29"><a href="#sort_points-29"><span class="linenos">29</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="sort_points-30"><a href="#sort_points-30"><span class="linenos">30</span></a><span class="sd">    Sort and array of points on their distance to the first point.</span>
 </span><span id="sort_points-31"><a href="#sort_points-31"><span class="linenos">31</span></a>
 </span><span id="sort_points-32"><a href="#sort_points-32"><span class="linenos">32</span></a><span class="sd">    Args:</span>
@@ -283,13 +278,13 @@
 
             <div class="docstring"><p>Sort and array of points on their distance to the first point.</p>
 
-<h6 id="arguments">Arguments:</h6>
+<h6 id="args">Args</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>np.ndarray: the sorted points</p>
@@ -310,7 +305,7 @@
     </div>
     <a class="headerlink" href="#graham_scan"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="graham_scan-42"><a href="#graham_scan-42"><span class="linenos">42</span></a><span class="k">def</span> <span class="nf">graham_scan</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="graham_scan-43"><a href="#graham_scan-43"><span class="linenos">43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="graham_scan-43"><a href="#graham_scan-43"><span class="linenos">43</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="graham_scan-44"><a href="#graham_scan-44"><span class="linenos">44</span></a><span class="sd">    Returns an array of indexes that make up the convex hull surrounding the points.</span>
 </span><span id="graham_scan-45"><a href="#graham_scan-45"><span class="linenos">45</span></a><span class="sd">    </span>
 </span><span id="graham_scan-46"><a href="#graham_scan-46"><span class="linenos">46</span></a><span class="sd">    Args:</span>
@@ -337,13 +332,13 @@
 
             <div class="docstring"><p>Returns an array of indexes that make up the convex hull surrounding the points.</p>
 
-<h6 id="arguments">Arguments:</h6>
+<h6 id="args">Args</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>np.ndarray: the indexes of the hull points</p>
@@ -364,7 +359,7 @@
     </div>
     <a class="headerlink" href="#graham_scan_lower"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="graham_scan_lower-67"><a href="#graham_scan_lower-67"><span class="linenos">67</span></a><span class="k">def</span> <span class="nf">graham_scan_lower</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="graham_scan_lower-68"><a href="#graham_scan_lower-68"><span class="linenos">68</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="graham_scan_lower-68"><a href="#graham_scan_lower-68"><span class="linenos">68</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="graham_scan_lower-69"><a href="#graham_scan_lower-69"><span class="linenos">69</span></a><span class="sd">    Returns an array of indexes that make up the lower convex hull.</span>
 </span><span id="graham_scan_lower-70"><a href="#graham_scan_lower-70"><span class="linenos">70</span></a><span class="sd">    </span>
 </span><span id="graham_scan_lower-71"><a href="#graham_scan_lower-71"><span class="linenos">71</span></a><span class="sd">    Args:</span>
@@ -392,13 +387,13 @@
 
             <div class="docstring"><p>Returns an array of indexes that make up the lower convex hull.</p>
 
-<h6 id="arguments">Arguments:</h6>
+<h6 id="args">Args</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>np.ndarray: the indexes of the hull points</p>
@@ -419,7 +414,7 @@
     </div>
     <a class="headerlink" href="#graham_scan_upper"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="graham_scan_upper-93"><a href="#graham_scan_upper-93"><span class="linenos"> 93</span></a><span class="k">def</span> <span class="nf">graham_scan_upper</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="graham_scan_upper-94"><a href="#graham_scan_upper-94"><span class="linenos"> 94</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="graham_scan_upper-94"><a href="#graham_scan_upper-94"><span class="linenos"> 94</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="graham_scan_upper-95"><a href="#graham_scan_upper-95"><span class="linenos"> 95</span></a><span class="sd">    Returns an array of indexes that make up the upper convex hull.</span>
 </span><span id="graham_scan_upper-96"><a href="#graham_scan_upper-96"><span class="linenos"> 96</span></a><span class="sd">    </span>
 </span><span id="graham_scan_upper-97"><a href="#graham_scan_upper-97"><span class="linenos"> 97</span></a><span class="sd">    Args:</span>
@@ -447,13 +442,13 @@
 
             <div class="docstring"><p>Returns an array of indexes that make up the upper convex hull.</p>
 
-<h6 id="arguments">Arguments:</h6>
+<h6 id="args">Args</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>np.ndarray: the indexes of the hull points</p>
@@ -563,13 +558,9 @@
                 }
 
                 let heading;
-                switch (result.doc.kind) {
+                switch (result.doc.type) {
                     case "function":
-                        if (doc.fullname.endsWith(".__init__")) {
-                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
-                        } else {
-                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
-                        }
+                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
@@ -590,7 +581,7 @@
                 }
                 html += `
                         <section class="search-result">
-                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
+                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
                         <div class="docstring">${doc.doc}</div>
                         </section>
                     `;

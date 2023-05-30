@@ -1,5 +1,13 @@
 # coding: utf-8
 
+"""
+
+The following module provides a 1D version 
+of hierarchical clustering, optimized for 
+linear complexity due to the use of a 
+single dimension.
+"""
+
 __author__ = 'Mário Antunes'
 __version__ = '0.1'
 __email__ = 'mariolpantunes@gmail.com'
@@ -114,7 +122,7 @@ def centroid_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
             clusters.append(cluster_index)
             # Update center
             cluster_center = (cluster_size/(cluster_size+1)) * \
-                cluster_center + (1/(cluster_size+1)) * points[i][0]
+            cluster_center + (1/(cluster_size+1)) * points[i][0]
             cluster_size += 1
         else:
             cluster_index += 1

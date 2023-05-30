@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.3.1"/>
+    <meta name="generator" content="pdoc 12.0.2"/>
     <title>knee.menger API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -29,12 +29,7 @@
             {childList: true}
         );
     })
-</script>
-<style>
-    mjx-container {
-        overflow-x: auto;
-    }
-</style></head>
+</script></head>
 <body>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
@@ -80,9 +75,9 @@
 <a href="./../knee.html">knee</a><wbr>.menger    </h1>
 
                 
-                        <input id="mod-menger-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                        <input id="menger-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-                        <label class="view-source-button" for="mod-menger-view-source"><span>View Source</span></label>
+                        <label class="view-source-button" for="menger-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="c1"># coding: utf-8</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
@@ -102,7 +97,7 @@
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="k">def</span> <span class="nf">menger_curvature</span><span class="p">(</span><span class="n">f</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    Computes the menger curvature based on three points.</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">    Args:</span>
@@ -129,7 +124,7 @@
 </span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
 </span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="k">def</span> <span class="nf">knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">    Returns the index of the knee point based on the menger curvature.</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
 </span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">    Args:</span>
@@ -153,8 +148,8 @@
 </span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">curvature</span><span class="p">)</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
 </span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursive knee point detection based on the menger curvature.</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="sd">&quot;&quot;&quot;Recursive knee point detection based on the menger curvature.</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
 </span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">    It returns the knee points on the curve.</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
@@ -183,7 +178,7 @@
     </div>
     <a class="headerlink" href="#menger_curvature"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="menger_curvature-19"><a href="#menger_curvature-19"><span class="linenos">19</span></a><span class="k">def</span> <span class="nf">menger_curvature</span><span class="p">(</span><span class="n">f</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="menger_curvature-20"><a href="#menger_curvature-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="menger_curvature-20"><a href="#menger_curvature-20"><span class="linenos">20</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="menger_curvature-21"><a href="#menger_curvature-21"><span class="linenos">21</span></a><span class="sd">    Computes the menger curvature based on three points.</span>
 </span><span id="menger_curvature-22"><a href="#menger_curvature-22"><span class="linenos">22</span></a>
 </span><span id="menger_curvature-23"><a href="#menger_curvature-23"><span class="linenos">23</span></a><span class="sd">    Args:</span>
@@ -212,7 +207,7 @@
 
             <div class="docstring"><p>Computes the menger curvature based on three points.</p>
 
-<h6 id="arguments">Arguments:</h6>
+<h6 id="args">Args</h6>
 
 <ul>
 <li><strong>f (np.ndarray):</strong>  first point</li>
@@ -220,7 +215,7 @@
 <li><strong>h (np.ndarray):</strong>  third point</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>float: menger curvature</p>
@@ -241,7 +236,7 @@
     </div>
     <a class="headerlink" href="#knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="knee-46"><a href="#knee-46"><span class="linenos">46</span></a><span class="k">def</span> <span class="nf">knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="knee-47"><a href="#knee-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="knee-47"><a href="#knee-47"><span class="linenos">47</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="knee-48"><a href="#knee-48"><span class="linenos">48</span></a><span class="sd">    Returns the index of the knee point based on the menger curvature.</span>
 </span><span id="knee-49"><a href="#knee-49"><span class="linenos">49</span></a>
 </span><span id="knee-50"><a href="#knee-50"><span class="linenos">50</span></a><span class="sd">    Args:</span>
@@ -268,13 +263,13 @@
 
             <div class="docstring"><p>Returns the index of the knee point based on the menger curvature.</p>
 
-<h6 id="arguments">Arguments:</h6>
+<h6 id="args">Args</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>int: the index of the knee point</p>
@@ -288,14 +283,14 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">multi_knee</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>, </span><span class="param"><span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span></span><span class="return-annotation">) -> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
+        <span class="name">multi_knee</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">points</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span>, </span><span class="param"><span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span></span><span class="return-annotation">) -> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
 
                 <label class="view-source-button" for="multi_knee-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#multi_knee"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="multi_knee-71"><a href="#multi_knee-71"><span class="linenos">71</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="multi_knee-72"><a href="#multi_knee-72"><span class="linenos">72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursive knee point detection based on the menger curvature.</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="multi_knee-71"><a href="#multi_knee-71"><span class="linenos">71</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="multi_knee-72"><a href="#multi_knee-72"><span class="linenos">72</span></a>    <span class="sd">&quot;&quot;&quot;Recursive knee point detection based on the menger curvature.</span>
 </span><span id="multi_knee-73"><a href="#multi_knee-73"><span class="linenos">73</span></a>
 </span><span id="multi_knee-74"><a href="#multi_knee-74"><span class="linenos">74</span></a><span class="sd">    It returns the knee points on the curve.</span>
 </span><span id="multi_knee-75"><a href="#multi_knee-75"><span class="linenos">75</span></a>
@@ -315,7 +310,7 @@
 
 <p>It returns the knee points on the curve.</p>
 
-<h6 id="arguments">Arguments:</h6>
+<h6 id="args">Args</h6>
 
 <ul>
 <li><strong>points (np.ndarray):</strong>  numpy array with the points (x, y)</li>
@@ -323,7 +318,7 @@
 <li><strong>t2 (int):</strong>  number of points threshold (default 4)</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="returns">Returns</h6>
 
 <blockquote>
   <p>np.ndarray: knee points on the curve</p>
@@ -433,13 +428,9 @@
                 }
 
                 let heading;
-                switch (result.doc.kind) {
+                switch (result.doc.type) {
                     case "function":
-                        if (doc.fullname.endsWith(".__init__")) {
-                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
-                        } else {
-                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
-                        }
+                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
@@ -460,7 +451,7 @@
                 }
                 html += `
                         <section class="search-result">
-                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
+                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
                         <div class="docstring">${doc.doc}</div>
                         </section>
                     `;

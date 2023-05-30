@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 12.3.1"/>
+    <meta name="generator" content="pdoc 12.0.2"/>
     <title>knee API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -29,12 +29,7 @@
             {childList: true}
         );
     })
-</script>
-<style>
-    mjx-container {
-        overflow-x: auto;
-    }
-</style></head>
+</script></head>
 <body>
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
@@ -118,9 +113,9 @@ As a post-processing step we implemented several algorithms:</p>
 </ol>
 </div>
 
-                        <input id="mod-knee-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                        <input id="knee-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-                        <label class="view-source-button" for="mod-knee-view-source"><span>View Source</span></label>
+                        <label class="view-source-button" for="knee-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">(Multi)Knee/Elbow point detection library</span>
@@ -165,9 +160,9 @@ As a post-processing step we implemented several algorithms:</p>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="kn">import</span> <span class="nn">knee.menger</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="kn">import</span> <span class="nn">knee.metrics</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="kn">import</span> <span class="nn">knee.multi_knee</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="kn">import</span> <span class="nn">knee.zmethod</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="kn">import</span> <span class="nn">knee.postprocessing</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="kn">import</span> <span class="nn">knee.rdp</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="kn">import</span> <span class="nn">knee.postprocessing</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="kn">import</span> <span class="nn">knee.rdp</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="kn">import</span> <span class="nn">knee.zmethod</span>
 </span></pre></div>
 
 
@@ -273,13 +268,9 @@ As a post-processing step we implemented several algorithms:</p>
                 }
 
                 let heading;
-                switch (result.doc.kind) {
+                switch (result.doc.type) {
                     case "function":
-                        if (doc.fullname.endsWith(".__init__")) {
-                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
-                        } else {
-                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
-                        }
+                        heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span><span class="signature">${doc.signature}:</span>`;
                         break;
                     case "class":
                         heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
@@ -300,7 +291,7 @@ As a post-processing step we implemented several algorithms:</p>
                 }
                 html += `
                         <section class="search-result">
-                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
+                        <a href="${url}" class="attr ${doc.type}">${heading}</a>
                         <div class="docstring">${doc.doc}</div>
                         </section>
                     `;
