@@ -1,9 +1,8 @@
+import math
 import unittest
 import numpy as np
-
-import math
-
 import knee.linear_fit as lf
+
 
 class TestLinearFir(unittest.TestCase):
     
