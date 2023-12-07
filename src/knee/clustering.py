@@ -1,7 +1,6 @@
 # coding: utf-8
 
 """
-
 The following module provides a 1D version 
 of hierarchical clustering, optimized for 
 linear complexity due to the use of a 

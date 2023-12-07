@@ -1,9 +1,15 @@
+#!/usr/bin/env python3
 # coding: utf-8
 
 __author__ = 'Mário Antunes'
 __version__ = '0.1'
-__email__ = 'mariolpantunes@gmail.com'
+__email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
+__license__ = 'MIT'
+__copyright__ = '''
+Copyright (c) 2021-2023 Stony Brook University
+Copyright (c) 2021-2023 The Research Foundation of SUNY
+'''
 
 
 import logging
@@ -35,8 +41,8 @@ def main():
     ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(True)
     ax.spines['bottom'].set_visible(True)
-    plt.savefig('knee_post_processing_00.png', bbox_inches='tight')
-    plt.savefig('knee_post_processing_00.pdf', bbox_inches='tight')
+    plt.savefig('../out/knee_post_processing_00.png', bbox_inches='tight')
+    plt.savefig('../out/knee_post_processing_00.pdf', bbox_inches='tight')
     plt.show()
 
     x2 = [0,2,2.2,3,5]
@@ -51,8 +57,8 @@ def main():
     ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(True)
     ax.spines['bottom'].set_visible(True)
-    plt.savefig('knee_post_processing_01.png', bbox_inches='tight')
-    plt.savefig('knee_post_processing_01.pdf', bbox_inches='tight')
+    plt.savefig('../out/knee_post_processing_01.png', bbox_inches='tight')
+    plt.savefig('../out/knee_post_processing_01.pdf', bbox_inches='tight')
     plt.show()
 
     # Plot 3
@@ -73,8 +79,8 @@ def main():
     ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(True)
     ax.spines['bottom'].set_visible(True)
-    plt.savefig('knee_post_processing_02.png', bbox_inches='tight')
-    plt.savefig('knee_post_processing_02.pdf', bbox_inches='tight')
+    plt.savefig('../out/knee_post_processing_02.png', bbox_inches='tight')
+    plt.savefig('../out/knee_post_processing_02.pdf', bbox_inches='tight')
     plt.show()
 
 if __name__ == '__main__':

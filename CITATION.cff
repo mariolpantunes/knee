@@ -10,8 +10,8 @@ type: software
 authors:
   - given-names: Mário
     family-names: Antunes
-    email: mario.antunes@av.it.pt
-    affiliation: Instituto de Telecomunicações
+    email: mario.antunes@ua.pt
+    affiliation: Universidade de Aveiro
     orcid: 'https://orcid.org/0000-0002-6504-9441'
   - given-names: Tyler
     email: testro@cs.stonybrook.edu

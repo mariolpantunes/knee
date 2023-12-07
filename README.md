@@ -34,6 +34,10 @@ The unit tests were written in [unittest](https://docs.python.org/3/library/unit
 Run the following commands to execute the unit tests.
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
+pip install .
 python -m unittest
 ```
 
@@ -43,6 +47,8 @@ This library was documented using the google style docstring, it can be accessed
 Run the following commands to produce the documentation for this library.
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 pip install pdoc
 pdoc --math -d google -o docs knee \
 --logo https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png \
@@ -51,9 +57,18 @@ pdoc --math -d google -o docs knee \
 
 ## Instalation
 
-The library can be used by adding this line to the requirement.txt file:
+To install the library locally, simple execute the following commands:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
+pip install .
+```
+You can also use the PyPI repository for easy access to the library:
+
 ```txt
-git+https://github.com/mariolpantunes/knee@main#egg=knee
+knee>=0.1
 ```
 
 ## Runing the demos
@@ -90,5 +105,19 @@ optional arguments:
   -k {left,linear,right,hull}
                         Knee ranking method
 ```
+
+## Authors
+
+* [**Mário Antunes**](https://github.com/mariolpantunes)
+
+* [**Tyler Estro**](https://www.fsl.cs.stonybrook.edu/~tyler/)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## License
+
+This project is under the following [COPYRIGHT](COPYRIGHT).
 
 ![Python CI](https://github.com/mariolpantunes/knee/workflows/Python%20CI/badge.svg)
