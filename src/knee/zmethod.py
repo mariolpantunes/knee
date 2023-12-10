@@ -1,7 +1,9 @@
 # coding: utf-8
 
-
-
+'''
+The following module provides knee detection method
+based on Z-method algorithm.
+'''
 
 __author__ = 'Tyler Estro'
 __version__ = '0.1'

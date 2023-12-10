@@ -1,16 +1,21 @@
 # coding: utf-8
 
-"""
+'''
 The following module provides a 1D version 
 of hierarchical clustering, optimized for 
 linear complexity due to the use of a 
 single dimension.
-"""
+'''
 
 __author__ = 'Mário Antunes'
 __version__ = '0.1'
-__email__ = 'mariolpantunes@gmail.com'
+__email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
+__license__ = 'MIT'
+__copyright__ = '''
+Copyright (c) 2021-2023 Stony Brook University
+Copyright (c) 2021-2023 The Research Foundation of SUNY
+'''
 
 
 import math

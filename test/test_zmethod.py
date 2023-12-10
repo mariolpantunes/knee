@@ -1,3 +1,15 @@
+# coding: utf-8
+
+__author__ = 'Mário Antunes'
+__version__ = '0.1'
+__email__ = 'mario.antunes@ua.pt'
+__status__ = 'Development'
+__license__ = 'MIT'
+__copyright__ = '''
+Copyright (c) 2021-2023 Stony Brook University
+Copyright (c) 2021-2023 The Research Foundation of SUNY
+'''
+
 import unittest
 import numpy as np
 import knee.zmethod as zmethod
@@ -11,3 +23,7 @@ class TestZ_Method(unittest.TestCase):
         result = zmethod.knees(points)
         desired = np.array([0, 1, 2, 3, 4, 6, 9])
         np.testing.assert_array_equal(result, desired)
+
+
+if __name__ == '__main__':
+    unittest.main()

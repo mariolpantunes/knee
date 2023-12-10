@@ -1,3 +1,15 @@
+# coding: utf-8
+
+__author__ = 'Mário Antunes'
+__version__ = '0.1'
+__email__ = 'mario.antunes@ua.pt'
+__status__ = 'Development'
+__license__ = 'MIT'
+__copyright__ = '''
+Copyright (c) 2021-2023 Stony Brook University
+Copyright (c) 2021-2023 The Research Foundation of SUNY
+'''
+
 import math
 import unittest
 import numpy as np
@@ -54,3 +66,7 @@ class TestLinearFir(unittest.TestCase):
         result = lf.rmspe_points(points, coef)
         desired = 0.202
         self.assertAlmostEqual(result, desired, 2)
+
+
+if __name__ == '__main__':
+    unittest.main()

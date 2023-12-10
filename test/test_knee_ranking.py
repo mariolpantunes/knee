@@ -1,3 +1,15 @@
+# coding: utf-8
+
+__author__ = 'Mário Antunes'
+__version__ = '0.1'
+__email__ = 'mario.antunes@ua.pt'
+__status__ = 'Development'
+__license__ = 'MIT'
+__copyright__ = '''
+Copyright (c) 2021-2023 Stony Brook University
+Copyright (c) 2021-2023 The Research Foundation of SUNY
+'''
+
 import math
 import unittest
 import numpy as np
@@ -82,3 +94,7 @@ class TestKneeRanking(unittest.TestCase):
         result = ranking.distances(point, points)
         desired = np.array([1, math.sqrt(2.0), 2, 3])
         np.testing.assert_array_equal(result, desired)
+
+
+if __name__ == '__main__':
+    unittest.main()

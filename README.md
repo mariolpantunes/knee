@@ -50,7 +50,7 @@ Run the following commands to produce the documentation for this library.
 python3 -m venv venv
 source venv/bin/activate
 pip install pdoc
-pdoc --math -d google -o docs knee \
+pdoc --math -d google -o docs src/knee \
 --logo https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png \
 --favicon https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png
 ```
