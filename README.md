@@ -116,7 +116,7 @@ optional arguments:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## License
+## Copyright
 
 This project is under the following [COPYRIGHT](COPYRIGHT).
 
