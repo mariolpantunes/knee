@@ -49,6 +49,9 @@ authors:
     family-names: Zadok
     affiliation: Stony Brook University
     orcid: 'https://orcid.org/0000-0001-5248-9184'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.10341887
 repository-code: 'https://github.com/mariolpantunes/knee'
 url: 'https://pypi.org/project/knee/'
 license: MIT
