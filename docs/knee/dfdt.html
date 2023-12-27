@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.1.0"/>
+    <meta name="generator" content="pdoc 14.3.0"/>
     <title>knee.dfdt API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -122,7 +122,7 @@ based on DFDT algorithm.</p>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="k">def</span> <span class="nf">get_knee</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    Return the index of the knee point based on the DFDT method.</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    Args:</span>
@@ -137,7 +137,7 @@ based on DFDT algorithm.</p>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="k">def</span> <span class="nf">get_knee_gradient</span><span class="p">(</span><span class="n">gradient</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">    Return the index of the knee point based on the DFDT method.</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">    Args:</span>
@@ -153,7 +153,7 @@ based on DFDT algorithm.</p>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="k">def</span> <span class="nf">knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    Returns the index of the knee point based on the DFDT method.</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">    It uses the iterative refinement  method.</span>
@@ -181,7 +181,7 @@ based on DFDT algorithm.</p>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">    Recursive knee point detection based on DFDT.</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">    It returns the knee points on the curve.</span>
@@ -223,7 +223,7 @@ based on DFDT algorithm.</p>
     </div>
     <a class="headerlink" href="#get_knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_knee-30"><a href="#get_knee-30"><span class="linenos">30</span></a><span class="k">def</span> <span class="nf">get_knee</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="get_knee-31"><a href="#get_knee-31"><span class="linenos">31</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_knee-31"><a href="#get_knee-31"><span class="linenos">31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_knee-32"><a href="#get_knee-32"><span class="linenos">32</span></a><span class="sd">    Return the index of the knee point based on the DFDT method.</span>
 </span><span id="get_knee-33"><a href="#get_knee-33"><span class="linenos">33</span></a>
 </span><span id="get_knee-34"><a href="#get_knee-34"><span class="linenos">34</span></a><span class="sd">    Args:</span>
@@ -268,7 +268,7 @@ based on DFDT algorithm.</p>
     </div>
     <a class="headerlink" href="#get_knee_gradient"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_knee_gradient-45"><a href="#get_knee_gradient-45"><span class="linenos">45</span></a><span class="k">def</span> <span class="nf">get_knee_gradient</span><span class="p">(</span><span class="n">gradient</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="get_knee_gradient-46"><a href="#get_knee_gradient-46"><span class="linenos">46</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_knee_gradient-46"><a href="#get_knee_gradient-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_knee_gradient-47"><a href="#get_knee_gradient-47"><span class="linenos">47</span></a><span class="sd">    Return the index of the knee point based on the DFDT method.</span>
 </span><span id="get_knee_gradient-48"><a href="#get_knee_gradient-48"><span class="linenos">48</span></a>
 </span><span id="get_knee_gradient-49"><a href="#get_knee_gradient-49"><span class="linenos">49</span></a><span class="sd">    Args:</span>
@@ -313,7 +313,7 @@ based on DFDT algorithm.</p>
     </div>
     <a class="headerlink" href="#knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="knee-61"><a href="#knee-61"><span class="linenos">61</span></a><span class="k">def</span> <span class="nf">knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="knee-62"><a href="#knee-62"><span class="linenos">62</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="knee-62"><a href="#knee-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="knee-63"><a href="#knee-63"><span class="linenos">63</span></a><span class="sd">    Returns the index of the knee point based on the DFDT method.</span>
 </span><span id="knee-64"><a href="#knee-64"><span class="linenos">64</span></a>
 </span><span id="knee-65"><a href="#knee-65"><span class="linenos">65</span></a><span class="sd">    It uses the iterative refinement  method.</span>
@@ -372,7 +372,7 @@ based on DFDT algorithm.</p>
     </div>
     <a class="headerlink" href="#multi_knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="multi_knee-89"><a href="#multi_knee-89"><span class="linenos"> 89</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="multi_knee-90"><a href="#multi_knee-90"><span class="linenos"> 90</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="multi_knee-90"><a href="#multi_knee-90"><span class="linenos"> 90</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="multi_knee-91"><a href="#multi_knee-91"><span class="linenos"> 91</span></a><span class="sd">    Recursive knee point detection based on DFDT.</span>
 </span><span id="multi_knee-92"><a href="#multi_knee-92"><span class="linenos"> 92</span></a>
 </span><span id="multi_knee-93"><a href="#multi_knee-93"><span class="linenos"> 93</span></a><span class="sd">    It returns the knee points on the curve.</span>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.1.0"/>
+    <meta name="generator" content="pdoc 14.3.0"/>
     <title>knee.lmethod API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -163,7 +163,7 @@ based on L-method algorithm.</p>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="k">class</span> <span class="nc">Fit</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    Enum that defines the types of linear fitting</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">best_fit</span> <span class="o">=</span> <span class="s1">&#39;bestfit&#39;</span>
@@ -174,7 +174,7 @@ based on L-method algorithm.</p>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="k">class</span> <span class="nc">Cost</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    Enum that defines the cost used in L-method</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    </span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">    RMSE was originaly used by the original authors.</span>
@@ -189,7 +189,7 @@ based on L-method algorithm.</p>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="k">class</span> <span class="nc">Refinement</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    Enum that defines the iterative refinement used in L-method</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    none as the name implies, it avoids the iterative refinement</span>
@@ -205,7 +205,7 @@ based on L-method algorithm.</p>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="k">def</span> <span class="nf">compute_error</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">fit</span><span class="o">=</span><span class="n">Fit</span><span class="o">.</span><span class="n">point_fit</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="n">Cost</span><span class="o">.</span><span class="n">rmse</span><span class="p">):</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    Returns the fitting error that is minimized by the L-method algorithm.</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    Args:</span>
@@ -247,7 +247,7 @@ based on L-method algorithm.</p>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="k">def</span> <span class="nf">get_knee</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fit</span><span class="o">=</span><span class="n">Fit</span><span class="o">.</span><span class="n">point_fit</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="n">Cost</span><span class="o">.</span><span class="n">rmse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">    Returns the index of the knee point based on the L-method.</span>
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">    This method does not use the iterative refinement.</span>
@@ -281,7 +281,7 @@ based on L-method algorithm.</p>
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="k">def</span> <span class="nf">knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fit</span><span class="p">:</span><span class="n">Fit</span><span class="o">=</span><span class="n">Fit</span><span class="o">.</span><span class="n">point_fit</span><span class="p">,</span> <span class="n">it</span><span class="p">:</span><span class="n">Refinement</span><span class="o">=</span><span class="n">Refinement</span><span class="o">.</span><span class="n">adjusted</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">    Returns the index of the knee point based on the L-method.</span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">    This method uses iterative refinement.</span>
@@ -316,7 +316,7 @@ based on L-method algorithm.</p>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>    <span class="sd">&quot;&quot;&quot;Recursive knee point detection based on the L-method.</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursive knee point detection based on the L-method.</span>
 </span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>
 </span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">    It returns the knee points on the curve.</span>
 </span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
@@ -357,7 +357,7 @@ based on L-method algorithm.</p>
     </div>
     <a class="headerlink" href="#Fit"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Fit-32"><a href="#Fit-32"><span class="linenos">32</span></a><span class="k">class</span> <span class="nc">Fit</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Fit-33"><a href="#Fit-33"><span class="linenos">33</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Fit-33"><a href="#Fit-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Fit-34"><a href="#Fit-34"><span class="linenos">34</span></a><span class="sd">    Enum that defines the types of linear fitting</span>
 </span><span id="Fit-35"><a href="#Fit-35"><span class="linenos">35</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Fit-36"><a href="#Fit-36"><span class="linenos">36</span></a>    <span class="n">best_fit</span> <span class="o">=</span> <span class="s1">&#39;bestfit&#39;</span>
@@ -419,7 +419,7 @@ based on L-method algorithm.</p>
     </div>
     <a class="headerlink" href="#Cost"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Cost-43"><a href="#Cost-43"><span class="linenos">43</span></a><span class="k">class</span> <span class="nc">Cost</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Cost-44"><a href="#Cost-44"><span class="linenos">44</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Cost-44"><a href="#Cost-44"><span class="linenos">44</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Cost-45"><a href="#Cost-45"><span class="linenos">45</span></a><span class="sd">    Enum that defines the cost used in L-method</span>
 </span><span id="Cost-46"><a href="#Cost-46"><span class="linenos">46</span></a><span class="sd">    </span>
 </span><span id="Cost-47"><a href="#Cost-47"><span class="linenos">47</span></a><span class="sd">    RMSE was originaly used by the original authors.</span>
@@ -489,7 +489,7 @@ RSS can be used to speedup the computation
     </div>
     <a class="headerlink" href="#Refinement"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Refinement-58"><a href="#Refinement-58"><span class="linenos">58</span></a><span class="k">class</span> <span class="nc">Refinement</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Refinement-59"><a href="#Refinement-59"><span class="linenos">59</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Refinement-59"><a href="#Refinement-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Refinement-60"><a href="#Refinement-60"><span class="linenos">60</span></a><span class="sd">    Enum that defines the iterative refinement used in L-method</span>
 </span><span id="Refinement-61"><a href="#Refinement-61"><span class="linenos">61</span></a>
 </span><span id="Refinement-62"><a href="#Refinement-62"><span class="linenos">62</span></a><span class="sd">    none as the name implies, it avoids the iterative refinement</span>
@@ -572,7 +572,7 @@ adjusted applies a variant that should be stable on noisy data</p>
     </div>
     <a class="headerlink" href="#compute_error"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="compute_error-74"><a href="#compute_error-74"><span class="linenos"> 74</span></a><span class="k">def</span> <span class="nf">compute_error</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">fit</span><span class="o">=</span><span class="n">Fit</span><span class="o">.</span><span class="n">point_fit</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="n">Cost</span><span class="o">.</span><span class="n">rmse</span><span class="p">):</span>
-</span><span id="compute_error-75"><a href="#compute_error-75"><span class="linenos"> 75</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="compute_error-75"><a href="#compute_error-75"><span class="linenos"> 75</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="compute_error-76"><a href="#compute_error-76"><span class="linenos"> 76</span></a><span class="sd">    Returns the fitting error that is minimized by the L-method algorithm.</span>
 </span><span id="compute_error-77"><a href="#compute_error-77"><span class="linenos"> 77</span></a>
 </span><span id="compute_error-78"><a href="#compute_error-78"><span class="linenos"> 78</span></a><span class="sd">    Args:</span>
@@ -648,7 +648,7 @@ adjusted applies a variant that should be stable on noisy data</p>
     </div>
     <a class="headerlink" href="#get_knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="get_knee-116"><a href="#get_knee-116"><span class="linenos">116</span></a><span class="k">def</span> <span class="nf">get_knee</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fit</span><span class="o">=</span><span class="n">Fit</span><span class="o">.</span><span class="n">point_fit</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="n">Cost</span><span class="o">.</span><span class="n">rmse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="get_knee-117"><a href="#get_knee-117"><span class="linenos">117</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_knee-117"><a href="#get_knee-117"><span class="linenos">117</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="get_knee-118"><a href="#get_knee-118"><span class="linenos">118</span></a><span class="sd">    Returns the index of the knee point based on the L-method.</span>
 </span><span id="get_knee-119"><a href="#get_knee-119"><span class="linenos">119</span></a>
 </span><span id="get_knee-120"><a href="#get_knee-120"><span class="linenos">120</span></a><span class="sd">    This method does not use the iterative refinement.</span>
@@ -716,7 +716,7 @@ It represents a single iteration of the refinement technique.</p>
     </div>
     <a class="headerlink" href="#knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="knee-150"><a href="#knee-150"><span class="linenos">150</span></a><span class="k">def</span> <span class="nf">knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fit</span><span class="p">:</span><span class="n">Fit</span><span class="o">=</span><span class="n">Fit</span><span class="o">.</span><span class="n">point_fit</span><span class="p">,</span> <span class="n">it</span><span class="p">:</span><span class="n">Refinement</span><span class="o">=</span><span class="n">Refinement</span><span class="o">.</span><span class="n">adjusted</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="knee-151"><a href="#knee-151"><span class="linenos">151</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="knee-151"><a href="#knee-151"><span class="linenos">151</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="knee-152"><a href="#knee-152"><span class="linenos">152</span></a><span class="sd">    Returns the index of the knee point based on the L-method.</span>
 </span><span id="knee-153"><a href="#knee-153"><span class="linenos">153</span></a>
 </span><span id="knee-154"><a href="#knee-154"><span class="linenos">154</span></a><span class="sd">    This method uses iterative refinement.</span>
@@ -785,7 +785,7 @@ It represents a single iteration of the refinement technique.</p>
     </div>
     <a class="headerlink" href="#multi_knee"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="multi_knee-185"><a href="#multi_knee-185"><span class="linenos">185</span></a><span class="k">def</span> <span class="nf">multi_knee</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="multi_knee-186"><a href="#multi_knee-186"><span class="linenos">186</span></a>    <span class="sd">&quot;&quot;&quot;Recursive knee point detection based on the L-method.</span>
+</span><span id="multi_knee-186"><a href="#multi_knee-186"><span class="linenos">186</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursive knee point detection based on the L-method.</span>
 </span><span id="multi_knee-187"><a href="#multi_knee-187"><span class="linenos">187</span></a>
 </span><span id="multi_knee-188"><a href="#multi_knee-188"><span class="linenos">188</span></a><span class="sd">    It returns the knee points on the curve.</span>
 </span><span id="multi_knee-189"><a href="#multi_knee-189"><span class="linenos">189</span></a>

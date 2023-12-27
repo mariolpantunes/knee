@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.1.0"/>
+    <meta name="generator" content="pdoc 14.3.0"/>
     <title>knee.clustering API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -124,7 +124,7 @@ single dimension.</p>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="k">def</span> <span class="nf">single_linkage</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    Computes the 1D clustering of the input points.</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    Efficient implementation that uses a single pass to compute the clusters.</span>
@@ -157,7 +157,7 @@ single dimension.</p>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="k">def</span> <span class="nf">complete_linkage</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">    Computes the 1D clustering of the input points.</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">    Efficient implementation that uses a single pass to compute the clusters.</span>
@@ -192,7 +192,7 @@ single dimension.</p>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">def</span> <span class="nf">centroid_linkage</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    Computes the 1D clustering of the input points.</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    Efficient implementation that uses a single pass to compute the clusters.</span>
@@ -235,7 +235,7 @@ single dimension.</p>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="k">def</span> <span class="nf">average_linkage</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">    Computes the 1D clustering of the input points.</span>
 </span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">    Efficient implementation that uses a single pass to compute the clusters.</span>
@@ -297,7 +297,7 @@ single dimension.</p>
     </div>
     <a class="headerlink" href="#single_linkage"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="single_linkage-30"><a href="#single_linkage-30"><span class="linenos">30</span></a><span class="k">def</span> <span class="nf">single_linkage</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="single_linkage-31"><a href="#single_linkage-31"><span class="linenos">31</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="single_linkage-31"><a href="#single_linkage-31"><span class="linenos">31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="single_linkage-32"><a href="#single_linkage-32"><span class="linenos">32</span></a><span class="sd">    Computes the 1D clustering of the input points.</span>
 </span><span id="single_linkage-33"><a href="#single_linkage-33"><span class="linenos">33</span></a>
 </span><span id="single_linkage-34"><a href="#single_linkage-34"><span class="linenos">34</span></a><span class="sd">    Efficient implementation that uses a single pass to compute the clusters.</span>
@@ -366,7 +366,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#complete_linkage"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="complete_linkage-63"><a href="#complete_linkage-63"><span class="linenos">63</span></a><span class="k">def</span> <span class="nf">complete_linkage</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="complete_linkage-64"><a href="#complete_linkage-64"><span class="linenos">64</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="complete_linkage-64"><a href="#complete_linkage-64"><span class="linenos">64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="complete_linkage-65"><a href="#complete_linkage-65"><span class="linenos">65</span></a><span class="sd">    Computes the 1D clustering of the input points.</span>
 </span><span id="complete_linkage-66"><a href="#complete_linkage-66"><span class="linenos">66</span></a>
 </span><span id="complete_linkage-67"><a href="#complete_linkage-67"><span class="linenos">67</span></a><span class="sd">    Efficient implementation that uses a single pass to compute the clusters.</span>
@@ -437,7 +437,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#centroid_linkage"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="centroid_linkage-98"><a href="#centroid_linkage-98"><span class="linenos"> 98</span></a><span class="k">def</span> <span class="nf">centroid_linkage</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="centroid_linkage-99"><a href="#centroid_linkage-99"><span class="linenos"> 99</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="centroid_linkage-99"><a href="#centroid_linkage-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="centroid_linkage-100"><a href="#centroid_linkage-100"><span class="linenos">100</span></a><span class="sd">    Computes the 1D clustering of the input points.</span>
 </span><span id="centroid_linkage-101"><a href="#centroid_linkage-101"><span class="linenos">101</span></a>
 </span><span id="centroid_linkage-102"><a href="#centroid_linkage-102"><span class="linenos">102</span></a><span class="sd">    Efficient implementation that uses a single pass to compute the clusters.</span>
@@ -516,7 +516,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#average_linkage"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="average_linkage-141"><a href="#average_linkage-141"><span class="linenos">141</span></a><span class="k">def</span> <span class="nf">average_linkage</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="average_linkage-142"><a href="#average_linkage-142"><span class="linenos">142</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="average_linkage-142"><a href="#average_linkage-142"><span class="linenos">142</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="average_linkage-143"><a href="#average_linkage-143"><span class="linenos">143</span></a><span class="sd">    Computes the 1D clustering of the input points.</span>
 </span><span id="average_linkage-144"><a href="#average_linkage-144"><span class="linenos">144</span></a>
 </span><span id="average_linkage-145"><a href="#average_linkage-145"><span class="linenos">145</span></a><span class="sd">    Efficient implementation that uses a single pass to compute the clusters.</span>

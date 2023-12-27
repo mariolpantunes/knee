@@ -20,7 +20,7 @@ class TestKneedle(unittest.TestCase):
         x = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ])
         y = np.array([1, 0.5, 0.333333333, 0.25, 0.2, 0.166666667, 0.142857143, 0.125, 0.111111111, 0.1])
         points = np.stack((x, y), axis=1)
-        result = kneedle.auto_knee(points)
+        result = kneedle.knee(points)
         desired = 4
         self.assertEqual(result, desired)
 
@@ -37,7 +37,7 @@ class TestKneedle(unittest.TestCase):
         y = np.array([1, 0.5, 0.333333333, 0.25, 0.2,
                      0.2, 0.1, 0.06666666667, 0.05, 0.04])
         points = np.stack((x, y), axis=1)
-        result = kneedle.auto_knees(points)
+        result = kneedle.knees(points)
         desired = np.array([3])
         np.testing.assert_array_equal(result, desired)
 
@@ -46,8 +46,8 @@ class TestKneedle(unittest.TestCase):
         y = np.array([1, 0.5, 0.333333333, 0.25, 0.2,
                      0.2, 0.1, 0.06666666667, 0.05, 0.04])
         points = np.stack((x, y), axis=1)
-        result = kneedle.auto_knees(
-            points, sensitivity=1.0, p=kneedle.PeakDetection.Significant)
+        result = kneedle.knees(points, sensitivity=1.0, 
+        p=kneedle.PeakDetection.Significant)
         desired = np.array([3])
         np.testing.assert_array_equal(result, desired)
 
@@ -56,7 +56,7 @@ class TestKneedle(unittest.TestCase):
         y = np.array([1, 0.5, 0.333333333, 0.25, 0.2,
                      0.2, 0.1, 0.06666666667, 0.05, 0.04])
         points = np.stack((x, y), axis=1)
-        result = kneedle.auto_knees(points, sensitivity=1.0, p=kneedle.PeakDetection.ZScore)
+        result = kneedle.knees(points, sensitivity=1.0, p=kneedle.PeakDetection.ZScore)
         desired = np.array([3])
         np.testing.assert_array_equal(result, desired)
 
@@ -96,7 +96,7 @@ class TestKneedle(unittest.TestCase):
         1.53887156e+13, 4.29217421e+12, 2.73160671e+12, 2.47734172e+12,
         4.47778860e+11, 1.02093688e+11, 4.39657822e+10])
         points = np.stack((x, y), axis=1)
-        result = kneedle.auto_knee(points, t=1.0)
+        result = kneedle.knee(points, t=1.0)
         desired = 34
         self.assertEqual(result, desired)
 

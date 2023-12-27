@@ -100,7 +100,7 @@ def differences(points: np.ndarray, cd: Direction, cc: Concavity) -> np.ndarray:
     return rv
 
 
-def knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
+def _knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
     """
     Returns the index of the knee point based on the Kneedle method.
 
@@ -133,7 +133,7 @@ def knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
         return idx
 
 
-def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle, debug:bool=False) -> np.ndarray:
+def _knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle, debug:bool=False) -> np.ndarray:
     """
     Returns the index of the knees point based on the Kneedle method.
 
@@ -185,7 +185,7 @@ def knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivit
         return knees
 
 
-def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p: PeakDetection = PeakDetection.Kneedle) -> np.ndarray:
+def knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p: PeakDetection = PeakDetection.Kneedle) -> np.ndarray:
     """
     Returns the index of the knees point based on the Kneedle method.
 
@@ -214,8 +214,8 @@ def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p:
     else:
         cd = Direction.Decreasing
 
-    knees_1= knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
-    knees_2 = knees(points, t, cd, Concavity.Clockwise, sensitivity, p)
+    knees_1= _knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
+    knees_2 = _knees(points, t, cd, Concavity.Clockwise, sensitivity, p)
 
     knees_idx = np.concatenate((knees_1, knees_2))
     # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
@@ -226,7 +226,7 @@ def auto_knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p:
     return knees_idx
 
 
-def auto_knee(points: np.ndarray, t: float = 1.0) -> int:
+def knee(points: np.ndarray, t: float = 1.0) -> int:
     """
     Returns the index of the knee point based on the Kneedle method.
 
@@ -263,7 +263,7 @@ def auto_knee(points: np.ndarray, t: float = 1.0) -> int:
     else:
         cc = Concavity.Counterclockwise
 
-    return knee(points, t, cd, cc)
+    return _knee(points, t, cd, cc)
 
 
 def multi_knee(points, t1=0.01, t2=3):
@@ -281,5 +281,5 @@ def multi_knee(points, t1=0.01, t2=3):
         np.ndarray: knee points on the curve
 
     """
-    knees = mk.multi_knee(auto_knee, points, t1, t2)
+    knees = mk.multi_knee(knee, points, t1, t2)
     return knees

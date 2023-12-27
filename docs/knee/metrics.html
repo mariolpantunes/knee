@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.1.0"/>
+    <meta name="generator" content="pdoc 14.3.0"/>
     <title>knee.metrics API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -154,7 +154,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="k">class</span> <span class="nc">Metrics</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">    Enum that defines the different metrics linear functions.</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    These metrics are used on the `knee.rdp` and `knee.multi_knee`. </span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -169,7 +169,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="k">class</span> <span class="nc">R2</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    Enum that defines the types of coefficient of determination</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="n">adjusted</span> <span class="o">=</span> <span class="s1">&#39;adjusted&#39;</span>
@@ -180,7 +180,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">r2</span><span class="p">:</span> <span class="n">R2</span> <span class="o">=</span> <span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">    Computes the coefficient of determination (R2).</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">    Args:</span>
@@ -208,7 +208,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    Computes the Root Mean Squared Error (RMSE).</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    Args:</span>
@@ -222,7 +222,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">    Computes the Root Mean Squared Log Error (RMSLE):</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">    $$</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}</span>
@@ -239,7 +239,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="k">def</span> <span class="nf">rmspe</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">    Computes the Root Mean Squared Percentage Error (RMSPE).</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    Args:</span>
@@ -254,7 +254,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="k">def</span> <span class="nf">rpd</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">    Computes the Relative Percentage Difference (RPD).</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">    Args:</span>
@@ -269,7 +269,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
 </span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="k">def</span> <span class="nf">residuals</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">    Computes the residual error of the fit.</span>
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
 </span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">    Args:</span>
@@ -283,7 +283,7 @@ used for computing regression based metrics.</p>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="k">def</span> <span class="nf">smape</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">    Computes Symmetric Mean Absolute Percentage Error (SMAPE).</span>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">    Args:</span>
@@ -310,7 +310,7 @@ used for computing regression based metrics.</p>
     </div>
     <a class="headerlink" href="#Metrics"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Metrics-23"><a href="#Metrics-23"><span class="linenos">23</span></a><span class="k">class</span> <span class="nc">Metrics</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Metrics-24"><a href="#Metrics-24"><span class="linenos">24</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Metrics-24"><a href="#Metrics-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Metrics-25"><a href="#Metrics-25"><span class="linenos">25</span></a><span class="sd">    Enum that defines the different metrics linear functions.</span>
 </span><span id="Metrics-26"><a href="#Metrics-26"><span class="linenos">26</span></a><span class="sd">    These metrics are used on the `knee.rdp` and `knee.multi_knee`. </span>
 </span><span id="Metrics-27"><a href="#Metrics-27"><span class="linenos">27</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -413,7 +413,7 @@ These metrics are used on the <code><a href="rdp.html">knee.rdp</a></code> and <
     </div>
     <a class="headerlink" href="#R2"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="R2-38"><a href="#R2-38"><span class="linenos">38</span></a><span class="k">class</span> <span class="nc">R2</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="R2-39"><a href="#R2-39"><span class="linenos">39</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="R2-39"><a href="#R2-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="R2-40"><a href="#R2-40"><span class="linenos">40</span></a><span class="sd">    Enum that defines the types of coefficient of determination</span>
 </span><span id="R2-41"><a href="#R2-41"><span class="linenos">41</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="R2-42"><a href="#R2-42"><span class="linenos">42</span></a>    <span class="n">adjusted</span> <span class="o">=</span> <span class="s1">&#39;adjusted&#39;</span>
@@ -475,7 +475,7 @@ These metrics are used on the <code><a href="rdp.html">knee.rdp</a></code> and <
     </div>
     <a class="headerlink" href="#r2"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="r2-49"><a href="#r2-49"><span class="linenos">49</span></a><span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">r2</span><span class="p">:</span> <span class="n">R2</span> <span class="o">=</span> <span class="n">R2</span><span class="o">.</span><span class="n">classic</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="r2-50"><a href="#r2-50"><span class="linenos">50</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="r2-50"><a href="#r2-50"><span class="linenos">50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="r2-51"><a href="#r2-51"><span class="linenos">51</span></a><span class="sd">    Computes the coefficient of determination (R2).</span>
 </span><span id="r2-52"><a href="#r2-52"><span class="linenos">52</span></a>
 </span><span id="r2-53"><a href="#r2-53"><span class="linenos">53</span></a><span class="sd">    Args:</span>
@@ -534,7 +534,7 @@ These metrics are used on the <code><a href="rdp.html">knee.rdp</a></code> and <
     </div>
     <a class="headerlink" href="#rmse"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmse-77"><a href="#rmse-77"><span class="linenos">77</span></a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmse-78"><a href="#rmse-78"><span class="linenos">78</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmse-78"><a href="#rmse-78"><span class="linenos">78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmse-79"><a href="#rmse-79"><span class="linenos">79</span></a><span class="sd">    Computes the Root Mean Squared Error (RMSE).</span>
 </span><span id="rmse-80"><a href="#rmse-80"><span class="linenos">80</span></a>
 </span><span id="rmse-81"><a href="#rmse-81"><span class="linenos">81</span></a><span class="sd">    Args:</span>
@@ -578,7 +578,7 @@ These metrics are used on the <code><a href="rdp.html">knee.rdp</a></code> and <
     </div>
     <a class="headerlink" href="#rmsle"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmsle-91"><a href="#rmsle-91"><span class="linenos"> 91</span></a><span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmsle-92"><a href="#rmsle-92"><span class="linenos"> 92</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmsle-92"><a href="#rmsle-92"><span class="linenos"> 92</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmsle-93"><a href="#rmsle-93"><span class="linenos"> 93</span></a><span class="sd">    Computes the Root Mean Squared Log Error (RMSLE):</span>
 </span><span id="rmsle-94"><a href="#rmsle-94"><span class="linenos"> 94</span></a><span class="sd">    $$</span>
 </span><span id="rmsle-95"><a href="#rmsle-95"><span class="linenos"> 95</span></a><span class="sd">    RMSLE(y, \\hat{y}) = \\sqrt{\\frac{\\sum_{i=1}^{n}(\\log (y_i+1) - \\log (\\hat{y_i}+1))^2}{n}}</span>
@@ -628,7 +628,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#rmspe"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rmspe-108"><a href="#rmspe-108"><span class="linenos">108</span></a><span class="k">def</span> <span class="nf">rmspe</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rmspe-109"><a href="#rmspe-109"><span class="linenos">109</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rmspe-109"><a href="#rmspe-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rmspe-110"><a href="#rmspe-110"><span class="linenos">110</span></a><span class="sd">    Computes the Root Mean Squared Percentage Error (RMSPE).</span>
 </span><span id="rmspe-111"><a href="#rmspe-111"><span class="linenos">111</span></a>
 </span><span id="rmspe-112"><a href="#rmspe-112"><span class="linenos">112</span></a><span class="sd">    Args:</span>
@@ -674,7 +674,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#rpd"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rpd-123"><a href="#rpd-123"><span class="linenos">123</span></a><span class="k">def</span> <span class="nf">rpd</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="rpd-124"><a href="#rpd-124"><span class="linenos">124</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rpd-124"><a href="#rpd-124"><span class="linenos">124</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rpd-125"><a href="#rpd-125"><span class="linenos">125</span></a><span class="sd">    Computes the Relative Percentage Difference (RPD).</span>
 </span><span id="rpd-126"><a href="#rpd-126"><span class="linenos">126</span></a>
 </span><span id="rpd-127"><a href="#rpd-127"><span class="linenos">127</span></a><span class="sd">    Args:</span>
@@ -720,7 +720,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#residuals"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="residuals-138"><a href="#residuals-138"><span class="linenos">138</span></a><span class="k">def</span> <span class="nf">residuals</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="residuals-139"><a href="#residuals-139"><span class="linenos">139</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="residuals-139"><a href="#residuals-139"><span class="linenos">139</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="residuals-140"><a href="#residuals-140"><span class="linenos">140</span></a><span class="sd">    Computes the residual error of the fit.</span>
 </span><span id="residuals-141"><a href="#residuals-141"><span class="linenos">141</span></a>
 </span><span id="residuals-142"><a href="#residuals-142"><span class="linenos">142</span></a><span class="sd">    Args:</span>
@@ -764,7 +764,7 @@ $$</p>
     </div>
     <a class="headerlink" href="#smape"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="smape-152"><a href="#smape-152"><span class="linenos">152</span></a><span class="k">def</span> <span class="nf">smape</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="smape-153"><a href="#smape-153"><span class="linenos">153</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="smape-153"><a href="#smape-153"><span class="linenos">153</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="smape-154"><a href="#smape-154"><span class="linenos">154</span></a><span class="sd">    Computes Symmetric Mean Absolute Percentage Error (SMAPE).</span>
 </span><span id="smape-155"><a href="#smape-155"><span class="linenos">155</span></a>
 </span><span id="smape-156"><a href="#smape-156"><span class="linenos">156</span></a><span class="sd">    Args:</span>

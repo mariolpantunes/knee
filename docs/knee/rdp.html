@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 14.1.0"/>
+    <meta name="generator" content="pdoc 14.3.0"/>
     <title>knee.rdp API documentation</title>
             <link rel="icon" href="https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png"/>
 
@@ -178,7 +178,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="k">class</span> <span class="nc">Distance</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    Enum that defines the distance method for the RDP </span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">perpendicular</span> <span class="o">=</span> <span class="s1">&#39;perpendicular&#39;</span>
@@ -189,7 +189,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="k">class</span> <span class="nc">Order</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">    Enum that defines the distance method for the RDP </span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">triangle</span> <span class="o">=</span> <span class="s1">&#39;triangle&#39;</span>
@@ -201,7 +201,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="n">indexes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">removed</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">    Computes the reverse of the RDP method.</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    It maps the indexes on a simplified curve (using the rdp algorithm) into</span>
@@ -239,7 +239,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span> <span class="nf">compute_cost_coef</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">smape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    Computes the cost of fitting a linear function (with a given coefficient)</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">    in the points array.</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
@@ -261,7 +261,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="k">def</span> <span class="nf">rdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="n">Distance</span> <span class="o">=</span> <span class="n">Distance</span><span class="o">.</span><span class="n">shortest</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">smape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">    Ramer–Douglas–Peucker (RDP) algorithm.</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.</span>
@@ -319,7 +319,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>
 </span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
 </span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="k">def</span> <span class="nf">compute_removed_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">    Given an array of points and the reduced set it computes how many</span>
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">    points were removed per segment.</span>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
@@ -343,7 +343,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>
 </span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="k">def</span> <span class="nf">order_triangle</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">distance_points</span><span class="p">:</span> <span class="n">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="sd">    Computes the triangle area of the left and right segments.</span>
 </span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">    The triangle area is a fast heuristic to estimate the how curve</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">    the left and right segment are.</span>
@@ -371,7 +371,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>
 </span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>
 </span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="k">def</span> <span class="nf">order_area</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">distance_points</span><span class="p">:</span><span class="n">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">    Computes the area of the left and right segments.</span>
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">    The area is an heuristic to estimate the how curve</span>
 </span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="sd">    the left and right segment are.</span>
@@ -400,7 +400,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
 </span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>
 </span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="k">def</span> <span class="nf">order_segment</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a><span class="sd">    Computes the fitting error for the left and right segments.</span>
 </span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>
 </span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a><span class="sd">    Args:</span>
@@ -421,7 +421,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>
 </span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a><span class="k">def</span> <span class="nf">_rdp_fixed</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">distance_points</span><span class="p">:</span><span class="n">callable</span><span class="p">,</span> 
 </span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a><span class="n">order</span><span class="p">:</span><span class="n">Order</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a><span class="sd">    Main loop of the RDP fixed version.</span>
 </span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>
 </span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a><span class="sd">    Not intended to be used as a single method.</span>
@@ -479,7 +479,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a>
 </span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>
 </span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a><span class="k">def</span> <span class="nf">rdp_fixed</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="n">Distance</span> <span class="o">=</span> <span class="n">Distance</span><span class="o">.</span><span class="n">shortest</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span><span class="n">Order</span><span class="o">=</span><span class="n">Order</span><span class="o">.</span><span class="n">segment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a><span class="sd">    Ramer–Douglas–Peucker (RDP) algorithm.</span>
 </span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>
 </span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a><span class="sd">    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.</span>
@@ -529,7 +529,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>
 </span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a><span class="k">def</span> <span class="nf">_grdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span><span class="n">Order</span><span class="p">,</span> 
 </span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a><span class="n">distance_points</span><span class="p">:</span><span class="n">callable</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span><span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a><span class="sd">    Main loop of the gRDP version.</span>
 </span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>
 </span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a><span class="sd">    Not intended to be used as a single method.</span>
@@ -603,7 +603,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>
 </span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a><span class="k">def</span> <span class="nf">grdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="n">Distance</span> <span class="o">=</span> <span class="n">Distance</span><span class="o">.</span><span class="n">shortest</span><span class="p">,</span> 
 </span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a><span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">smape</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span><span class="n">Order</span><span class="o">=</span><span class="n">Order</span><span class="o">.</span><span class="n">segment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a><span class="sd">    Global Ramer–Douglas–Peucker (RDP) algorithm.</span>
 </span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>
 </span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a><span class="sd">    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.</span>
@@ -641,7 +641,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>
 </span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a><span class="k">def</span> <span class="nf">mp_grdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">min_points</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="n">Distance</span> <span class="o">=</span> <span class="n">Distance</span><span class="o">.</span><span class="n">shortest</span><span class="p">,</span>
 </span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a><span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">smape</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span><span class="n">Order</span><span class="o">=</span><span class="n">Order</span><span class="o">.</span><span class="n">segment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a><span class="sd">    MP gRDP (Min Points Global RDP)</span>
 </span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a>
 </span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a><span class="sd">    This version computes the gRDP with the given threshold.</span>
@@ -688,7 +688,7 @@ versions of the RDP algorhtm.</p>
 </span><span id="L-541"><a href="#L-541"><span class="linenos">541</span></a>    
 </span><span id="L-542"><a href="#L-542"><span class="linenos">542</span></a>
 </span><span id="L-543"><a href="#L-543"><span class="linenos">543</span></a><span class="k">def</span> <span class="nf">min_point_rdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">],</span> <span class="n">min_points</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="L-544"><a href="#L-544"><span class="linenos">544</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-544"><a href="#L-544"><span class="linenos">544</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-545"><a href="#L-545"><span class="linenos">545</span></a><span class="sd">    Minimal points RDP.</span>
 </span><span id="L-546"><a href="#L-546"><span class="linenos">546</span></a>
 </span><span id="L-547"><a href="#L-547"><span class="linenos">547</span></a><span class="sd">    Given a minimal amount of points, this version runs Global RDP with different threshold </span>
@@ -742,7 +742,7 @@ versions of the RDP algorhtm.</p>
     </div>
     <a class="headerlink" href="#Distance"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Distance-34"><a href="#Distance-34"><span class="linenos">34</span></a><span class="k">class</span> <span class="nc">Distance</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Distance-35"><a href="#Distance-35"><span class="linenos">35</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Distance-35"><a href="#Distance-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Distance-36"><a href="#Distance-36"><span class="linenos">36</span></a><span class="sd">    Enum that defines the distance method for the RDP </span>
 </span><span id="Distance-37"><a href="#Distance-37"><span class="linenos">37</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Distance-38"><a href="#Distance-38"><span class="linenos">38</span></a>    <span class="n">perpendicular</span> <span class="o">=</span> <span class="s1">&#39;perpendicular&#39;</span>
@@ -804,7 +804,7 @@ versions of the RDP algorhtm.</p>
     </div>
     <a class="headerlink" href="#Order"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Order-45"><a href="#Order-45"><span class="linenos">45</span></a><span class="k">class</span> <span class="nc">Order</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-</span><span id="Order-46"><a href="#Order-46"><span class="linenos">46</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Order-46"><a href="#Order-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="Order-47"><a href="#Order-47"><span class="linenos">47</span></a><span class="sd">    Enum that defines the distance method for the RDP </span>
 </span><span id="Order-48"><a href="#Order-48"><span class="linenos">48</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Order-49"><a href="#Order-49"><span class="linenos">49</span></a>    <span class="n">triangle</span> <span class="o">=</span> <span class="s1">&#39;triangle&#39;</span>
@@ -879,7 +879,7 @@ versions of the RDP algorhtm.</p>
     </div>
     <a class="headerlink" href="#mapping"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="mapping-57"><a href="#mapping-57"><span class="linenos">57</span></a><span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="n">indexes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">removed</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="mapping-58"><a href="#mapping-58"><span class="linenos">58</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="mapping-58"><a href="#mapping-58"><span class="linenos">58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="mapping-59"><a href="#mapping-59"><span class="linenos">59</span></a><span class="sd">    Computes the reverse of the RDP method.</span>
 </span><span id="mapping-60"><a href="#mapping-60"><span class="linenos">60</span></a>
 </span><span id="mapping-61"><a href="#mapping-61"><span class="linenos">61</span></a><span class="sd">    It maps the indexes on a simplified curve (using the rdp algorithm) into</span>
@@ -953,7 +953,7 @@ This method assumes the indexes are sorted in ascending order.</p>
     </div>
     <a class="headerlink" href="#compute_cost_coef"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="compute_cost_coef-95"><a href="#compute_cost_coef-95"><span class="linenos"> 95</span></a><span class="k">def</span> <span class="nf">compute_cost_coef</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">smape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="compute_cost_coef-96"><a href="#compute_cost_coef-96"><span class="linenos"> 96</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="compute_cost_coef-96"><a href="#compute_cost_coef-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="compute_cost_coef-97"><a href="#compute_cost_coef-97"><span class="linenos"> 97</span></a><span class="sd">    Computes the cost of fitting a linear function (with a given coefficient)</span>
 </span><span id="compute_cost_coef-98"><a href="#compute_cost_coef-98"><span class="linenos"> 98</span></a><span class="sd">    in the points array.</span>
 </span><span id="compute_cost_coef-99"><a href="#compute_cost_coef-99"><span class="linenos"> 99</span></a>
@@ -1007,7 +1007,7 @@ in the points array.</p>
     </div>
     <a class="headerlink" href="#rdp"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rdp-117"><a href="#rdp-117"><span class="linenos">117</span></a><span class="k">def</span> <span class="nf">rdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="n">Distance</span> <span class="o">=</span> <span class="n">Distance</span><span class="o">.</span><span class="n">shortest</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">smape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="rdp-118"><a href="#rdp-118"><span class="linenos">118</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rdp-118"><a href="#rdp-118"><span class="linenos">118</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rdp-119"><a href="#rdp-119"><span class="linenos">119</span></a><span class="sd">    Ramer–Douglas–Peucker (RDP) algorithm.</span>
 </span><span id="rdp-120"><a href="#rdp-120"><span class="linenos">120</span></a>
 </span><span id="rdp-121"><a href="#rdp-121"><span class="linenos">121</span></a><span class="sd">    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.</span>
@@ -1100,7 +1100,7 @@ This version uses different cost functions to decided whenever to keep or remove
     </div>
     <a class="headerlink" href="#compute_removed_points"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="compute_removed_points-175"><a href="#compute_removed_points-175"><span class="linenos">175</span></a><span class="k">def</span> <span class="nf">compute_removed_points</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">reduced</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="compute_removed_points-176"><a href="#compute_removed_points-176"><span class="linenos">176</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="compute_removed_points-176"><a href="#compute_removed_points-176"><span class="linenos">176</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="compute_removed_points-177"><a href="#compute_removed_points-177"><span class="linenos">177</span></a><span class="sd">    Given an array of points and the reduced set it computes how many</span>
 </span><span id="compute_removed_points-178"><a href="#compute_removed_points-178"><span class="linenos">178</span></a><span class="sd">    points were removed per segment.</span>
 </span><span id="compute_removed_points-179"><a href="#compute_removed_points-179"><span class="linenos">179</span></a>
@@ -1155,7 +1155,7 @@ points were removed per segment.</p>
     </div>
     <a class="headerlink" href="#order_triangle"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="order_triangle-199"><a href="#order_triangle-199"><span class="linenos">199</span></a><span class="k">def</span> <span class="nf">order_triangle</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">distance_points</span><span class="p">:</span> <span class="n">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="order_triangle-200"><a href="#order_triangle-200"><span class="linenos">200</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="order_triangle-200"><a href="#order_triangle-200"><span class="linenos">200</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="order_triangle-201"><a href="#order_triangle-201"><span class="linenos">201</span></a><span class="sd">    Computes the triangle area of the left and right segments.</span>
 </span><span id="order_triangle-202"><a href="#order_triangle-202"><span class="linenos">202</span></a><span class="sd">    The triangle area is a fast heuristic to estimate the how curve</span>
 </span><span id="order_triangle-203"><a href="#order_triangle-203"><span class="linenos">203</span></a><span class="sd">    the left and right segment are.</span>
@@ -1216,7 +1216,7 @@ the left and right segment are.</p>
     </div>
     <a class="headerlink" href="#order_area"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="order_area-227"><a href="#order_area-227"><span class="linenos">227</span></a><span class="k">def</span> <span class="nf">order_area</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">distance_points</span><span class="p">:</span><span class="n">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="order_area-228"><a href="#order_area-228"><span class="linenos">228</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="order_area-228"><a href="#order_area-228"><span class="linenos">228</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="order_area-229"><a href="#order_area-229"><span class="linenos">229</span></a><span class="sd">    Computes the area of the left and right segments.</span>
 </span><span id="order_area-230"><a href="#order_area-230"><span class="linenos">230</span></a><span class="sd">    The area is an heuristic to estimate the how curve</span>
 </span><span id="order_area-231"><a href="#order_area-231"><span class="linenos">231</span></a><span class="sd">    the left and right segment are.</span>
@@ -1278,7 +1278,7 @@ the left and right segment are.</p>
     </div>
     <a class="headerlink" href="#order_segment"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="order_segment-256"><a href="#order_segment-256"><span class="linenos">256</span></a><span class="k">def</span> <span class="nf">order_segment</span><span class="p">(</span><span class="n">pt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="order_segment-257"><a href="#order_segment-257"><span class="linenos">257</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="order_segment-257"><a href="#order_segment-257"><span class="linenos">257</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="order_segment-258"><a href="#order_segment-258"><span class="linenos">258</span></a><span class="sd">    Computes the fitting error for the left and right segments.</span>
 </span><span id="order_segment-259"><a href="#order_segment-259"><span class="linenos">259</span></a>
 </span><span id="order_segment-260"><a href="#order_segment-260"><span class="linenos">260</span></a><span class="sd">    Args:</span>
@@ -1328,7 +1328,7 @@ the left and right segment are.</p>
     </div>
     <a class="headerlink" href="#rdp_fixed"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="rdp_fixed-335"><a href="#rdp_fixed-335"><span class="linenos">335</span></a><span class="k">def</span> <span class="nf">rdp_fixed</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="n">Distance</span> <span class="o">=</span> <span class="n">Distance</span><span class="o">.</span><span class="n">shortest</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span><span class="n">Order</span><span class="o">=</span><span class="n">Order</span><span class="o">.</span><span class="n">segment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="rdp_fixed-336"><a href="#rdp_fixed-336"><span class="linenos">336</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="rdp_fixed-336"><a href="#rdp_fixed-336"><span class="linenos">336</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="rdp_fixed-337"><a href="#rdp_fixed-337"><span class="linenos">337</span></a><span class="sd">    Ramer–Douglas–Peucker (RDP) algorithm.</span>
 </span><span id="rdp_fixed-338"><a href="#rdp_fixed-338"><span class="linenos">338</span></a>
 </span><span id="rdp_fixed-339"><a href="#rdp_fixed-339"><span class="linenos">339</span></a><span class="sd">    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.</span>
@@ -1428,7 +1428,7 @@ This version reduces the number of points to a fixed length.</p>
     <a class="headerlink" href="#grdp"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="grdp-458"><a href="#grdp-458"><span class="linenos">458</span></a><span class="k">def</span> <span class="nf">grdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="n">Distance</span> <span class="o">=</span> <span class="n">Distance</span><span class="o">.</span><span class="n">shortest</span><span class="p">,</span> 
 </span><span id="grdp-459"><a href="#grdp-459"><span class="linenos">459</span></a><span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">smape</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span><span class="n">Order</span><span class="o">=</span><span class="n">Order</span><span class="o">.</span><span class="n">segment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="grdp-460"><a href="#grdp-460"><span class="linenos">460</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="grdp-460"><a href="#grdp-460"><span class="linenos">460</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="grdp-461"><a href="#grdp-461"><span class="linenos">461</span></a><span class="sd">    Global Ramer–Douglas–Peucker (RDP) algorithm.</span>
 </span><span id="grdp-462"><a href="#grdp-462"><span class="linenos">462</span></a>
 </span><span id="grdp-463"><a href="#grdp-463"><span class="linenos">463</span></a><span class="sd">    Is an algorithm that decimates a curve composed of line segments to a similar curve with fewer points.</span>
@@ -1504,7 +1504,7 @@ The exploration is based on the segment that has an overall higher reconstructio
     <a class="headerlink" href="#mp_grdp"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="mp_grdp-496"><a href="#mp_grdp-496"><span class="linenos">496</span></a><span class="k">def</span> <span class="nf">mp_grdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">min_points</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="n">Distance</span> <span class="o">=</span> <span class="n">Distance</span><span class="o">.</span><span class="n">shortest</span><span class="p">,</span>
 </span><span id="mp_grdp-497"><a href="#mp_grdp-497"><span class="linenos">497</span></a><span class="n">cost</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">smape</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span><span class="n">Order</span><span class="o">=</span><span class="n">Order</span><span class="o">.</span><span class="n">segment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="mp_grdp-498"><a href="#mp_grdp-498"><span class="linenos">498</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="mp_grdp-498"><a href="#mp_grdp-498"><span class="linenos">498</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="mp_grdp-499"><a href="#mp_grdp-499"><span class="linenos">499</span></a><span class="sd">    MP gRDP (Min Points Global RDP)</span>
 </span><span id="mp_grdp-500"><a href="#mp_grdp-500"><span class="linenos">500</span></a>
 </span><span id="mp_grdp-501"><a href="#mp_grdp-501"><span class="linenos">501</span></a><span class="sd">    This version computes the gRDP with the given threshold.</span>
@@ -1592,7 +1592,7 @@ the rdp_fixed method continues from the previous point onwards.</p>
     </div>
     <a class="headerlink" href="#min_point_rdp"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="min_point_rdp-544"><a href="#min_point_rdp-544"><span class="linenos">544</span></a><span class="k">def</span> <span class="nf">min_point_rdp</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">],</span> <span class="n">min_points</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-</span><span id="min_point_rdp-545"><a href="#min_point_rdp-545"><span class="linenos">545</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="min_point_rdp-545"><a href="#min_point_rdp-545"><span class="linenos">545</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="min_point_rdp-546"><a href="#min_point_rdp-546"><span class="linenos">546</span></a><span class="sd">    Minimal points RDP.</span>
 </span><span id="min_point_rdp-547"><a href="#min_point_rdp-547"><span class="linenos">547</span></a>
 </span><span id="min_point_rdp-548"><a href="#min_point_rdp-548"><span class="linenos">548</span></a><span class="sd">    Given a minimal amount of points, this version runs Global RDP with different threshold </span>
