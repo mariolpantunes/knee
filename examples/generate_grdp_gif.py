@@ -40,7 +40,7 @@ def generate_frame(points, reduced):
     x = points_reduced[:, 0]
     y = points_reduced[:, 1]
     plt.plot(x, y, marker='o', markersize=3)
-    
+
     fig.canvas.draw()
     image = np.array(fig.canvas.buffer_rgba())
 
@@ -69,6 +69,6 @@ if __name__ == '__main__':
     parser.add_argument('--max', type=int, help='maximum number of points', default=20)
     parser.add_argument('--dst', type=rdp.Distance, choices=list(rdp.Distance), help='distance metric', default='shortest')
     parser.add_argument('--ord', type=rdp.Order, choices=list(rdp.Order), help='ordering metric', default='segment')
-    parser.add_argument('-o', type=str, help='output file', default="gRDP.gif")
+    parser.add_argument('-o', type=str, help='output file', default='out/gRDP.gif')
     args = parser.parse_args()
     main(args)

@@ -37,7 +37,7 @@ def kneedle_novel(points, args):
     reduced, removed = rdp.mp_grdp(points, t=args.r, min_points=args.p)
 
     points_reduced = points[reduced]
-    knees = kneedle.auto_knees(points_reduced, p=kneedle.PeakDetection.All)
+    knees = kneedle.knees(points_reduced, p=kneedle.PeakDetection.All)
 
     knees = pp.filter_worst_knees(points_reduced, knees)
     knees = pp.filter_corner_knees(points_reduced, knees, t=args.c)
