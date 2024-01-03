@@ -22,7 +22,7 @@ from matplotlib.patches import Ellipse
 
 plt.style.use('seaborn-v0_8-paper')
 plt.rcParams['figure.autolayout'] = True
-plt.rcParams['figure.figsize'] = (4, 3)
+plt.rcParams['figure.figsize'] = (4, 4)
 plt.rcParams['lines.linewidth'] = 2
 
 
@@ -43,8 +43,8 @@ def main():
     ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(True)
     ax.spines['bottom'].set_visible(True)
-    plt.savefig('out/knee_post_processing_00.png', bbox_inches='tight')
-    plt.savefig('out/knee_post_processing_00.pdf', bbox_inches='tight')
+    plt.savefig('out/knee_post_processing_00.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knee_post_processing_00.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
     x2 = [0,2,2.2,3,5]
@@ -59,8 +59,8 @@ def main():
     ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(True)
     ax.spines['bottom'].set_visible(True)
-    plt.savefig('out/knee_post_processing_01.png', bbox_inches='tight')
-    plt.savefig('out/knee_post_processing_01.pdf', bbox_inches='tight')
+    plt.savefig('out/knee_post_processing_01.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knee_post_processing_01.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
     # Plot 3
@@ -77,12 +77,12 @@ def main():
     ax.plot(2.5, 1.0315, 'x', mew=5, ms=10, color='#DD8452')
     ax.plot(2.8, 0.5626, 'x', mew=5, ms=10, color='#DD8452')
 
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(True)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
     ax.spines['bottom'].set_visible(True)
-    plt.savefig('out/knee_post_processing_02.png', bbox_inches='tight')
-    plt.savefig('out/knee_post_processing_02.pdf', bbox_inches='tight')
+    plt.savefig('out/knee_post_processing_02.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knee_post_processing_02.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
 

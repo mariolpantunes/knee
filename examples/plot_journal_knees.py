@@ -29,7 +29,7 @@ import knee.knee_ranking as knee_ranking
 
 plt.style.use('seaborn-v0_8-paper')
 plt.rcParams['figure.autolayout'] = True
-plt.rcParams['figure.figsize'] = (4, 3)
+plt.rcParams['figure.figsize'] = (4, 4)
 plt.rcParams['lines.linewidth'] = 2
 
 
@@ -54,8 +54,8 @@ def main(args):
     plt.plot(x, y, color= colormap[0])
     points_reduced = points[reduced]
     plt.plot(points_reduced[:, 0], points_reduced[:, 1], marker='o', markersize=3, color=colormap[1])
-    plt.savefig('out/knees_trace_reduced.png', bbox_inches='tight')
-    plt.savefig('out/knees_trace_reduced.pdf', bbox_inches='tight')
+    plt.savefig('out/knees_trace_reduced.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knees_trace_reduced.pdf', bbox_inches='tight', transparent=True)
     plt.show()
     
     # Plot the original Knees
@@ -63,8 +63,8 @@ def main(args):
     knees_original = rdp.mapping(knees, reduced, removed)
     plt.plot(points_reduced[:, 0], points_reduced[:, 1], marker='o', markersize=3, color=colormap[1])
     plt.plot(x[knees_original], y[knees_original], 's', markersize=5, color=colormap[2])
-    plt.savefig('out/knees_original_knees.png', bbox_inches='tight')
-    plt.savefig('out/knees_original_knees.pdf', bbox_inches='tight')
+    plt.savefig('out/knees_original_knees.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knees_original_knees.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
     # Plot filtered and final knees
@@ -75,15 +75,15 @@ def main(args):
     plt.plot(points_reduced[:, 0], points_reduced[:, 1], marker='o', markersize=3, color=colormap[1])
     plt.plot(x[knees_original], y[knees_original], 's', markersize=5, color=colormap[2])
     plt.plot(x[knees], y[knees], 'o', markersize=7, color=colormap[3])
-    plt.savefig('out/knees_final_knees.png', bbox_inches='tight')
-    plt.savefig('out/knees_final_knees.pdf', bbox_inches='tight')
+    plt.savefig('out/knees_final_knees.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knees_final_knees.pdf', bbox_inches='tight', transparent=True)
     plt.show()
     
     # Plot original trace with final knees
     plt.plot(x, y, color= colormap[0])
     plt.plot(x[knees], y[knees], 'o', markersize=7, color=colormap[3])
-    plt.savefig('out/knees_final_plot.png', bbox_inches='tight')
-    plt.savefig('out/knees_final_plot.pdf', bbox_inches='tight')
+    plt.savefig('out/knees_final_plot.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knees_final_plot.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
 

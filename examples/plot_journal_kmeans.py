@@ -24,7 +24,7 @@ import knee.kneedle as kneedle
 
 plt.style.use('seaborn-v0_8-paper')
 plt.rcParams['figure.autolayout'] = True
-plt.rcParams['figure.figsize'] = (4, 3)
+plt.rcParams['figure.figsize'] = (4, 4)
 plt.rcParams['lines.linewidth'] = 2
 
 
@@ -59,16 +59,16 @@ def main():
     ax = plt.gca()
     ax.set_xlabel('Petal length')
     ax.set_ylabel('Petal width')
-    plt.savefig('out/kmeans_clusters.png', bbox_inches='tight')
-    plt.savefig('out/kmeans_clusters.pdf', bbox_inches='tight')
+    plt.savefig('out/kmeans_clusters.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/kmeans_clusters.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
     plt.plot(wcss[:,0], wcss[:,1], color = colormap[0])
     plt.xlabel('Number of clusters')
     plt.ylabel('WCSS') #within cluster sum of squares
     plt.axvline(x = k, color = colormap[1])
-    plt.savefig('out/kmeans_wcss.png', bbox_inches='tight')
-    plt.savefig('out/kmeans_wcss.pdf', bbox_inches='tight')
+    plt.savefig('out/kmeans_wcss.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/kmeans_wcss.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
 
