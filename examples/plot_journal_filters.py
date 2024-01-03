@@ -20,8 +20,10 @@ from matplotlib.patches import Rectangle
 from matplotlib.patches import Ellipse
 
 
-plt.style.use('seaborn-v0_8-whitegrid')
+plt.style.use('seaborn-v0_8-paper')
 plt.rcParams['figure.autolayout'] = True
+plt.rcParams['figure.figsize'] = (4, 3)
+plt.rcParams['lines.linewidth'] = 2
 
 
 def main():
@@ -51,8 +53,8 @@ def main():
     # Plot 2
     fg, ax = plt.subplots()
     ax.plot(x2, y2, color='#4C72B0', marker='o', markersize=3)
-    ax.add_patch(Rectangle((1, 3.5), 1, 1, fill=False, hatch='/', color='#55A868'))
-    ax.add_patch(Rectangle((1, 3.5), 1.067, 1.25, fill=False, hatch='\\', color='#DD8452'))
+    ax.add_patch(Rectangle((1, 3.5), 1, 1, fill=False, hatch='/', color='#55A868', linewidth=2))
+    ax.add_patch(Rectangle((1, 3.5), 1.067, 1.25, fill=False, hatch='\\', color='#DD8452', linewidth=2))
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(True)

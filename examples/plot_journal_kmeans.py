@@ -22,8 +22,10 @@ from sklearn.cluster import KMeans
 import knee.kneedle as kneedle
 
 
-plt.style.use('seaborn-v0_8-whitegrid')
+plt.style.use('seaborn-v0_8-paper')
 plt.rcParams['figure.autolayout'] = True
+plt.rcParams['figure.figsize'] = (4, 3)
+plt.rcParams['lines.linewidth'] = 2
 
 
 logging.basicConfig(level=logging.DEBUG, format='%(message)s')
