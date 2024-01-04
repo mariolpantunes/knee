@@ -1,6 +1,5 @@
 plots*
 out/
-traces/
 
 # VSCode
 .vscode
