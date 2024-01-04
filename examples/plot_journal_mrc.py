@@ -82,14 +82,6 @@ def main(args):
     plt.annotate('D', xy=(9.82E4, 0.706), weight='bold', color=colormap[3], xytext=(1.08E5,.75), arrowprops=dict(arrowstyle='->', lw=1.5))
 
     # Bracket
-    #plt.annotate('Range of cache space with\ngradual miss-ratio improvement',
-    #xy=(2.10E4, 0.779), weight='bold', color=colormap[3], 
-    #xytext=(2.10E4, 0.720),
-    #fontsize=14, 
-    #ha='center', va='bottom',
-    #xycoords='axes fraction', 
-    #bbox=dict(boxstyle='square', fc='0.8'),
-    #arrowprops=dict(arrowstyle='-[, widthB=3.0, lengthB=.5', lw=1.5))
     ax = plt.gca()
     draw_brace(ax, (1.29E4, 3.10E4), -0.76, 'Range of cache\nspace with gradual\nmiss-ratio improvement', colormap)
 
