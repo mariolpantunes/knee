@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+__author__ = 'Mário Antunes'
+__version__ = '0.1'
+__email__ = 'mario.antunes@ua.pt'
+__status__ = 'Development'
+__license__ = 'MIT'
+__copyright__ = '''
+Copyright (c) 2021-2023 Stony Brook University
+Copyright (c) 2021-2023 The Research Foundation of SUNY
+'''
+
+import tqdm
+import logging
+import argparse
+import numpy as np
+import matplotlib.pyplot as plt 
+
+from sklearn import datasets
+from sklearn.cluster import KMeans
+
+import knee.rdp as rdp
+import knee.kneedle as kneedle
+import knee.postprocessing as pp
+import knee.clustering as clustering
+import knee.knee_ranking as knee_ranking
+
+
+plt.style.use('seaborn-v0_8-paper')
+plt.rcParams['figure.autolayout'] = True
+plt.rcParams['figure.figsize'] = (8, 4)
+plt.rcParams['lines.linewidth'] = 2
+
+
+logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+logging.getLogger('matplotlib').setLevel(logging.WARNING)
+logging.getLogger('PIL').setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
+
+
+def draw_brace(ax, xspan, yy, text, colormap):
+    """Draws an annotated brace on the axes."""
+    xmin, xmax = xspan
+    xspan = xmax - xmin
+    ax_xmin, ax_xmax = ax.get_xlim()
+    xax_span = ax_xmax - ax_xmin
+
+    ymin, ymax = ax.get_ylim()
+    yspan = ymax - ymin
+    resolution = int(xspan/xax_span*100)*2+1 # guaranteed uneven
+    beta = 300./xax_span # the higher this is, the smaller the radius
+
+    x = np.linspace(xmin, xmax, resolution)
+    x_half = x[:int(resolution/2)+1]
+    y_half_brace = (1/(1.+np.exp(-beta*(x_half-x_half[0])))
+                    + 1/(1.+np.exp(-beta*(x_half-x_half[-1]))))
+    y = np.concatenate((y_half_brace, y_half_brace[-2::-1]))
+    y = yy + (.05*y - .01)*yspan # adjust vertical position
+
+    ax.autoscale(False)
+    ax.plot(x, -y, color='black', lw=2, clip_on=False)
+
+    ax.text((xmax+xmin)/2., -yy-.2*yspan, text, ha='center', va='bottom', color=colormap[3])
+
+
+def main(args):
+    colormap=np.array(['#4C72B0','#DD8452','#55A868','#C44E52',
+    '#8172B3','#937860','#DA8BC3','#8C8C8C','#CCB974','#64B5CD'])
+    points = np.genfromtxt(args.i, delimiter=',')
+
+    # Plot original trace and reduced version
+    x = points[:,0]
+    y = points[:,1]
+    plt.plot(x, y, color= colormap[0])
+    
+    # Arrows
+    plt.annotate('A', xy=(1.29E4, 0.796), weight='bold', color=colormap[3], xytext=(2.29E4,.82), arrowprops=dict(arrowstyle='->', lw=1.5))
+    plt.annotate('B', xy=(3.10E4, 0.786), weight='bold', color=colormap[3], xytext=(4.10E4,.82), arrowprops=dict(arrowstyle='->', lw=1.5))
+    plt.annotate('C', xy=(3.30E4, 0.763), weight='bold', color=colormap[3], xytext=(5.25E4,.80), arrowprops=dict(arrowstyle='->', lw=1.5))
+    plt.annotate( '', xy=(4.25E4, 0.753), weight='bold', color=colormap[3], xytext=(5.25E4,.80), arrowprops=dict(arrowstyle='->', lw=1.5))
+    plt.annotate('D', xy=(9.82E4, 0.706), weight='bold', color=colormap[3], xytext=(1.08E5,.75), arrowprops=dict(arrowstyle='->', lw=1.5))
+
+    # Bracket
+    #plt.annotate('Range of cache space with\ngradual miss-ratio improvement',
+    #xy=(2.10E4, 0.779), weight='bold', color=colormap[3], 
+    #xytext=(2.10E4, 0.720),
+    #fontsize=14, 
+    #ha='center', va='bottom',
+    #xycoords='axes fraction', 
+    #bbox=dict(boxstyle='square', fc='0.8'),
+    #arrowprops=dict(arrowstyle='-[, widthB=3.0, lengthB=.5', lw=1.5))
+    ax = plt.gca()
+    draw_brace(ax, (1.29E4, 3.10E4), -0.76, 'Range of cache\nspace with gradual\nmiss-ratio improvement', colormap)
+
+    plt.savefig('out/mrc.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/mrc.pdf', bbox_inches='tight', transparent=True)
+    plt.show()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Plot the Multi-Knees using kneedle')
+    parser.add_argument('-i', type=str, required=True, help='input file')
+    args = parser.parse_args()
+    main(args)
