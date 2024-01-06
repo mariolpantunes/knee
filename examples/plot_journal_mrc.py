@@ -13,7 +13,6 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 
 import tqdm
 import logging
-import argparse
 import numpy as np
 import matplotlib.pyplot as plt 
 
@@ -64,10 +63,11 @@ def draw_brace(ax, xspan, yy, text, colormap):
     ax.text((xmax+xmin)/2., -yy-.2*yspan, text, ha='center', va='bottom', color=colormap[3])
 
 
-def main(args):
+def main():
     colormap=np.array(['#4C72B0','#DD8452','#55A868','#C44E52',
     '#8172B3','#937860','#DA8BC3','#8C8C8C','#CCB974','#64B5CD'])
-    points = np.genfromtxt(args.i, delimiter=',')
+    
+    points = np.genfromtxt('traces/rsrch1-minisim1.csv', delimiter=',')
 
     # Plot original trace and reduced version
     x = points[:,0]
@@ -83,7 +83,7 @@ def main(args):
 
     # Bracket
     ax = plt.gca()
-    draw_brace(ax, (1.29E4, 3.10E4), -0.76, 'Range of cache\nspace with gradual\nmiss-ratio improvement', colormap)
+    draw_brace(ax, (1.29E4, 3.10E4), -0.762, 'Range of cache\nspace with gradual\nmiss-ratio improvement', colormap)
 
     plt.savefig('out/mrc.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/mrc.pdf', bbox_inches='tight', transparent=True)
@@ -91,7 +91,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Plot the Multi-Knees using kneedle')
-    parser.add_argument('-i', type=str, required=True, help='input file')
-    args = parser.parse_args()
-    main(args)
+    main()
