@@ -59,6 +59,8 @@ def main():
     ax = plt.gca()
     ax.set_xlabel('Petal length')
     ax.set_ylabel('Petal width')
+    ax.set_xlim([0, 7.1])
+    ax.set_ylim([0, 2.6])
     plt.savefig('out/kmeans_clusters.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/kmeans_clusters.pdf', bbox_inches='tight', transparent=True)
     plt.show()
@@ -67,6 +69,9 @@ def main():
     plt.xlabel('Number of clusters')
     plt.ylabel('WCSS') #within cluster sum of squares
     plt.axvline(x = k, color = colormap[1])
+    ax = plt.gca()
+    ax.set_xlim([0, 13])
+    ax.set_ylim([0, 160])
     plt.savefig('out/kmeans_wcss.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/kmeans_wcss.pdf', bbox_inches='tight', transparent=True)
     plt.show()
