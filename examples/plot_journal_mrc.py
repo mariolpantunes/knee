@@ -78,12 +78,12 @@ def main():
     plt.annotate('A', xy=(1.29E4, 0.796), weight='bold', color=colormap[3], xytext=(2.29E4,.82), arrowprops=dict(arrowstyle='->', lw=1.5))
     plt.annotate('B', xy=(3.10E4, 0.786), weight='bold', color=colormap[3], xytext=(4.10E4,.82), arrowprops=dict(arrowstyle='->', lw=1.5))
     plt.annotate('C', xy=(3.30E4, 0.763), weight='bold', color=colormap[3], xytext=(5.25E4,.80), arrowprops=dict(arrowstyle='->', lw=1.5))
-    plt.annotate( '', xy=(4.25E4, 0.753), weight='bold', color=colormap[3], xytext=(5.25E4,.80), arrowprops=dict(arrowstyle='->', lw=1.5))
+    #plt.annotate( '', xy=(4.25E4, 0.753), weight='bold', color=colormap[3], xytext=(5.25E4,.80), arrowprops=dict(arrowstyle='->', lw=1.5))
     plt.annotate('D', xy=(9.82E4, 0.706), weight='bold', color=colormap[3], xytext=(1.08E5,.75), arrowprops=dict(arrowstyle='->', lw=1.5))
 
     # Bracket
-    ax = plt.gca()
-    draw_brace(ax, (1.29E4, 3.10E4), -0.762, 'Range of cache\nspace with gradual\nmiss-ratio improvement', colormap)
+    #ax = plt.gca()
+    #draw_brace(ax, (1.29E4, 3.10E4), -0.762, 'Range of cache\nspace with gradual\nmiss-ratio improvement', colormap)
 
     plt.savefig('out/mrc.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/mrc.pdf', bbox_inches='tight', transparent=True)
