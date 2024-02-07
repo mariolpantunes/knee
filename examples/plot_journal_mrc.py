@@ -73,6 +73,10 @@ def main():
     x = points[:,0]
     y = points[:,1]
     plt.plot(x, y, color= colormap[0])
+    plt.legend(['MRC (LRU)'])
+
+    plt.xlabel('Cache Size (GB)')
+    plt.ylabel('Miss Ratio')
     
     # Arrows
     plt.annotate('A', xy=(1.29E4, 0.796), weight='bold', color=colormap[3], xytext=(2.29E4,.82), arrowprops=dict(arrowstyle='->', lw=1.5))
