@@ -22,7 +22,8 @@ from sklearn.cluster import KMeans
 import knee.kneedle as kneedle
 
 
-plt.style.use('seaborn-v0_8-paper')
+#plt.style.use('seaborn-v0_8-paper')
+plt.style.use('tableau-colorblind10')
 plt.rcParams['figure.autolayout'] = True
 plt.rcParams['figure.figsize'] = (4, 4)
 plt.rcParams['lines.linewidth'] = 2
@@ -53,9 +54,17 @@ def main():
     kmeans = KMeans(n_clusters=k, init='k-means++', n_init='auto', random_state=42)
     kmeans.fit(X)
 
-    colormap=np.array(['#4C72B0','#DD8452','#55A868','#C44E52',
-    '#8172B3','#937860','#DA8BC3','#8C8C8C','#CCB974','#64B5CD'])
-    plt.scatter(X[:,2], X[:,3], c=colormap[kmeans.labels_], s=40)
+    # Color Blind adjusted colors and markers
+    colormap=['#377eb8', '#ff7f00', '#4daf4a', '#f781bf', 
+    '#a65628', '#984ea3','#999999', '#e41a1c', '#dede00']
+    markers=['o', '*', '.', 'x', '+', 's', 'd', 'h', 'v']
+    lines=['-', ':', '--', '-.']
+
+    for i in range(k):
+        cluster_i_idx = np.where(kmeans.labels_ == i)[0]
+        X_cluster_i = X[cluster_i_idx]
+        plt.scatter(X_cluster_i[:,2], X_cluster_i[:,3], c=colormap[i], s=40, marker=markers[i])
+    
     ax = plt.gca()
     ax.set_xlabel('Petal length')
     ax.set_ylabel('Petal width')
@@ -65,10 +74,10 @@ def main():
     plt.savefig('out/kmeans_clusters.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
-    plt.plot(wcss[:,0], wcss[:,1], color = colormap[0])
+    plt.plot(wcss[:,0], wcss[:,1], color = colormap[0], linestyle=lines[0])
     plt.xlabel('Number of clusters')
     plt.ylabel('WCSS') #within cluster sum of squares
-    plt.axvline(x = k, color = colormap[1])
+    plt.axvline(x = k, color = colormap[1], linestyle=lines[1])
     ax = plt.gca()
     ax.set_xlim([0, 13])
     ax.set_ylim([0, 160])

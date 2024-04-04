@@ -21,9 +21,11 @@ import matplotlib.pyplot as plt
 
 import pyBlindOpt.pso as pso
 
-plt.style.use('seaborn-v0_8-paper')
+
+#plt.style.use('seaborn-v0_8-paper')
+plt.style.use('tableau-colorblind10')
 plt.rcParams['figure.autolayout'] = True
-plt.rcParams['figure.figsize'] = (4, 4)
+plt.rcParams['figure.figsize'] = (8, 4)
 plt.rcParams['lines.linewidth'] = 2
 
 
@@ -38,9 +40,15 @@ def make_curvature(f):
 
 
 def main():
+    # Color Blind adjusted colors and markers
+    colormap=['#377eb8', '#ff7f00', '#4daf4a', '#f781bf', 
+    '#a65628', '#984ea3','#999999', '#e41a1c', '#dede00']
+    markers=['o', '*', '.', 'x', '+', 's', 'd', 'h', 'v']
+    lines=['-', ':', '--', '-.']
+
     x_axis_min = 0.0
     x_axis_max = 3.0
-    x = jnp.arange(x_axis_min, x_axis_max, 0.2)
+    x = jnp.arange(x_axis_min, x_axis_max, 0.1)
     y = function(x)
     
     # compute the curvature (using numerical methods and JAX)
@@ -51,10 +59,11 @@ def main():
     bounds = np.asarray([(x_axis_min, x_axis_max)])
     max_kf, _ = pso.particle_swarm_optimization(lambda x: -kf(x), bounds, n_pop=15, n_iter=15, verbose=False)
 
-    plt.plot(x,y)
-    plt.plot(x,k)
-    plt.axvline(x = max_kf[0], color = 'b', label = 'axvline - full height')
-    
+    plt.plot(x,y, color = colormap[0], linestyle=lines[0])
+    plt.plot(x,k, color = colormap[2], linestyle=lines[2])
+    plt.axvline(x = max_kf[0], color = colormap[1], linestyle=lines[1], label = 'axvline - full height')
+    plt.savefig('out/function_curvature.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/function_curvature.pdf', bbox_inches='tight', transparent=True)
     plt.show()
 
 if __name__ == '__main__':

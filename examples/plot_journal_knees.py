@@ -27,7 +27,8 @@ import knee.clustering as clustering
 import knee.knee_ranking as knee_ranking
 
 
-plt.style.use('seaborn-v0_8-paper')
+#plt.style.use('seaborn-v0_8-paper')
+plt.style.use('tableau-colorblind10')
 plt.rcParams['figure.autolayout'] = True
 plt.rcParams['figure.figsize'] = (4, 4)
 plt.rcParams['lines.linewidth'] = 2
@@ -40,8 +41,12 @@ logger = logging.getLogger(__name__)
 
 
 def main(args):
-    colormap=np.array(['#4C72B0','#DD8452','#55A868','#C44E52',
-    '#8172B3','#937860','#DA8BC3','#8C8C8C','#CCB974','#64B5CD'])
+    # Color Blind adjusted colors and markers
+    colormap=['#377eb8', '#ff7f00', '#4daf4a', '#f781bf', 
+    '#a65628', '#984ea3','#999999', '#e41a1c', '#dede00']
+    markers=['o', '*', '.', 'x', '+', 's', 'd', 'h', 'v']
+    lines=['-', ':', '--', '-.']
+
     points = np.genfromtxt(args.i, delimiter=',')
     logger.info(f'Loading {args.i} file ({len(points)})...')
     reduced, removed = rdp.mp_grdp(points, t=0.001, min_points=20)
@@ -53,7 +58,7 @@ def main(args):
     y = points[:,1]
     plt.plot(x, y, color= colormap[0])
     points_reduced = points[reduced]
-    plt.plot(points_reduced[:, 0], points_reduced[:, 1], marker='o', markersize=3, color=colormap[1])
+    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
     plt.savefig('out/knees_trace_reduced.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/knees_trace_reduced.pdf', bbox_inches='tight', transparent=True)
     plt.show()
@@ -61,7 +66,7 @@ def main(args):
     # Plot the original Knees
     knees = kneedle.knees(points_reduced, p=kneedle.PeakDetection.All)
     knees_original = rdp.mapping(knees, reduced, removed)
-    plt.plot(points_reduced[:, 0], points_reduced[:, 1], marker='o', markersize=3, color=colormap[1])
+    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
     plt.plot(x[knees_original], y[knees_original], 's', markersize=5, color=colormap[2])
     plt.savefig('out/knees_original_knees.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/knees_original_knees.pdf', bbox_inches='tight', transparent=True)
@@ -72,16 +77,16 @@ def main(args):
     knees = pp.filter_corner_knees(points_reduced, knees, t=0.33)
     knees = pp.filter_clusters(points_reduced, knees, clustering.average_linkage, 0.05, knee_ranking.ClusterRanking.left)
     knees = rdp.mapping(knees, reduced, removed)
-    plt.plot(points_reduced[:, 0], points_reduced[:, 1], marker='o', markersize=3, color=colormap[1])
+    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
     plt.plot(x[knees_original], y[knees_original], 's', markersize=5, color=colormap[2])
-    plt.plot(x[knees], y[knees], 'o', markersize=7, color=colormap[3])
+    plt.plot(x[knees], y[knees], 'o', markersize=7, color=colormap[7])
     plt.savefig('out/knees_final_knees.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/knees_final_knees.pdf', bbox_inches='tight', transparent=True)
     plt.show()
     
     # Plot original trace with final knees
     plt.plot(x, y, color= colormap[0])
-    plt.plot(x[knees], y[knees], 'o', markersize=7, color=colormap[3])
+    plt.plot(x[knees], y[knees], 'o', markersize=7, color=colormap[7])
     plt.savefig('out/knees_final_plot.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/knees_final_plot.pdf', bbox_inches='tight', transparent=True)
     plt.show()

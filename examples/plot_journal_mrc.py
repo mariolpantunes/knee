@@ -26,7 +26,8 @@ import knee.clustering as clustering
 import knee.knee_ranking as knee_ranking
 
 
-plt.style.use('seaborn-v0_8-paper')
+#plt.style.use('seaborn-v0_8-paper')
+plt.style.use('tableau-colorblind10')
 plt.rcParams['figure.autolayout'] = True
 plt.rcParams['figure.figsize'] = (8, 4)
 plt.rcParams['lines.linewidth'] = 2
@@ -64,14 +65,18 @@ def draw_brace(ax, xspan, yy, text, colormap):
 
 
 def main():
-    colormap=np.array(['#4C72B0','#DD8452','#55A868','#C44E52',
-    '#8172B3','#937860','#DA8BC3','#8C8C8C','#CCB974','#64B5CD'])
+    # Color Blind adjusted colors and markers
+    colormap=['#377eb8', '#ff7f00', '#4daf4a', '#f781bf', 
+    '#a65628', '#984ea3','#999999', '#e41a1c', '#dede00']
+    markers=['o', '*', '.', 'x', '+', 's', 'd', 'h', 'v']
+    lines=['-', ':', '--', '-.']
     
     points = np.genfromtxt('traces/rsrch1-minisim1.csv', delimiter=',')
 
     # Plot original trace and reduced version
-    x = points[:,0]
+    x = points[:,0]/1000
     y = points[:,1]
+    
     plt.plot(x, y, color= colormap[0])
     plt.legend(['MRC (LRU)'])
 
@@ -79,11 +84,14 @@ def main():
     plt.ylabel('Miss Ratio')
     
     # Arrows
-    plt.annotate('A', xy=(1.29E4, 0.796), weight='bold', color=colormap[3], xytext=(2.29E4,.82), arrowprops=dict(arrowstyle='->', lw=1.5))
-    plt.annotate('B', xy=(3.10E4, 0.786), weight='bold', color=colormap[3], xytext=(4.10E4,.82), arrowprops=dict(arrowstyle='->', lw=1.5))
-    plt.annotate('C', xy=(3.30E4, 0.763), weight='bold', color=colormap[3], xytext=(5.25E4,.80), arrowprops=dict(arrowstyle='->', lw=1.5))
-    #plt.annotate( '', xy=(4.25E4, 0.753), weight='bold', color=colormap[3], xytext=(5.25E4,.80), arrowprops=dict(arrowstyle='->', lw=1.5))
-    plt.annotate('D', xy=(9.82E4, 0.706), weight='bold', color=colormap[3], xytext=(1.08E5,.75), arrowprops=dict(arrowstyle='->', lw=1.5))
+    plt.annotate('A', xy=(1.29E4/1000, 0.796), weight='bold', color=colormap[7], 
+    xytext=(2.29E4/1000,.82), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
+    plt.annotate('B', xy=(3.10E4/1000, 0.786), weight='bold', color=colormap[7], 
+    xytext=(4.10E4/1000,.82), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
+    plt.annotate('C', xy=(4.25E4/1000, 0.753), weight='bold', color=colormap[7], 
+    xytext=(5.25E4/1000,.80), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
+    plt.annotate('D', xy=(9.82E4/1000, 0.706), weight='bold', color=colormap[7], 
+    xytext=(1.08E5/1000,.75), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
 
     # Bracket
     #ax = plt.gca()
