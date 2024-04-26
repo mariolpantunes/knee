@@ -2,7 +2,7 @@
 # coding: utf-8
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -19,12 +19,13 @@ import logging
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-import knee.linear_fit as lf
-import knee.clustering as clustering
-import knee.knee_ranking as knee_ranking
+import kneeliverse.linear_fit as lf
+import kneeliverse.clustering as clustering
+import kneeliverse.knee_ranking as knee_ranking
 
 
 from enum import Enum
+
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)

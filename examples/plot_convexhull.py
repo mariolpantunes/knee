@@ -17,9 +17,9 @@ import logging
 import argparse
 import numpy as np
 
-import knee.rdp as rdp
-import knee.linear_fit as lf
-import knee.convex_hull as ch
+import kneeliverse.rdp as rdp
+import kneeliverse.linear_fit as lf
+import kneeliverse.convex_hull as ch
 import matplotlib.pyplot as plt
 
 

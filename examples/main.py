@@ -19,20 +19,20 @@ import argparse
 import numpy as np
 import logging
 
-import knee.rdp as rdp
-import knee.kneedle as kneedle
-import knee.lmethod as lmethod
-import knee.dfdt as dfdt
-import knee.menger as menger
-import knee.curvature as curvature
-import knee.postprocessing as pp
-import matplotlib.pyplot as plt
-import knee.clustering as clustering
-import knee.zmethod as zmethod
-import knee.knee_ranking as ranking
-import knee.evaluation as evaluation
-from knee.knee_ranking import ClusterRanking
+import kneeliverse.rdp as rdp
+import kneeliverse.kneedle as kneedle
+import kneeliverse.lmethod as lmethod
+import kneeliverse.dfdt as dfdt
+import kneeliverse.menger as menger
+import kneeliverse.curvature as curvature
+import kneeliverse.postprocessing as pp
+import kneeliverse.clustering as clustering
+import kneeliverse.zmethod as zmethod
+import kneeliverse.knee_ranking as ranking
+import kneeliverse.evaluation as evaluation
+from kneeliverse.knee_ranking import ClusterRanking
 from plot import get_dimention, plot_lines_knees_ranking, plot_lines_knees
+import matplotlib.pyplot as plt
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')

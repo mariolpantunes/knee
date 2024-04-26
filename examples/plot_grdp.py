@@ -16,9 +16,9 @@ import logging
 import argparse
 import numpy as np
 
-import knee.rdp as rdp
-import knee.metrics as metrics
-import knee.evaluation as evaluation
+import kneeliverse.rdp as rdp
+import kneeliverse.metrics as metrics
+import kneeliverse.evaluation as evaluation
 
 
 import exectime.timeit as timeit

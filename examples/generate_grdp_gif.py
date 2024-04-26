@@ -18,7 +18,7 @@ import imageio
 import argparse
 import numpy as np
 
-import knee.rdp as rdp
+import kneeliverse.rdp as rdp
 
 import matplotlib.pyplot as plt
 

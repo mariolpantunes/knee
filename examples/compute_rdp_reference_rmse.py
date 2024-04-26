@@ -2,7 +2,7 @@
 # coding: utf-8
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -24,9 +24,9 @@ import argparse
 import numpy as np
 
 
-import knee.rdp as rdp
-import knee.linear_fit as lf
-import knee.metrics as metrics
+import kneeliverse.rdp as rdp
+import kneeliverse.linear_fit as lf
+import kneeliverse.metrics as metrics
 
 
 class Trace(enum.Enum):

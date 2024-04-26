@@ -20,8 +20,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-import knee.kneedle as kneedle
-import knee.evaluation as evaluation
+import kneeliverse.kneedle as kneedle
+import kneeliverse.evaluation as evaluation
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')

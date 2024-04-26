@@ -17,10 +17,10 @@ import logging
 import argparse
 import numpy as np
 
-import knee.rdp as rdp
-import knee.linear_fit as lf
-import knee.postprocessing as pp
-import knee.clustering as clustering
+import kneeliverse.rdp as rdp
+import kneeliverse.linear_fit as lf
+import kneeliverse.postprocessing as pp
+import kneeliverse.clustering as clustering
 import matplotlib.pyplot as plt
 
 

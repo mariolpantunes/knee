@@ -2,7 +2,7 @@
 # coding: utf-8
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -17,14 +17,14 @@ import numpy as np
 import logging
 
 from enum import Enum
-from knee.evaluation import accuracy_trace
-from knee.knee_ranking import rank, slope_ranking
-from knee.postprocessing import filter_clustring, filter_worst_knees, filter_corner_knees, add_points_even
-import knee.postprocessing as pp
+from kneeliverse.evaluation import accuracy_trace
+from kneeliverse.knee_ranking import rank, slope_ranking
+from kneeliverse.postprocessing import filter_clustring, filter_worst_knees, filter_corner_knees, add_points_even
+import kneeliverse.postprocessing as pp
 import matplotlib.pyplot as plt
-from knee.rdp import rdp, mapping
-from knee.knee_ranking import ClusterRanking
-import knee.clustering as clustering
+from kneeliverse.rdp import rdp, mapping
+from kneeliverse.knee_ranking import ClusterRanking
+import kneeliverse.clustering as clustering
 from plot import plot_ranking, plot_knees
 
 

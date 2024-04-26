@@ -2,7 +2,7 @@
 # coding: utf-8
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -18,12 +18,12 @@ import logging
 import argparse
 import numpy as np
 
-import knee.rdp as rdp
-import knee.kneedle as kneedle
-import knee.postprocessing as pp
-import knee.clustering as clustering
-import knee.evaluation as evaluation
-import knee.knee_ranking as knee_ranking
+import kneeliverse.rdp as rdp
+import kneeliverse.kneedle as kneedle
+import kneeliverse.postprocessing as pp
+import kneeliverse.clustering as clustering
+import kneeliverse.evaluation as evaluation
+import kneeliverse.knee_ranking as knee_ranking
 
 import matplotlib.pyplot as plt
 

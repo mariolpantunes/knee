@@ -68,7 +68,7 @@ pip install .
 You can also use the PyPI repository for easy access to the library:
 
 ```txt
-knee>=0.1
+kneeliverse>=1.0
 ```
 
 ## Runing the demos

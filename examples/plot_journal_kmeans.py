@@ -2,7 +2,7 @@
 # coding: utf-8
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from sklearn import datasets
 from sklearn.cluster import KMeans
 
-import knee.kneedle as kneedle
+import kneeliverse.kneedle as kneedle
 
 
 #plt.style.use('seaborn-v0_8-paper')

@@ -20,11 +20,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-import knee.rdp as rdp
-import knee.postprocessing as pp
-import knee.clustering as clustering
-import knee.evaluation as evaluation
-import knee.knee_ranking as knee_ranking
+import kneeliverse.rdp as rdp
+import kneeliverse.postprocessing as pp
+import kneeliverse.clustering as clustering
+import kneeliverse.evaluation as evaluation
+import kneeliverse.knee_ranking as knee_ranking
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')

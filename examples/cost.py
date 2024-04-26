@@ -2,7 +2,7 @@
 # coding: utf-8
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -19,11 +19,11 @@ import numpy as np
 import logging
 
 
-import knee.rdp as rdp
-import knee.postprocessing as pp
-import knee.clustering as clustering
-import knee.evaluation as evaluation
-from knee.knee_ranking import ClusterRanking
+import kneeliverse.rdp as rdp
+import kneeliverse.postprocessing as pp
+import kneeliverse.clustering as clustering
+import kneeliverse.evaluation as evaluation
+import kneeliverse.knee_ranking as knee_ranking #import ClusterRanking
 
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -60,7 +60,7 @@ def main(args):
         t_k = pp.filter_corner_knees(points_reduced, t_k)
         for t in ts:
             ## Clustering ##
-            filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, t, ClusterRanking.left)
+            filtered_knees = pp.filter_clustring(points_reduced, t_k, clustering.average_linkage, t, knee_ranking.ClusterRanking.left)
             final_knees = pp.add_points_even(points, points_reduced, filtered_knees, points_removed)
             
             ## Evaluation ##
