@@ -7,7 +7,7 @@ versions of the RDP algorhtm.
 '''
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -20,9 +20,9 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 import enum
 import logging
 import numpy as np
-import knee.linear_fit as lf
-import knee.metrics as metrics
-import knee.evaluation as evaluation
+import kneeliverse.linear_fit as lf
+import kneeliverse.metrics as metrics
+import kneeliverse.evaluation as evaluation
 
 
 #import matplotlib.pyplot as plt

@@ -19,8 +19,8 @@ import math
 import enum
 import logging
 import numpy as np
-import knee.linear_fit as lf
-import knee.evaluation as ev
+import kneeliverse.linear_fit as lf
+import kneeliverse.evaluation as ev
 
 
 logger = logging.getLogger(__name__)

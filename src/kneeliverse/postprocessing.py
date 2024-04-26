@@ -7,7 +7,7 @@ designed to improve the quality of the knee candidates.
 '''
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -19,10 +19,10 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 import math
 import logging
 import numpy as np
-import knee.rdp as rdp
-import knee.linear_fit as lf
-import knee.convex_hull as ch
-import knee.knee_ranking as kr
+import kneeliverse.rdp as rdp
+import kneeliverse.linear_fit as lf
+import kneeliverse.convex_hull as ch
+import kneeliverse.knee_ranking as kr
 
 
 logger = logging.getLogger(__name__)

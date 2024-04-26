@@ -1,4 +1,4 @@
-# (Multi)Knee/Elbow point detection library
+# Kneeliverse: A Universal Knee/ElbowDetection Library for Performance Curves
 
 Estimating the knee/elbow point in performance curves is a challenging task.
 However, most of the time these points represent ideal compromises between cost and performance.
@@ -50,7 +50,7 @@ Run the following commands to produce the documentation for this library.
 python3 -m venv venv
 source venv/bin/activate
 pip install pdoc
-pdoc --math -d google -o docs src/knee \
+pdoc --math -d google -o docs src/kneeliverse \
 --logo https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png \
 --favicon https://raw.githubusercontent.com/mariolpantunes/knee/main/media/knee.png
 ```

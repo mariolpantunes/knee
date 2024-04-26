@@ -6,7 +6,7 @@ based on Z-method algorithm.
 '''
 
 __author__ = 'Tyler Estro'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'testro@cs.stonybrook.edu'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -20,12 +20,12 @@ import enum
 import math
 import logging
 import numpy as np
-import knee.postprocessing as pp
+import kneeliverse.postprocessing as pp
 
 
 import uts.gradient as grad
-from uts.zscore import zscore_array
-from uts.thresholding import isodata
+import uts.zscore as uzscore #import zscore_array
+#import uts.thresholding as uthres #import isodata
 
 
 logger = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05, out:Outlier=Outlier.
         candidates = [i for i in range(len(yd2)) if yd2[i] >= outlier_z]
     else:
         # Z-score
-        z_yd2 = zscore_array(x, yd2) # <-- TODO T-score or other
+        z_yd2 = uzscore.zscore_array(x, yd2) # <-- TODO T-score or other
         outlier_z = np.median(z_yd2) # <-- TODO outher metric
         candidates = [i for i in range(len(z_yd2)) if z_yd2[i] >= outlier_z]
     
@@ -194,7 +194,7 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
     x = points[:, 0]
     y = points[:, 1]
     yd2 = grad.csd(x, y)
-    z_yd2 = zscore_array(x, yd2)
+    z_yd2 = uzscore.zscore_array(x, yd2)
     min_zscore = min(z_yd2)
 
     #logger.info(f'zscore [{min_zscore} {max(z_yd2)}]')

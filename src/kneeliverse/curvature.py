@@ -6,7 +6,7 @@ based on equation curvature.
 '''
 
 __author__ = 'Mário Antunes'
-__version__ = '0.1'
+__version__ = '1.0'
 __email__ = 'mario.antunes@ua.pt'
 __status__ = 'Development'
 __license__ = 'MIT'
@@ -18,7 +18,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 import logging
 import numpy as np
 import uts.gradient as grad
-import knee.multi_knee as mk
+import kneeliverse.multi_knee as mk
 
 
 logger = logging.getLogger(__name__)

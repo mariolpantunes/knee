@@ -1,5 +1,5 @@
 """
-(Multi)Knee/Elbow point detection library
+Kneeliverse: A Universal Knee/ElbowDetection Library for Performance Curves
 
 Estimating the knee/elbow point in performance curves is a challenging task.
 However, most of the time these points represent ideal compromises between cost and performance.
@@ -29,18 +29,18 @@ As a post-processing step we implemented several algorithms:
 3. Knee ranking algorithms that used several criteria to assess the quality of a knee point
 """
 
-import knee.clustering
-import knee.convex_hull
-import knee.curvature
-import knee.dfdt
-import knee.evaluation
-import knee.knee_ranking
-import knee.kneedle
-import knee.linear_fit
-import knee.lmethod
-import knee.menger
-import knee.metrics
-import knee.multi_knee
-import knee.postprocessing
-import knee.rdp
-import knee.zmethod
+import kneeliverse.clustering
+import kneeliverse.convex_hull
+import kneeliverse.curvature
+import kneeliverse.dfdt
+import kneeliverse.evaluation
+import kneeliverse.knee_ranking
+import kneeliverse.kneedle
+import kneeliverse.linear_fit
+import kneeliverse.lmethod
+import kneeliverse.menger
+import kneeliverse.metrics
+import kneeliverse.multi_knee
+import kneeliverse.postprocessing
+import kneeliverse.rdp
+import kneeliverse.zmethod
