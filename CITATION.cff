@@ -56,9 +56,9 @@ authors:
     orcid: 'https://orcid.org/0000-0001-5248-9184'
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.10341887
+    value: 10.5281/zenodo.11089667
 repository-code: 'https://github.com/mariolpantunes/knee'
-url: 'https://pypi.org/project/knee/'
+url: 'https://pypi.org/project/kneeliverse/'
 license: MIT
 version: '1.0'
-date-released: '2024-04-26'
+date-released: '2024-05-01'
