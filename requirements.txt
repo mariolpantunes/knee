@@ -1,6 +1,6 @@
 tqdm>=4.66.5
 pdoc>=14.6.0
-numpy>=2.0.1
+numpy~=1.26
 imageio>=2.35.0
 jax[cpu]>=0.4.31
 pyBlindOpt>=0.1.3
