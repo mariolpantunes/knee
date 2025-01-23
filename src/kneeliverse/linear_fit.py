@@ -24,6 +24,7 @@ import kneeliverse.metrics as metrics
 
 from typing import Union
 
+from numba import jit
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,7 @@ def linear_fit_points(points: np.ndarray) -> tuple:
     return linear_fit(x, y)
 
 
+@jit(nopython=True)
 def linear_fit(x: np.ndarray, y: np.ndarray) -> tuple:
     """
     Computes the linear fit for the points.
@@ -85,6 +87,7 @@ def linear_transform_points(points: np.ndarray, coef: tuple) -> np.ndarray:
     return linear_transform(x, coef)
 
 
+@jit(nopython=True)
 def linear_transform(x: np.ndarray, coef: tuple) -> np.ndarray:
     """
     Computes the y values for an x array and the given coefficients.
@@ -120,6 +123,7 @@ def linear_hv_residuals_points(points: np.ndarray) -> float:
     return linear_hv_residuals(x,y)
 
 
+@jit(nopython=True)
 def linear_hv_residuals(x: np.ndarray, y: np.ndarray) -> float:
     """
     Computes the residual error from a straight line fitting.
@@ -169,6 +173,7 @@ def linear_fit_transform_points(points: np.ndarray, vertical:bool=False) -> Unio
     return linear_fit_transform(x, y, vertical)
 
 
+@jit(nopython=True)
 def linear_fit_transform(x: np.ndarray, y: np.ndarray, vertical=False) -> Union[np.ndarray, tuple]:
     # try a tipical y = mx + b line
     coef1 = linear_fit(x, y)
@@ -206,6 +211,7 @@ def linear_r2_points(points: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R
     return linear_r2(x, y, coef, r2)
 
 
+@jit(nopython=True)
 def linear_r2(x: np.ndarray, y: np.ndarray, coef: tuple, r2: metrics.R2 = metrics.R2.classic) -> float:
     """
     Computes the coefficient of determination (R2).
@@ -253,6 +259,7 @@ def rmspe_points(points: np.ndarray, coef: tuple, eps: float = 1e-16) -> float:
     return rmspe(x, y, coef, eps)
 
 
+@jit(nopython=True)
 def rmspe(x: np.ndarray, y: np.ndarray, coef: tuple, eps: float = 1e-16) -> float:
     """
     Computes the Root Mean Squared Percentage Error (RMSPE).
@@ -289,6 +296,7 @@ def rmsle_points(points: np.ndarray, coef: tuple) -> float:
     return rmsle(x, y, coef)
 
 
+@jit(nopython=True)
 def rmsle(x: np.ndarray, y: np.ndarray, coef: tuple) -> float:
     """
     Computes the Root Mean Squared Log Error (RMSLE):
@@ -423,6 +431,7 @@ def linear_fit_residuals_points(points: np.ndarray) -> float:
     return linear_fit_residuals(x, y)
 
 
+@jit(nopython=True)
 def linear_fit_residuals(x: np.ndarray, y: np.ndarray) -> float:
     coef = linear_fit(x, y)
     y_hat = linear_transform(x, coef)
@@ -451,6 +460,7 @@ def r2_points(points: np.ndarray, t: metrics.R2 = metrics.R2.classic) -> float:
         return r2(x, y, t)
 
 
+@jit(nopython=True)
 def r2(x: np.ndarray, y: np.ndarray, t: metrics.R2 = metrics.R2.classic) -> float:
     """Computes the coefficient of determination (R2).
 
@@ -529,6 +539,7 @@ def shortest_distance_points(p: np.ndarray, a: np.ndarray, b: np.ndarray):
     return np.hypot(h, c)
 
 
+@jit(nopython=True)
 def perpendicular_distance(points: np.ndarray) -> np.ndarray:
     """
     Computes the perpendicular distance from the points to the 
@@ -544,6 +555,7 @@ def perpendicular_distance(points: np.ndarray) -> np.ndarray:
     return perpendicular_distance_index(points, 0, len(points) - 1)
 
 
+@jit(nopython=True)
 def perpendicular_distance_index(points: np.ndarray, left: int, right: int) -> np.ndarray:
     """
     Computes the perpendicular distance from the points to the 
@@ -560,6 +572,7 @@ def perpendicular_distance_index(points: np.ndarray, left: int, right: int) -> n
     return left + perpendicular_distance_points(points[left:right+1], points[left], points[right])
 
 
+@jit(nopython=True)
 def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.ndarray) -> np.ndarray:
     """
     Computes the perpendicular distance from the points to the 

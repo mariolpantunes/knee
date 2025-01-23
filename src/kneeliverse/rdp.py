@@ -25,6 +25,9 @@ import kneeliverse.metrics as metrics
 import kneeliverse.evaluation as evaluation
 
 
+from numba import jit
+
+
 #import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)

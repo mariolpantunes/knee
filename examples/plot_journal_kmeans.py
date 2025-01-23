@@ -66,8 +66,8 @@ def main():
         plt.scatter(X_cluster_i[:,2], X_cluster_i[:,3], c=colormap[i], s=40, marker=markers[i])
     
     ax = plt.gca()
-    ax.set_xlabel('Petal length')
-    ax.set_ylabel('Petal width')
+    ax.set_xlabel('Petal length (cm)')
+    ax.set_ylabel('Petal width (cm)')
     ax.set_xlim([0, 7.1])
     ax.set_ylim([0, 2.6])
     plt.savefig('out/kmeans_clusters.png', bbox_inches='tight', transparent=True)
