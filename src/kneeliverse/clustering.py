@@ -19,11 +19,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 
 
 import math
-import logging
 import numpy as np
-
-
-logger = logging.getLogger(__name__)
 
 
 def single_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:

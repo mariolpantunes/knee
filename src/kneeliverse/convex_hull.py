@@ -35,11 +35,14 @@ def _ccw(a:np.ndarray, b:np.ndarray, c:np.ndarray) -> float:
     return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])
 
 
-def _dist_points(pi, pj):
+def _dist_points(pi, pj) -> np.ndarray:
+    """
+    Compute the distance between two points ($p_i$, $p_j$)
+    """
     return np.linalg.norm(pi - pj)
 
 
-def _compare_points(p0, pi, pj):
+def _compare_points(p0, pi, pj) -> int:
     o = _ccw(p0, pi, pj)
     if o == 0:
         return -1 if _dist_points(p0, pj) >= _dist_points(p0, pi) else 1

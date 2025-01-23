@@ -49,7 +49,7 @@ def main(args):
 
     points = np.genfromtxt(args.i, delimiter=',')
     logger.info(f'Loading {args.i} file ({len(points)})...')
-    reduced, removed = rdp.mp_grdp(points, t=0.001, min_points=20)
+    reduced, removed = rdp.mp_grdp(points, t=0.0001, min_points=20)
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
 
