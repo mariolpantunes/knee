@@ -55,15 +55,20 @@ def main(args):
     space_saving = round((1.0-(len(reduced)/len(points)))*100.0, 2)
     logger.info('Number of data points after RDP: %s(%s %%)', len(reduced), space_saving)
 
+    # save points to CSV
+    # np.savetxt(f'traces/web0_reduced.csv', points_reduced, delimiter=",")
+
     # Plot original trace and reduced version
     x = points[:,0]
     y = points[:,1]
     plt.plot(x, y, color= colormap[0])
+    plt.savefig('out/knees_trace_original.png', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knees_trace_original.pdf', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knees_trace_original.svg', bbox_inches='tight', transparent=True)
+    plt.show()
+
+    plt.plot(x, y, color= colormap[0])
     points_reduced = points[reduced]
-
-    # save points to CSV
-    np.savetxt(f'traces/web0_reduced.csv', points_reduced, delimiter=",")
-
     plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
     plt.savefig('out/knees_trace_reduced.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/knees_trace_reduced.pdf', bbox_inches='tight', transparent=True)
@@ -133,6 +138,7 @@ def main(args):
     plt.plot(x[knees], y[knees], 'o', markersize=7, color=colormap[7])
     plt.savefig('out/knees_final_plot.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/knees_final_plot.pdf', bbox_inches='tight', transparent=True)
+    plt.savefig('out/knees_final_plot.svg', bbox_inches='tight', transparent=True)
     plt.show()
 
 

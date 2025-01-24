@@ -11,13 +11,12 @@ Copyright (c) 2021-2023 Stony Brook University
 Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
+
 import tqdm
 import logging
 import numpy as np
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 
-from sklearn import datasets
-from sklearn.cluster import KMeans
 
 import kneeliverse.rdp as rdp
 import kneeliverse.kneedle as kneedle
@@ -71,27 +70,33 @@ def main():
     markers=['o', '*', '.', 'x', '+', 's', 'd', 'h', 'v']
     lines=['-', ':', '--', '-.']
     
-    points = np.genfromtxt('traces/rsrch1-minisim1.csv', delimiter=',')
+    points = np.genfromtxt('traces/web0.csv', delimiter=',')
 
     # Plot original trace and reduced version
     x = points[:,0]/1000
     y = points[:,1]
     
     plt.plot(x, y, color= colormap[0])
-    plt.legend(['MRC (LRU)'])
+    plt.legend(['MRC (ARC)'])
 
     plt.xlabel('Cache Size (GB)')
     plt.ylabel('Miss Ratio')
     
+    # Points
+    pa = (36.4, 0.5417)
+    pb = (53.7, 0.4508)
+    pc = (90.2, 0.3956)
+    pd = (162.9, 0.3469)
+
     # Arrows
-    plt.annotate('A', xy=(1.29E4/1000, 0.796), weight='bold', color=colormap[7], 
-    xytext=(2.29E4/1000,.82), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
-    plt.annotate('B', xy=(3.10E4/1000, 0.786), weight='bold', color=colormap[7], 
-    xytext=(4.10E4/1000,.82), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
-    plt.annotate('C', xy=(4.25E4/1000, 0.753), weight='bold', color=colormap[7], 
-    xytext=(5.25E4/1000,.80), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
-    plt.annotate('D', xy=(9.82E4/1000, 0.706), weight='bold', color=colormap[7], 
-    xytext=(1.08E5/1000,.75), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
+    plt.annotate('A', xy=pa, weight='bold', color=colormap[7], 
+    xytext=(pa[0]+10, pa[1]+0.05), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
+    plt.annotate('B', xy=pb, weight='bold', color=colormap[7], 
+    xytext=(pb[0]+10, pb[1]+0.05), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
+    plt.annotate('C', xy=pc, weight='bold', color=colormap[7], 
+    xytext=(pc[0]+10, pc[1]+0.05), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
+    plt.annotate('D', xy=pd, weight='bold', color=colormap[7], 
+    xytext=(pd[0]+10, pd[1]+0.05), arrowprops=dict(arrowstyle='->', lw=1.5, color=colormap[6]))
 
     # Bracket
     #ax = plt.gca()

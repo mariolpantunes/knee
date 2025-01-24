@@ -34,6 +34,7 @@ logging.getLogger('matplotlib').setLevel(logging.WARNING)
 logging.getLogger('PIL').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
+
 def main():
     iris = datasets.load_iris()
     X = iris.data
