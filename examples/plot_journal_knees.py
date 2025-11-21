@@ -69,7 +69,7 @@ def main(args):
 
     plt.plot(x, y, color= colormap[0])
     points_reduced = points[reduced]
-    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
+    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[0], marker='o', markersize=3, color=colormap[1])
     plt.savefig('out/knees_trace_reduced.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/knees_trace_reduced.pdf', bbox_inches='tight', transparent=True)
     plt.show()
@@ -77,7 +77,7 @@ def main(args):
     # Plot the original Knees
     knees = kneedle.knees(points_reduced, p=kneedle.PeakDetection.All)
     knees_original = rdp.mapping(knees, reduced, removed)
-    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
+    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[0], marker='o', markersize=3, color=colormap[1])
     plt.plot(x[knees_original], y[knees_original], 's', markersize=5, color=colormap[2])
     plt.savefig('out/knees_original_knees.png', bbox_inches='tight', transparent=True)
     plt.savefig('out/knees_original_knees.pdf', bbox_inches='tight', transparent=True)
@@ -96,7 +96,7 @@ def main(args):
         previous_knees_len = len(knees)
         
         knees_worst = rdp.mapping(knees, reduced, removed)
-        plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
+        plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[0], marker='o', markersize=3, color=colormap[1])
         plt.plot(x[knees_original], y[knees_original], 's', markersize=5, color=colormap[2])
         plt.plot(x[knees_worst], y[knees_worst], 'o', markersize=7, color=colormap[7])
         plt.show()
@@ -108,7 +108,7 @@ def main(args):
         previous_knees = set(knees)
         previous_knees_len = len(knees)
         knees_corner = rdp.mapping(knees, reduced, removed)
-        plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
+        plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[0], marker='o', markersize=3, color=colormap[1])
         plt.plot(x[knees_worst], y[knees_worst], 's', markersize=5, color=colormap[2])
         plt.plot(x[knees_corner], y[knees_corner], 'o', markersize=7, color=colormap[7])
         plt.show()
@@ -120,13 +120,13 @@ def main(args):
         previous_knees = set(knees)
         previous_knees_len = len(knees)
         knees_cluster = rdp.mapping(knees, reduced, removed)
-        plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
+        plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[0], marker='o', markersize=3, color=colormap[1])
         plt.plot(x[knees_corner], y[knees_corner], 's', markersize=5, color=colormap[2])
         plt.plot(x[knees_cluster], y[knees_cluster], 'o', markersize=7, color=colormap[7])
         plt.show()
     
     knees = rdp.mapping(knees, reduced, removed)
-    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[2], marker='o', markersize=3, color=colormap[1])
+    plt.plot(points_reduced[:, 0], points_reduced[:, 1], linestyle=lines[0], marker='o', markersize=3, color=colormap[1])
     plt.plot(x[knees_original], y[knees_original], 's', markersize=5, color=colormap[2])
     plt.plot(x[knees], y[knees], 'o', markersize=7, color=colormap[7])
     plt.savefig('out/knees_final_knees.png', bbox_inches='tight', transparent=True)
