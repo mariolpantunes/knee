@@ -18,7 +18,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 import enum
 import numpy as np
 
-from numba import jit
+
 
 
 class Metrics(enum.Enum):
@@ -47,7 +47,6 @@ class R2(enum.Enum):
         return self.value
 
 
-@jit(nopython=True)
 def r2(y: np.ndarray, y_hat: np.ndarray, r2: R2 = R2.classic) -> float:
     """
     Computes the coefficient of determination (R2).
@@ -76,7 +75,6 @@ def r2(y: np.ndarray, y_hat: np.ndarray, r2: R2 = R2.classic) -> float:
     return rv
 
 
-@jit(nopython=True)
 def rmse(y: np.ndarray, y_hat: np.ndarray) -> float:
     """
     Computes the Root Mean Squared Error (RMSE).
@@ -91,7 +89,6 @@ def rmse(y: np.ndarray, y_hat: np.ndarray) -> float:
     return np.sqrt(np.mean(np.square(y - y_hat)))
 
 
-@jit(nopython=True)
 def rmsle(y: np.ndarray, y_hat: np.ndarray) -> float:
     """
     Computes the Root Mean Squared Log Error (RMSLE):
@@ -109,7 +106,6 @@ def rmsle(y: np.ndarray, y_hat: np.ndarray) -> float:
     return np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
 
 
-@jit(nopython=True)
 def rmspe(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     """
     Computes the Root Mean Squared Percentage Error (RMSPE).
@@ -125,7 +121,6 @@ def rmspe(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     return np.sqrt(np.mean(np.square((y - y_hat) / (y+eps))))
 
 
-@jit(nopython=True)
 def rpd(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     """
     Computes the Relative Percentage Difference (RPD).
@@ -141,7 +136,6 @@ def rpd(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     return np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
 
 
-@jit(nopython=True)
 def residuals(y: np.ndarray, y_hat: np.ndarray) -> float:
     """
     Computes the residual error of the fit.
@@ -156,7 +150,6 @@ def residuals(y: np.ndarray, y_hat: np.ndarray) -> float:
     return np.sum(np.square((y-y_hat)))
 
 
-@jit(nopython=True)
 def smape(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     """
     Computes Symmetric Mean Absolute Percentage Error (SMAPE).

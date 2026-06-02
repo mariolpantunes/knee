@@ -67,6 +67,20 @@ class TestConvexHull(unittest.TestCase):
         
         np.testing.assert_array_equal(result, desired)
 
+    def test_graham_scan_lower(self):
+        # Sorted by x-coordinate
+        points = np.array([[0, 0], [1, -1], [1, 1], [2, 0]])
+        result = convex_hull.graham_scan_lower(points)
+        desired = np.array([0, 1, 3])
+        np.testing.assert_array_equal(result, desired)
+
+    def test_graham_scan_upper(self):
+        # Sorted by x-coordinate
+        points = np.array([[0, 0], [1, -1], [1, 1], [2, 0]])
+        result = convex_hull.graham_scan_upper(points)
+        desired = np.array([0, 2, 3])
+        np.testing.assert_array_equal(result, desired)
+
 
 if __name__ == '__main__':
     unittest.main()

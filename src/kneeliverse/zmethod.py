@@ -75,18 +75,18 @@ def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05, out:Outlier=Outlier.
         q1, q3 = np.percentile(yd2, [25, 75])
         iqr = q3 - q1
         outlier_z = q3 + (1.5 * iqr)
-        candidates = [i for i in range(len(yd2)) if yd2[i] >= outlier_z]
+        candidates = np.where(yd2 >= outlier_z)[0]
     elif out is Outlier.hampel:
         # Hampel method
         med = np.median(yd2)
         t = np.abs(yd2-med)
         outlier_z = np.median(t) * 4.5
-        candidates = [i for i in range(len(yd2)) if yd2[i] >= outlier_z]
+        candidates = np.where(yd2 >= outlier_z)[0]
     else:
         # Z-score
         z_yd2 = uzscore.zscore_array(x, yd2) # <-- TODO T-score or other
         outlier_z = np.median(z_yd2) # <-- TODO outher metric
-        candidates = [i for i in range(len(z_yd2)) if z_yd2[i] >= outlier_z]
+        candidates = np.where(z_yd2 >= outlier_z)[0]
     
     logger.info(f'Candidates: {candidates}({len(candidates)})')
     

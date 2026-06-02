@@ -65,8 +65,8 @@ def _sort_points(points:np.ndarray) -> np.ndarray:
     """
     
     # find the smaller point and respective index
-    p0 = min(points, key=lambda p: (p[0], p[1]))
-    p0_idx = np.where(np.all(points==p0,axis=1))[0][0]
+    p0_idx = np.lexsort((points[:, 1], points[:, 0]))[0]
+    p0 = points[p0_idx]
     
     # create a mask to select all points except the smaller point
     mask = np.full(len(points), True)
@@ -125,7 +125,7 @@ def graham_scan_lower(points:np.ndarray) -> np.ndarray:
 
     for i in range(2, len(points)):
         # if we turn clockwise to reach this point, pop the last point from the stack, else, append this point to it.
-        while len(stack) > 1 and ccw(points[stack[-2]], points[stack[-1]], points[i]) <= 0:
+        while len(stack) > 1 and _ccw(points[stack[-2]], points[stack[-1]], points[i]) <= 0:
             stack.pop()
         stack.append(i)
     # the stack is now a representation of the convex hull, return it.
@@ -151,7 +151,7 @@ def graham_scan_upper(points:np.ndarray) -> np.ndarray:
 
     for i in range(2, len(points)):
         # if we turn clockwise to reach this point, pop the last point from the stack, else, append this point to it.
-        while len(stack) > 1 and ccw(points[i], points[stack[-1]], points[stack[-2]]) <= 0:
+        while len(stack) > 1 and _ccw(points[i], points[stack[-1]], points[stack[-2]]) <= 0:
             stack.pop()
         stack.append(i)
     # the stack is now a representation of the convex hull, return it.

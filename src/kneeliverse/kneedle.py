@@ -15,7 +15,6 @@ Copyright (c) 2021-2023 Stony Brook University
 Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
-import math
 import enum
 import logging
 import numpy as np
@@ -79,23 +78,16 @@ def differences(points: np.ndarray, cd: Direction, cc: Concavity) -> np.ndarray:
     """
 
     rv = np.empty(points.shape)
+    rv[:, 0] = points[:, 0]
 
     if cd is Direction.Decreasing and cc is Concavity.Clockwise:
-        for i in range(0, len(points)):
-            rv[i][0] = points[i][0]
-            rv[i][1] = points[i][0] + points[i][1]  # x + y
+        rv[:, 1] = points[:, 0] + points[:, 1]  # x + y
     elif cd is Direction.Decreasing and cc is Concavity.Counterclockwise:
-        for i in range(0, len(points)):
-            rv[i][0] = points[i][0]
-            rv[i][1] = 1.0 - (points[i][0] + points[i][1])  # 1.0 - (x + y)
+        rv[:, 1] = 1.0 - (points[:, 0] + points[:, 1])  # 1.0 - (x + y)
     elif cd is Direction.Increasing and cc is Concavity.Clockwise:
-        for i in range(0, len(points)):
-            rv[i][0] = points[i][0]
-            rv[i][1] = points[i][1] - points[i][0]  # y - x
+        rv[:, 1] = points[:, 1] - points[:, 0]  # y - x
     else:
-        for i in range(0, len(points)):
-            rv[i][0] = points[i][0]
-            rv[i][1] = math.fabs(points[i][1] - points[i][0])  # abs(y - x)
+        rv[:, 1] = np.abs(points[:, 1] - points[:, 0])  # abs(y - x)
 
     return rv
 
@@ -114,7 +106,7 @@ def _knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
         int: the index of the knee point
     """
 
-    Ds = ema.linear(points, t)
+    Ds = ema.ema_linear(points, t)
     pmin = Ds.min(axis=0)
     pmax = Ds.max(axis=0)
     diff = pmax - pmin
@@ -158,7 +150,7 @@ def _knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivi
     Returns:
         np.ndarray: the indexes of the knee points
     """
-    Ds = ema.linear(points, t)
+    Ds = ema.ema_linear(points, t)
 
     pmin = Ds.min(axis=0)
     pmax = Ds.max(axis=0)
@@ -248,9 +240,7 @@ def knee(points: np.ndarray, t: float = 1.0) -> int:
         cd = Direction.Decreasing
 
     y = points[:, 1]
-    yhat = np.empty(len(points))
-    for i in range(0, len(points)):
-        yhat[i] = points[i][0]*m+b
+    yhat = points[:, 0] * m + b
 
     vote = np.sum(y - yhat)
 

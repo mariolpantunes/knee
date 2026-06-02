@@ -25,7 +25,7 @@ import kneeliverse.metrics as metrics
 import kneeliverse.evaluation as evaluation
 
 
-from numba import jit
+
 
 
 #import matplotlib.pyplot as plt
@@ -79,19 +79,12 @@ def mapping(indexes: np.ndarray, reduced: np.ndarray, removed: np.ndarray, sorte
     else:
         sorted_removed = removed
 
-    rv = []
-    j = 0
-    count = 0
-
-    for i in indexes:
-        value = reduced[i]
-        while j < len(sorted_removed) and sorted_removed[j][0] < value:
-            count += sorted_removed[j][1]
-            j += 1
-        idx = i + count
-        rv.append(int(idx))
-
-    return np.array(rv)
+    reduced_values = reduced[indexes]
+    k = np.searchsorted(sorted_removed[:, 0], reduced_values)
+    cumsum_removed = np.zeros(len(sorted_removed) + 1)
+    cumsum_removed[1:] = np.cumsum(sorted_removed[:, 1])
+    counts = cumsum_removed[k]
+    return (indexes + counts).astype(int)
 
 
 def compute_cost_coef(pt: np.ndarray, coef, cost: metrics.Metrics=metrics.Metrics.smape) -> float:
@@ -186,16 +179,11 @@ def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarra
     Returns:
         np.ndarray: the points that were removed
     """
-    removed = []
-
-    left = reduced[0]
-    for i in range(1, len(reduced)):
-        right = reduced[i]
-        pt = points[left:right+1]
-        removed.append([left,len(pt)-2])
-        left = right
-
-    return np.array(removed)
+    if len(reduced) <= 1:
+        return np.empty((0, 2))
+    first_col = reduced[:-1]
+    second_col = reduced[1:] - reduced[:-1] - 1
+    return np.column_stack((first_col, second_col))
 
 
 def order_triangle(pt: np.ndarray, index:int, distance_points: callable) -> tuple:

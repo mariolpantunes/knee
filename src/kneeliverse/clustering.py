@@ -39,20 +39,11 @@ def single_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
     Returns:
         np.ndarray: the clusters ids
     """
-    clusters = []
-    cluster_index = 0
     length = points[-1, 0] - points[0, 0]
-
-    # First Point is a cluster
-    clusters.append(cluster_index)
-
-    for i in range(1, len(points)):
-        distance = math.fabs(points[i][0]-points[i-1][0])/length
-        if distance >= t:
-            cluster_index += 1
-        clusters.append(cluster_index)
-
-    return np.array(clusters)
+    if length == 0:
+        return np.zeros(len(points), dtype=int)
+    diffs = np.abs(np.diff(points[:, 0])) / length
+    return np.concatenate(([0], np.cumsum(diffs >= t)))
 
 
 def complete_linkage(points: np.ndarray, t: float = 0.01) -> np.ndarray:
