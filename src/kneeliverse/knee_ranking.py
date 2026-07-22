@@ -127,6 +127,30 @@ def rank(array: np.ndarray) -> np.ndarray:
     return ranks
 
 
+def rank_min(array: np.ndarray) -> np.ndarray:
+    """
+    Computes the rank of an array of values, with ties sharing the
+    MINIMUM rank of their tied group.
+
+    Unlike `rank`, which is built on `argsort` and therefore splits an
+    exactly-tied group into consecutive integers in whatever order the
+    underlying sort implementation happens to produce, this gives every
+    value in a tied group the same (lowest) rank - the "competition
+    ranking" convention (equivalent to `scipy.stats.rankdata(array,
+    method='min') - 1`, 0-indexed). Needed whenever downstream logic
+    breaks ties deterministically by a secondary key (see
+    `right_flatness_ranking`): an arbitrary rank spread within a tied
+    group would otherwise swamp that tie-break.
+
+    Args:
+        array (np.ndarray): array with values
+
+    Returns:
+        np.ndarray: an array with the (0-indexed, min-tie) rank of each value
+    """
+    return np.searchsorted(np.sort(array), array, side='left')
+
+
 def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.ndarray:
     """
     Computes the rank of a set of knees in a curve.
@@ -234,3 +258,79 @@ def smooth_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> 
     #logger.info(f'Smooth Ranking {rankings}')
 
     return rankings
+
+
+def right_flatness_ranking(points: np.ndarray, knees: np.ndarray, basis: str = 'left_ratio',
+                            flatness_weight: float = 0.7, floor: float = 1e-9) -> np.ndarray:
+    """
+    Computes the rank of a set of knees in a curve, preferring the SMALLEST
+    knee whose right remainder (from the knee to the end of the curve) is
+    closest to flat.
+
+    This is the opposite lens from `slope_ranking`, which scores the
+    steepness of the curve's approach INTO a knee (backward-looking, so a
+    single noisy pre-knee step can inflate its score). This looks forward
+    instead: a knee whose entire remainder has already flattened out has
+    captured essentially all the extractable information, so further knees
+    would just chase noise.
+
+    Each knee's right-remainder slope (endpoint-to-endpoint, via
+    `linear_fit` - the same 2-point approximation `slope_ranking` itself
+    uses) is compared against a reference slope selected by `basis`:
+      - 'left_ratio' (default): the LEFT remainder's own slope up to the
+        knee - a regime-change read ("how much did the decline rate drop
+        right here").
+      - 'overall_ratio': the whole curve's own endpoint-to-endpoint slope,
+        one global reference instead of a per-knee one.
+
+    Combined via RANK (not the raw ratio value) with the leftmost
+    preference, weighted by `flatness_weight` (0.0 = pure leftmost, 1.0 =
+    pure flattest) - ranking removes the raw ratio's scale sensitivity
+    (dominated by numerical noise at very large knees, where both slopes
+    are near zero, or trivially tiny at very small ones, where the left
+    slope is huge). Ties are broken deterministically toward the smaller
+    (leftmost) knee via `rank_min` plus a small leftmost nudge, so an
+    exactly-flat plateau's several equally-flat knees don't get an
+    arbitrary winner.
+
+    CAVEAT: evaluated against real storage-traffic (k, cost) tradeoff
+    curves from a downstream project (7 real traces, human-validated
+    ground truth) - best configuration found was 1/7 exact matches,
+    clearly behind that project's chosen k-selection strategy. Included
+    here as a legitimate, tested alternative ranking lens, not a proven
+    winner - read this caveat before assuming it is competitive by default.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+        knees (np.ndarray): knees indexes
+        basis (str): 'left_ratio' or 'overall_ratio' (default 'left_ratio')
+        flatness_weight (float): weight of the flatness rank vs. the
+            leftmost rank, in [0, 1] (default 0.7)
+        floor (float): minimum reference slope, to avoid division by zero
+            (default 1e-9)
+
+    Returns:
+        np.ndarray: an array with the ranks of each value
+    """
+    x = points[:, 0]
+    y = points[:, 1]
+
+    def _slope(i: int, j: int) -> float:
+        _, m = lf.linear_fit(x[i:j + 1], y[i:j + 1])
+        return math.fabs(m)
+
+    right_slopes = np.array([_slope(k, len(points) - 1) for k in knees])
+    if basis == 'overall_ratio':
+        overall = _slope(0, len(points) - 1)
+        reference = np.full_like(right_slopes, max(overall, floor))
+    else:
+        reference = np.array([max(_slope(0, k), floor) for k in knees])
+    ratio = right_slopes / reference
+
+    flatness_rank = rank_min(ratio)
+    leftmost_rank = rank_min(knees)
+    combined = flatness_weight * flatness_rank + (1 - flatness_weight) * leftmost_rank
+    # Deterministic tie-break toward the smaller (leftmost) knee.
+    combined = combined + 1e-6 * leftmost_rank
+
+    return -combined

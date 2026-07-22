@@ -95,6 +95,50 @@ class TestKneeRanking(unittest.TestCase):
         desired = np.array([1, math.sqrt(2.0), 2, 3])
         np.testing.assert_array_equal(result, desired)
 
+    def test_rank_min_ties_share_lowest_rank(self):
+        array = np.array([3.0, 1.0, 1.0, 2.0, 1.0])
+        result = ranking.rank_min(array)
+        desired = np.array([4, 0, 0, 3, 0])
+        np.testing.assert_array_equal(result, desired)
+
+    def test_rank_min_no_ties_matches_rank(self):
+        array = np.array([5.0, 2.0, 8.0, 1.0])
+        np.testing.assert_array_equal(ranking.rank_min(array), ranking.rank(array))
+
+
+class TestRightFlatnessRanking(unittest.TestCase):
+    def test_prefers_earliest_knee_whose_remainder_is_flat(self):
+        # A sharp early knee at k=3, then an exactly flat tail from k=3 onward.
+        costs = np.concatenate([np.linspace(1.0, 0.2, 4), np.full(16, 0.2)])
+        points = np.column_stack((np.arange(20, dtype=float), costs))
+        knees = np.array([1, 3, 6, 10, 15])
+        scores = ranking.right_flatness_ranking(points, knees, basis='left_ratio', flatness_weight=1.0)
+        self.assertEqual(knees[int(np.argmax(scores))], 3)
+
+    def test_does_not_falsely_flatten_a_still_declining_curve(self):
+        # Pure, uniform linear decline - no knee's remainder is genuinely
+        # flatter than any other's, so ties must resolve to the
+        # deterministic leftmost fallback.
+        costs = np.linspace(1.0, 0.05, 30)
+        points = np.column_stack((np.arange(30, dtype=float), costs))
+        knees = np.array([2, 10, 20, 27])
+        scores = ranking.right_flatness_ranking(points, knees, basis='left_ratio', flatness_weight=1.0)
+        self.assertEqual(knees[int(np.argmax(scores))], 2)
+
+    def test_pure_leftmost_at_zero_weight(self):
+        costs = np.concatenate([np.linspace(1.0, 0.2, 4), np.full(16, 0.2)])
+        points = np.column_stack((np.arange(20, dtype=float), costs))
+        knees = np.array([3, 6, 10, 15])
+        scores = ranking.right_flatness_ranking(points, knees, flatness_weight=0.0)
+        self.assertEqual(knees[int(np.argmax(scores))], 3)
+
+    def test_overall_ratio_basis_runs_without_error(self):
+        costs = np.concatenate([np.linspace(1.0, 0.2, 4), np.full(16, 0.2)])
+        points = np.column_stack((np.arange(20, dtype=float), costs))
+        knees = np.array([1, 3, 6, 10, 15])
+        scores = ranking.right_flatness_ranking(points, knees, basis='overall_ratio', flatness_weight=0.5)
+        self.assertEqual(len(scores), len(knees))
+
 
 if __name__ == '__main__':
     unittest.main()
