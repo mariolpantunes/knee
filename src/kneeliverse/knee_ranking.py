@@ -151,6 +151,61 @@ def rank_min(array: np.ndarray) -> np.ndarray:
     return np.searchsorted(np.sort(array), array, side='left')
 
 
+def rank_min_tol(array: np.ndarray, rtol: float = 1e-9, atol: float = 0.0) -> np.ndarray:
+    """
+    Like `rank_min`, but values that are equal to within a RELATIVE
+    tolerance share a rank, instead of only bit-identical ones.
+
+    `rank_min` ties only on exact equality, which is the wrong test for a
+    value that came out of a floating-point computation. Two quantities that
+    are mathematically identical - say the slope of two sub-ranges of the
+    same straight line - routinely differ in the last bit or two, and
+    `rank_min` then hands them a full integer rank spread built entirely out
+    of that noise. Any downstream tie-break by a secondary key is swamped,
+    and *which* value ends up first depends on the platform's libm and
+    compiler rather than on the data. Ranking on a tolerance instead makes
+    the result depend only on differences that are actually meaningful.
+
+    Two values are grouped when they differ by no more than
+    `rtol * max(|a|, |b|) + atol`. Note this is applied between ADJACENT
+    values in sorted order, so grouping is transitive: a chain of values
+    each within tolerance of the next collapses into one group even if its
+    two ends are far apart. That is the intended reading of "no meaningful
+    difference anywhere along this run", but it does mean `rtol` should stay
+    small relative to the differences you care about.
+
+    Args:
+        array (np.ndarray): array with values
+        rtol (float): relative tolerance for grouping (default 1e-9)
+        atol (float): absolute tolerance, added to the relative term - use
+            for arrays whose values legitimately reach 0.0 (default 0.0)
+
+    Returns:
+        np.ndarray: an array with the (0-indexed, tolerant-tie) rank of each
+        value
+    """
+    array = np.asarray(array, dtype=float)
+    if array.size == 0:
+        return np.zeros(0, dtype=int)
+
+    order = np.argsort(array, kind='stable')
+    ordered = array[order]
+
+    scale = np.maximum(np.abs(ordered[1:]), np.abs(ordered[:-1]))
+    starts_group = np.concatenate(
+        ([True], np.diff(ordered) > rtol * scale + atol))
+
+    # Every member of a group takes the sorted position of the group's first
+    # member - the same "lowest rank of the tied group" convention rank_min
+    # uses, just with a tolerant notion of "tied".
+    group_id = np.cumsum(starts_group) - 1
+    first_position = np.flatnonzero(starts_group)
+
+    ranks = np.empty(array.size, dtype=int)
+    ranks[order] = first_position[group_id]
+    return ranks
+
+
 def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.ndarray:
     """
     Computes the rank of a set of knees in a curve.
@@ -261,7 +316,8 @@ def smooth_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> 
 
 
 def right_flatness_ranking(points: np.ndarray, knees: np.ndarray, basis: str = 'left_ratio',
-                            flatness_weight: float = 0.7, floor: float = 1e-9) -> np.ndarray:
+                            flatness_weight: float = 0.7, floor: float = 1e-9,
+                            ratio_rtol: float = 1e-9) -> np.ndarray:
     """
     Computes the rank of a set of knees in a curve, preferring the SMALLEST
     knee whose right remainder (from the knee to the end of the curve) is
@@ -289,9 +345,17 @@ def right_flatness_ranking(points: np.ndarray, knees: np.ndarray, basis: str = '
     (dominated by numerical noise at very large knees, where both slopes
     are near zero, or trivially tiny at very small ones, where the left
     slope is huge). Ties are broken deterministically toward the smaller
-    (leftmost) knee via `rank_min` plus a small leftmost nudge, so an
-    exactly-flat plateau's several equally-flat knees don't get an
-    arbitrary winner.
+    (leftmost) knee via `rank_min_tol` plus a small leftmost nudge, so
+    several equally-flat knees don't get an arbitrary winner.
+
+    The flatness axis is ranked with a TOLERANCE (`rank_min_tol`), not with
+    exact equality. Knees whose remainders are equally flat rarely produce
+    bit-identical ratios: on a purely linear decline, for instance, every
+    knee's ratio is 1.0 to within ~1e-15, and ranking those exactly gives a
+    full integer rank spread made of nothing but floating-point noise - far
+    too large for the 1e-6 leftmost nudge below to overcome, so the winner
+    ends up decided by the platform's arithmetic instead of by the curve.
+    `ratio_rtol` sets what counts as "no meaningful difference in flatness".
 
     CAVEAT: evaluated against real storage-traffic (k, cost) tradeoff
     curves from a downstream project (7 real traces, human-validated
@@ -308,6 +372,9 @@ def right_flatness_ranking(points: np.ndarray, knees: np.ndarray, basis: str = '
             leftmost rank, in [0, 1] (default 0.7)
         floor (float): minimum reference slope, to avoid division by zero
             (default 1e-9)
+        ratio_rtol (float): relative tolerance below which two knees count
+            as equally flat and share a rank, leaving the leftmost nudge to
+            decide between them (default 1e-9)
 
     Returns:
         np.ndarray: an array with the ranks of each value
@@ -327,7 +394,9 @@ def right_flatness_ranking(points: np.ndarray, knees: np.ndarray, basis: str = '
         reference = np.array([max(_slope(0, k), floor) for k in knees])
     ratio = right_slopes / reference
 
-    flatness_rank = rank_min(ratio)
+    # Tolerant on the flatness axis (a computed float, noisy in its last
+    # bits); exact on the leftmost axis (knee indices, exact integers).
+    flatness_rank = rank_min_tol(ratio, rtol=ratio_rtol)
     leftmost_rank = rank_min(knees)
     combined = flatness_weight * flatness_rank + (1 - flatness_weight) * leftmost_rank
     # Deterministic tie-break toward the smaller (leftmost) knee.

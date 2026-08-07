@@ -105,6 +105,32 @@ class TestKneeRanking(unittest.TestCase):
         array = np.array([5.0, 2.0, 8.0, 1.0])
         np.testing.assert_array_equal(ranking.rank_min(array), ranking.rank(array))
 
+    def test_rank_min_tol_matches_rank_min_when_values_are_separated(self):
+        array = np.array([3.0, 1.0, 2.0, 1.0])
+        np.testing.assert_array_equal(ranking.rank_min_tol(array), ranking.rank_min(array))
+
+    def test_rank_min_tol_ties_values_differing_only_in_the_last_bits(self):
+        # rank_min splits these into consecutive ranks because they are not
+        # bit-identical; rank_min_tol must see one tied group.
+        array = np.array([1.0, 1.0 + 3e-16, 1.0 - 2e-16, 2.0])
+        np.testing.assert_array_equal(ranking.rank_min_tol(array), np.array([0, 0, 0, 3]))
+        self.assertGreater(len(set(ranking.rank_min(array).tolist())), 2)
+
+    def test_rank_min_tol_keeps_differences_above_the_tolerance(self):
+        array = np.array([1.0, 1.1, 1.2])
+        np.testing.assert_array_equal(ranking.rank_min_tol(array), np.array([0, 1, 2]))
+
+    def test_rank_min_tol_atol_groups_values_around_zero(self):
+        # Relative tolerance alone cannot tie 0.0 to a small non-zero value;
+        # that is what atol is for.
+        array = np.array([0.0, 1e-18, 1.0])
+        np.testing.assert_array_equal(ranking.rank_min_tol(array), np.array([0, 1, 2]))
+        np.testing.assert_array_equal(ranking.rank_min_tol(array, atol=1e-15), np.array([0, 0, 2]))
+
+    def test_rank_min_tol_handles_empty_and_single_element(self):
+        self.assertEqual(len(ranking.rank_min_tol(np.array([]))), 0)
+        np.testing.assert_array_equal(ranking.rank_min_tol(np.array([5.0])), np.array([0]))
+
 
 class TestRightFlatnessRanking(unittest.TestCase):
     def test_prefers_earliest_knee_whose_remainder_is_flat(self):
@@ -124,6 +150,35 @@ class TestRightFlatnessRanking(unittest.TestCase):
         knees = np.array([2, 10, 20, 27])
         scores = ranking.right_flatness_ranking(points, knees, basis='left_ratio', flatness_weight=1.0)
         self.assertEqual(knees[int(np.argmax(scores))], 2)
+
+    def test_choice_is_invariant_to_last_bit_noise(self):
+        # The regression test for the real defect: on a linear decline every
+        # knee's ratio is 1.0 to within ~1e-15, so ranking them exactly turns
+        # last-bit arithmetic into a full integer rank spread - far more than
+        # the 1e-6 leftmost nudge can overcome. The winner then depends on the
+        # platform's libm rather than on the curve, which is how this first
+        # showed up: the same input picked knee 2 on one machine and knee 20
+        # on another. Perturbing below the noise floor must change nothing.
+        costs = np.linspace(1.0, 0.05, 30)
+        knees = np.array([2, 10, 20, 27])
+        rng = np.random.default_rng(0)
+        winners = set()
+        for _ in range(100):
+            jittered = costs + rng.uniform(-1e-15, 1e-15, costs.size)
+            points = np.column_stack((np.arange(30, dtype=float), jittered))
+            scores = ranking.right_flatness_ranking(points, knees, basis='left_ratio', flatness_weight=1.0)
+            winners.add(int(knees[int(np.argmax(scores))]))
+        self.assertEqual(winners, {2})
+
+    def test_genuinely_flatter_remainder_still_beats_the_leftmost(self):
+        # The tolerance must not be so eager that it merges real differences
+        # and collapses the ranker into plain leftmost: knee 1 sits mid-decline
+        # and knee 6 is deep in the flat tail, so 6 has to win over 8.
+        costs = np.concatenate([np.linspace(1.0, 0.2, 6), np.full(14, 0.2)])
+        points = np.column_stack((np.arange(20, dtype=float), costs))
+        knees = np.array([1, 6, 8])
+        scores = ranking.right_flatness_ranking(points, knees, basis='left_ratio', flatness_weight=1.0)
+        self.assertEqual(knees[int(np.argmax(scores))], 6)
 
     def test_pure_leftmost_at_zero_weight(self):
         costs = np.concatenate([np.linspace(1.0, 0.2, 4), np.full(16, 0.2)])
