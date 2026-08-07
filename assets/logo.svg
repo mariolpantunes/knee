@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128"
+     role="img" aria-label="Kneeliverse — knee and elbow detection in performance curves">
+  <title>Kneeliverse — knee and elbow detection in performance curves</title>
+  <desc>A cost curve that falls steeply and then flattens out. The two faint
+  guides are the steep descent and the flat tail, each extended; they cross
+  at the knee, which is what defines it. The blue marker sits on that
+  crossing. The teal markers further along the tail are the other candidates
+  the curve offers, which rank below the knee.</desc>
+
+  <!-- Light and dark are both first-class: this renders on GitHub in either
+       theme and on pdoc pages, which follow the reader's preference. -->
+  <style>
+    .cell  { fill: #f8fafc; stroke: #cbd5e1; }
+    .guide { stroke: #cbd5e1; }
+    .halo  { stroke: #ffffff; }
+    .curve { stroke: #94a3b8; }
+    @media (prefers-color-scheme: dark) {
+      .cell  { fill: #0f172a; stroke: #334155; }
+      .guide { stroke: #334155; }
+      .halo  { stroke: #0f172a; }
+      .curve { stroke: #64748b; }
+    }
+  </style>
+
+  <defs>
+    <!-- The guides run past the knee in both directions, so they are clipped
+         to the frame rather than trimmed by hand. -->
+    <clipPath id="frame">
+      <rect x="14" y="14" width="100" height="100" rx="16"/>
+    </clipPath>
+  </defs>
+
+  <!-- the plot area -->
+  <rect class="cell" x="14" y="14" width="100" height="100" rx="16" stroke-width="3"/>
+
+  <!-- The two regimes the knee separates, each extended past it: the steep
+       descent (28,26)->(58,78) continued, and the flat tail (58,78)->(104,86)
+       continued backwards. They intersect exactly at the knee. -->
+  <g class="guide" fill="none" stroke-width="1.6" stroke-dasharray="3.5 4.5"
+     clip-path="url(#frame)">
+    <path d="M 28 26 L 78 112"/>
+    <path d="M 30 73 L 110 87"/>
+  </g>
+
+  <!-- the cost curve: a steep descent bending into a long flat tail -->
+  <path class="curve" fill="none" stroke-width="3.5" stroke-linecap="round"
+        d="M 28 26 C 42 50, 51 68, 58 78 C 66 88, 84 85, 104 86"/>
+
+  <!-- candidates further along the tail, which rank below the knee -->
+  <g fill="#14b8a6">
+    <circle class="halo" cx="79" cy="85" r="5" stroke-width="2"/>
+    <circle class="halo" cx="97" cy="85.5" r="5" stroke-width="2"/>
+  </g>
+
+  <!-- the knee: where the descent gives way to the tail -->
+  <circle class="halo" cx="58" cy="78" r="8" fill="#3b82f6" stroke-width="2.5"/>
+</svg>

@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides knee detection method
@@ -17,14 +16,15 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 
 
 import enum
-import math
 import logging
+import math
+
 import numpy as np
+import uts.gradient as grad
+import uts.zscore as uzscore  #import zscore_array
+
 import kneeliverse.postprocessing as pp
 
-
-import uts.gradient as grad
-import uts.zscore as uzscore #import zscore_array
 #import uts.thresholding as uthres #import isodata
 
 
@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 class Outlier(enum.Enum):
     """
+    Enum of the outlier-detection methods available to the Z-method.
     """
     zscore = 'zscore'
     iqr = 'iqr'
@@ -110,16 +111,16 @@ def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05, out:Outlier=Outlier.
 
             if len(n) == 1 and n[0] == i:
                 best_candidates.append(i)
-                logger.info(f'found best knee...')
+                logger.info('found best knee...')
             elif len(n) > 1:
                 # find the best candidate from the remaining list
-                r = pp.rank_corners(points, n)
+                r = pp.rank_corners(points, np.asarray(n))
                 logger.info(f'{n} -> rank {r}')
                 if n[np.argmax(r)] == i:
                     best_candidates.append(i)
-                    logger.info(f'found best knee...')
+                    logger.info('found best knee...')
             else:
-                logger.info(f'Ups...')
+                logger.info('Ups...')
         logger.info(f'Candidates {candidates}({len(candidates)}) best candidates {best_candidates}({len(best_candidates)})')
         if np.array_equal(best_candidates, candidates):
             done = True
@@ -131,7 +132,7 @@ def knees2(points:np.ndarray, dx:float=0.05, dy:float=0.05, out:Outlier=Outlier.
     return np.array(candidates)
 
 
-def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, x_max:int=None, y_range:list=None) -> np.ndarray:
+def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, x_max:int|None=None, y_range:list|None=None) -> np.ndarray:
     """
     Given an array of points, it computes the knees.
 
@@ -152,7 +153,7 @@ def knees(points:np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, x_max:
     return map_index(x, np.array(rv))
 
 
-def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, plot:bool=False, x_max:int=None, y_range:list=None) -> np.ndarray:
+def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, plot:bool=False, x_max:int|None=None, y_range:list|None=None) -> np.ndarray|list|tuple:
     """
     Use our outlier method to find interesting points in an MRC.
     
@@ -235,7 +236,7 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
                 x_diff = np.hstack(([0], x_diff,[len(candidates)-1]))
                 
                 # first create an array of candidate outliers
-                for i in range(0, len(x_diff)-1):
+                for i in range(len(x_diff)-1):
                     # points in this form (0, 1) [1,2) ... [n,End)
                     if i == 0:
                         x_range = candidates[candidates[:,0] <= candidates[x_diff[i+1]][0]]
@@ -273,7 +274,7 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
     #logger.info(f'Outlier points {outlier_points}')
     outlier_points = {int(x[0]):x[1] for x in outlier_points}
     #logger.info(f'Outlier points {outlier_points}')
-    outlier_keys = list(sorted(outlier_points.keys()))
+    outlier_keys = sorted(outlier_points.keys())
     for k in outlier_keys:
         if outlier_points[k] > outlier_min_mr:
             del outlier_points[k]
@@ -283,6 +284,6 @@ def getPoints(points: np.ndarray, dx:float=0.05, dy:float=0.05, dz:float=0.05, p
     # returns sorted list of cache sizes
     if not plot:
         #return map_index(points, outlier_points)
-        return np.array(list(sorted(outlier_points.keys())))
+        return np.array(sorted(outlier_points.keys()))
     else:
         return (outlier_points, z_yd2)

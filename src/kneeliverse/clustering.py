@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides a 1D version 
@@ -19,6 +18,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 
 
 import math
+
 import numpy as np
 
 

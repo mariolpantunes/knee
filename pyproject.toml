@@ -1,3 +1,55 @@
 [build-system]
-requires = ['setuptools>=42']
-build-backend = 'setuptools.build_meta'
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kneeliverse"
+version = "1.2.0"
+authors = [
+    {name = "Mário Antunes", email = "mario.antunes@ua.pt"}
+]
+description = "Kneeliverse: A Universal Knee/Elbow Detection Library for Performance Curves"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.12"
+keywords = [
+    "knee-detection", "elbow-detection", "kneedle", "l-method", "rdp",
+    "curvature", "multi-knee", "performance-curves", "model-selection",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "numpy>=2.1.0",
+    "pyUTSAlgorithms>=0.2.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/mariolpantunes/knee"
+Documentation = "https://mariolpantunes.github.io/knee/"
+Repository = "https://github.com/mariolpantunes/knee"
+Issues = "https://github.com/mariolpantunes/knee/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+include = ["src/kneeliverse"]
+reportImportCycles = "none"
+
+[tool.vulture]
+paths = ["src/kneeliverse"]
+min_confidence = 80

@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides knee detection method
@@ -15,12 +14,13 @@ Copyright (c) 2021-2023 Stony Brook University
 Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
-import math
 import logging
+import math
+
 import numpy as np
+
 import kneeliverse.knee_ranking as kr
 import kneeliverse.multi_knee as mk
-
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def knee(points: np.ndarray) -> int:
         int: the index of the knee point
     """
 
-    curvature = [0]
+    curvature = [0.0]
 
     for i in range(1, len(points)-1):
         f = points[i]

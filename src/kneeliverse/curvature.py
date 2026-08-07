@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides knee detection method
@@ -16,11 +15,12 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
 import logging
+
 import numpy as np
 import uts.gradient as grad
+
 import kneeliverse.knee_ranking as kr
 import kneeliverse.multi_knee as mk
-
 
 logger = logging.getLogger(__name__)
 

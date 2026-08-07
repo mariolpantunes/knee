@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides knee detection method
@@ -17,12 +16,13 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 
 import enum
 import logging
-import numpy as np
-import uts.ema as ema
-import uts.peak_detection as pd
-import kneeliverse.multi_knee as mk
-import kneeliverse.linear_fit as lf
 
+import numpy as np
+import uts.peak_detection as pd
+from uts import ema
+
+import kneeliverse.linear_fit as lf
+import kneeliverse.multi_knee as mk
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ def differences(points: np.ndarray, cd: Direction, cc: Concavity) -> np.ndarray:
     return rv
 
 
-def _knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
+def _knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int|None:
     """
     Returns the index of the knee point based on the Kneedle method.
 
@@ -125,7 +125,7 @@ def _knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int:
         return idx
 
 
-def _knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle, debug:bool=False) -> np.ndarray:
+def _knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivity:float=1.0, p:PeakDetection=PeakDetection.Kneedle, debug:bool=False) -> np.ndarray|dict:
     """
     Returns the index of the knees point based on the Kneedle method.
 
@@ -206,8 +206,8 @@ def knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p: Peak
     else:
         cd = Direction.Decreasing
 
-    knees_1= _knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p)
-    knees_2 = _knees(points, t, cd, Concavity.Clockwise, sensitivity, p)
+    knees_1 = np.asarray(_knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p))
+    knees_2 = np.asarray(_knees(points, t, cd, Concavity.Clockwise, sensitivity, p))
 
     knees_idx = np.concatenate((knees_1, knees_2))
     # np.concatenate generates float array when one is empty (see https://github.com/numpy/numpy/issues/8878)
@@ -218,7 +218,7 @@ def knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p: Peak
     return knees_idx
 
 
-def knee(points: np.ndarray, t: float = 1.0) -> int:
+def knee(points: np.ndarray, t: float = 1.0) -> int|None:
     """
     Returns the index of the knee point based on the Kneedle method.
 

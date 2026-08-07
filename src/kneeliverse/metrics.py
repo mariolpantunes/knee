@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides a set of methods
@@ -16,9 +15,8 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
 import enum
+
 import numpy as np
-
-
 
 
 class Metrics(enum.Enum):
@@ -103,7 +101,7 @@ def rmsle(y: np.ndarray, y_hat: np.ndarray) -> float:
     Returns:
         float: Root Mean Squared Log Error (RMSLE)
     """
-    return np.sqrt(np.mean(np.square((np.log(y+1) - np.log(y_hat+1)))))
+    return np.sqrt(np.mean(np.square(np.log(y+1) - np.log(y_hat+1))))
 
 
 def rmspe(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
@@ -133,7 +131,7 @@ def rpd(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     Returns:
         float: Relative Percentage Difference (RPD)
     """
-    return np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
+    return float(np.mean(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps))))
 
 
 def residuals(y: np.ndarray, y_hat: np.ndarray) -> float:
@@ -147,7 +145,7 @@ def residuals(y: np.ndarray, y_hat: np.ndarray) -> float:
     Returns:
         float: residual error of the fit
     """
-    return np.sum(np.square((y-y_hat)))
+    return np.sum(np.square(y-y_hat))
 
 
 def smape(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
@@ -161,4 +159,4 @@ def smape(y: np.ndarray, y_hat: np.ndarray, eps: float = 1e-16) -> float:
     Returns:
         float: residual error of the fit
     """
-    return np.mean(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
+    return float(np.mean(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps)))

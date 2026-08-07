@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides a set of methods
@@ -15,13 +14,14 @@ Copyright (c) 2021-2023 Stony Brook University
 Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
-import math
 import enum
 import logging
-import numpy as np
-import kneeliverse.linear_fit as lf
-import kneeliverse.evaluation as ev
+import math
 
+import numpy as np
+
+import kneeliverse.evaluation as ev
+import kneeliverse.linear_fit as lf
 
 logger = logging.getLogger(__name__)
 
@@ -351,7 +351,7 @@ def smooth_ranking(points: np.ndarray, knees: np.ndarray, t: ClusterRanking) -> 
     peak = np.max(y[knees])
 
     # TODO: find a better approximation, for example SMAPE
-    for i in range(0, len(knees)):
+    for i in range(len(knees)):
         # R2 score
         r2 = 0
         if t is ClusterRanking.linear:

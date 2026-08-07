@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides knee detection method
@@ -15,13 +14,14 @@ Copyright (c) 2021-2023 Stony Brook University
 Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
-import math
 import logging
+import math
+
 import numpy as np
 import uts.gradient as grad
 import uts.thresholding as thresh
-import kneeliverse.multi_knee as mk
 
+import kneeliverse.multi_knee as mk
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ def get_knee_gradient(gradient: np.ndarray) -> int:
     t = thresh.isodata(gradient)
     diff = np.absolute(gradient - t)
     knee = np.argmin(diff[1:-1]) + 1
-    return knee
+    return int(knee)
 
 
 def knee(points: np.ndarray) -> int:
@@ -80,7 +80,7 @@ def knee(points: np.ndarray) -> int:
     while last_knee < knee and (len(x)-cutoff) > 2:
         last_knee = knee
         knee = get_knee_gradient(gradient[cutoff:]) + cutoff
-        cutoff = int(math.ceil(knee/2.0))
+        cutoff = math.ceil(knee/2.0)
 
     return knee
 

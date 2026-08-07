@@ -60,5 +60,5 @@ identifiers:
 repository-code: 'https://github.com/mariolpantunes/knee'
 url: 'https://pypi.org/project/kneeliverse/'
 license: MIT
-version: '1.0'
-date-released: '2024-05-01'
+version: 1.2.0
+date-released: '2026-08-07'

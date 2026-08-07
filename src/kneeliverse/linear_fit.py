@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides a set of methods
@@ -16,15 +15,12 @@ Copyright (c) 2021-2023 Stony Brook University
 Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
-import math
 import logging
+import math
+
 import numpy as np
-import kneeliverse.metrics as metrics
 
-
-from typing import Union
-
-
+from kneeliverse import metrics
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +146,7 @@ def linear_hv_residuals(x: np.ndarray, y: np.ndarray) -> float:
         return x_residuals
 
 
-def linear_fit_transform_points(points: np.ndarray, vertical:bool=False) -> Union[np.ndarray, tuple]:
+def linear_fit_transform_points(points: np.ndarray, vertical:bool=False) -> np.ndarray | tuple:
     """
     Computes the horizontal or vertical line fitting.
 
@@ -170,7 +166,7 @@ def linear_fit_transform_points(points: np.ndarray, vertical:bool=False) -> Unio
     return linear_fit_transform(x, y, vertical)
 
 
-def linear_fit_transform(x: np.ndarray, y: np.ndarray, vertical=False) -> Union[np.ndarray, tuple]:
+def linear_fit_transform(x: np.ndarray, y: np.ndarray, vertical=False) -> np.ndarray | tuple:
     # try a tipical y = mx + b line
     coef1 = linear_fit(x, y)
     y_hat = linear_transform(x, coef1)

@@ -1,0 +1,63 @@
+# The CI gate, moved to commit time.
+#
+# Every Python hook below is `language: system`, not a pinned mirror. A mirror
+# would fetch its own copy of ruff or basedpyright and run it against a config
+# that pre-commit chose, which is how a repository ends up with hooks that pass
+# and CI that fails. These call the tools already installed in the environment
+# and let them read `pyproject.toml`, so `git commit` and `.github/workflows`
+# are running the same check with the same settings by construction.
+#
+# `pass_filenames: false` on the whole-project tools is deliberate. basedpyright
+# and vulture both need to see every file to be correct -- vulture calls a
+# function dead when nothing references it, and handing it only the staged files
+# means everything they reference looks unreferenced. Type-checking one file in
+# isolation fails the same way.
+#
+# Install with: pre-commit install
+# Run over everything once: pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=512]
+
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff (src)
+        entry: ruff check src
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: basedpyright
+        name: basedpyright
+        entry: basedpyright
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: vulture
+        name: vulture
+        entry: vulture
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: unittest
+        name: unittest
+        # PYTHONPATH=src, not a bare `python`: CI runs `pip install .` first,
+        # but a commit hook has no such step and the interpreter on PATH is
+        # whoever's -- usually one without this package installed. Testing the
+        # working tree is also the more useful thing to check before a commit.
+        entry: env PYTHONPATH=src python -m unittest discover -s test
+        language: system
+        types: [python]
+        pass_filenames: false

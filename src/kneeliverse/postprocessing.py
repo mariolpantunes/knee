@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides a set of methods
@@ -16,14 +15,16 @@ Copyright (c) 2021-2023 Stony Brook University
 Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
-import math
 import logging
+import math
+from collections.abc import Callable
+
 import numpy as np
-import kneeliverse.rdp as rdp
-import kneeliverse.linear_fit as lf
+
 import kneeliverse.convex_hull as ch
 import kneeliverse.knee_ranking as kr
-
+import kneeliverse.linear_fit as lf
+from kneeliverse import rdp
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,7 @@ def filter_worst_knees(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
 
 
 def filter_clusters(points: np.ndarray, knees: np.ndarray,
-clustering: callable, t: float = 0.01,
+clustering: Callable, t: float = 0.01,
 method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
     """
     Filter the knee points based on clustering.
@@ -146,12 +147,14 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
     Returns:
         np.ndarray: the filtered knees
     """
+    # Bound unconditionally: it is only READ under this same condition, but
+    # leaving it conditional makes every use a possibly-unbound reference.
+    hull = np.array([], dtype=int)
     if method is kr.ClusterRanking.hull:
         hull = ch.graham_scan_lower(points)
         logger.info(f'hull {len(hull)}')
 
     x = points[:, 0]
-    y = points[:, 1]
 
     if len(knees) <= 1:
         return knees
@@ -161,7 +164,7 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
 
         max_cluster = clusters.max()
         filtered_knees = []
-        for i in range(0, max_cluster+1):
+        for i in range(max_cluster+1):
             current_cluster = knees[clusters == i]
             #logger.info(f'Cluster {i} with {len(current_cluster)} elements')
 
@@ -185,8 +188,6 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                                 length_r = (x[b+1] - x[j])/length
                                 left = points[a-1:j+1]
                                 right = points[j:b+2]
-                                coef_l = lf.linear_fit_points(left)
-                                coef_r = lf.linear_fit_points(right)
                                 #r_l = lf.linear_residuals(x[a-1:j+1], y[a-1:j+1], coef_l)
                                 #r_r = lf.linear_residuals(x[j:b+2], y[j:b+2], coef_r)
                                 #r_l = lf.rmse_points(left, coef_l)
@@ -251,7 +252,7 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
         return np.array(filtered_knees)
 
 
-def filter_clusters_corners(points: np.ndarray, knees: np.ndarray, clustering: callable, t: float = 0.01) -> np.ndarray:
+def filter_clusters_corners(points: np.ndarray, knees: np.ndarray, clustering: Callable, t: float = 0.01) -> np.ndarray:
     """
     This methods finds and removes corner points.
 
@@ -270,7 +271,7 @@ def filter_clusters_corners(points: np.ndarray, knees: np.ndarray, clustering: c
 
     max_cluster = clusters.max()
     filtered_knees = []
-    for i in range(0, max_cluster+1):
+    for i in range(max_cluster+1):
         current_cluster = knees[clusters == i]
         # Compute the rank for each corner point
         ranks = rank_corners_triangle(points, current_cluster)
@@ -338,7 +339,7 @@ def add_points_even(points: np.ndarray, reduced: np.ndarray, knees: np.ndarray, 
         left = candidates[i]
         right = candidates[i+1]
         pdx = math.fabs(points[right][0] - points[left][0])/dx
-        number_points = int(math.ceil(pdx/(2.0*tx)))
+        number_points = math.ceil(pdx/(2.0*tx))
         inc = int((right-left)/number_points)
         idx = left
         for _ in range(number_points):
@@ -427,7 +428,7 @@ def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, 
     # Process candidates as pairs
     for left, right in candidates:
         pdx = math.fabs(points[right][0] - points[left][0])/dx
-        number_points = int(math.ceil(pdx/(2.0*tx)))
+        number_points = math.ceil(pdx/(2.0*tx))
         inc = int((right-left)/number_points)
         idx = left
         for _ in range(number_points):
@@ -476,7 +477,7 @@ def rank_corners_triangle(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
     """
     ranks = []
 
-    for i in range(0, len(knees)):
+    for i in range(len(knees)):
         idx = [knees[i]-1, knees[i], knees[i]+1]
         pt = points[idx]
         #TODO: use the above function

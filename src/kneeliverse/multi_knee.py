@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides one algorithm that transfroms
@@ -16,16 +15,18 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
 import logging
-import numpy as np
-import kneeliverse.linear_fit as lf
-import kneeliverse.metrics as metrics
+from collections.abc import Callable
 
+import numpy as np
+
+import kneeliverse.linear_fit as lf
+from kneeliverse import metrics
 
 logger = logging.getLogger(__name__)
 
 
 #TODO: support all the other metrics
-def multi_knee(get_knee: callable, points: np.ndarray, t1: float = 0.001, t2: int = 3, cost: metrics.Metrics = metrics.Metrics.smape) -> np.ndarray:
+def multi_knee(get_knee: Callable, points: np.ndarray, t1: float = 0.001, t2: int = 3, cost: metrics.Metrics = metrics.Metrics.smape) -> np.ndarray:
     """
     Wrapper that convert a single knee point detection into a multi knee point detector.
 

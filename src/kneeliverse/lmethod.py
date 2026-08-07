@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides knee detection method
@@ -15,15 +14,14 @@ Copyright (c) 2021-2023 Stony Brook University
 Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
-import math
 import logging
-import numpy as np
-import kneeliverse.linear_fit as lf 
-import kneeliverse.multi_knee as mk
-
-
+import math
 from enum import Enum
 
+import numpy as np
+
+import kneeliverse.linear_fit as lf
+import kneeliverse.multi_knee as mk
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +110,7 @@ def compute_error(x: np.ndarray, y: np.ndarray, index:int, length:int, fit=Fit.p
     return error, coef_left, coef_right
 
 
-def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit, cost=Cost.rmse) -> int:
+def get_knee(x: np.ndarray, y: np.ndarray, fit=Fit.point_fit, cost=Cost.rmse) -> tuple:
     """
     Returns the index of the knee point based on the L-method.
 

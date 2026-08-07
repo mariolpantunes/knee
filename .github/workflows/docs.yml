@@ -1,0 +1,82 @@
+name: Generate and Deploy Docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pdoc
+          pip install .
+
+      - name: Generate Docs
+        run: |
+          # `kneeliverse` alone: pdoc recurses into the package's submodules,
+          # and naming them as well makes it warn about duplicate specs.
+          pdoc --math -d google -o docs_build kneeliverse \
+            --logo "assets/logo.svg" \
+            --favicon "assets/logo.svg"
+          # The logo path is resolved relative to the page referencing it, and
+          # pdoc emits two levels: `kneeliverse.html` at the root and
+          # `kneeliverse/<submodule>.html` below it. A single copy leaves every
+          # submodule page with a broken logo, so the assets go in both.
+          cp -r assets docs_build/assets
+          cp -r assets docs_build/kneeliverse/assets
+          touch docs_build/.nojekyll
+
+      - name: Every page must resolve its logo
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          root = pathlib.Path("docs_build")
+          pages = list(root.rglob("*.html"))
+          missing = [f"{p.relative_to(root)} -> {r}" for p in pages
+                     for r in set(re.findall(r'(?:src|href)="([^"]*logo\.svg)"',
+                                             p.read_text()))
+                     if not (p.parent / r).exists()]
+          if missing:
+              print("::error::logo references that do not resolve:")
+              print("\n".join(missing))
+              sys.exit(1)
+          print(f"checked {len(pages)} pages, all logo references resolve")
+          PY
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: 'docs_build'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

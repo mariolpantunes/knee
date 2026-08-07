@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides a set of methods
@@ -16,12 +15,14 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
 import enum
-import math
 import logging
-import numpy as np
-import kneeliverse.linear_fit as lf
-import kneeliverse.metrics as metrics
+import math
+from collections.abc import Sequence
 
+import numpy as np
+
+import kneeliverse.linear_fit as lf
+from kneeliverse import metrics
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +170,9 @@ def get_neighbourhood(x: np.ndarray, y: np.ndarray, a: int, b: int, t: float = 0
     r2 = 1.0
     i = a - 1
     _, slope = lf.linear_fit(x[i:a+1], y[i:a+1])
+    # Seeded before the loop: with t >= 1.0 the loop body never runs, and the
+    # `else` branch below would then return an unbound name.
+    previous_res = (i, r2, slope)
 
     while r2 > t and i > b:
         # print('.')
@@ -598,7 +602,7 @@ def mcc(cm: np.ndarray) -> float:
     return n/d
 
 
-def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache:dict=None) -> float:
+def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache:dict|None=None) -> float:
     """
     Computes the global RMSE for a point reduction set.
 
@@ -628,7 +632,7 @@ def compute_global_rmse(points: np.ndarray, reduced: np.ndarray, cache:dict=None
             coef = lf.linear_fit_points(pt)
             y_hat = lf.linear_transform_points(pt, coef)
             y = pt[:,1]
-            segment_error = np.sum(np.square((y-y_hat)))
+            segment_error = np.sum(np.square(y-y_hat))
             cache[(left, right)] = segment_error
         
         segment_errors[i-1] = cache[(left, right)]
@@ -704,24 +708,24 @@ def compute_cost(points: np.ndarray, segment_errors:np.ndarray, cost:metrics.Met
             cache['tss'] = tss
         tss = cache['tss']
         rss = np.sum(segment_errors)
-        cost = 1.0 - rss if tss == 0 else 1.0 - (rss/tss)
+        value = 1.0 - rss if tss == 0 else 1.0 - (rss/tss)
         #return np.sum(np.square(y-y_hat))
     elif cost is metrics.Metrics.rmsle:
         #return np.sum(np.square((np.log(y+1) - np.log(y_hat+1))))
-        cost = math.sqrt(np.sum(segment_errors)/total)
+        value = math.sqrt(np.sum(segment_errors)/total)
     elif cost is metrics.Metrics.rmspe:
         #return np.sum(np.square((y - y_hat) / (y+eps)))
-        cost = math.sqrt(np.sum(segment_errors)/total)
+        value = math.sqrt(np.sum(segment_errors)/total)
     elif cost is metrics.Metrics.rpd:
         #return np.sum(np.abs((y - y_hat) / (np.maximum(y, y_hat)+eps)))
-        cost = np.sum(segment_errors)/total
+        value = np.sum(segment_errors)/total
     else:
         #return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
-        cost = np.sum(segment_errors)/total
+        value = np.sum(segment_errors)/total
 
-    cost = 0 if cost < 0 else cost
-
-    return cost
+    # `value`, not `cost`: the parameter of that name holds the Metrics enum
+    # selecting the formula, and reassigning it made the two meanings collide.
+    return float(max(value, 0.0))
 
 
 def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, eps: float = 1e-16) -> float:
@@ -740,7 +744,7 @@ def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, 
     if cost is metrics.Metrics.r2:
         return np.sum(np.square(y-y_hat))
     elif cost is metrics.Metrics.rmsle:
-        return np.sum(np.square((np.log(y+1) - np.log(y_hat+1))))
+        return np.sum(np.square(np.log(y+1) - np.log(y_hat+1)))
     elif cost is metrics.Metrics.rmspe:
         return np.sum(np.square((y - y_hat) / (y+eps)))
     elif cost is metrics.Metrics.rpd:
@@ -749,7 +753,7 @@ def compute_partial_cost(y:np.ndarray, y_hat:np.ndarray, cost: metrics.Metrics, 
         return np.sum(2.0 * np.abs(y_hat - y) / (np.abs(y) + np.abs(y_hat) + eps))
 
 
-def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict=None) -> float:
+def compute_global_cost(points: np.ndarray, reduced: Sequence, cost: metrics.Metrics = metrics.Metrics.rpd, cache:dict|None=None) -> float:
     """
     Compute the cost of multi-point fitting using the segment errors.
     
@@ -782,50 +786,10 @@ def compute_global_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.M
             else:
                 y_hat = lf.linear_fit_transform_points(pt)
                 y = pt[:,1]
-                segment_error = compute_partial_cost(y, y_hat, cost)
+                segment_error = compute_partial_cost(np.asarray(y), np.asarray(y_hat), cost)
                 cache[(left, right)] = segment_error
         
         segment_errors[i-1] = cache[(left, right)]
         left = right
 
     return compute_cost(points, segment_errors, cost, cache)
-
-
-def compute_global_segment_cost(points: np.ndarray, reduced: np.ndarray, cost: metrics.Metrics = metrics.Metrics.rpd) -> tuple:
-    """
-    Compute the cost of multi-point fitting using the segment errors.
-    
-    Legacy function that does not use a cache or combines the segments costs.
-    Used for unit testing.
-
-    Args:
-        points (np.ndarray): the original points
-        reduced (np.ndarray): the reduced set of points used for the fitting
-        cost (metrics.Metrics): the metric used for the cost calculation (default: metrics.Metrics.rpd)
-
-    Returns:
-        tuple: the global cost, and partial costs
-    """
-    y, y_hat = [], []
-
-    cost_segment = []
-
-    left = reduced[0]
-    for i in range(1, len(reduced)):
-        right = reduced[i]
-        pt = points[left:right+1]
-        
-        y_temp, y_hat_temp = lf.linear_fit_transform_points(pt)
-        
-        y_hat.extend(y_hat_temp)
-        y.extend(y_temp)
-
-        # compute the cost function
-        #c = compute_cost(y_temp, y_hat_temp, cost)
-        c = lf.linear_hv_residuals_points(pt) 
-        cost_segment.append(c)
-
-        left = right
-
-    # compute the cost function
-    return compute_cost(y, y_hat, cost), np.array(cost_segment)

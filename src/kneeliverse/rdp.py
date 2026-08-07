@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides a set of methods
@@ -19,15 +18,13 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 #import math
 import enum
 import logging
+from collections.abc import Callable
+
 import numpy as np
-import kneeliverse.linear_fit as lf
-import kneeliverse.metrics as metrics
-import kneeliverse.evaluation as evaluation
+
 import kneeliverse.knee_ranking as kr
-
-
-
-
+import kneeliverse.linear_fit as lf
+from kneeliverse import evaluation, metrics
 
 #import matplotlib.pyplot as plt
 
@@ -192,7 +189,7 @@ def compute_removed_points(points: np.ndarray, reduced: np.ndarray) -> np.ndarra
     return np.column_stack((first_col, second_col))
 
 
-def order_triangle(pt: np.ndarray, index:int, distance_points: callable) -> tuple:
+def order_triangle(pt: np.ndarray, index:int, distance_points: Callable) -> tuple:
     """
     Computes the triangle area of the left and right segments.
     The triangle area is a fast heuristic to estimate the how curve
@@ -220,7 +217,7 @@ def order_triangle(pt: np.ndarray, index:int, distance_points: callable) -> tupl
     return left_tri_area, right_tri_area
 
 
-def order_area(pt: np.ndarray, index:int, distance_points:callable) -> tuple:
+def order_area(pt: np.ndarray, index:int, distance_points:Callable) -> tuple:
     """
     Computes the area of the left and right segments.
     The area is an heuristic to estimate the how curve
@@ -269,7 +266,7 @@ def order_segment(pt: np.ndarray, index:int) -> tuple:
     return left_cost, right_cost
 
 
-def _rdp_fixed(points: np.ndarray, length:int, distance_points:callable, 
+def _rdp_fixed(points: np.ndarray, length:int, distance_points:Callable, 
 order:Order, stack:list, reduced:list) -> list:
     """
     Main loop of the RDP fixed version.
@@ -298,7 +295,7 @@ order:Order, stack:list, reduced:list) -> list:
         # fix issue when all distances are 0 (perfect fit)
         # changed to EPS for improve robustness
         #if d.sum() < np.finfo(float).eps:
-        if np.all((d < np.finfo(float).eps)):
+        if np.all(d < np.finfo(float).eps):
             index = int((len(d))/2)
         else:
             # See the note in rdp(): ties in perpendicular distance split at
@@ -365,22 +362,8 @@ def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.s
     return reduced, compute_removed_points(points, reduced)
 
 
-def plot_frame(points, reduced, t):
-    fig = plt.figure(figsize=(6, 6))
-    x = points[:, 0]
-    y = points[:, 1]
-    plt.plot(x, y)
-    points_reduced = points[reduced]
-    x = points_reduced[:, 0]
-    y = points_reduced[:, 1]
-    plt.plot(x, y, marker='o', markersize=3)
-    plt.savefig(f'./img/img_{t}.png', transparent = False,  facecolor = 'white')
-    print(f'{t}')
-    plt.close()
-
-
-def _grdp(points:np.ndarray, t:float, cost:metrics.Metrics, order:Order, 
-distance_points:callable, stack:list, reduced:list) -> tuple:
+def _grdp(points:np.ndarray, t:float, cost:metrics.Metrics, order:Order,
+distance_points:Callable, stack:list, reduced:list) -> tuple:
     """
     Main loop of the gRDP version.
 
@@ -405,8 +388,6 @@ distance_points:callable, stack:list, reduced:list) -> tuple:
     global_cost = evaluation.compute_global_cost(points, reduced, cost, cache)
     curved = global_cost < t if cost is metrics.Metrics.r2 else global_cost >= t
 
-    ti = 0
-
     while curved and stack:
         _, left, right = stack.pop()
         pt = points[left:right]
@@ -415,7 +396,7 @@ distance_points:callable, stack:list, reduced:list) -> tuple:
         # fix issue when all distances are 0 (perfect fit)
         # changed to EPS for improve robustness
         #if d.sum() < np.finfo(float).eps:
-        if np.all((d < np.finfo(float).eps)):
+        if np.all(d < np.finfo(float).eps):
             index = int((len(d))/2)
         else:
             # See the note in rdp(): ties in perpendicular distance split at
@@ -541,7 +522,7 @@ cost: metrics.Metrics = metrics.Metrics.smape, order:Order=Order.segment) -> tup
         return reduced, compute_removed_points(points, reduced)
     
 
-def min_point_rdp(points: np.ndarray, t:list=[0.01, 0.001, 0.0001], min_points:int=10) -> tuple:
+def min_point_rdp(points: np.ndarray, t:tuple=(0.01, 0.001, 0.0001), min_points:int=10) -> tuple:
     """
     Minimal points RDP.
 
@@ -552,17 +533,18 @@ def min_point_rdp(points: np.ndarray, t:list=[0.01, 0.001, 0.0001], min_points:i
 
     Args:
         points (np.ndarray): numpy array with the points (x, y)
-        t (float): a list of coefficient of determination thresholds (default [0.01, 0.001, 0.0001])
+        t (Sequence[float]): coefficient of determination thresholds, tried
+            from largest to smallest (default (0.01, 0.001, 0.0001))
         min_points (int): the minimal amount of points (default 10)
 
     Returns:
         tuple: the index of the reduced space, the points that were removed
-    """    
-    
-    # sort the threshold in 
-    t.sort(reverse=True)
+    """
 
-    for current_t in t:
+    # sorted(), not t.sort(): the latter reorders the caller's own list in
+    # place, and with the mutable default this function used to carry, that
+    # mutation persisted across calls.
+    for current_t in sorted(t, reverse=True):
         reduced, removed = grdp(points, t=current_t)
         if len(reduced) >= min_points:
             return reduced, removed

@@ -1,4 +1,3 @@
-# coding: utf-8
 
 '''
 The following module provides optimized methods
@@ -17,6 +16,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 
 
 import functools
+
 import numpy as np
 
 
@@ -35,11 +35,11 @@ def _ccw(a:np.ndarray, b:np.ndarray, c:np.ndarray) -> float:
     return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])
 
 
-def _dist_points(pi, pj) -> np.ndarray:
+def _dist_points(pi, pj) -> float:
     """
     Compute the distance between two points ($p_i$, $p_j$)
     """
-    return np.linalg.norm(pi - pj)
+    return float(np.linalg.norm(pi - pj))
 
 
 def _compare_points(p0, pi, pj) -> int:
@@ -50,7 +50,7 @@ def _compare_points(p0, pi, pj) -> int:
         return 1 if o > 0 else -1
 
 
-def _sort_points(points:np.ndarray) -> np.ndarray:
+def _sort_points(points:np.ndarray) -> list:
     """
     Sort the points based on the polar angle to the first point.
     

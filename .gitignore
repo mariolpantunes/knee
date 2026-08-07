@@ -133,3 +133,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Generated docs - built by .github/workflows/docs.yml, never committed
+docs_build/
+docs/
