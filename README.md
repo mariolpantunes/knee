@@ -16,8 +16,12 @@ they need under one consistent API.
 
 ## Features
 
-* **Single-knee detectors**: Discrete Curvature, DFDT, Kneedle, L-method and
-  Menger curvature, each exposed as `knee(points) -> int`.
+* **Single-knee detectors**: Discrete Curvature, DFDT, Kneedle, L-method,
+  Menger curvature and AutoElbow, each exposed as `knee(points) -> int`.
+* **Parameter-free detection** *(new in 1.2.0)*: `autoelbow` scores each point
+  by a ratio of squared distances to three fixed references and takes the
+  largest. No threshold, no sensitivity, no smoothing window - the answer is a
+  property of the curve alone, and it handles all four orientations.
 * **Multi-knee detection**: Kneedle, Fusion and the Z-method detect multiple
   knees natively; `multi_knee` generalises *any* single-knee function into a
   recursive multi-knee one, so "multi L-method" costs nothing extra.

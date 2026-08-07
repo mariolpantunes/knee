@@ -21,32 +21,19 @@ import numpy as np
 import uts.peak_detection as pd
 from uts import ema
 
-import kneeliverse.linear_fit as lf
 import kneeliverse.multi_knee as mk
+from kneeliverse import utils
+from kneeliverse.utils import Concavity, Direction
 
 logger = logging.getLogger(__name__)
 
-
-class Direction(enum.Enum):
-    """
-    Enum data type that represents the direction of a concavity.
-    """
-    Increasing = 'increasing'
-    Decreasing = 'decreasing'
-
-    def __str__(self):
-        return self.value
-
-
-class Concavity(enum.Enum):
-    """
-    Enum data type that represents the rotation of a concavity.
-    """
-    Counterclockwise = 'counter-clockwise'
-    Clockwise = 'clockwise'
-
-    def __str__(self):
-        return self.value
+# Re-exported: `Direction` and `Concavity` began life here and are used as
+# `kneedle.Direction` throughout the demos and examples, so they stay
+# importable from this module even though they now live in `utils` - other
+# detectors need the same vocabulary and should not have to import kneedle
+# to get at it.
+__all__ = ['Concavity', 'Direction', 'PeakDetection', 'differences', 'knee',
+           'knees', 'multi_knee']
 
 
 class PeakDetection(enum.Enum):
@@ -199,12 +186,9 @@ def knees(points: np.ndarray,  t: float = 1.0, sensitivity: float = 1.0, p: Peak
     Returns:
         np.ndarray: the indexes of the knee points
     """
-    _, m = lf.linear_fit_points(points)
-
-    if m > 0.0:
-        cd = Direction.Increasing
-    else:
-        cd = Direction.Decreasing
+    # Only the direction is taken: this deliberately runs BOTH concavities
+    # and unions the results, rather than committing to one.
+    cd, _ = utils.detect_orientation(points)
 
     knees_1 = np.asarray(_knees(points, t, cd, Concavity.Counterclockwise, sensitivity, p))
     knees_2 = np.asarray(_knees(points, t, cd, Concavity.Clockwise, sensitivity, p))
@@ -232,26 +216,10 @@ def knee(points: np.ndarray, t: float = 1.0) -> int|None:
     Returns:
         int: the index of the knee point
     """
-    b, m = lf.linear_fit_points(points)
-
-    if m > 0.0:
-        cd = Direction.Increasing
-    else:
-        cd = Direction.Decreasing
-
-    y = points[:, 1]
-    yhat = points[:, 0] * m + b
-
-    vote = np.sum(y - yhat)
-
-    if cd is Direction.Increasing and vote > 0:
-        cc = Concavity.Clockwise
-    elif cd is Direction.Increasing and vote <= 0:
-        cc = Concavity.Counterclockwise
-    elif cd is Direction.Decreasing and vote > 0:
-        cc = Concavity.Clockwise
-    else:
-        cc = Concavity.Counterclockwise
+    # The four-way branch this replaced set `cc` from the sign of the
+    # residual sum alone - every arm agreed on that - so it reduces exactly
+    # to `detect_orientation`, which other detectors now share.
+    cd, cc = utils.detect_orientation(points)
 
     return _knee(points, t, cd, cc)
 

@@ -30,6 +30,7 @@ As a post-processing step we implemented several algorithms:
 """
 
 from kneeliverse import (
+    autoelbow,
     clustering,
     convex_hull,
     curvature,
@@ -44,11 +45,13 @@ from kneeliverse import (
     multi_knee,
     postprocessing,
     rdp,
+    utils,
     zmethod,
 )
 
 # Re-exported so `import kneeliverse` exposes the whole surface.
 __all__ = [
+    'autoelbow',
     'clustering',
     'convex_hull',
     'curvature',
@@ -63,5 +66,6 @@ __all__ = [
     'multi_knee',
     'postprocessing',
     'rdp',
+    'utils',
     'zmethod',
 ]
