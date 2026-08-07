@@ -275,7 +275,10 @@ def filter_clusters_corners(points: np.ndarray, knees: np.ndarray, clustering: C
         current_cluster = knees[clusters == i]
         # Compute the rank for each corner point
         ranks = rank_corners_triangle(points, current_cluster)
-        idx = np.argmax(ranks)
+        # argmax_tol, like every other selection site in the library: corners
+        # of equal strength within a cluster are a genuine tie, and an exact
+        # argmax would settle it on last-bit noise. Ties go to the leftmost.
+        idx = kr.argmax_tol(ranks)
         best_knee = knees[clusters == i][idx]
         filtered_knees.append(best_knee)
     return np.array(filtered_knees)
@@ -475,23 +478,25 @@ def rank_corners_triangle(points: np.ndarray, knees: np.ndarray) -> np.ndarray:
     """
     Ranks knees based on the triangle fast heuristic.
 
+    Each knee scores the area of the triangle it forms with its immediate
+    neighbours (`triangle_area`): collinear points enclose nothing, a sharp
+    corner encloses a lot. On evenly spaced x this is exactly half the
+    absolute second difference, so it is a discrete curvature - higher is a
+    stronger corner, and the score is never negative.
+
     Args:
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
-    
+
     Returns:
-        np.ndarray: the ranks
+        np.ndarray: the ranks, all >= 0
     """
-    ranks = []
-
-    for i in range(len(knees)):
-        idx = [knees[i]-1, knees[i], knees[i]+1]
-        pt = points[idx]
-        #TODO: use the above function
-        area = 0.5*((pt[1][0]-pt[0][0])*(pt[1][1]-pt[2][1]))
-        ranks.append(area)
-
-    return np.array(ranks)
+    # This used to inline 0.5*(x1-x0)*(y1-y2) with a `TODO: use the above
+    # function` beside it. That is not the triangle's area: it multiplies the
+    # left x-gap by the RIGHT y-drop, so it measures a one-sided step rather
+    # than how much the curve bends, and it is signed - a knee sitting in a
+    # rising run scored negative and could never win its cluster.
+    return np.array([triangle_area(points[[k-1, k, k+1]]) for k in knees])
 
 
 def rank_corners(points: np.ndarray, knees: np.ndarray) -> np.ndarray:

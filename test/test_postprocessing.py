@@ -114,9 +114,31 @@ class TestCornerRanking(unittest.TestCase):
                 self.assertTrue(np.all(scores >= 0))
 
     def test_triangle_ranking_prefers_the_real_corner(self):
-        # Only knee 7 sits on the bend; the other two are on straight runs.
+        # The curve bends at 7; knees 3 and 12 sit mid-run, where the three
+        # points are collinear and enclose no area at all. Under the formula
+        # this function used to inline - 0.5*(x1-x0)*(y1-y2), the left x-gap
+        # times the RIGHT y-drop - knee 3 won instead, because a one-sided
+        # step is not a measure of bending.
         scores = pp.rank_corners_triangle(self.points, np.array([3, 7, 12]))
-        self.assertEqual(int(np.argmax(scores)), 0)  # index 3 is closest to the bend start
+        self.assertEqual(int(np.argmax(scores)), 1)
+        self.assertAlmostEqual(scores[0], 0.0)
+        self.assertAlmostEqual(scores[2], 0.0)
+        self.assertGreater(scores[1], 0.0)
+
+    def test_triangle_ranking_is_never_negative(self):
+        # The old formula was signed, so a knee in a rising run scored below
+        # zero and could never win its cluster however sharp it was. On
+        # usr0.csv that happened to 1 of 9 real knees.
+        rising = np.concatenate([np.linspace(0.3, 1.0, 8), np.full(12, 1.0)])
+        points = np.column_stack((np.arange(len(rising), dtype=float), rising))
+        scores = pp.rank_corners_triangle(points, np.array([3, 7, 12]))
+        self.assertTrue(np.all(scores >= 0.0))
+
+    def test_triangle_ranking_agrees_with_triangle_area(self):
+        # It delegates now, rather than inlining a second, different formula.
+        knees = np.array([3, 7, 12])
+        expected = [pp.triangle_area(self.points[[k - 1, k, k + 1]]) for k in knees]
+        np.testing.assert_allclose(pp.rank_corners_triangle(self.points, knees), expected)
 
 
 class TestKneeFilters(unittest.TestCase):
