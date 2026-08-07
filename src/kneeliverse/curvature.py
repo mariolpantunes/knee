@@ -18,6 +18,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 import logging
 import numpy as np
 import uts.gradient as grad
+import kneeliverse.knee_ranking as kr
 import kneeliverse.multi_knee as mk
 
 
@@ -46,8 +47,14 @@ def knee(points: np.ndarray) -> int:
 
     curvature = np.absolute(gradient2) / ((1.0 + gradient1**2.0)**(1.5))
     # prevents the selection of the first point
-    #idx = np.argmax(curvature[0:-1]) 
-    idx = np.argmax(curvature[1:-1]) + 1
+    #idx = np.argmax(curvature[0:-1])
+    #
+    # argmax_tol, not np.argmax: curvature comes out of two finite-difference
+    # gradients, so a curve with genuinely equal curvature at several points -
+    # a symmetric curve, or a straight run - produces values that differ only
+    # in their last bits. np.argmax would let that noise pick the knee. Ties
+    # now resolve to the leftmost point, the conservative choice.
+    idx = kr.argmax_tol(curvature[1:-1]) + 1
     return idx
 
 

@@ -26,6 +26,26 @@ import kneeliverse.evaluation as ev
 logger = logging.getLogger(__name__)
 
 
+EPS_RANK: float = 1e-9
+"""Relative tolerance below which two computed values count as equal.
+
+Knee selection repeatedly takes a DISCRETE decision - a rank, an argmax -
+on CONTINUOUS values. When two of those values are mathematically equal but
+not bit-equal, an exact comparison turns last-bit arithmetic into a real
+decision, and the answer starts depending on the platform's libm rather than
+on the curve. This constant is the library's single statement of how
+different two values must be before the difference is allowed to matter.
+
+The value is relative because cost curves are normalised to [0, 1], so
+absolute thresholds do not transfer between curves. 1e-9 sits roughly six
+orders of magnitude above the noise actually observed (chained polyfit/OLS
+residuals measure ~1.5e-15 on a linear decline, against a float64 epsilon of
+2.2e-16) and roughly six below any difference that carries meaning on a
+normalised curve. Callers working on differently-scaled data can override it
+wherever it appears as a keyword.
+"""
+
+
 class ClusterRanking(enum.Enum):
     """
     Enum data type that represents the direction of the ranking within a cluster.
@@ -151,7 +171,7 @@ def rank_min(array: np.ndarray) -> np.ndarray:
     return np.searchsorted(np.sort(array), array, side='left')
 
 
-def rank_min_tol(array: np.ndarray, rtol: float = 1e-9, atol: float = 0.0) -> np.ndarray:
+def rank_min_tol(array: np.ndarray, rtol: float = EPS_RANK, atol: float = 0.0) -> np.ndarray:
     """
     Like `rank_min`, but values that are equal to within a RELATIVE
     tolerance share a rank, instead of only bit-identical ones.
@@ -176,7 +196,7 @@ def rank_min_tol(array: np.ndarray, rtol: float = 1e-9, atol: float = 0.0) -> np
 
     Args:
         array (np.ndarray): array with values
-        rtol (float): relative tolerance for grouping (default 1e-9)
+        rtol (float): relative tolerance for grouping (default `EPS_RANK`)
         atol (float): absolute tolerance, added to the relative term - use
             for arrays whose values legitimately reach 0.0 (default 0.0)
 
@@ -206,7 +226,51 @@ def rank_min_tol(array: np.ndarray, rtol: float = 1e-9, atol: float = 0.0) -> np
     return ranks
 
 
-def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.ndarray:
+def argmax_tol(values: np.ndarray, keys: np.ndarray | None = None,
+               rtol: float = EPS_RANK, atol: float = 0.0) -> int:
+    """
+    Index of the largest value, with values within tolerance of the largest
+    treated as tied and the tie resolved by an explicit key.
+
+    `np.argmax` returns the first occurrence of the maximum, which is only
+    deterministic when the tied values are bit-identical. Values that are
+    mathematically equal but differ in their last bits are not tied as far as
+    `np.argmax` is concerned, so it silently returns whichever one the
+    arithmetic happened to make larger - a choice that can differ between
+    platforms, libm versions and compilers for the same input. This is the
+    consumption-side counterpart to `rank_min_tol`: use it wherever a score
+    array is turned into a single winner.
+
+    The default tie-break is the lowest index, which for a curve indexed by
+    knee position means the leftmost - the conservative choice, and the one
+    that keeps a knee-selection pipeline from drifting to larger knees on
+    noise alone.
+
+    Args:
+        values (np.ndarray): array to maximise over
+        keys (np.ndarray): tie-break key, minimised among the tied values
+            (default None, meaning the array index)
+        rtol (float): relative tolerance for the tie (default `EPS_RANK`)
+        atol (float): absolute tolerance, added to the relative term - use
+            when the values legitimately reach 0.0 (default 0.0)
+
+    Returns:
+        int: index into `values` of the winner
+    """
+    values = np.asarray(values, dtype=float)
+    if values.size == 0:
+        raise ValueError('argmax_tol of an empty array')
+
+    best = np.max(values)
+    tied = np.flatnonzero(values >= best - (rtol * abs(best) + atol))
+
+    if keys is None:
+        return int(tied[0])
+    return int(tied[np.argmin(np.asarray(keys)[tied])])
+
+
+def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8,
+                  rtol: float = EPS_RANK) -> np.ndarray:
     """
     Computes the rank of a set of knees in a curve.
 
@@ -217,6 +281,8 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.n
         points (np.ndarray): numpy array with the points (x, y)
         knees (np.ndarray): knees indexes
         t (float): the R2 threshold for the neighbourhood (default 0.8)
+        rtol (float): relative tolerance below which two neighbourhood slopes
+            count as equally steep and share a rank (default `EPS_RANK`)
 
     Returns:
         np.ndarray: an array with the ranks of each value
@@ -238,12 +304,21 @@ def slope_ranking(points: np.ndarray, knees: np.ndarray, t: float = 0.8) -> np.n
             rankings.append(math.fabs(slope))
 
         rankings = np.array(rankings)
-        rankings = rank(rankings)
+        # rank_min_tol, not rank: these are fitted slopes, and knees whose
+        # neighbourhoods decline at the same rate produce values that agree
+        # mathematically but not bit-for-bit. `rank` splits such a group into
+        # consecutive integers ordered by last-bit noise - on a pure linear
+        # decline, where every neighbourhood slope is identical by
+        # construction, it returned [0, 0.667, 0.333, 1] and handed the win
+        # to an arbitrary knee. Tied slopes must share a rank so the caller's
+        # own tie-break decides.
+        rankings = rank_min_tol(rankings, rtol=rtol)
         # Min Max normalization
-        if len(rankings) > 1:
+        if len(rankings) > 1 and np.ptp(rankings) > 0:
             rankings = (rankings - np.min(rankings))/np.ptp(rankings)
         else:
-            rankings = np.array([1.0])
+            # Every knee equally ranked - normalising would divide by zero.
+            rankings = np.ones(len(rankings))
 
     return rankings
 

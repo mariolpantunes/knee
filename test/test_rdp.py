@@ -136,5 +136,44 @@ class TestRDP(unittest.TestCase):
         np.testing.assert_array_equal(removed, desired)
 
 
+class TestRDPDeterminism(unittest.TestCase):
+    """RDP splits at the point furthest from the chord, and that distance is
+    computed, not given. On a symmetric curve two points are equidistant to
+    the last bit, and an exact `np.argmax` then picks between them on the
+    arithmetic - which was measured on a real trace: two candidates agreeing
+    to 13 significant figures (relative gap 4.1e-14) were separated by 2.3e-17
+    and produced different reductions. Since RDP runs upstream of every
+    detector, that noise propagates into the final knee."""
+
+    @staticmethod
+    def _symmetric_curve():
+        # Exactly symmetric about its midpoint: the two shoulder points are
+        # equidistant from the end-to-end chord by construction.
+        x = np.arange(21, dtype=float)
+        y = np.concatenate([np.linspace(1.0, 0.2, 10), [0.15],
+                            np.linspace(0.2, 1.0, 10)])
+        return np.column_stack((x, y))
+
+    def test_split_is_invariant_to_last_bit_noise(self):
+        base = self._symmetric_curve()
+        rng = np.random.default_rng(0)
+        shapes = set()
+        for _ in range(100):
+            pts = base.copy()
+            pts[:, 1] += rng.uniform(-1e-15, 1e-15, len(pts))
+            reduced, _ = rdp.rdp(pts, t=0.01)
+            shapes.add(tuple(int(i) for i in reduced))
+        self.assertEqual(len(shapes), 1)
+
+    def test_a_genuinely_furthest_point_is_still_chosen(self):
+        # The tolerance must not blur a real corner into a tie: this curve
+        # bends hard at index 5 and nowhere else, so the reduction has to
+        # keep that point.
+        x = np.arange(11, dtype=float)
+        y = np.concatenate([np.linspace(1.0, 0.2, 6), np.full(5, 0.2)])
+        reduced, _ = rdp.rdp(np.column_stack((x, y)), t=0.001)
+        self.assertIn(5, [int(i) for i in reduced])
+
+
 if __name__ == '__main__':
     unittest.main()

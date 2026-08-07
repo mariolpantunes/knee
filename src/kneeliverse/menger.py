@@ -18,6 +18,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 import math
 import logging
 import numpy as np
+import kneeliverse.knee_ranking as kr
 import kneeliverse.multi_knee as mk
 
 
@@ -73,7 +74,11 @@ def knee(points: np.ndarray) -> int:
 
     curvature.append(0)
     curvature = np.array(curvature)
-    return np.argmax(curvature)
+    # argmax_tol, not np.argmax - see the note in curvature.knee. Menger
+    # curvature is a ratio of triangle areas, so three collinear or equally
+    # bent point-triples give values that agree mathematically and differ in
+    # their last bits; ties resolve to the leftmost point.
+    return kr.argmax_tol(curvature)
 
 
 def multi_knee(points: np.ndarray, t1: float = 0.001, t2: int = 4) -> np.ndarray:

@@ -23,6 +23,7 @@ import numpy as np
 import kneeliverse.linear_fit as lf
 import kneeliverse.metrics as metrics
 import kneeliverse.evaluation as evaluation
+import kneeliverse.knee_ranking as kr
 
 
 
@@ -156,7 +157,12 @@ def rdp(points: np.ndarray, t: float = 0.01, distance: Distance = Distance.short
 
         if curved:
             d = distance_points(pt, pt[0], pt[-1])
-            index = np.argmax(d)
+            # argmax_tol: two points equally far from the chord are a genuine
+            # tie, and perpendicular distance is a computed quantity, so an
+            # exact argmax lets last-bit noise choose the split. Splitting at
+            # the leftmost of the tied points is deterministic and keeps the
+            # simplification reproducible across platforms.
+            index = kr.argmax_tol(d)
             stack.append((left+index, left+len(pt)))
             stack.append((left, left+index+1))
         else:
@@ -295,7 +301,9 @@ order:Order, stack:list, reduced:list) -> list:
         if np.all((d < np.finfo(float).eps)):
             index = int((len(d))/2)
         else:
-            index = np.argmax(d)
+            # See the note in rdp(): ties in perpendicular distance split at
+            # the leftmost point rather than wherever the arithmetic lands.
+            index = kr.argmax_tol(d)
 
         # add the relevant point to the reduced set
         reduced.append(left+index)
@@ -410,7 +418,9 @@ distance_points:callable, stack:list, reduced:list) -> tuple:
         if np.all((d < np.finfo(float).eps)):
             index = int((len(d))/2)
         else:
-            index = np.argmax(d)
+            # See the note in rdp(): ties in perpendicular distance split at
+            # the leftmost point rather than wherever the arithmetic lands.
+            index = kr.argmax_tol(d)
         
         # add the relevant point to the reduced set and sort
         reduced.append(left+index)

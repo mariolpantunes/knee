@@ -218,11 +218,15 @@ method: kr.ClusterRanking = kr.ClusterRanking.linear) -> np.ndarray:
                 if rankings is None:
                     best_knee = None
                 else:
-                    rankings = kr.rank(rankings)
-                    #logger.info(f'Rankings {rankings}')
-                    # Min Max normalization
-                    #rankings = (rankings - np.min(rankings))/np.ptp(rankings)
-                    idx = np.argmax(rankings)
+                    # argmax_tol on the scores directly, rather than ranking
+                    # them first and taking a plain argmax. Ranking was only
+                    # ever a way of ordering the scores, and `rank` split
+                    # values that agree to within floating-point noise into
+                    # consecutive integers, so which knee won a cluster of
+                    # equally-good candidates came down to last-bit
+                    # arithmetic. Scores tied within EPS_RANK now resolve to
+                    # the leftmost knee in the cluster, deterministically.
+                    idx = kr.argmax_tol(rankings)
                     best_knee = knees[clusters == i][idx]
             else:
                 if method is kr.ClusterRanking.hull:

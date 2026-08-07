@@ -14,6 +14,8 @@ import unittest
 import numpy as np
 import kneeliverse.rdp as rdp
 import kneeliverse.postprocessing as pp
+import kneeliverse.clustering as clustering
+import kneeliverse.knee_ranking as kr
 
 
 class TestPostProcessing(unittest.TestCase):
@@ -53,6 +55,33 @@ class TestPostProcessing(unittest.TestCase):
         result = pp.add_points_even(points, points_reduced, knees, removed,  extremes=True)
         desired = np.array([0,1,2,3,10,11,12])
         np.testing.assert_array_equal(result, desired)"""
+
+
+class TestFilterClustersDeterminism(unittest.TestCase):
+    """`filter_clusters` picks one knee per cluster by ranking the members
+    and taking the best. It ranked with `rank` and then `np.argmax`, so a
+    cluster whose knees score equally had its winner decided by last-bit
+    noise rather than by the curve."""
+
+    @staticmethod
+    def _curve():
+        # A staircase: several knees per step, equally good within a step.
+        y = np.concatenate([np.linspace(1.0, 0.6, 7), np.full(4, 0.6),
+                            np.linspace(0.6, 0.25, 7), np.full(4, 0.25)])
+        return np.column_stack((np.arange(len(y), dtype=float), y))
+
+    def test_selection_is_invariant_to_last_bit_noise(self):
+        base = self._curve()
+        knees = np.array([3, 5, 6, 13, 15, 16])
+        rng = np.random.default_rng(0)
+        results = set()
+        for _ in range(100):
+            points = base.copy()
+            points[:, 1] += rng.uniform(-1e-15, 1e-15, len(points))
+            filtered = pp.filter_clusters(points, knees, clustering.average_linkage,
+                                          t=0.05, method=kr.ClusterRanking.left)
+            results.add(tuple(int(i) for i in filtered))
+        self.assertEqual(len(results), 1)
 
 
 if __name__ == '__main__':

@@ -132,6 +132,78 @@ class TestKneeRanking(unittest.TestCase):
         np.testing.assert_array_equal(ranking.rank_min_tol(np.array([5.0])), np.array([0]))
 
 
+class TestArgmaxTol(unittest.TestCase):
+    def test_exact_ties_take_the_lowest_index(self):
+        self.assertEqual(ranking.argmax_tol(np.array([0.5, 0.5, 0.5])), 0)
+
+    def test_last_bit_difference_is_still_a_tie(self):
+        # np.argmax would return 1 here; that is the whole defect.
+        values = np.array([0.5, 0.5 + 1e-16, 0.5])
+        self.assertEqual(int(np.argmax(values)), 1)
+        self.assertEqual(ranking.argmax_tol(values), 0)
+
+    def test_real_differences_are_preserved(self):
+        self.assertEqual(ranking.argmax_tol(np.array([0.5, 0.9, 0.5])), 1)
+        self.assertEqual(ranking.argmax_tol(np.array([1.0, 1.1, 1.2])), 2)
+
+    def test_matches_argmax_when_values_are_separated(self):
+        values = np.array([1.0, 5.0, 3.0])
+        self.assertEqual(ranking.argmax_tol(values), int(np.argmax(values)))
+
+    def test_keys_resolve_the_tie(self):
+        values = np.array([0.5, 0.5, 0.5])
+        self.assertEqual(ranking.argmax_tol(values, keys=np.array([9, 2, 7])), 1)
+
+    def test_works_on_negative_values(self):
+        # The tolerance scales with |best|, so a negative maximum must still
+        # tie correctly rather than widening or inverting the window.
+        self.assertEqual(ranking.argmax_tol(np.array([-2.0, -1.0, -1.0 - 1e-16])), 1)
+
+    def test_atol_covers_a_maximum_of_zero(self):
+        # Relative tolerance alone cannot tie anything to 0.0.
+        self.assertEqual(ranking.argmax_tol(np.array([0.0, -1e-18])), 0)
+        self.assertEqual(ranking.argmax_tol(np.array([-1e-18, 0.0]), atol=1e-15), 0)
+
+    def test_single_element_and_empty(self):
+        self.assertEqual(ranking.argmax_tol(np.array([3.0])), 0)
+        with self.assertRaises(ValueError):
+            ranking.argmax_tol(np.array([]))
+
+
+class TestSlopeRankingDeterminism(unittest.TestCase):
+    """`slope_ranking` ranked its neighbourhood slopes with `rank`, which
+    splits a tied group into consecutive integers ordered by whatever the
+    sort produced. On a pure linear decline - where every neighbourhood
+    slope is identical by construction - that turned last-bit noise into a
+    winner, returning [0, 0.667, 0.333, 1] and picking the rightmost knee."""
+
+    def setUp(self):
+        self.costs = np.linspace(1.0, 0.05, 30)
+        self.knees = np.array([5, 10, 15, 20])
+
+    def _points(self, costs):
+        return np.column_stack((np.arange(len(costs), dtype=float), costs))
+
+    def test_equal_slopes_share_a_rank(self):
+        scores = ranking.slope_ranking(self._points(self.costs), self.knees, t=0.8)
+        self.assertEqual(len(set(scores.tolist())), 1)
+
+    def test_choice_is_invariant_to_last_bit_noise(self):
+        rng = np.random.default_rng(0)
+        winners = set()
+        for _ in range(100):
+            jittered = self.costs + rng.uniform(-1e-15, 1e-15, self.costs.size)
+            scores = ranking.slope_ranking(self._points(jittered), self.knees, t=0.8)
+            winners.add(int(self.knees[ranking.argmax_tol(scores)]))
+        self.assertEqual(winners, {5})
+
+    def test_a_genuinely_steeper_knee_still_wins(self):
+        # The tolerance must not flatten real differences into one group.
+        costs = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(22, 0.3)])
+        scores = ranking.slope_ranking(self._points(costs), np.array([3, 12, 20]), t=0.8)
+        self.assertGreater(len(set(scores.tolist())), 1)
+
+
 class TestRightFlatnessRanking(unittest.TestCase):
     def test_prefers_earliest_knee_whose_remainder_is_flat(self):
         # A sharp early knee at k=3, then an exactly flat tail from k=3 onward.
