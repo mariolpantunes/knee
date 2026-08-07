@@ -454,14 +454,21 @@ def triangle_area(p: np.ndarray) -> float:
     """
     Given 3 points computes the triangle area.
 
+    Uses the shoelace formula. The result is the absolute area, so it does not
+    depend on the winding order of the three points - listing them clockwise
+    or counter-clockwise gives the same answer, and collinear points give 0.
+
     Args:
         p (np.ndarray): numpy array with 3 2D points (x, y)
-    
+
     Returns:
-        float: triange area
+        float: triangle area, always >= 0
     """
-    area = 0.5 * (p[0][0]*(p[1][1]-p[2][1]) + p[1][0]*(p[2][1]-p[0][1]) + p[2][0]*(p[0][1]-p[1][1]))
-    return area
+    # The abs is what makes this an area rather than a signed determinant.
+    # Without it the value flips sign with the winding order, so a caller
+    # ranking corners by "area" would rank half of them below zero.
+    signed = 0.5 * (p[0][0]*(p[1][1]-p[2][1]) + p[1][0]*(p[2][1]-p[0][1]) + p[2][0]*(p[0][1]-p[1][1]))
+    return float(abs(signed))
 
 
 def rank_corners_triangle(points: np.ndarray, knees: np.ndarray) -> np.ndarray:

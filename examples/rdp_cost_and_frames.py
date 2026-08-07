@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# coding: utf-8
 
 """
 Measure how well a simplified curve still represents the original, and
@@ -28,9 +27,7 @@ import logging
 
 import numpy as np
 
-import kneeliverse.evaluation as evaluation
-import kneeliverse.metrics as metrics
-import kneeliverse.rdp as rdp
+from kneeliverse import evaluation, metrics, rdp
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)

@@ -68,17 +68,28 @@ class TestTriangleArea(unittest.TestCase):
         p = np.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]])
         self.assertAlmostEqual(pp.triangle_area(p), 0.0)
 
-    def test_the_value_is_signed_not_absolute(self):
-        # Documents current behaviour, which does NOT match the docstring:
-        # the function is named/documented as an area but omits the abs, so it
-        # returns the signed shoelace value and flips sign with the winding.
-        # An area cannot be negative. Nothing calls it today - not even
-        # rank_corners_triangle - so no behaviour depends on the choice, but
-        # it is a real mismatch and this test will fail loudly if it is fixed.
+    def test_an_area_is_never_negative(self):
+        # The shoelace determinant flips sign with the winding order; an area
+        # cannot. This used to return -2.0 for one ordering and 2.0 for the
+        # other, so a caller ranking corners by "area" would have ranked half
+        # of them below zero.
         p = np.array([[0.0, 0.0], [1.0, 2.0], [2.0, 0.0]])
-        self.assertAlmostEqual(pp.triangle_area(p), -2.0)
-        self.assertAlmostEqual(pp.triangle_area(p[::-1]), 2.0)
-        self.assertAlmostEqual(abs(pp.triangle_area(p)), abs(pp.triangle_area(p[::-1])))
+        self.assertAlmostEqual(pp.triangle_area(p), 2.0)
+        self.assertGreaterEqual(pp.triangle_area(p), 0.0)
+
+    def test_winding_order_does_not_change_the_area(self):
+        p = np.array([[0.0, 0.0], [1.0, 2.0], [2.0, 0.0]])
+        self.assertAlmostEqual(pp.triangle_area(p), pp.triangle_area(p[::-1]))
+
+    def test_area_scales_with_the_height_of_the_corner(self):
+        # Same base, taller apex -> larger area, monotonically.
+        areas = [pp.triangle_area(np.array([[0.0, 0.0], [1.0, h], [2.0, 0.0]]))
+                 for h in (0.5, 1.0, 2.0, 4.0)]
+        self.assertEqual(areas, sorted(areas))
+
+    def test_it_returns_a_plain_float(self):
+        p = np.array([[0.0, 1.0], [5.0, 0.5], [10.0, 0.3]])
+        self.assertIsInstance(pp.triangle_area(p), float)
 
 
 class TestCornerRanking(unittest.TestCase):
