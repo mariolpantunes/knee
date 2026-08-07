@@ -32,7 +32,10 @@ jobs:
           # release that enables new rules by default fails a PR that changed
           # none of the code it flags -- which is what happened at ruff 0.16.
           pip install ruff==0.16.1 basedpyright==1.39.8 vulture==2.16
-          pip install .
+          # .[plot] rather than .: matplotlib is optional at runtime, but
+          # basedpyright still has to resolve rdp.plot_frame's lazy import, and
+          # without it the plot_frame tests skip instead of running.
+          pip install .[plot]
 
       - name: Lint with Ruff
         run: ruff check src
