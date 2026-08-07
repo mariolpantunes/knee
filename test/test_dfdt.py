@@ -41,5 +41,29 @@ class TestDFDT_Method(unittest.TestCase):
         np.testing.assert_array_equal(result, desired)
 
 
+class TestGetKneeGradient(unittest.TestCase):
+    """`dfdt.knee` is a thin wrapper over this: it takes the gradient of the
+    curve and returns where the rate of change settles."""
+
+    def test_it_finds_the_corner(self):
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.assertEqual(dfdt.get_knee_gradient(np.gradient(y)), 7)
+
+    def test_it_returns_a_plain_int(self):
+        # It used to hand back a numpy integer, which is not an `int` as far
+        # as a type checker (or a dict key) is concerned.
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.assertIsInstance(dfdt.get_knee_gradient(np.gradient(y)), int)
+
+    def test_the_index_is_inside_the_curve(self):
+        for corner in (4, 9, 14):
+            with self.subTest(corner=corner):
+                y = np.concatenate([np.linspace(1.0, 0.3, corner + 1),
+                                    np.full(25 - corner - 1, 0.3)])
+                idx = dfdt.get_knee_gradient(np.gradient(y))
+                self.assertGreaterEqual(idx, 0)
+                self.assertLess(idx, len(y))
+
+
 if __name__ == '__main__':
     unittest.main()

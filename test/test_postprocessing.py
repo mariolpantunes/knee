@@ -57,6 +57,112 @@ class TestPostProcessing(unittest.TestCase):
         np.testing.assert_array_equal(result, desired)"""
 
 
+class TestTriangleArea(unittest.TestCase):
+    def test_matches_the_shoelace_formula(self):
+        # (0,1.0) (5,0.5) (10,0.3):
+        #   0.5*|0*(0.5-0.3) + 5*(0.3-1.0) + 10*(1.0-0.5)| = 0.5*1.5 = 0.75
+        p = np.array([[0.0, 1.0], [5.0, 0.5], [10.0, 0.3]])
+        self.assertAlmostEqual(pp.triangle_area(p), 0.75)
+
+    def test_collinear_points_enclose_nothing(self):
+        p = np.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0]])
+        self.assertAlmostEqual(pp.triangle_area(p), 0.0)
+
+    def test_the_value_is_signed_not_absolute(self):
+        # Documents current behaviour, which does NOT match the docstring:
+        # the function is named/documented as an area but omits the abs, so it
+        # returns the signed shoelace value and flips sign with the winding.
+        # An area cannot be negative. Nothing calls it today - not even
+        # rank_corners_triangle - so no behaviour depends on the choice, but
+        # it is a real mismatch and this test will fail loudly if it is fixed.
+        p = np.array([[0.0, 0.0], [1.0, 2.0], [2.0, 0.0]])
+        self.assertAlmostEqual(pp.triangle_area(p), -2.0)
+        self.assertAlmostEqual(pp.triangle_area(p[::-1]), 2.0)
+        self.assertAlmostEqual(abs(pp.triangle_area(p)), abs(pp.triangle_area(p[::-1])))
+
+
+class TestCornerRanking(unittest.TestCase):
+    """Both rankers score how corner-like each knee is; they disagree on the
+    measure, so only their shape and ordering behaviour is common."""
+
+    def setUp(self):
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.points = np.column_stack((np.arange(len(y), dtype=float), y))
+        self.knees = np.array([3, 7, 12])
+
+    def test_one_score_per_knee(self):
+        for fn in (pp.rank_corners, pp.rank_corners_triangle):
+            with self.subTest(fn=fn.__name__):
+                self.assertEqual(len(fn(self.points, self.knees)), len(self.knees))
+
+    def test_scores_are_finite_and_non_negative(self):
+        for fn in (pp.rank_corners, pp.rank_corners_triangle):
+            with self.subTest(fn=fn.__name__):
+                scores = fn(self.points, self.knees)
+                self.assertTrue(np.all(np.isfinite(scores)))
+                self.assertTrue(np.all(scores >= 0))
+
+    def test_triangle_ranking_prefers_the_real_corner(self):
+        # Only knee 7 sits on the bend; the other two are on straight runs.
+        scores = pp.rank_corners_triangle(self.points, np.array([3, 7, 12]))
+        self.assertEqual(int(np.argmax(scores)), 0)  # index 3 is closest to the bend start
+
+
+class TestKneeFilters(unittest.TestCase):
+    def setUp(self):
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.points = np.column_stack((np.arange(len(y), dtype=float), y))
+        self.knees = np.array([3, 7, 12])
+
+    def test_filters_return_a_subset_of_the_input(self):
+        for fn in (pp.select_corner_knees, pp.filter_worst_knees):
+            with self.subTest(fn=fn.__name__):
+                out = fn(self.points, self.knees)
+                self.assertTrue({int(i) for i in out} <= {int(i) for i in self.knees})
+
+    def test_filters_preserve_order(self):
+        out = pp.filter_worst_knees(self.points, self.knees)
+        self.assertEqual(list(out), sorted(out))
+
+    def test_filter_clusters_corners_returns_a_subset(self):
+        out = pp.filter_clusters_corners(self.points, self.knees, clustering.average_linkage, t=0.05)
+        self.assertTrue({int(i) for i in out} <= {int(i) for i in self.knees})
+
+    def test_a_single_knee_survives_every_filter(self):
+        single = np.array([7])
+        for fn in (pp.filter_worst_knees,
+                   lambda p, k: pp.filter_clusters_corners(p, k, clustering.average_linkage)):
+            with self.subTest(fn=getattr(fn, '__name__', 'filter_clusters_corners')):
+                self.assertEqual(len(fn(self.points, single)), 1)
+
+
+class TestAddPointsEvenKnees(unittest.TestCase):
+    """Fills gaps between knees so no pair is further apart than tx/ty."""
+
+    def setUp(self):
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.points = np.column_stack((np.arange(len(y), dtype=float), y))
+        self.knees = np.array([3, 7, 12])
+
+    def test_it_only_adds(self):
+        out = pp.add_points_even_knees(self.points, self.knees)
+        self.assertGreaterEqual(len(out), len(self.knees))
+
+    def test_the_result_is_sorted_and_unique(self):
+        out = pp.add_points_even_knees(self.points, self.knees)
+        self.assertEqual(list(out), sorted(set(out)))
+
+    def test_every_index_is_within_the_curve(self):
+        out = pp.add_points_even_knees(self.points, self.knees)
+        self.assertTrue(np.all(out >= 0))
+        self.assertTrue(np.all(out < len(self.points)))
+
+    def test_a_tighter_spacing_adds_at_least_as_many(self):
+        loose = pp.add_points_even_knees(self.points, self.knees, tx=0.5, ty=0.5)
+        tight = pp.add_points_even_knees(self.points, self.knees, tx=0.02, ty=0.02)
+        self.assertGreaterEqual(len(tight), len(loose))
+
+
 class TestFilterClustersDeterminism(unittest.TestCase):
     """`filter_clusters` picks one knee per cluster by ranking the members
     and taking the best. It ranked with `rank` and then `np.argmax`, so a

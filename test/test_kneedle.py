@@ -102,5 +102,33 @@ class TestKneedle(unittest.TestCase):
         self.assertEqual(result, desired)
 
 
+class TestDifferences(unittest.TestCase):
+    """The difference curve Kneedle detects peaks on: it rotates the
+    normalised curve so the knee becomes a maximum."""
+
+    def setUp(self):
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        y = (y - y.min()) / (y.max() - y.min())
+        x = np.arange(len(y), dtype=float)
+        self.points = np.column_stack(((x - x.min()) / (x.max() - x.min()), y))
+
+    def test_it_returns_one_pair_per_point(self):
+        d = kneedle.differences(self.points, kneedle.Direction.Decreasing,
+                                kneedle.Concavity.Counterclockwise)
+        self.assertEqual(d.shape, self.points.shape)
+
+    def test_the_x_column_is_preserved(self):
+        d = kneedle.differences(self.points, kneedle.Direction.Decreasing,
+                                kneedle.Concavity.Counterclockwise)
+        np.testing.assert_allclose(d[:, 0], self.points[:, 0])
+
+    def test_every_direction_and_concavity_is_accepted(self):
+        for cd in kneedle.Direction:
+            for cc in kneedle.Concavity:
+                with self.subTest(direction=cd.value, concavity=cc.value):
+                    d = kneedle.differences(self.points, cd, cc)
+                    self.assertTrue(np.all(np.isfinite(d)))
+
+
 if __name__ == '__main__':
     unittest.main()

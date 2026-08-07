@@ -88,5 +88,21 @@ class TestMetrics(unittest.TestCase):
         self.assertAlmostEqual(result, desired, 2)
 
 
+class TestResiduals(unittest.TestCase):
+    def test_an_exact_match_has_no_residual(self):
+        y = np.array([1.0, 2.0, 3.0])
+        self.assertAlmostEqual(metrics.residuals(y, y), 0.0)
+
+    def test_it_is_the_sum_of_squares(self):
+        y = np.array([1.0, 2.0, 3.0])
+        y_hat = np.array([1.5, 2.0, 2.0])          # errors 0.5, 0, 1
+        self.assertAlmostEqual(metrics.residuals(y, y_hat), 0.25 + 0.0 + 1.0)
+
+    def test_it_is_symmetric(self):
+        y = np.array([1.0, 2.0, 3.0])
+        y_hat = np.array([1.5, 2.0, 2.0])
+        self.assertAlmostEqual(metrics.residuals(y, y_hat), metrics.residuals(y_hat, y))
+
+
 if __name__ == '__main__':
     unittest.main()

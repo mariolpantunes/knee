@@ -74,5 +74,45 @@ class TestL_Method(unittest.TestCase):
         self.assertEqual(result, desired)
 
 
+class TestComputeError(unittest.TestCase):
+    """The quantity L-method minimises: the length-weighted fitting error of
+    the two lines meeting at `index`.
+
+    Note the 4th argument is `length` (the x-span), not the cost enum -
+    passing the enum positionally is an easy and silent mistake.
+    """
+
+    def setUp(self):
+        self.x = np.arange(20, dtype=float)
+        self.y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.length = self.x[-1] - self.x[0]
+
+    def test_it_returns_the_error_and_both_fits(self):
+        error, left, right = lmethod.compute_error(self.x, self.y, 7, self.length)
+        self.assertTrue(np.isfinite(error))
+        self.assertEqual(len(left), 2)
+        self.assertEqual(len(right), 2)
+
+    def test_the_corner_has_the_lowest_error(self):
+        # The curve bends at 7, so splitting there fits both sides best.
+        errors = {i: lmethod.compute_error(self.x, self.y, i, self.length)[0]
+                  for i in range(2, len(self.x) - 2)}
+        self.assertEqual(min(errors, key=lambda k: errors[k]), 7)
+
+    def test_both_fit_modes_agree_on_the_corner(self):
+        for fit in lmethod.Fit:
+            with self.subTest(fit=fit.value):
+                errors = {i: lmethod.compute_error(self.x, self.y, i, self.length, fit)[0]
+                          for i in range(2, len(self.x) - 2)}
+                self.assertEqual(min(errors, key=lambda k: errors[k]), 7)
+
+    def test_both_cost_modes_are_accepted(self):
+        for cost in lmethod.Cost:
+            with self.subTest(cost=cost.value):
+                error, _, _ = lmethod.compute_error(self.x, self.y, 7, self.length,
+                                                    lmethod.Fit.point_fit, cost)
+                self.assertTrue(np.isfinite(error))
+
+
 if __name__ == '__main__':
     unittest.main()

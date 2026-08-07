@@ -15,7 +15,8 @@ import unittest
 
 import numpy as np
 
-from kneeliverse import rdp
+from kneeliverse import linear_fit as lf
+from kneeliverse import metrics, rdp
 
 
 class TestRDP(unittest.TestCase):
@@ -215,6 +216,102 @@ class TestGlobalRDPIsMoreAggressive(unittest.TestCase):
                 local, _ = rdp.rdp(points, t=t)
                 glob, _ = rdp.grdp(points, t=t)
                 self.assertLess(len(glob), len(local))
+
+
+class TestSplitOrdering(unittest.TestCase):
+    """`grdp` explores the worst segment first, and these three heuristics are
+    how it decides which that is. Each returns (left_cost, right_cost) for a
+    split at `index`."""
+
+    def setUp(self):
+        # Bends at 7, dead flat after: splitting there must cost nothing on
+        # the right and something on the left.
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.points = np.column_stack((np.arange(len(y), dtype=float), y))
+        self.orderings = {
+            'segment': lambda i: rdp.order_segment(self.points, i),
+            'triangle': lambda i: rdp.order_triangle(self.points, i, lf.shortest_distance_points),
+            'area': lambda i: rdp.order_area(self.points, i, lf.shortest_distance_points),
+        }
+
+    def test_a_flat_remainder_costs_nothing(self):
+        for name, fn in self.orderings.items():
+            with self.subTest(order=name):
+                _, right = fn(8)
+                self.assertAlmostEqual(right, 0.0)
+
+    def test_the_bent_side_costs_more_than_the_flat_side(self):
+        for name, fn in self.orderings.items():
+            with self.subTest(order=name):
+                left, right = fn(8)
+                self.assertGreater(left, right)
+
+    def test_splitting_at_the_corner_beats_splitting_in_the_tail(self):
+        # A split at the corner leaves two well-fitted halves; one deep in the
+        # tail leaves the whole bend on the left.
+        for name, fn in self.orderings.items():
+            with self.subTest(order=name):
+                self.assertLess(sum(fn(7)), sum(fn(15)))
+
+
+class TestComputeCostCoef(unittest.TestCase):
+    def setUp(self):
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.points = np.column_stack((np.arange(len(y), dtype=float), y))
+
+    def test_an_exact_fit_costs_nothing(self):
+        x = np.arange(5, dtype=float)
+        straight = np.column_stack((x, 2.0 * x + 1.0))
+        for metric in (metrics.Metrics.smape, metrics.Metrics.rpd,
+                       metrics.Metrics.rmspe, metrics.Metrics.rmsle):
+            with self.subTest(metric=metric.value):
+                self.assertAlmostEqual(rdp.compute_cost_coef(straight, (1.0, 2.0), metric), 0.0)
+
+    def test_r2_scores_an_exact_fit_as_one(self):
+        x = np.arange(5, dtype=float)
+        straight = np.column_stack((x, 2.0 * x + 1.0))
+        self.assertAlmostEqual(
+            rdp.compute_cost_coef(straight, (1.0, 2.0), metrics.Metrics.r2), 1.0)
+
+    def test_every_metric_is_dispatchable(self):
+        coef = lf.linear_fit_points(self.points)
+        for metric in metrics.Metrics:
+            with self.subTest(metric=metric.value):
+                self.assertTrue(np.isfinite(rdp.compute_cost_coef(self.points, coef, metric)))
+
+
+class TestMinPointRDP(unittest.TestCase):
+    """Tries successively tighter thresholds and returns as soon as one keeps
+    at least `min_points`, falling back to the fixed-length version."""
+
+    def setUp(self):
+        y = np.concatenate([np.linspace(1.0, 0.3, 8), np.full(12, 0.3)])
+        self.points = np.column_stack((np.arange(len(y), dtype=float), y))
+
+    def test_it_keeps_at_least_the_requested_points(self):
+        for min_points in (3, 5, 8):
+            with self.subTest(min_points=min_points):
+                reduced, _ = rdp.min_point_rdp(self.points, min_points=min_points)
+                self.assertGreaterEqual(len(reduced), min_points)
+
+    def test_it_keeps_the_endpoints(self):
+        reduced, _ = rdp.min_point_rdp(self.points, min_points=5)
+        self.assertEqual(int(reduced[0]), 0)
+        self.assertEqual(int(reduced[-1]), len(self.points) - 1)
+
+    def test_it_does_not_reorder_the_callers_thresholds(self):
+        # Regression: this used to call t.sort(reverse=True), which reordered
+        # the caller's own list in place - and with the mutable default it
+        # once carried, that mutation persisted between calls.
+        thresholds = [0.0001, 0.01, 0.001]
+        before = list(thresholds)
+        rdp.min_point_rdp(self.points, t=thresholds, min_points=5)
+        self.assertEqual(thresholds, before)
+
+    def test_thresholds_are_tried_largest_first_regardless_of_order(self):
+        ascending, _ = rdp.min_point_rdp(self.points, t=[0.0001, 0.001, 0.01], min_points=5)
+        descending, _ = rdp.min_point_rdp(self.points, t=[0.01, 0.001, 0.0001], min_points=5)
+        np.testing.assert_array_equal(ascending, descending)
 
 
 class TestPlotFrame(unittest.TestCase):

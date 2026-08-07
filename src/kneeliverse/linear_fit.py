@@ -575,4 +575,8 @@ def perpendicular_distance_points(pt: np.ndarray, start: np.ndarray, end: np.nda
     Returns:
         np.ndarray: the perpendicular distances
     """
-    return np.fabs(np.cross(end-start, pt-start)/np.linalg.norm(end-start))
+    # cross2d, not np.cross: NumPy 2.0 deprecated np.cross on 2-D vectors
+    # ("Arrays of 2-dimensional vectors are deprecated") and will remove it,
+    # which would break this on the 3.14 leg of CI. cross2d is the 2-D
+    # determinant this needs and was already in this module for the purpose.
+    return np.fabs(cross2d(end-start, pt-start)/np.linalg.norm(end-start))
