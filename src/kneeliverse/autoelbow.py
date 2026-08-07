@@ -32,30 +32,6 @@ from kneeliverse.utils import Concavity, Direction
 logger = logging.getLogger(__name__)
 
 
-def normalize(points: np.ndarray) -> np.ndarray:
-    """
-    Rescale both axes of a curve onto [0, 1].
-
-    AutoElbow compares distances measured along x with distances measured
-    along y, so the two have to share a scale before any of it means
-    anything. A degenerate axis (every value identical) is mapped to zeros
-    rather than dividing by its zero range.
-
-    Args:
-        points (np.ndarray): numpy array with the points (x, y)
-
-    Returns:
-        np.ndarray: the points, each axis rescaled to [0, 1]
-    """
-    points = np.asarray(points, dtype=float)
-    out = np.empty_like(points)
-    for axis in (0, 1):
-        column = points[:, axis]
-        span = column.max() - column.min()
-        out[:, axis] = np.zeros_like(column) if span == 0 else (column - column.min()) / span
-    return out
-
-
 def enforce_monotonicity(y: np.ndarray, decreasing: bool) -> np.ndarray:
     """
     Smooth away the wobbles that run against the curve's overall trend.
@@ -121,7 +97,7 @@ def score(points: np.ndarray) -> np.ndarray:
     """
     direction, concavity = utils.detect_orientation(points)
 
-    normalized = normalize(points)
+    normalized = utils.normalize(points)
     x = normalized[:, 0]
     # A left elbow and a right knee both fall; the other two rise.
     falling = ((concavity is Concavity.Counterclockwise) ==

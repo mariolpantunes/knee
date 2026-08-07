@@ -10,6 +10,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
 import unittest
+import warnings
 
 import numpy as np
 
@@ -36,6 +37,88 @@ class TestOrientationVocabulary(unittest.TestCase):
     def test_members_stringify_to_their_value(self):
         self.assertEqual(str(utils.Direction.Increasing), 'increasing')
         self.assertEqual(str(utils.Concavity.Clockwise), 'clockwise')
+
+
+class TestNormalize(unittest.TestCase):
+    def test_both_axes_land_on_the_unit_interval(self):
+        points = np.column_stack((np.arange(10, dtype=float) * 3.0 + 5.0,
+                                  np.linspace(100.0, 20.0, 10)))
+        out = utils.normalize(points)
+        for axis in (0, 1):
+            self.assertAlmostEqual(out[:, axis].min(), 0.0)
+            self.assertAlmostEqual(out[:, axis].max(), 1.0)
+
+    def test_it_preserves_shape_and_order(self):
+        points = np.column_stack((np.arange(10, dtype=float), np.linspace(5.0, 1.0, 10)))
+        out = utils.normalize(points)
+        self.assertEqual(out.shape, points.shape)
+        self.assertTrue(np.all(np.diff(out[:, 1]) < 0))
+
+    def test_a_degenerate_axis_becomes_zeros(self):
+        # Every y identical: the span is 0 and must not be divided by.
+        points = np.column_stack((np.arange(5, dtype=float), np.full(5, 7.0)))
+        out = utils.normalize(points)
+        np.testing.assert_allclose(out[:, 1], np.zeros(5))
+
+    def test_it_is_scale_and_offset_invariant(self):
+        points = np.column_stack((np.arange(10, dtype=float), np.linspace(1.0, 0.2, 10)))
+        shifted = points.copy()
+        shifted[:, 1] = shifted[:, 1] * 1000.0 + 42.0
+        np.testing.assert_allclose(utils.normalize(points),
+                                   utils.normalize(shifted))
+
+
+class TestNormalizeGuardsDegenerateAxes(unittest.TestCase):
+    """The reason this lives here rather than inside one detector.
+
+    `kneedle.knee` guarded a constant axis and `kneedle.knees`, a few lines
+    away in the same module, did not - so a flat curve gave a knee from one
+    and a RuntimeWarning plus NaNs from the other. One implementation, one
+    policy.
+    """
+
+    def setUp(self):
+        self.flat = np.column_stack((np.arange(20, dtype=float), np.full(20, 0.5)))
+
+    def test_a_constant_axis_maps_to_zeros(self):
+        np.testing.assert_allclose(utils.normalize(self.flat)[:, 1], np.zeros(20))
+
+    def test_it_produces_no_warning_and_no_nan(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+            out = utils.normalize(self.flat)
+        self.assertFalse(np.any(np.isnan(out)))
+
+    def test_both_kneedle_entry_points_survive_a_flat_curve(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+            kneedle.knee(self.flat)
+            kneedle.knees(self.flat)
+
+
+class TestSpan(unittest.TestCase):
+    def test_it_returns_the_extent_of_each_axis(self):
+        points = np.column_stack((np.arange(11, dtype=float), np.linspace(2.0, 7.0, 11)))
+        dx, dy = utils.span(points)
+        self.assertAlmostEqual(dx, 10.0)
+        self.assertAlmostEqual(dy, 5.0)
+
+    def test_it_is_never_negative(self):
+        # A descending curve ends below where it started, but its extent is
+        # still a magnitude.
+        points = np.column_stack((np.arange(5, dtype=float), np.linspace(9.0, 1.0, 5)))
+        dx, dy = utils.span(points)
+        self.assertGreaterEqual(dx, 0.0)
+        self.assertAlmostEqual(dy, 8.0)
+
+    def test_a_constant_axis_spans_nothing(self):
+        points = np.column_stack((np.arange(5, dtype=float), np.full(5, 3.0)))
+        self.assertAlmostEqual(utils.span(points)[1], 0.0)
+
+    def test_it_returns_plain_floats(self):
+        points = np.column_stack((np.arange(5, dtype=float), np.linspace(1.0, 2.0, 5)))
+        for value in utils.span(points):
+            self.assertIsInstance(value, float)
 
 
 class TestDetectOrientation(unittest.TestCase):

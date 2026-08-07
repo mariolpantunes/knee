@@ -94,12 +94,7 @@ def _knee(points: np.ndarray, t: float, cd: Direction, cc: Concavity) -> int|Non
     """
 
     Ds = ema.ema_linear(points, t)
-    pmin = Ds.min(axis=0)
-    pmax = Ds.max(axis=0)
-    diff = pmax - pmin
-    diff[diff == 0] = 1.0
-
-    Dn = (Ds - pmin)/diff 
+    Dn = utils.normalize(Ds)
 
     Dd = differences(Dn, cd, cc)
 
@@ -138,10 +133,9 @@ def _knees(points: np.ndarray, t: float, cd: Direction, cc: Concavity, sensitivi
         np.ndarray: the indexes of the knee points
     """
     Ds = ema.ema_linear(points, t)
-
-    pmin = Ds.min(axis=0)
-    pmax = Ds.max(axis=0)
-    Dn = (Ds - pmin)/(pmax - pmin)
+    # Shared with `_knee`, which guarded a constant axis where this did not:
+    # a flat curve used to divide by zero here and return NaNs.
+    Dn = utils.normalize(Ds)
 
     Dd = differences(Dn, cd, cc)
 

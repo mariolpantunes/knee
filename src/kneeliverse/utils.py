@@ -56,6 +56,48 @@ class Concavity(enum.Enum):
         return self.value
 
 
+def normalize(points: np.ndarray) -> np.ndarray:
+    """
+    Rescale both axes of a curve onto [0, 1].
+
+    Several methods compare a distance measured along x with one measured
+    along y, which only means something once the two share a scale.
+
+    An axis with no variation is mapped to zeros rather than divided by its
+    zero range. That case is not hypothetical: `kneedle.knee` guarded against
+    it and `kneedle.knees`, three lines away in the same module, did not - so
+    a flat curve produced a knee from one and a RuntimeWarning and NaNs from
+    the other. Having one implementation is what keeps the two consistent.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        np.ndarray: the points, each axis rescaled to [0, 1]
+    """
+    points = np.asarray(points, dtype=float)
+    minimum = points.min(axis=0)
+    span_ = points.max(axis=0) - minimum
+    # A zero span means the axis is constant; every value maps to 0.
+    span_[span_ == 0] = 1.0
+    return (points - minimum) / span_
+
+
+def span(points: np.ndarray) -> tuple:
+    """
+    The extent a curve covers on each axis.
+
+    Args:
+        points (np.ndarray): numpy array with the points (x, y)
+
+    Returns:
+        tuple: (dx, dy), both non-negative
+    """
+    points = np.asarray(points, dtype=float)
+    dx, dy = np.abs(points.max(axis=0) - points.min(axis=0))
+    return float(dx), float(dy)
+
+
 def detect_orientation(points: np.ndarray) -> tuple:
     """
     Classify a curve by the direction it runs and the way it bends.

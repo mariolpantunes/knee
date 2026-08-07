@@ -18,35 +18,6 @@ def corner_curve(corner: int, n: int = 30) -> np.ndarray:
     return np.column_stack((np.arange(len(y), dtype=float), y))
 
 
-class TestNormalize(unittest.TestCase):
-    def test_both_axes_land_on_the_unit_interval(self):
-        points = np.column_stack((np.arange(10, dtype=float) * 3.0 + 5.0,
-                                  np.linspace(100.0, 20.0, 10)))
-        out = autoelbow.normalize(points)
-        for axis in (0, 1):
-            self.assertAlmostEqual(out[:, axis].min(), 0.0)
-            self.assertAlmostEqual(out[:, axis].max(), 1.0)
-
-    def test_it_preserves_shape_and_order(self):
-        points = np.column_stack((np.arange(10, dtype=float), np.linspace(5.0, 1.0, 10)))
-        out = autoelbow.normalize(points)
-        self.assertEqual(out.shape, points.shape)
-        self.assertTrue(np.all(np.diff(out[:, 1]) < 0))
-
-    def test_a_degenerate_axis_becomes_zeros(self):
-        # Every y identical: the span is 0 and must not be divided by.
-        points = np.column_stack((np.arange(5, dtype=float), np.full(5, 7.0)))
-        out = autoelbow.normalize(points)
-        np.testing.assert_allclose(out[:, 1], np.zeros(5))
-
-    def test_it_is_scale_and_offset_invariant(self):
-        points = np.column_stack((np.arange(10, dtype=float), np.linspace(1.0, 0.2, 10)))
-        shifted = points.copy()
-        shifted[:, 1] = shifted[:, 1] * 1000.0 + 42.0
-        np.testing.assert_allclose(autoelbow.normalize(points),
-                                   autoelbow.normalize(shifted))
-
-
 class TestEnforceMonotonicity(unittest.TestCase):
     def test_an_already_monotone_curve_is_untouched(self):
         y = np.linspace(1.0, 0.0, 10)

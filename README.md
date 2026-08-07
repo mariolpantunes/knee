@@ -35,6 +35,10 @@ they need under one consistent API.
   are mathematically equal but differ in their last bits are treated as tied and
   resolved by an explicit rule. Without this a knee could differ between two
   machines running identical input — see [Determinism](#determinism).
+* **Shared curve primitives**: `utils` holds what more than one method needs —
+  `detect_orientation` (which of the four knee/elbow shapes a curve is),
+  `normalize` (both axes onto [0, 1]) and `span`. One implementation means one
+  policy: a constant axis is handled the same way everywhere.
 
 > **Note:** the library targets modern Python 3.12+ standards.
 
@@ -71,6 +75,21 @@ print(f'knee at x={points[knee, 0]:.0f}')      # knee at x=9
 
 Every detector shares that signature, so they are interchangeable —
 `curvature.knee`, `dfdt.knee`, `kneedle.knee`, `lmethod.knee`, `menger.knee`.
+
+`autoelbow` is the one that takes no parameters at all — the answer is a
+property of the curve — and it handles all four orientations, so it does not
+need to be told whether it is looking at a knee or an elbow:
+
+```python
+import kneeliverse.autoelbow as autoelbow
+import kneeliverse.utils as utils
+
+print(utils.detect_orientation(points))    # (decreasing, counter-clockwise)
+print(autoelbow.knee(points))              # 9
+```
+
+`examples/compare_autoelbow.py` runs all six against each other on synthetic
+and real curves, and reports where they disagree.
 
 Multi-knee detection generalises *any* of them:
 

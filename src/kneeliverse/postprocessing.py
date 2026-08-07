@@ -24,7 +24,7 @@ import numpy as np
 import kneeliverse.convex_hull as ch
 import kneeliverse.knee_ranking as kr
 import kneeliverse.linear_fit as lf
-from kneeliverse import rdp
+from kneeliverse import rdp, utils
 
 logger = logging.getLogger(__name__)
 
@@ -311,10 +311,7 @@ def add_points_even(points: np.ndarray, reduced: np.ndarray, knees: np.ndarray, 
     points_reduced = points[reduced]
 
     # compute the delta x and y for the complete trace
-    max_x, max_y = points.max(axis=0)
-    min_x, min_y = points.min(axis=0)
-    dx = math.fabs(max_x - min_x)
-    dy = math.fabs(max_y - min_y)
+    dx, dy = utils.span(points)
     
     # compute the candidates
     candidates = []
@@ -393,10 +390,7 @@ def add_points_even_knees(points: np.ndarray, knees: np.ndarray, tx:float=0.05, 
     new_knees = []
 
     # compute the delta x and y for the complete trace
-    max_x, max_y = points.max(axis=0)
-    min_x, min_y = points.min(axis=0)
-    dx = math.fabs(max_x - min_x)
-    dy = math.fabs(max_y - min_y)
+    dx, dy = utils.span(points)
     
     # compute the candidates
     candidates = []
