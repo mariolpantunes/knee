@@ -29,13 +29,21 @@ def menger_curvature(f:np.ndarray, g:np.ndarray, h:np.ndarray) -> float:
     """
     Computes the menger curvature based on three points.
 
+    The Menger curvature of three points is 4A / (|fg| |gh| |hf|), where A is
+    the area of the triangle they span - equivalently the reciprocal of the
+    radius of the circle through them. Collinear points have zero curvature;
+    a tight corner has a small circumscribed circle and so a large one.
+
+    Note `knee` calls this with the MIDDLE point first: menger_curvature(
+    points[i], points[i-1], points[i+1]).
+
     Args:
         f (np.ndarray): first point
         g (np.ndarray): second point
         h (np.ndarray): third point
 
     Returns:
-        float: menger curvature
+        float: menger curvature, always >= 0
     """
     x1 = f[0]
     y1 = f[1]
@@ -44,7 +52,14 @@ def menger_curvature(f:np.ndarray, g:np.ndarray, h:np.ndarray) -> float:
     x3 = h[0]
     y3 = h[1]
 
-    nom = 2.0 * math.fabs((x2-x1)*(y3-y2))-((y2-y1)*(x3-x2))
+    # The fabs has to cover the WHOLE cross product. It used to wrap only the
+    # first term, leaving the subtraction outside it:
+    #     2.0 * fabs((x2-x1)*(y3-y2)) - ((y2-y1)*(x3-x2))
+    # which is not twice the triangle's area and is not even guaranteed
+    # positive. Collinear points scored 1.06 instead of 0, so a straight run
+    # scored uniformly non-zero, every point along it tied, and `knee`
+    # returned the leftmost one for every curve it was ever given.
+    nom = 2.0 * math.fabs((x2-x1)*(y3-y2) - (y2-y1)*(x3-x2))
     temp = math.fabs((x2-x1)**2.0 + (y2-y1)**2.0)*math.fabs((x3-x2)
     ** 2.0 + (y3-y2)**2.0) * math.fabs((x1-x3)**2.0 + (y1-y3)**2.0)
     dem = math.sqrt(temp)
