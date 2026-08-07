@@ -793,3 +793,78 @@ def compute_global_cost(points: np.ndarray, reduced: Sequence, cost: metrics.Met
         left = right
 
     return compute_cost(points, segment_errors, cost, cache)
+
+
+# Dispatch from the Metrics enum to the function that implements it. The
+# enum and the implementations live in `metrics`, but nothing there mapped
+# one to the other, so callers had to spell the branch out by hand.
+_METRIC_FUNCTIONS = {
+    metrics.Metrics.r2: metrics.r2,
+    metrics.Metrics.rmsle: metrics.rmsle,
+    metrics.Metrics.rmspe: metrics.rmspe,
+    metrics.Metrics.rpd: metrics.rpd,
+    metrics.Metrics.smape: metrics.smape,
+}
+
+
+def compute_metric(y: Sequence, y_hat: Sequence, cost: metrics.Metrics = metrics.Metrics.rpd) -> float:
+    """
+    Evaluate a `Metrics` member against observed and fitted values.
+
+    Args:
+        y (np.ndarray): the observed y values
+        y_hat (np.ndarray): the y values from the linear approximation
+        cost (metrics.Metrics): the metric to evaluate (default: metrics.Metrics.rpd)
+
+    Returns:
+        float: the value of the selected metric
+    """
+    return float(_METRIC_FUNCTIONS[cost](np.asarray(y, dtype=float),
+                                         np.asarray(y_hat, dtype=float)))
+
+
+def compute_global_segment_cost(points: np.ndarray, reduced: np.ndarray,
+                                cost: metrics.Metrics = metrics.Metrics.rpd) -> tuple:
+    """
+    Compute the cost of a multi-point fitting, without a cache.
+
+    The uncached counterpart to `compute_global_cost`: it fits each segment
+    of the reduced curve, collects the observed and fitted y values across
+    the whole curve, and evaluates `cost` over them. It also returns the
+    per-segment horizontal/vertical residuals, which `compute_global_cost`
+    folds away.
+
+    Args:
+        points (np.ndarray): the original points
+        reduced (np.ndarray): the reduced set of points used for the fitting
+        cost (metrics.Metrics): the metric used for the cost calculation
+            (default: metrics.Metrics.rpd)
+
+    Returns:
+        tuple: the global cost, and the per-segment residuals
+    """
+    y, y_hat = [], []
+    cost_segment = []
+
+    left = reduced[0]
+    for i in range(1, len(reduced)):
+        right = reduced[i]
+        pt = points[left:right+1]
+
+        # For a horizontal fit (the default) this returns y_hat alone, so the
+        # observed values come from the segment itself - the same pairing
+        # `compute_global_cost` uses. Unpacking it as a 2-tuple, which this
+        # function used to do, raises ValueError before anything else runs.
+        y_hat_temp = lf.linear_fit_transform_points(pt)
+        y.extend(pt[:, 1])
+        y_hat.extend(np.asarray(y_hat_temp))
+
+        cost_segment.append(lf.linear_hv_residuals_points(pt))
+        left = right
+
+    # `compute_metric`, evaluating the metric over (y, y_hat) - which is what
+    # this needs and what the code here always meant to do. It previously
+    # called `compute_cost`, whose signature is (points, segment_errors, cost,
+    # cache): the wrong arguments AND one too few, so it raised TypeError on
+    # every call and no result it ever produced can have been observed.
+    return compute_metric(y, y_hat, cost), np.array(cost_segment)

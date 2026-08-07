@@ -1,4 +1,3 @@
-# coding: utf-8
 
 __author__ = 'Mário Antunes'
 __version__ = '1.0'
@@ -11,8 +10,10 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
 import unittest
+
 import numpy as np
-import kneeliverse.dfdt as dfdt
+
+from kneeliverse import dfdt
 
 
 class TestDFDT_Method(unittest.TestCase):

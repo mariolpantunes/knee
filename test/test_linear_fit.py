@@ -1,4 +1,3 @@
-# coding: utf-8
 
 __author__ = 'Mário Antunes'
 __version__ = '1.0'
@@ -12,7 +11,9 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 
 import math
 import unittest
+
 import numpy as np
+
 import kneeliverse.linear_fit as lf
 
 
@@ -60,7 +61,9 @@ class TestLinearFir(unittest.TestCase):
         desired = 0.973
         self.assertAlmostEqual(result, desired, 2)
     
-    def test_rmspe(self):
+    def test_rmspe_points(self):
+        # Renamed: this shared its name with the `lf.rmspe` test above, so
+        # that one was shadowed and never ran. They cover different functions.
         coef = (0, 1)
         points = np.array([[0.0, 0.0], [1.0, 0.9], [2.0, 1.5], [3,2.25], [4,3.6], [5.0,5.0]])
         result = lf.rmspe_points(points, coef)

@@ -33,6 +33,11 @@ dependencies = [
     "pyUTSAlgorithms>=0.2.1",
 ]
 
+[project.optional-dependencies]
+# Only `rdp.plot_frame` needs this, and it imports matplotlib itself rather
+# than at module scope, so the core library stays dependency-light.
+plot = ["matplotlib>=3.9.2"]
+
 [project.urls]
 Homepage = "https://github.com/mariolpantunes/knee"
 Documentation = "https://mariolpantunes.github.io/knee/"

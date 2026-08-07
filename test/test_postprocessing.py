@@ -1,4 +1,3 @@
-# coding: utf-8
 
 __author__ = 'Mário Antunes'
 __version__ = '1.0'
@@ -11,11 +10,12 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
 import unittest
+
 import numpy as np
-import kneeliverse.rdp as rdp
-import kneeliverse.postprocessing as pp
-import kneeliverse.clustering as clustering
+
 import kneeliverse.knee_ranking as kr
+import kneeliverse.postprocessing as pp
+from kneeliverse import clustering
 
 
 class TestPostProcessing(unittest.TestCase):

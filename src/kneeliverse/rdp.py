@@ -18,6 +18,7 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 #import math
 import enum
 import logging
+import os
 from collections.abc import Callable
 
 import numpy as np
@@ -360,6 +361,48 @@ def rdp_fixed(points: np.ndarray, length:int=10, distance: Distance = Distance.s
     reduced = _rdp_fixed(points, length, distance_points, order, stack, reduced)
     reduced = np.array(reduced)
     return reduced, compute_removed_points(points, reduced)
+
+
+def plot_frame(points: np.ndarray, reduced: np.ndarray, name, directory: str = './img') -> str:
+    """
+    Render one simplification step: the original curve, with the reduced
+    point set drawn over it. Intended for building an animation of RDP
+    working, one frame per iteration (see `examples/generate_grdp_gif.py`).
+
+    matplotlib is imported inside the function, not at module scope, so it
+    stays an optional dependency of the library - only this one helper needs
+    it. Install it with `pip install kneeliverse[plot]`.
+
+    Args:
+        points (np.ndarray): the original points (x, y)
+        reduced (np.ndarray): indexes of the points that survived
+        name: frame identifier, used in the file name
+        directory (str): directory to write into, created if absent
+            (default './img')
+
+    Returns:
+        str: the path of the file written
+
+    Raises:
+        ImportError: if matplotlib is not installed
+    """
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError as e:  # pragma: no cover - depends on the environment
+        raise ImportError(
+            'plot_frame needs matplotlib: pip install kneeliverse[plot]') from e
+
+    os.makedirs(directory, exist_ok=True)
+    path = os.path.join(directory, f'img_{name}.png')
+
+    plt.figure(figsize=(6, 6))
+    plt.plot(points[:, 0], points[:, 1])
+    points_reduced = points[reduced]
+    plt.plot(points_reduced[:, 0], points_reduced[:, 1], marker='o', markersize=3)
+    plt.savefig(path, transparent=False, facecolor='white')
+    plt.close()
+
+    return path
 
 
 def _grdp(points:np.ndarray, t:float, cost:metrics.Metrics, order:Order,

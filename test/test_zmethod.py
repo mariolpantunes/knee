@@ -1,4 +1,3 @@
-# coding: utf-8
 
 __author__ = 'Mário Antunes'
 __version__ = '1.0'
@@ -11,8 +10,10 @@ Copyright (c) 2021-2023 The Research Foundation of SUNY
 '''
 
 import unittest
+
 import numpy as np
-import kneeliverse.zmethod as zmethod
+
+from kneeliverse import zmethod
 
 
 class TestZ_Method(unittest.TestCase):
